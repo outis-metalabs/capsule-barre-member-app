@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Capsule Barre — Member App proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root { --paper:#f3f2ee; --ink:#12110f; --mute:#4e4b45; --line:#d8d5cb; --ox:#b8422e; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:#eceae3; color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; font-weight:500; }
+  .wrap { max-width:880px; margin:0 auto; padding:48px 24px 64px; }
+  .brand { font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; margin:0 0 12px; }
+  .brand em { font-style:normal; color:var(--ox); }
+  h1 { font-size:44px; letter-spacing:-.03em; line-height:1.05; margin:0 0 12px; }
+  .lede { font-size:18px; color:var(--mute); max-width:640px; margin:0 0 28px; line-height:1.45; }
+  .rule { background:#fff; border-left:4px solid var(--ox); border-radius:0 16px 16px 0; padding:14px 16px; margin:0 0 28px; font-weight:700; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+  a.card { display:block; background:#fff; border:1px solid var(--line); border-radius:20px; padding:20px; text-decoration:none; color:inherit; }
+  a.card:hover { border-color:var(--ox); }
+  a.card .k { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ox); font-weight:700; margin:0 0 6px; }
+  a.card h2 { font-size:22px; margin:0 0 6px; letter-spacing:-.02em; }
+  a.card p { margin:0; color:var(--mute); font-size:15px; }
+  .foot { margin-top:28px; color:var(--mute); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="brand">Capsule <em>Barre</em> · AICC</p>
+  <h1>Member App proposal</h1>
+  <p class="lede">A phone app for members. <code>aicc-center</code> stays the system of record. The phone never spends a session.</p>
+  <div class="rule">Cheongdam stays at 2 left after book, cancel, and “I’m here.” The studio marks attendance.</div>
+  <div class="grid">
+    <a class="card" href="plan.html"><p class="k">Read</p><h2>The plan</h2><p>Repos, features, flows, server changes, build order, decisions.</p></a>
+    <a class="card" href="app.html"><p class="k">Click</p><h2>The prototype</h2><p>Mina’s evening. Screens and features in the left rail.</p></a>
+    <a class="card" href="decisions.html"><p class="k">Confirm</p><h2>Decisions and gaps</h2><p>Nine decisions, already confirmed. Seventeen gaps and how each is closed.</p></a>
+  </div>
+  <p class="foot">9 Oct 2026 · English proposal · not production</p>
+</div>
+</body>
+</html>

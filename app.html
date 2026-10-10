@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Capsule Barre — member app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f3f2ee;
+    --ink: #12110f;
+    --soft: #2a2824;
+    --mute: #4e4b45;
+    --line: #d8d5cb;
+    --card: #fff;
+    --ox: #b8422e;
+    --ox-ink: #fff8f6;
+    --ok: #1f5a45;
+    --ok-bg: #e4efe9;
+    --warn: #8a5a12;
+    --warn-bg: #f5ead6;
+    --ox-bg: rgba(184,66,46,.08);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: #eceae3;
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-weight: 500;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--ox); outline-offset: 2px; }
+  .shell {
+    max-width: 1120px; margin: 0 auto; padding: 24px;
+    display: grid; grid-template-columns: 220px 390px 1fr; gap: 24px; align-items: start;
+  }
+  .lede { color: var(--mute); font-size: 15px; line-height: 1.45; margin: 0 0 16px; font-weight: 500; }
+  .brand { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; margin: 0 0 8px; }
+  .brand em { font-style: normal; color: var(--ox); }
+  .rail { background: #1a1916; color: #f3f2ee; border-radius: 24px; padding: 16px 12px 24px; position: sticky; top: 16px; }
+  .rail .brand { color: #f3f2ee; padding: 0 8px; }
+  .clocks { display: flex; gap: 8px; margin-bottom: 16px; }
+  .clocks button {
+    flex: 1; border: 1px solid rgba(255,255,255,.16); background: transparent; color: #f3f2ee; border-radius: 12px; min-height: 40px; padding: 8px 4px;
+    font-size: 12px; font-weight: 700; white-space: nowrap;
+  }
+  .clocks button.on { background: #f3f2ee; border-color: #f3f2ee; color: var(--ink); }
+  .railseg { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: rgba(255,255,255,.08); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
+  .railseg button { border: 0; background: transparent; color: rgba(243,242,238,.7); border-radius: 10px; min-height: 32px; font-size: 12px; font-weight: 700; }
+  .railseg button.on { background: rgba(255,255,255,.14); color: #f3f2ee; }
+  .jump { display: flex; flex-direction: column; gap: 2px; max-height: 640px; overflow: auto; }
+  .jump::-webkit-scrollbar { width: 0; }
+  .jump .group { margin: 12px 12px 4px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(243,242,238,.5); font-weight: 700; }
+  .jump .group:first-child { margin-top: 0; }
+  .jump button.spec { color: rgba(243,242,238,.42); }
+  .jump button.spec::after { content: "spec"; float: right; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; margin-top: 3px; }
+  .jump button {
+    text-align: left; border: 0; background: transparent; color: rgba(243,242,238,.82); border-radius: 12px;
+    min-height: 40px; padding: 8px 12px; font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .jump button:hover { background: rgba(255,255,255,.06); }
+  .jump button.on { background: #f3f2ee; color: var(--ink); font-weight: 700; }
+  .phone {
+    width: 390px; height: 844px; background: #1a1916; border-radius: 40px; padding: 12px;
+    box-shadow: 0 32px 64px rgba(18,17,15,.16); position: sticky; top: 16px;
+  }
+  .screen {
+    height: 100%; background: var(--paper); border-radius: 28px; overflow: hidden;
+    display: flex; flex-direction: column; position: relative;
+  }
+  .status {
+    display: flex; justify-content: space-between; padding: 12px 16px 0; font-size: 12px; font-weight: 700;
+  }
+  .scroll { flex: 1; overflow: auto; padding: 8px 16px 24px; display: flex; flex-direction: column; }
+  .scroll::-webkit-scrollbar { width: 0; }
+  .tabs {
+    display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line);
+    background: #fbfaf6; padding: 8px 4px 12px;
+  }
+  .tabs button {
+    border: 0; background: transparent; color: var(--mute); font-size: 12px; font-weight: 500;
+    min-height: 44px; padding: 4px 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .tabs button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .tabs button.on { color: var(--ink); font-weight: 700; }
+  .tabs button.on svg { stroke: var(--ox); }
+  .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); font-weight: 700; }
+  h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -.03em; line-height: 1.1; font-weight: 700; }
+  .sub { margin: 0 0 16px; color: var(--mute); font-size: 15px; line-height: 1.4; font-weight: 500; }
+  .time { font-family: "Bebas Neue", sans-serif; font-size: 96px; line-height: .82; margin: 0 0 8px; letter-spacing: .02em; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 8px;
+    width: 100%; text-align: left;
+  }
+  .balance { padding: 24px; box-shadow: 0 12px 32px rgba(184,66,46,.08); }
+  .count { margin: 8px 0; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; letter-spacing: -.03em; line-height: 1; }
+  .count small { font-size: 15px; color: var(--mute); font-family: "IBM Plex Sans", sans-serif; }
+  .slot {
+    width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 16px; margin-bottom: 8px;
+  }
+  .slot-row { display: flex; align-items: center; gap: 12px; }
+  .when { width: 72px; flex: none; }
+  .when b { display: block; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; line-height: 1; letter-spacing: -.03em; }
+  .when small { font-size: 12px; color: var(--mute); font-weight: 500; }
+  .what { flex: 1; min-width: 0; }
+  .what strong { display: block; font-size: 15px; font-weight: 700; }
+  .what span { display: block; margin-top: 4px; font-size: 12px; color: var(--mute); font-weight: 500; }
+  .slot .tag { flex: none; }
+  .slot .meta { margin-top: 12px; }
+  .timeline { margin: 8px 0 0 8px; padding-left: 16px; border-left: 2px solid var(--line); }
+  .timeline .slot { position: relative; }
+  .timeline .slot::before {
+    content: ""; position: absolute; left: -22px; top: 24px; width: 10px; height: 10px; border-radius: 50%; background: var(--mute); border: 2px solid var(--paper);
+  }
+  .timeline .slot.ok::before { background: var(--ok); }
+  .timeline .slot.warn::before { background: var(--warn); }
+  .notice {
+    margin: 8px 12px 0; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px;
+    box-shadow: 0 12px 32px rgba(18,17,15,.14); animation: rise .35s ease;
+  }
+  .notice-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--mute); font-weight: 700; margin-bottom: 4px; }
+  .notice strong { display: block; font-size: 15px; }
+  .notice p { margin: 4px 0 8px; font-size: 12px; color: var(--soft); }
+  .notice-acts { display: flex; gap: 8px; }
+  .notice-acts button { flex: 1; min-height: 44px; border: 0; border-radius: 12px; background: var(--ox); color: var(--ox-ink); font-weight: 700; font-size: 12px; }
+  .notice-acts button.quiet { background: #e8e6de; color: var(--ink); }
+  .alert-row {
+    display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; position: relative;
+  }
+  .alert-row .alert-ico { width: 36px; height: 36px; border-radius: 50%; background: #e8e6de; display: grid; place-items: center; flex: none; color: var(--soft); }
+  .alert-row.unread .alert-ico { background: var(--ox-bg); color: var(--ox); }
+  .alert-row > div { flex: 1; min-width: 0; }
+  .alert-row strong { display: block; font-size: 15px; font-weight: 700; }
+  .alert-row span:not(.alert-ico) { display: block; margin-top: 4px; font-size: 12px; color: var(--mute); font-weight: 500; }
+  .alert-row em { font-style: normal; font-size: 12px; color: var(--mute); font-weight: 500; flex: none; padding-top: 2px; }
+  .alert-row.unread em::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ox); margin-right: 6px; vertical-align: middle; }
+  .switch-row {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px; min-height: 64px; padding: 12px 16px; margin-bottom: 8px;
+  }
+  .switch-row > div { flex: 1; }
+  .switch-row strong { display: block; font-size: 15px; font-weight: 700; }
+  .switch-row span:not(.switch) { display: block; margin-top: 2px; font-size: 12px; color: var(--mute); font-weight: 500; }
+  .switch { width: 44px; height: 26px; border-radius: 999px; background: #d8d5cb; position: relative; flex: none; transition: background .16s; }
+  .switch i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .16s; box-shadow: 0 1px 2px rgba(18,17,15,.2); }
+  .switch.on { background: var(--ok); }
+  .switch.on i { transform: translateX(18px); }
+  .chips { display: flex; gap: 8px; margin-bottom: 16px; }
+  .chips.wrap { flex-wrap: wrap; }
+  .chips.wrap .chip-btn { flex: 0 0 auto; padding: 0 14px; }
+  .card.req .reply { margin-top: 12px; padding: 12px; background: var(--paper); border-radius: 12px; font-size: 15px; font-weight: 500; }
+  .card.req .reply .lbl { display: block; margin-bottom: 4px; }
+  .bubble.me { align-self: flex-end; max-width: 80%; background: var(--ink); color: #f3f2ee; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 15px; font-weight: 500; margin: 8px 0; }
+  .card.ai { border-color: rgba(184,66,46,.25); }
+  .card.ai strong { display: block; font-size: 15px; }
+  .card.ai .meta { margin-top: 12px; }
+  .btn.mini { width: auto; min-height: 40px; padding: 8px 14px; font-size: 12px; margin: 0; box-shadow: none; }
+  .actions.ai-form { flex-direction: row; gap: 8px; align-items: center; }
+  .ai-form input { flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 999px; padding: 12px 16px; background: #fff; font-size: 15px; font-weight: 500; }
+  .ai-form .btn { width: 48px; min-height: 48px; padding: 0; margin: 0; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .chip-btn { flex: 1; min-height: 44px; border: 1px solid var(--line); background: #fff; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--soft); }
+  .chip-btn.on { background: var(--ink); border-color: var(--ink); color: #f3f2ee; }
+  .field textarea {
+    width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 12px 16px; font-size: 15px; font-weight: 500; line-height: 1.4; resize: none; font-family: inherit; color: var(--ink);
+  }
+  .what-sub { display: block; margin-top: 4px; font-size: 12px; color: var(--mute); font-weight: 500; }
+  .actions { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 24px; }
+  .actions .btn { margin-top: 0; }
+  #authForm, #newPassForm { display: flex; flex-direction: column; flex: 1; }
+  #authForm .btn, #newPassForm .btn { margin-top: auto; }
+  .slot.press, .btn, .menu-row { transition: transform .16s ease; }
+  .slot.press:active, .btn:active, .menu-row:active { transform: scale(.98); }
+  .card.press { cursor: pointer; }
+  .card.press:active { transform: scale(.99); }
+  .row { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+  .tag { display: inline-flex; align-items: center; min-height: 24px; border-radius: 999px; padding: 4px 8px; font-size: 12px; font-weight: 700; background: #e8e6de; color: var(--soft); }
+  .tag.ok { background: var(--ok-bg); color: var(--ok); }
+  .tag.warn { background: var(--warn-bg); color: var(--warn); }
+  .tag.ox { background: var(--ox-bg); color: var(--ox); }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  /* Button system: .btn primary (one per screen, oxidized red) · .btn.ghost secondary · .link tertiary · .btn.done is a state, not a control */
+  .btn {
+    width: 100%; border: 0; border-radius: 16px; min-height: 48px; padding: 12px 16px; font-weight: 700; font-size: 15px;
+    background: var(--ox); color: var(--ox-ink); margin-top: 8px;
+    box-shadow: 0 8px 24px rgba(184,66,46,.22), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .btn.done { background: var(--ok); color: #fff; }
+  .peak { animation: rise .45s ease; }
+  @keyframes rise { from { transform: translateY(8px); opacity: .4; } to { transform: none; opacity: 1; } }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: #e8e6de; border-radius: 16px; padding: 4px; margin-bottom: 16px; }
+  .seg button { border: 0; background: transparent; border-radius: 12px; min-height: 44px; padding: 8px; font-weight: 500; font-size: 15px; }
+  .seg button.on { background: #fff; font-weight: 700; box-shadow: 0 4px 12px rgba(18,17,15,.06); }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; font-weight: 700; color: var(--mute); margin-bottom: 4px; letter-spacing: .08em; text-transform: uppercase; }
+  .field input {
+    width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-height: 48px; padding: 12px 16px; font-size: 15px; font-weight: 700;
+  }
+  .err { color: var(--ox); font-size: 12px; font-weight: 700; margin: 4px 0 0; }
+  .field.bad input { border-color: var(--ox); }
+  .otp { display: flex; gap: 8px; justify-content: space-between; }
+  .otp input { width: 48px; height: 56px; text-align: center; font-size: 28px; font-weight: 700; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .check { display: flex; gap: 8px; align-items: flex-start; font-size: 15px; color: var(--soft); margin: 8px 0 16px; }
+  .check input { width: 20px; height: 20px; margin-top: 2px; }
+  .link { border: 0; background: transparent; color: var(--ox); font-weight: 700; font-size: 15px; padding: 8px 0; min-height: 44px; width: auto; align-self: flex-start; text-align: left; }
+  .top { display: flex; align-items: center; margin-bottom: 16px; gap: 8px; }
+  .pill { border: 1px solid var(--line); background: #fff; border-radius: 999px; min-height: 44px; padding: 8px 12px; font-size: 12px; font-weight: 700; }
+  .chip { margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500; background: #e8e6de; color: var(--ink); border-radius: 8px; padding: 8px; white-space: nowrap; }
+  .map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 16px; }
+  .pad {
+    min-height: 88px; border: 1px solid var(--line); background: #fff; border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 28px;
+  }
+  .pad small { font-size: 12px; font-weight: 500; color: var(--mute); margin-top: 4px; }
+  .pad.taken { background: #e8e6de; color: var(--mute); }
+  .pad.mine { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 0 8px 24px rgba(18,17,15,.16); }
+  .pad.mine small { color: rgba(255,255,255,.72); }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .stat { background: var(--paper); border-radius: 12px; padding: 16px; }
+  .stat b { display: block; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; letter-spacing: -.03em; }
+  .stat small { font-family: "IBM Plex Sans", sans-serif; font-size: 12px; font-weight: 500; }
+  .stat.after b { color: var(--ox); }
+  .lbl { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); font-weight: 700; }
+  .meter { height: 8px; background: #e8e6de; border-radius: 999px; overflow: hidden; margin-top: 16px; }
+  .meter span { display: block; height: 100%; background: var(--ox); border-radius: inherit; }
+  .toast {
+    position: absolute; left: 16px; right: 16px; top: 104px; background: var(--ink); color: #fff;
+    border-radius: 16px; padding: 12px 16px; font-size: 15px; font-weight: 700; z-index: 2;
+    transform: translateY(-8px); opacity: 0; pointer-events: none; transition: .24s ease;
+    box-shadow: 0 16px 32px rgba(18,17,15,.2);
+  }
+  .toast.show { transform: none; opacity: 1; }
+  .sheet { position: absolute; inset: 0; background: rgba(18,17,15,.32); display: none; align-items: end; }
+  .sheet.open { display: flex; }
+  .sheet .box { width: 100%; background: #fff; border-radius: 24px 24px 0 0; padding: 16px 16px 24px; }
+  .note { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .note h2 { margin: 0 0 8px; font-size: 28px; letter-spacing: -.02em; }
+  .note p { margin: 0; color: var(--soft); font-size: 15px; line-height: 1.45; }
+  .week { display: flex; gap: 8px; margin-bottom: 16px; }
+  .week button {
+    flex: 1; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-height: 56px; padding: 8px 0; font-size: 12px; font-weight: 700;
+  }
+  .week button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .week button:disabled { opacity: .55; cursor: not-allowed; background: transparent; border-style: dashed; color: var(--mute); text-decoration: line-through; }
+  .ico { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; flex: none; }
+  .menu-row {
+    display: flex; align-items: center; gap: 16px; width: 100%; text-align: left;
+    border: 1px solid var(--line); background: #fff; border-radius: 16px; min-height: 64px; padding: 12px 16px; margin-bottom: 8px;
+  }
+  .menu-row strong { display: block; font-size: 15px; font-weight: 700; }
+  .menu-row span { color: var(--mute); font-size: 12px; font-weight: 500; }
+  .menu-row .go { margin-left: auto; color: var(--mute); font-size: 22px; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%; background: var(--ink); color: #f7f6f1;
+    display: grid; place-items: center; font-weight: 700; font-size: 15px;
+  }
+  .bell {
+    border: 1px solid var(--line); background: #fff; border-radius: 50%; width: 44px; height: 44px;
+    display: grid; place-items: center; position: relative; flex: none;
+  }
+  .bell .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--ox); border-radius: 50%; }
+  .who { display: flex; align-items: center; gap: 16px; margin: 8px 0 24px; }
+  .who h1, .who .sub { margin: 0; }
+  .tiny { font-size: 15px; color: var(--mute); margin: 0 0 8px; }
+  @media (max-width: 960px) {
+    .shell { grid-template-columns: 1fr; max-width: 430px; padding: 12px; }
+    .phone { position: static; margin: 0 auto; width: 100%; max-width: 390px; }
+    .rail { position: static; }
+    .jump { max-height: 240px; }
+  }
+  @media (max-width: 420px) {
+    .shell { padding: 0; gap: 12px; }
+    .phone { border-radius: 0; padding: 0; height: 100vh; height: 100dvh; }
+    .screen { border-radius: 0; }
+    .rail, .note { border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <p class="brand">Capsule <em>Barre</em></p>
+    <div class="clocks">
+      <button type="button" id="clkAm" class="on">Now 9:41am</button>
+      <button type="button" id="clkPm">Lobby 6:40pm</button>
+    </div>
+    <div class="railseg" id="railseg">
+      <button type="button" class="on" data-rail="screens">Screens</button>
+      <button type="button" data-rail="features">Features</button>
+    </div>
+    <nav class="jump" id="jump"></nav>
+  </aside>
+  <div class="phone">
+    <div class="screen">
+      <div class="status"><span id="clock">9:41</span><span>Thu 8 Oct</span></div>
+      <div class="notice" id="notice" hidden></div>
+      <div class="scroll" id="view"></div>
+      <nav class="tabs" id="tabs" hidden></nav>
+      <div class="toast" id="toast"></div>
+      <div class="sheet" id="sheet"><div class="box" id="sheetBox"></div></div>
+    </div>
+  </div>
+  <aside class="note" id="note"></aside>
+</div>
+<script>
+const TAKEN = new Set([2, 5]);
+const HISTORY = [
+  { when: "Tue 6 Oct", time: "7:00pm", className: "Barre", teacher: "Hana Lee", studio: "cheongdam", status: "attended" },
+  { when: "Sat 4 Oct", time: "10:00am", className: "Barre", teacher: "Soo Kim", studio: "geumho", status: "attended" },
+  { when: "Thu 2 Oct", time: "7:00pm", className: "Barre", teacher: "Hana Lee", studio: "cheongdam", status: "cancelled" }
+];
+const ICONS = {
+  today: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  schedule: '<svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>',
+  you: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.5 3.7-5 7-5s5.8 1.5 7 5"/></svg>',
+  bell: '<svg class="ico" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5"/><path d="M5 16h14"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>',
+  menu: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
+  pass: '<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
+  ask: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 19h.01"/><path d="M9 9a3 3 0 1 1 4.2 2.8c-.8.4-1.2.9-1.2 1.7V14"/></svg>',
+  studio: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>',
+  spark: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',
+  check: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  send: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-7z"/></svg>',
+  pin: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
+  out: '<svg class="ico" viewBox="0 0 24 24"><path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2"/><path d="M4 12h12M13 9l3 3-3 3"/></svg>'
+};
+const SEED_ALERTS = () => [
+  { k: "pass", t: "Pass ends in 5 days", d: "Cheongdam · 2 of 10 left · 14 Oct", when: "Today", unread: true },
+  { k: "check", t: "Attended · Barre", d: "Tue 6 Oct · 7:00pm · Hana Lee · Cheongdam", when: "Tue" },
+  { k: "send", t: "Geumho replied", d: "Yes — book her a drop-in at the desk. Soo Kim", when: "Mon" },
+  { k: "today", t: "Booked · Barre", d: "Sat 4 Oct · 10:00am · Soo Kim · Geumho", when: "Fri" }
+];
+const NOTIFY = () => ({ booked: true, changed: true, day: true, hours: true });
+const SEED_REQUESTS = () => [
+  { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", reply: "Yes — book her a drop-in at the desk. Soo Kim" }
+];
+const state = {
+  clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
+  bookTab: "group", day: "thu", otpFor: "create", newPass: "", newConfirm: "",
+  studio: "geumho", name: "Mina Park", phone: "010-5550-1842",
+  password: "", confirm: "", terms: false, otp: ["","","","","",""],
+  otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, offer: false, booking: null, wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
+  alerts: SEED_ALERTS(), notify: NOTIFY(),
+  askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS()
+};
+function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unread: true }); }
+function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
+function resetSession() {
+  Object.assign(state, { booking: null, wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false,
+    late: false, offer: false, ask: false, spotPick: 3, alerts: SEED_ALERTS(), notify: NOTIFY(), feature: null, studio: "geumho",
+    askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS() });
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+function noteFor() {
+  if (state.auth !== "app") return ["Account", "Two screens: form, then code. Header has menu and alerts."];
+  if (state.tab === "today") {
+    if (state.arrived && state.arrivedVia === "nudge") return ["Nearby", "Location was allowed. At 6:40 the phone sensed the studio and sent a notification. One tap on it. Still 2 left."];
+    if (state.nudge) return ["Nudge", "The phone knows she's close. It asks; it does not decide. Tap the notification."];
+    if (state.arrived) return ["Here", "One tap in the window. Presence only. Still 2 left."];
+    if (canHere()) return ["Lobby", "I’m here takes the thumb zone. Allow location on the morning card and the phone will ask instead."];
+    return ["Today", "Class card when booked. Allow location once and arrival needs no tap."];
+  }
+  if (state.tab === "book") return ["Book", "This studio’s list. Switch to see the other."];
+  if (state.tab === "schedule") return ["Schedule", "Upcoming plus past classes."];
+  return ["You", "Icon menu: pass, alerts, ask, studios."];
+}
+function toast(t) {
+  const el = document.getElementById("toast");
+  el.textContent = t; el.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1600);
+}
+function pass() {
+  return state.studio === "geumho"
+    ? { left: 8, total: 20, until: "12 Nov", name: "20-session barre" }
+    : { left: 2, total: 10, until: "14 Oct", name: "10-session barre" };
+}
+function remainingLine() { return pass().left + " left"; }
+function meter() {
+  const p = pass();
+  const pct = Math.max(8, Math.round((p.left / p.total) * 100));
+  return `<div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
+}
+function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : "6:40"; }
+function canHere() {
+  return state.clock === "pm" && state.booking && state.booking.time === "7:00pm" && state.booking.status === "confirmed";
+}
+function arrive(via) {
+  if (state.arrived || !canHere()) return;
+  state.arrived = true; state.arrivedVia = via;
+  alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
+  toast("You’re here · still " + remainingLine());
+}
+function tick() { state.nudge = state.location === "on" && canHere() && !state.arrived; }
+function closeSheet() { document.getElementById("sheet").classList.remove("open"); }
+function topbar() {
+  const p = pass();
+  return `<div class="top">
+    <button class="pill" type="button" data-act="studios">${state.studio === "geumho" ? "Geumho" : "Cheongdam"} ▾</button>
+    <span class="chip">${p.left} left · ${p.until}</span>
+    <button class="bell" type="button" data-act="alerts" aria-label="Alerts">${ICONS.bell}${state.alerts.some(a => a.unread) ? '<i class="dot"></i>' : ""}</button>
+    <button class="bell" type="button" data-act="menu" aria-label="Menu">${ICONS.menu}</button>
+  </div>`;
+}
+function fe(f) { return state.formField === f ? "bad" : ""; }
+function em(f) { return state.formField === f && state.formError ? `<p class="err">${state.formError}</p>` : ""; }
+function welcome() {
+  const create = state.mode === "create", forgot = state.mode === "forgot";
+  return `<p class="kicker">Capsule Barre</p>
+    <h1>${create ? "Create account" : forgot ? "Reset password" : "Log in"}</h1>
+    <form id="authForm">
+    ${!forgot ? `<div class="seg">
+      <button type="button" class="${!create?"on":""}" data-act="mode-login">Log in</button>
+      <button type="button" class="${create?"on":""}" data-act="mode-create">Create account</button>
+    </div>` : `<button class="link" type="button" data-act="mode-login">Back to log in</button>`}
+    ${create ? `<div class="field ${fe("name")}"><label>Name</label><input id="fName" value="${esc(state.name)}" />${em("name")}</div>` : ""}
+    <div class="field ${fe("phone")}"><label>Phone</label><input id="fPhone" inputmode="tel" value="${esc(state.phone)}" />${em("phone")}</div>
+    ${!forgot ? `<div class="field ${fe("pass")}"><label>Password</label><input id="fPass" type="password" value="${esc(state.password)}" placeholder="${create?"8+ characters":""}" />${em("pass")}</div>` : ""}
+    ${create ? `<div class="field ${fe("confirm")}"><label>Confirm password</label><input id="fConfirm" type="password" value="${esc(state.confirm)}" />${em("confirm")}</div>
+      <label class="check"><input id="fTerms" type="checkbox" ${state.terms?"checked":""} /> I agree to the terms and privacy policy</label>${em("terms")}
+      <p class="sub"><button class="link" type="button" data-act="legal-terms">Terms</button> · <button class="link" type="button" data-act="legal-privacy">Privacy</button></p>` : ""}
+    ${state.mode === "login" ? `<p><button class="link" type="button" data-act="mode-forgot">Forgot password</button></p>` : ""}
+    <button class="btn" type="submit">${create || forgot ? "Get code" : "Log in"}</button></form>`;
+}
+function otp() {
+  const boxes = state.otp.map((d,i) => `<input maxlength="1" inputmode="numeric" data-otp="${i}" value="${d}" />`).join("");
+  return `<button class="link" type="button" data-act="back-auth">Back</button>
+    <p class="kicker" style="margin-top:12px">Code</p><h1>Enter the 6 digits</h1>
+    <p class="sub">Sent to ${esc(state.phone)}.</p>
+    ${state.otpError ? `<p class="err">${state.otpError}</p>` : ""}
+    <div class="otp">${boxes}</div>
+    <button class="btn" type="button" data-act="verify">Continue</button>
+    <p class="sub" style="margin-top:12px;text-align:center"><button class="link" type="button" data-act="resend">Resend</button></p>`;
+}
+function newPass() {
+  return `<button class="link" type="button" data-act="mode-login">Back to log in</button>
+    <p class="kicker" style="margin-top:12px">Password</p><h1>Set a new password</h1>
+    <form id="newPassForm">${state.formError ? `<p class="err">${state.formError}</p>` : ""}
+    <div class="field"><label>New password</label><input id="fNew" type="password" value="${esc(state.newPass)}" /></div>
+    <div class="field"><label>Confirm</label><input id="fNew2" type="password" value="${esc(state.newConfirm)}" /></div>
+    <button class="btn" type="submit">Save and log in</button></form>`;
+}
+function slot(act, time, title, meta, tag, kind, foot) {
+  const m = String(time).match(/^(.*?)(am|pm)$/);
+  const hm = m ? m[1] : time, ap = m ? m[2] : "";
+  const inner = `<div class="slot-row"><div class="when"><b>${hm}</b><small>${ap}</small></div><div class="what"><strong>${title}</strong><span>${meta}</span></div><span class="tag ${kind || ""}">${tag}</span></div>${foot ? `<div class="meta">${foot}</div>` : ""}`;
+  if (!act) return `<div class="slot ${kind || ""}">${inner}</div>`;
+  return `<button class="slot press ${kind || ""}" type="button" data-act="${act}">${inner}</button>`;
+}
+function today() {
+  const p = pass();
+  const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
+  if (!b) {
+    const elsewhere = state.booking && state.booking.studio !== state.studio;
+    const other = elsewhere
+      ? slot("open-other-class", state.booking.time, "Your class at " + studioName(state.booking.studio), state.booking.className + " · " + state.booking.teacher + " · " + state.booking.when, "Booked", "ok")
+      : (state.studio === "geumho"
+        ? slot("switch-cheongdam-book", "7:00pm", "Barre", "Cheongdam · Hana Lee · 6 of 8", "Tonight", "ox")
+        : "");
+    return `${topbar()}<p class="kicker">Today · ${state.studio==="geumho"?"Geumho":"Cheongdam"}</p>
+      <h1>${elsewhere ? "Nothing here today" : "No class today"}</h1><p class="sub">${p.left} of ${p.total} left · until ${p.until}</p>
+      ${other}<div class="actions"><button class="btn" type="button" data-act="tab-book">Book a class</button></div>`;
+  }
+  const here = canHere(), after = Math.max(0, p.left - 1);
+  const actions = [];
+  if (b.time==="7:00pm" && b.status==="confirmed" && !state.arrived && here && !state.nudge) {
+    actions.push(`<button class="btn" type="button" data-act="here">I’m here</button>`);
+  }
+  if (state.arrived) {
+    actions.push(`<div class="btn done peak" role="status">You’re here · see you at 7:00</div><p class="sub">Still ${p.left} left.</p>`);
+  }
+  if (b.time==="7:00pm" && b.status==="confirmed" && state.clock==="am" && !state.arrived) {
+    actions.push(state.location === "on"
+      ? `<div class="card"><div class="row"><div><strong>We’ll ask when you’re close</strong><span class="what-sub">Location on · 6:30–6:55 only</span></div><button class="link" type="button" data-act="location-off">Turn off</button></div></div>`
+      : `<button class="card press" type="button" data-act="location-ask"><div class="row"><div><strong>Get a nudge when you arrive</strong><span class="what-sub">Allow location for the arrival window</span></div><span class="tag">Optional</span></div></button>`);
+  }
+  if (b.status==="confirmed" && state.clock==="am" && !state.arrived && state.late) {
+    actions.push(`<div class="card"><strong>Free cancel ended at 4:00pm</strong><span class="what-sub">The studio can help. Still ${p.left} left.</span></div>`);
+    actions.push(`<button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`);
+  } else if (b.status==="confirmed" && state.clock==="am" && !state.arrived) {
+    actions.push(`<button class="btn ghost" type="button" data-act="move">Change time</button>`);
+    actions.push(`<button class="btn ghost" type="button" data-act="cancel">Cancel free</button>`);
+  }
+  return `${topbar()}
+    <p class="kicker">${b.time==="7:00pm"?"Tonight · Cheongdam": b.when+" · "+(b.studio==="geumho"?"Geumho":"Cheongdam")}</p>
+    <p class="time">${b.time.replace("pm","").replace("am","")}</p>
+    <p class="sub">${b.when} · ${b.className} · ${b.teacher}${b.spot?" · Reformer "+b.spot:""}</p>
+    <div class="card balance"><div class="meta">
+      ${b.status==="confirmed" && b.time==="7:00pm" ? `<span class="tag ${state.late ? "warn" : ""}">${state.late ? "Free cancel ended" : "Free until 4:00pm"}</span><span class="tag">Here from 6:30</span>`:""}
+      <span class="tag ok">${b.status}</span>
+      ${state.arrived?`<span class="tag ok">You’re here</span>`:""}
+    </div>
+    <div class="split"><div class="stat"><div class="lbl">Now</div><b>${p.left} <small>left</small></b></div>
+    <div class="stat after"><div class="lbl">After class</div><b>${after} <small>left</small></b></div></div>
+    ${meter()}</div>
+    ${actions.length ? `<div class="actions">${actions.join("")}</div>` : ""}`;
+}
+function book() {
+  const geumho = state.studio === "geumho", thu = state.day !== "sat";
+  let list = "";
+  if (geumho) {
+    list = slot("pick-geumho-10", "10:00am", "Barre", "Soo Kim · 4 of 8", "Open", "ok")
+      + slot("pick-geumho-6", "6:00pm", "Barre", "Jiwon Park · 7 of 8", "Open", "ok")
+      + `<p class="tiny">Tonight is at Cheongdam.</p>`
+      + `<button class="btn ghost" type="button" data-act="switch-cheongdam-book">Switch to Cheongdam</button>`;
+  } else if (state.bookTab === "private") {
+    list = !thu
+      ? slot("pick-sat10", "10:00am", "Hana Lee", "50 min · open", "Open", "ok")
+        + slot("", "11:00am", "Jiwon Park", "Private", "Taken", "")
+      : `<div class="card"><p class="sub" style="margin:0">No private on Thursday. Saturday is open.</p></div>`;
+  } else if (thu) {
+    list = slot("pick-7", "7:00pm", "Barre", "Hana Lee · 6 of 8", "Open", "ok",
+        `<span class="tag">Free until 4:00pm</span><span class="tag">Here from 6:30</span>`)
+      + slot("wait", "8:00pm", "Barre", "Soo Kim · full", "Waitlist", "warn",
+        `<span class="tag">${state.wait ? "You’re 2nd" : "You’d be 2nd"}</span>`);
+  } else {
+    list = slot("", "9:00am", "Kids Barre", "2 of 3", "May not run", "warn")
+      + slot("pick-sat10", "10:00am", "Barre", "Hana Lee", "Open", "ok");
+  }
+  return `${topbar()}<div class="seg">
+      <button type="button" class="${state.bookTab==="group"?"on":""}" data-act="book-group">Group</button>
+      <button type="button" class="${state.bookTab==="private"?"on":""}" data-act="book-private">Private</button>
+    </div>
+    <div class="week">
+      <button type="button" class="${thu?"on":""}" data-act="day-thu">Thu<br>8</button>
+      <button type="button" disabled>Fri<br>9</button>
+      <button type="button" class="${!thu?"on":""}" data-act="day-sat">Sat<br>10</button>
+      <button type="button" disabled>Sun<br>11</button>
+      <button type="button" disabled>Mon<br>12</button>
+    </div>${list}`;
+}
+function spot() {
+  const mine = state.spotPick;
+  const pads = [1,2,3,4,5,6].map(n => TAKEN.has(n)
+    ? `<div class="pad taken">${n}<small>Taken</small></div>`
+    : `<button type="button" class="pad ${n===mine?"mine":""}" data-act="spot" data-n="${n}">${n}<small>${n===mine?"Yours":"Open"}</small></button>`).join("");
+  return `${topbar()}<button class="link" type="button" data-act="tab-book">Back</button>
+    <p class="kicker">Thu · 7:00pm</p><h1>Pick a reformer</h1>
+    <p class="sub">Yours until 6:45pm.</p><div class="map">${pads}</div>
+    <div class="actions"><button class="btn" type="button" data-act="confirm-spot" ${mine ? "" : "disabled"}>${mine ? "Use reformer " + mine : "Choose a reformer"}</button></div>`;
+}
+function waitlist() {
+  return `${topbar()}<button class="link" type="button" data-act="tab-book">Back</button>
+    <p class="kicker">8:00pm · full</p>
+    <h1>${state.wait?"You’re 2nd":"Join the line?"}</h1>
+    <p class="sub">${state.wait?"We’ll ask before booking you in. Still 2 left.":"You’d be 2nd. Still 2 left."}</p>
+    <div class="actions">${state.wait?`<button class="btn ghost" type="button" data-act="tab-schedule">See schedule</button>`
+      :`<button class="btn" type="button" data-act="stay-wait">Join waitlist</button>`}</div>`;
+}
+function schedule() {
+  const rows = [], past = [];
+  if (state.booking && state.booking.studio === state.studio) {
+    rows.push(slot("tab-today", state.booking.time, state.booking.className, state.booking.when + " · " + state.booking.teacher, state.booking.status, "ok"));
+  }
+  if (state.wait && state.studio === "cheongdam") {
+    rows.push(slot("", "8:00pm", "Barre", "Thu 8 Oct · Soo Kim", "2nd", "warn"));
+  }
+  HISTORY.filter(h => h.studio === state.studio).forEach(h => {
+    past.push(slot("", h.time, h.className, h.when + " · " + h.teacher, h.status, h.status === "attended" ? "ok" : ""));
+  });
+  return `${topbar()}<p class="kicker">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Your classes</h1>
+    <p class="kicker">Upcoming</p><div class="timeline">${rows.join("") || `<div class="card"><p class="sub" style="margin:0">Nothing booked here.</p></div>`}</div>
+    <p class="kicker" style="margin-top:16px">Past</p><div class="timeline">${past.join("")}</div>`;
+}
+function you() {
+  const p = pass();
+  return `<div class="who"><div class="avatar">MP</div><div><h1>${esc(state.name)}</h1><p class="sub">${esc(state.phone)}</p></div></div>
+    <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>${p.left} left</strong><span>${p.name} · ${p.until}</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="alerts">${ICONS.bell}<div><strong>Alerts</strong><span>${state.alerts.filter(a => a.unread).length} new</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask AI</strong><span>Book, check, extend or hold — by typing</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Studios</strong><span>Geumho 8/20 · Cheongdam 2/10</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="${state.location === "on" ? "location-off" : "location-ask"}">${ICONS.pin}<div><strong>Arrival</strong><span>${state.location === "on" ? "Nudge when close · location on" : "Tap I’m here · location off"}</span></div><span class="go">›</span></button>
+    <div class="actions"><button class="btn ghost" type="button" data-act="logout">Log out</button></div>`;
+}
+function passScreen() {
+  const p = pass();
+  const used = HISTORY.filter(h => h.studio === state.studio && h.status === "attended").map(h =>
+    `<div class="card"><strong>${h.when} · ${h.time}</strong><p class="sub" style="margin:4px 0 0">${h.teacher} · attended</p></div>`).join("");
+  return `<button class="link" type="button" data-act="tab-you">Back</button>
+    <p class="kicker" style="margin-top:12px">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Pass</h1>
+    <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
+    <div class="card"><div class="lbl">Previous</div><strong>10-session intro</strong><p class="sub" style="margin:0">Finished 2 Aug 2026 · 0 left</p></div>
+    <p class="kicker">Usage</p>${used || `<div class="card"><p class="sub" style="margin:0">No visits yet.</p></div>`}
+    <div class="actions"><button class="btn ghost" type="button" data-act="ai-extend-ask">Ask to extend or hold</button></div>`;
+}
+function alerts() {
+  const icon = k => { const s = ICONS[k] || ICONS.bell; return s.includes('class="ico"') ? s : s.replace("<svg ", '<svg class="ico" '); };
+  const rows = state.alerts.map((a, i) => `<button class="alert-row ${a.unread ? "unread" : ""}" type="button" data-act="read" data-i="${i}">
+      <span class="alert-ico">${icon(a.k)}</span>
+      <div><strong>${a.t}</strong><span>${a.d}</span></div>
+      <em>${a.when}</em></button>`).join("");
+  const sw = (key, label, sub) => `<button class="switch-row" type="button" data-act="toggle" data-k="${key}" aria-pressed="${state.notify[key]}">
+      <div><strong>${label}</strong><span>${sub}</span></div><span class="switch ${state.notify[key] ? "on" : ""}"><i></i></span></button>`;
+  return `<button class="link" type="button" data-act="tab-you">Back</button>
+    <h1>Alerts</h1>
+    ${rows}
+    <p class="kicker" style="margin-top:24px">Notify me</p>
+    ${sw("booked", "Booked, moved, cancelled", "Confirmations")}
+    ${sw("changed", "Studio changes a class", "Time, teacher, or cancelled")}
+    ${sw("day", "1 day before", "The evening before class")}
+    ${sw("hours", "3 hours before", "Just before free cancel ends")}`;
+}
+function askDefault() {
+  const s = studioName(state.studio);
+  return { extend: `Can I extend my ${s} pass? I’m away next week.`, hold: `Can you hold my ${s} pass for two weeks?`, question: `` }[state.askType];
+}
+function aiReply(q) {
+  const s = q.toLowerCase();
+  const sn = studioName(state.studio), p = pass();
+  const pending = state.requests.find(r => r.status === "waiting" && r.studio === state.studio && r.type !== "question");
+  if (/extend|hold|freeze|more time|pause/.test(s) && pending) return { k: "request", kicker: "Already asked", title: sn + " is still deciding",
+    body: "You asked to " + (pending.type === "hold" ? "hold" : "extend") + " on " + pending.when.toLowerCase() + ". Your pass still ends " + p.until + " until they reply.", acts: [["ai-requests", "Your requests"]] };
+  if (/extend|hold|freeze|more time|pause/.test(s)) return { k: "request", kicker: "A request, not a change", title: "Ask " + sn + " to extend?",
+    body: "Your pass still ends " + p.until + " until the owner decides. I’ll send it to their list.", acts: [["ai-extend", "Send request"]] };
+  if (/cancel/.test(s)) { const b = state.booking; return b
+    ? { k: "cancel", kicker: "From your " + studioName(b.studio) + " schedule", title: b.when + " · " + b.time + " · " + b.className, body: "Free to cancel until 4:00pm. Still " + remainingLine() + " either way.", acts: [["ai-cancel", "Cancel this class"], ["ai-keep", "Keep it"]] }
+    : { k: "info", kicker: "From your schedule", title: "Nothing booked", body: "There’s nothing to cancel.", acts: [["ai-book", "See classes"]] }; }
+  if (/left|remaining|how many|balance|sessions|expire|until/.test(s)) return { k: "balance", kicker: "From your passes", title: "Geumho 8 of 20 · Cheongdam 2 of 10",
+    body: "Geumho until 12 Nov. Cheongdam until 14 Oct — 5 days.", acts: [["ai-pass", "Open pass"]] };
+  const b7 = state.booking && state.booking.studio === "cheongdam" && state.booking.time === "7:00pm";
+  if (/book|reserve|tonight|7|seven|thu/.test(s) && b7) return { k: "booked", kicker: "From your Cheongdam schedule", title: "You’re booked · Thu 7:00pm · Hana Lee" + (state.booking.spot ? " · Reformer " + state.booking.spot : ""),
+    body: "Free cancel until 4:00pm. Still " + remainingLine() + ".", acts: [["ai-today", "Open tonight"], ["ai-move", "Change time"]] };
+  if (/book|reserve|tonight|7|seven|thu/.test(s)) return { k: "book", kicker: "From Cheongdam’s schedule", title: "Thu 8 Oct · 7:00pm · Barre · Hana Lee",
+    body: "6 of 8 taken. Free cancel until 4:00pm. Booking keeps you at 2 left.", acts: [["ai-book-7", "Pick a reformer and book"], ["ai-book", "Other times"]] };
+  if (/sat|weekend|what.?s on|schedule|classes|tomorrow/.test(s)) return { k: "list", kicker: "From Cheongdam’s schedule", title: "Saturday 10 Oct",
+    body: "9:00am Kids Barre · may not run (2 of 3)\n10:00am Barre · Hana Lee · open\n11:00am private · Jiwon Park · taken", acts: [["ai-book-sat", "Open Saturday"]] };
+  return { k: "help", kicker: "I can do three things", title: "Book, check, or send a request", body: "Try “book me tonight at 7”, “how many left?”, or “extend my pass”. I show a card; you decide.", acts: [] };
+}
+function aiAsk(q) {
+  q = q.trim(); if (!q) return;
+  state.chat.push({ role: "me", text: q });
+  state.chat.push({ role: "ai", card: aiReply(q) });
+  render();
+  const sc = document.getElementById("view"); sc.scrollTop = sc.scrollHeight;
+}
+function assistant() {
+  const chips = ["Book me tonight at 7", "How many left?", "What’s on Saturday?", "Extend my pass"].map(c =>
+    `<button type="button" class="chip-btn" data-act="ai-chip" data-q="${esc(c)}">${c}</button>`).join("");
+  const thread = state.chat.map(m => m.role === "me"
+    ? `<div class="bubble me">${esc(m.text)}</div>`
+    : `<div class="card ai"><p class="kicker">${m.card.kicker}</p><strong>${m.card.title}</strong><p class="sub" style="white-space:pre-line;margin:4px 0 0">${m.card.body}</p>
+        ${m.card.acts.length ? `<div class="meta">${m.card.acts.map(([a, l], i) => `<button type="button" class="${i ? "chip-btn" : "btn mini"}" data-act="${a}">${l}</button>`).join("")}</div>` : ""}</div>`).join("");
+  return `<button class="link" type="button" data-act="tab-you">Back</button>
+    <h1>Ask AI</h1>
+    <p class="sub">${studioName(state.studio)} · ask in a line, get a card. Nothing happens until you tap it.</p>
+    ${state.chat.length ? thread : `<div class="chips wrap">${chips}</div>`}
+    ${state.requests.length ? `<button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>` : ""}
+    <form id="aiForm" class="actions ai-form"><input id="aiText" placeholder="Try: book me tonight at 7" autocomplete="off" /><button class="btn" type="submit" aria-label="Ask">${ICONS.spark}</button></form>`;
+}
+function requestList() {
+  if (!state.requests.length) return "";
+  const lbl = { extend: "Extend pass", hold: "Hold pass", question: "Question" };
+  return state.requests.map(r => `<div class="card req">
+    <div class="row"><div><strong>${lbl[r.type]} · ${studioName(r.studio)}</strong><p class="sub" style="margin:4px 0 0">${esc(r.text)}</p></div>
+    <span class="tag ${r.status === "replied" ? "ok" : "warn"}">${r.status === "replied" ? "Replied" : "Waiting"}</span></div>
+    ${r.reply ? `<div class="reply"><span class="lbl">Reply · ${r.when}</span>${esc(r.reply)}</div>` : `<p class="tiny" style="margin:8px 0 0">Sent ${r.when} · the studio replies here and in Alerts</p>`}</div>`).join("");
+}
+function requests() {
+  return `<button class="link" type="button" data-act="ai">Back</button>
+    <h1>Your requests</h1><p class="sub">What you asked the studio, and what they said.</p>${requestList()}`;
+}
+function askLabel() { return { extend: "Extend pass", hold: "Hold pass", question: "Question" }[state.askType]; }
+function ask() {
+  const p = pass();
+  const chip = (k, l) => `<button type="button" class="chip-btn ${state.askType === k ? "on" : ""}" data-act="ask-type" data-k="${k}">${l}</button>`;
+  if (state.ask) return `<button class="link" type="button" data-act="ai">Back</button>
+    <h1>Sent to ${studioName(state.studio)}</h1>
+    <div class="card"><div class="meta"><span class="tag ok">${askLabel()}</span><span class="tag warn">Still ends ${p.until}</span></div>
+      <p class="sub" style="margin:12px 0 0">${esc(state.askText)}</p></div>
+    <p class="sub">The owner sees this on today’s list. The reply lands here and in Alerts. Nothing changes on your pass until they decide.</p>
+    <div class="actions"><button class="btn ghost" type="button" data-act="ai-requests">Your requests</button></div>`;
+  return `<button class="link" type="button" data-act="ai">Back</button>
+    <h1>Request to ${studioName(state.studio)}</h1>
+    <p class="sub">${studioName(state.studio)} · ${p.left} of ${p.total} left · ends ${p.until}</p>
+    <div class="chips">${chip("extend", "Extend pass")}${chip("hold", "Hold pass")}${chip("question", "Question")}</div>
+    <div class="field"><label>Message</label><textarea id="askText" rows="4" placeholder="Ask in one line">${esc(state.askText || askDefault())}</textarea></div>
+    <p class="tiny">The studio replies in Alerts. Your pass still ends ${p.until} until they say otherwise.</p>
+    <div class="actions"><button class="btn" type="button" data-act="send-ask">Send to ${studioName(state.studio)}</button></div>`;
+}
+const BOOKING7 = { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot:3, status:"confirmed" };
+function ensureBooked() {
+  const b = state.booking;
+  if (!b || b.studio !== "cheongdam" || b.time !== "7:00pm") { state.booking = { ...BOOKING7 }; state.arrived = false; state.arrivedVia = null; }
+  state.studio = "cheongdam";
+}
+function inApp() { state.auth = "app"; state.view = null; state.nudge = false; state.late = false; state.offer = false; }
+const JUMPS = [
+  { key: "signin",   label: "Sign in",  note: "Phone and password, then the code. Only a phone the studio already has.", go: () => { state.auth = "welcome"; state.mode = "login"; state.formError = ""; } },
+  { key: "create",   label: "Create account", note: "One form, then the code. Terms link outside the checkbox.", go: () => { state.auth = "welcome"; state.mode = "create"; state.formError = ""; } },
+  { key: "code",     label: "Code", note: "Six boxes. Paste fills all. 000000 is wrong on purpose.", go: () => { state.auth = "otp"; state.otpFor = state.mode === "forgot" ? "forgot" : "login"; state.otp = ["","","","","",""]; state.otpError = ""; } },
+  { key: "today",    label: "Today", note: "Class card when booked; one suggestion when not. Bell and menu in the header.", go: () => { inApp(); state.tab = "today"; } },
+  { key: "book",     label: "Book", note: "Group or private, by day, this studio only. Time first.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
+  { key: "reformer", label: "Reformer", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
+  { key: "booked",   label: "Confirmed", note: "Tonight. Now 2, after class 1. The meter did not move.", go: () => { inApp(); ensureBooked(); state.tab = "today"; } },
+  { key: "arrive",   label: "Arrival nudge", note: "6:40, location on. The phone asks; the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { key: "schedule", label: "Schedule", note: "Upcoming on top, history below the line.", go: () => { inApp(); state.tab = "schedule"; } },
+  { key: "manage",   label: "Cancel or change", note: "Change is one move. Cancel is free until 4:00pm and asks first.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
+  { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
+  { key: "alerts",   label: "Alerts", note: "Booked, expiry, attended, arrived. Toggles at the bottom.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { key: "ai",       label: "Ask AI", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Book me tonight at 7"); } },
+  { key: "pass",     label: "Pass", note: "2 / 10 until 14 Oct, as the server returns it. Previous pass and visits.", go: () => { inApp(); state.tab = "you"; state.view = "pass"; } },
+  { key: "you",      label: "You", note: "Pass, alerts, ask, studios, arrival, log out.", go: () => { inApp(); state.tab = "you"; } }
+];
+const FEATURES = [
+  { g: "Account" },
+  { f: "F1", label: "Create account", note: "One form, then the code. Only a phone the studio already has.", go: () => { state.auth = "welcome"; state.mode = "create"; state.formError = ""; } },
+  { f: "F2", label: "Log in", note: "Phone and password, then the code.", go: () => { state.auth = "welcome"; state.mode = "login"; state.formError = ""; } },
+  { f: "F3", label: "Forgot password", note: "Code first, then a new password.", go: () => { state.auth = "welcome"; state.mode = "forgot"; state.formError = ""; } },
+  { f: "F5", label: "Switch studio", note: "Two memberships, two balances. Pick one; the header and lists follow.", go: () => { inApp(); state.tab = "today"; render(); openStudios(); } },
+  { g: "Today" },
+  { f: "F6", label: "Class card", note: "Time, teacher, reformer, deadline. Now 2, after class 1. The meter does not move.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; } },
+  { f: "F7", label: "Empty state", note: "No class today. One suggestion, one button.", go: () => { inApp(); state.booking = null; state.arrived = false; state.studio = "geumho"; state.tab = "today"; } },
+  { f: "F8", label: "Other studio class", note: "Looking at Geumho while tonight is at Cheongdam. One row takes you there.", go: () => { inApp(); ensureBooked(); state.studio = "geumho"; state.tab = "today"; } },
+  { g: "Book" },
+  { f: "F9", label: "Group by day", note: "Thursday at Cheongdam. 7:00 open, 8:00 full.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
+  { f: "F10", label: "Private by day", note: "Saturday privates. Hana Lee open, Jiwon Park taken.", go: () => { inApp(); state.tab = "book"; state.bookTab = "private"; state.day = "sat"; state.studio = "cheongdam"; } },
+  { f: "F12", label: "Book a class", note: "Tap 7:00pm. Pick a reformer. Booked, and still 2 left.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
+  { f: "F13", label: "Reformer pick", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
+  { f: "F14", label: "Waitlist", note: "8:00 is full. Join and you’re 2nd. Nothing is held.", go: () => { inApp(); state.wait = false; state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
+  { f: "F15", label: "Waitlist offer", note: "A seat opened at 8:00pm after the free-cancel deadline. The phone asks; it never books for you. Take it or pass.", go: () => { inApp(); state.wait = true; state.studio = "cheongdam"; state.tab = "schedule"; state.offer = true; } },
+  { g: "Manage" },
+  { f: "F16", label: "Change time", note: "Thursday 7:00 to Saturday 10:00 in one move. Not cancel and rebook.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
+  { f: "F17", label: "Cancel free", note: "Before 4:00pm. The bottom button asks first. Still 2 left after.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; } },
+  { f: "F18", label: "Late cancel", note: "4:30pm. Free cancel ended at 4:00. The cancel button is gone; the studio can help. Still 2 left.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; state.late = true; } },
+  { g: "Arrival" },
+  { f: "F19", label: "I’m here", note: "6:40pm, location off. The button appears in the window only. Presence, not attendance.", go: () => { inApp(); ensureBooked(); state.location = "off"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; } },
+  { f: "F20", label: "Arrival nudge", note: "Location on. At 6:40 the phone senses the studio and asks. The tap on the notification is the check-in.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { f: "F21", label: "iBeacon (v2)", note: "Spec only — this is the same notification. In v2 a Bluetooth beacon fires it instead of the geofence if 'close' turns out to mean next door.", spec: true, go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { g: "Schedule & pass" },
+  { f: "F22", label: "Upcoming", note: "Tonight at the top of the timeline, waitlist under it.", go: () => { inApp(); ensureBooked(); state.tab = "schedule"; } },
+  { f: "F23", label: "History", note: "Attended and cancelled, below the line. Attended rows are the ones that spent a session.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "schedule"; } },
+  { f: "F24", label: "Pass balance", note: "2 / 10, until 14 Oct. The number the server returns, nothing computed here.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "pass"; } },
+  { f: "F25", label: "Previous passes", note: "The finished intro pass and the visits on this one.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "pass"; } },
+  { f: "F26", label: "Extend or hold", note: "From Pass or by typing. The card says “a request, not a change”; Send opens one short form to the owner’s to-do. The screen still says 14 Oct.", go: () => { inApp(); state.studio = "cheongdam"; state.ask = false; state.askType = "extend"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Extend my pass"); } },
+  { g: "Alerts & ask" },
+  { f: "F27", label: "Activity list", note: "Typed rows with a time. Unread rows carry a dot. Read state lives on the phone; the events live on the server.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { f: "F28", label: "Push", note: "The arrival nudge is the push you can see here. Reminders, offers and replies use the same channel.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { f: "F29", label: "Alert toggles", note: "Four switches under the list: confirmations, studio changes, 1 day before, 3 hours before.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { f: "F30", label: "Studio request form", note: "The confirm step behind the extend / hold card. Three types, one line, one button. Not a menu item of its own.", go: () => { inApp(); state.studio = "cheongdam"; state.ask = false; state.askType = "extend"; state.tab = "you"; state.view = "ask"; } },
+  { f: "F31", label: "Assistant", note: "“Book me tonight at 7” → a card from Cheongdam’s schedule with one button. “How many left?” → both balances. “Extend my pass” → a request, not a change. Cards, never free chat.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Book me tonight at 7"); aiAsk("How many left?"); } },
+  { g: "You & system" },
+  { f: "F32", label: "Profile", note: "Name and phone. Changing the phone re-verifies with a code.", go: () => { inApp(); state.tab = "you"; } },
+  { f: "F34", label: "Arrival setting", note: "The system prompt. Location only 6:30–6:55 with a class.", go: () => { inApp(); state.tab = "you"; render(); openLocation(); } },
+  { f: "F35", label: "Legal", note: "Terms and privacy, linked outside the checkbox so the box stays one tap.", go: () => { state.auth = "welcome"; state.mode = "create"; render(); openLegal("Terms", "Studio membership, booking, and cancel rules."); } },
+  { f: "F36", label: "Error states", note: "Spec only — this list is the happy path. Each error (full, expired, exhausted, duplicate, deadline, offline) is one sentence and one action on this screen.", spec: true, go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
+  { f: "F37", label: "Korean copy", note: "Spec only — every screen you see here, in Korean, after this English flow is accepted.", spec: true, go: () => { inApp(); state.tab = "today"; } }
+];
+function currentJump() {
+  if (state.auth === "welcome") return state.mode === "create" ? "create" : "signin";
+  if (state.auth === "otp") return "code";
+  if (state.auth === "newpass") return "signin";
+  if (state.view === "spot") return "reformer";
+  if (state.view === "wait") return "wait";
+  if (state.view === "alerts") return "alerts";
+  if (state.view === "ask" || state.view === "ai" || state.view === "requests") return "ai";
+  if (state.view === "pass") return "pass";
+  if (state.tab === "today") {
+    if (state.nudge || (state.arrived && state.arrivedVia === "nudge")) return "arrive";
+    return state.booking && state.booking.studio === state.studio ? "booked" : "today";
+  }
+  return state.tab;
+}
+function render() {
+  const cur = state.jump || currentJump();
+  document.querySelectorAll("#railseg button").forEach(b => b.classList.toggle("on", b.dataset.rail === state.rail));
+  document.getElementById("jump").innerHTML = state.rail === "features"
+    ? FEATURES.map(x => x.g ? `<div class="group">${x.g}</div>`
+        : `<button type="button" class="${x.f === state.feature ? "on" : ""} ${x.spec ? "spec" : ""}" data-jump="feature" data-f="${x.f}">${x.label}</button>`).join("")
+    : JUMPS.map(j => `<button type="button" class="${j.key === cur ? "on" : ""}" data-jump="${j.key}">${j.label}</button>`).join("");
+  document.getElementById("clock").textContent = clockLabel();
+  document.getElementById("clkAm").classList.toggle("on", state.clock === "am");
+  document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
+  const tabs = document.getElementById("tabs");
+  tabs.hidden = state.auth !== "app";
+  if (state.auth === "app") {
+    tabs.innerHTML = ["today","book","schedule","you"].map(t =>
+      `<button type="button" class="${state.tab===t?"on":""}" data-act="tab-${t}">${ICONS[t]}<span>${t[0].toUpperCase()+t.slice(1)}</span></button>`).join("");
+  }
+  const notice = document.getElementById("notice");
+  notice.hidden = !(state.auth === "app" && (state.nudge || state.offer));
+  if (state.offer) notice.innerHTML = `<div class="notice-head"><span>Capsule Barre</span><span>now</span></div>
+    <strong>A spot opened at 8:00pm</strong><p>Barre with Soo Kim, tonight. Free cancel has ended for this class. Take it?</p>
+    <div class="notice-acts"><button type="button" data-act="offer-take">Take it</button><button type="button" class="quiet" data-act="offer-pass">Pass</button></div>`;
+  else if (!notice.hidden) notice.innerHTML = `<div class="notice-head"><span>Capsule Barre</span><span>now</span></div>
+    <strong>You’re at Cheongdam</strong><p>Barre at 7:00 with Hana Lee. Say you’re here?</p>
+    <div class="notice-acts"><button type="button" data-act="nudge-here">I’m here</button><button type="button" class="quiet" data-act="nudge-close">Not yet</button></div>`;
+  const view = document.getElementById("view");
+  if (state.auth === "welcome") view.innerHTML = welcome();
+  else if (state.auth === "otp") view.innerHTML = otp();
+  else if (state.auth === "newpass") view.innerHTML = newPass();
+  else if (state.view === "spot") view.innerHTML = spot();
+  else if (state.view === "wait") view.innerHTML = waitlist();
+  else if (state.view === "pass") view.innerHTML = passScreen();
+  else if (state.view === "alerts") view.innerHTML = alerts();
+  else if (state.view === "ask") view.innerHTML = ask();
+  else if (state.view === "ai") view.innerHTML = assistant();
+  else if (state.view === "requests") view.innerHTML = requests();
+  else if (state.tab === "today") view.innerHTML = today();
+  else if (state.tab === "book") view.innerHTML = book();
+  else if (state.tab === "schedule") view.innerHTML = schedule();
+  else view.innerHTML = you();
+  const feat = state.feature && FEATURES.find(x => x.f === state.feature);
+  const jmp = state.jump && JUMPS.find(j => j.key === state.jump);
+  const n = feat ? [feat.f + " · " + feat.label, feat.note] : jmp ? [jmp.label, jmp.note] : noteFor();
+  document.getElementById("note").innerHTML = `<p class="kicker">${n[0]}</p><h2>${n[0]}</h2><p>${n[1]}</p>`;
+  wire();
+}
+function readForm() {
+  ["fName","fPhone","fPass","fConfirm","fTerms"].forEach(()=>{});
+  const name = document.getElementById("fName"), phone = document.getElementById("fPhone");
+  const pass = document.getElementById("fPass"), conf = document.getElementById("fConfirm"), terms = document.getElementById("fTerms");
+  if (name) state.name = name.value;
+  if (phone) state.phone = phone.value;
+  if (pass) state.password = pass.value;
+  if (conf) state.confirm = conf.value;
+  if (terms) state.terms = terms.checked;
+}
+function sendCode() {
+  readForm(); state.formError = ""; state.formField = "";
+  const fail = (f, m) => { state.formField = f; state.formError = m; };
+  if (state.mode === "create") {
+    if (!state.name.trim()) fail("name", "Add your name.");
+    else if (state.password.length < 8) fail("pass", "Password needs 8+ characters.");
+    else if (state.password !== state.confirm) fail("confirm", "Passwords don’t match.");
+    else if (!state.terms) fail("terms", "Agree to terms to continue.");
+  }
+  if (state.mode === "login" && !state.password) fail("pass", "Enter your password.");
+  if (!state.formError && !/^010/.test(state.phone.replace(/\D/g,""))) fail("phone", "Use the phone on your contract.");
+  if (state.formError) { render(); return; }
+  state.otp = ["","","","","",""]; state.otpError = ""; state.otpFor = state.mode; state.auth = "otp";
+  render(); setTimeout(() => document.querySelector("[data-otp='0']")?.focus(), 50);
+}
+function verify() {
+  const code = state.otp.join("");
+  if (code.length < 6) { state.otpError = "Enter all 6 digits."; return render(); }
+  if (code === "000000") { state.otpError = "That code is wrong."; return render(); }
+  if (state.otpFor === "forgot") { state.auth = "newpass"; state.formError = ""; return render(); }
+  enterApp();
+}
+function saveNewPass() {
+  const a = document.getElementById("fNew")?.value || "", b = document.getElementById("fNew2")?.value || "";
+  state.newPass = a; state.newConfirm = b; state.formError = "";
+  if (a.length < 8) { state.formError = "Password needs 8+ characters."; return render(); }
+  if (a !== b) { state.formError = "Passwords don’t match."; return render(); }
+  state.password = a; enterApp();
+}
+function enterApp() {
+  if (state.otpFor === "create") { resetSession(); state.alerts = [{ k: "pass", t: "Welcome, " + state.name.split(" ")[0], d: "Geumho · 8 of 20 · until 12 Nov", when: "Just now", unread: true }]; }
+  state.auth = "app"; state.tab = "today"; state.view = null; state.studio = "geumho";
+  toast("Welcome in"); render();
+}
+function remainingLine() { return pass().left + " left"; }
+function bookClass(spec) {
+  state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null;
+  alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
+  state.tab = "today"; state.view = null;
+  toast("Booked · still " + remainingLine()); render();
+}
+function sheetBox(html) {
+  const box = document.getElementById("sheetBox");
+  document.getElementById("sheet").classList.add("open");
+  box.innerHTML = html;
+  box.querySelector("[data-act=close]")?.addEventListener("click", closeSheet);
+  return box;
+}
+function openStudios() {
+  const box = sheetBox(`<p class="kicker">On this phone</p><h1>Switch studio</h1>
+    <button class="card press" type="button" data-st="geumho"><div class="row"><div><strong>Geumho</strong><p class="sub" style="margin:4px 0 0">8 of 20 · Soo Kim, Jiwon Park</p></div></div></button>
+    <button class="card press" type="button" data-st="cheongdam"><div class="row"><div><strong>Cheongdam</strong><p class="sub" style="margin:4px 0 0">2 of 10 · Hana Lee</p></div></div></button>
+    <button class="btn ghost" type="button" data-act="close">Close</button>`);
+  box.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { state.studio = b.dataset.st; closeSheet(); render(); });
+}
+function openMenu() {
+  sheetBox(`<p class="kicker">Menu</p><h1>More</h1>
+    <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>Pass</strong><span>History and remaining</span></div></button>
+    <button class="menu-row" type="button" data-act="alerts">${ICONS.bell}<div><strong>Alerts</strong></div></button>
+    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask AI</strong></div></button>
+    <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Switch studio</strong></div></button>
+    <button class="btn ghost" type="button" data-act="close">Close</button>`);
+  document.getElementById("sheetBox").onclick = (e) => {
+    const a = e.target.closest("[data-act]"); if (!a) return;
+    if (a.dataset.act === "close") return closeSheet();
+    closeSheet();
+    const fake = { target: a, closest: () => a };
+  };
+}
+function openMove() {
+  const onSat = state.booking && state.booking.when === "Sat 10 Oct";
+  const target = onSat
+    ? { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" }
+    : { studio:"cheongdam", kind:"group", when:"Sat 10 Oct", time:"10:00am", teacher:"Hana Lee", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" };
+  const box = sheetBox(`<p class="kicker">One move</p><h1>${onSat ? "Thursday 7:00" : "Saturday 10:00"}</h1>
+    <p class="sub">Replaces ${onSat ? "Saturday 10:00" : "Thursday 7:00"}. Still ${remainingLine()}.</p>
+    <button class="btn" type="button" id="doMove">Move</button>
+    <button class="btn ghost" type="button" data-act="close">Keep ${onSat ? "Saturday" : "Thursday"}</button>`);
+  box.querySelector("#doMove").onclick = () => {
+    state.booking = target;
+    state.arrived = false; state.arrivedVia = null; closeSheet(); toast("Moved · " + remainingLine()); render();
+  };
+}
+function openLocation() {
+  const box = sheetBox(`<p class="kicker">System prompt</p><h1>Use your location?</h1>
+    <p class="sub">Capsule Barre checks only 6:30–6:55 when you have a class. When you’re close it sends one notification asking if you’re here. It never spends a session.</p>
+    <button class="btn" type="button" id="locAllow">Allow while using</button>
+    <button class="btn ghost" type="button" data-act="close">Don’t allow</button>`);
+  box.querySelector("#locAllow").onclick = () => { state.location = "on"; closeSheet(); tick(); toast("We’ll ask when you’re close"); render(); };
+}
+function openCancel() {
+  const b = state.booking;
+  const box = sheetBox(`<p class="kicker">Free until 4:00pm</p><h1>Cancel ${b.when.split(" ")[0]} ${b.time.replace("pm","").replace("am","")}?</h1>
+    <p class="sub">${b.className} · ${b.teacher}. Still ${remainingLine()} either way.</p>
+    <button class="btn" type="button" data-act="close">Keep it</button>
+    <button class="btn ghost" type="button" id="doCancel">Cancel class</button>`);
+  box.querySelector("#doCancel").onclick = () => { closeSheet(); document.getElementById("view").dispatchEvent(new CustomEvent("cancel-yes")); };
+}
+function openLegal(title, body) {
+  sheetBox(`<p class="kicker">Legal</p><h1>${title}</h1><p class="sub">${body}</p><button class="btn ghost" type="button" data-act="close">Close</button>`);
+}
+function wire() {
+  document.getElementById("view").onclick = (e) => {
+    const btn = e.target.closest("[data-act]"); if (!btn) return;
+    state.feature = null; state.jump = null;
+    const act = btn.dataset.act;
+    if (act === "mode-login") { state.mode = "login"; state.formError = ""; state.auth = "welcome"; render(); }
+    if (act === "mode-create") { state.mode = "create"; state.formError = ""; render(); }
+    if (act === "mode-forgot") { state.mode = "forgot"; state.formError = ""; render(); }
+    if (act === "back-auth") { state.auth = "welcome"; render(); }
+    if (act === "verify") verify();
+    if (act === "resend") toast("Code sent");
+    if (act === "tab-today") { state.tab = "today"; state.view = null; render(); }
+    if (act === "tab-book") { state.tab = "book"; state.view = null; render(); }
+    if (act === "tab-schedule") { state.tab = "schedule"; state.view = null; render(); }
+    if (act === "tab-you") { state.tab = "you"; state.view = null; render(); }
+    if (act === "day-thu") { state.day = "thu"; render(); }
+    if (act === "day-sat") { state.day = "sat"; render(); }
+    if (act === "book-group") { state.bookTab = "group"; render(); }
+    if (act === "book-private") { state.bookTab = "private"; render(); }
+    if (act === "studios") openStudios();
+    if (act === "menu") openMenu();
+    if (act === "legal-terms") openLegal("Terms", "Studio membership, booking, and cancel rules.");
+    if (act === "legal-privacy") openLegal("Privacy", "Phone and class data stay with the studio.");
+    if (act === "switch-cheongdam-book") { state.studio = "cheongdam"; state.tab = "book"; state.view = null; render(); }
+    if (act === "open-other-class") { state.studio = state.booking.studio; state.tab = "today"; state.view = null; render(); }
+    if (act === "pick-7") { state.view = "spot"; state.spotPick = null; state.tab = "book"; state.studio = "cheongdam"; render(); }
+    if (act === "spot") { state.spotPick = Number(btn.dataset.n); render(); }
+    if (act === "confirm-spot") bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot: state.spotPick || 3, status:"confirmed" });
+    if (act === "wait") { state.view = "wait"; state.tab = "book"; render(); }
+    if (act === "stay-wait") { state.wait = true; alert("book", "Waitlist · 8:00pm", "You’re 2nd · still " + remainingLine()); state.view = null; state.tab = "schedule"; state.studio = "cheongdam"; toast("You’re 2nd"); render(); }
+    if (act === "pick-sat10") bookClass({ studio:"cheongdam", kind:"private", when:"Sat 10 Oct", time:"10:00am", teacher:"Hana Lee", className:"Barre", spot: null, status:"confirmed" });
+    if (act === "pick-geumho-10") bookClass({ studio:"geumho", kind:"group", when:"Thu 8 Oct", time:"10:00am", teacher:"Soo Kim", className:"Barre", spot: 1, status:"confirmed" });
+    if (act === "pick-geumho-6") bookClass({ studio:"geumho", kind:"group", when:"Thu 8 Oct", time:"6:00pm", teacher:"Jiwon Park", className:"Barre", spot: 4, status:"confirmed" });
+    if (act === "here") { arrive("tap"); state.nudge = false; render(); }
+    if (act === "nudge-here") { arrive("nudge"); state.nudge = false; render(); }
+    if (act === "nudge-close") { state.nudge = false; render(); }
+    if (act === "clock-pm") { state.clock = "pm"; tick(); render(); }
+    if (act === "location-ask") openLocation();
+    if (act === "location-off") { state.location = "off"; toast("Location off"); render(); }
+    if (act === "cancel") openCancel();
+    if (act === "cancel-yes") { state.booking = null; state.arrived = false; state.arrivedVia = null; alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); toast("Cancelled · " + remainingLine()); render(); }
+    if (act === "move") openMove();
+    if (act === "pass") { state.view = "pass"; render(); }
+    if (act === "alerts") { state.view = "alerts"; render(); }
+    if (act === "ask") { state.view = "ask"; render(); }
+    if (act === "ai") { state.view = "ai"; state.tab = "you"; render(); }
+    if (act === "ai-chip") aiAsk(btn.dataset.q);
+    if (act === "ai-requests") { state.view = "requests"; state.tab = "you"; render(); }
+    if (act === "late-ask") { state.askType = "question"; state.askText = "Can I still cancel tonight’s 7:00? I know it’s past 4:00."; state.ask = false; state.view = "ask"; state.tab = "you"; render(); }
+    if (act === "ai-extend-ask") { state.view = "ai"; state.tab = "you"; render(); aiAsk("Extend my pass"); }
+    if (act === "ai-book-7") { state.studio = "cheongdam"; state.tab = "book"; state.view = "spot"; state.spotPick = null; render(); }
+    if (act === "ai-book") { state.tab = "book"; state.view = null; state.bookTab = "group"; state.day = "thu"; render(); }
+    if (act === "ai-book-sat") { state.studio = "cheongdam"; state.tab = "book"; state.view = null; state.bookTab = "group"; state.day = "sat"; render(); }
+    if (act === "ai-pass") { state.view = "pass"; render(); }
+    if (act === "ai-today") { state.studio = "cheongdam"; state.tab = "today"; state.view = null; render(); }
+    if (act === "ai-move") { state.studio = "cheongdam"; state.tab = "today"; state.view = null; render(); openMove(); }
+    if (act === "ai-extend") { state.askType = "extend"; state.askText = ""; state.ask = false; state.view = "ask"; render(); }
+    if (act === "ai-cancel") { state.tab = "today"; state.view = null; render(); openCancel(); }
+    if (act === "ai-keep") { state.chat.push({ role: "ai", card: { k: "info", kicker: "Kept", title: "Still on for " + state.booking.time, body: "See you there. " + remainingLine() + ".", acts: [] } }); render(); }
+    if (act === "read") { const a = state.alerts[Number(btn.dataset.i)]; if (a) a.unread = false; render(); }
+    if (act === "toggle") { const k = btn.dataset.k; state.notify[k] = !state.notify[k]; render(); }
+    if (act === "ask-type") { const cur = document.getElementById("askText")?.value.trim() || ""; state.askType = btn.dataset.k; state.askText = cur === askDefault() || !cur ? "" : cur; state.askText = ""; render(); }
+    if (act === "send-ask" && state.askType !== "question" && state.requests.some(r => r.status === "waiting" && r.studio === state.studio && r.type === state.askType)) { toast("Already asked · waiting for " + studioName(state.studio)); state.view = "requests"; render(); return; }
+    if (act === "send-ask") { state.askText = document.getElementById("askText")?.value.trim() || askDefault(); state.ask = true;
+      state.requests.unshift({ type: state.askType, text: state.askText, studio: state.studio, when: "Today", status: "waiting" });
+      state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Your requests"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent"); render(); }
+    if (act === "logout") { resetSession(); state.auth = "welcome"; state.mode = "login"; state.view = null; state.password = ""; render(); }
+  };
+  document.querySelectorAll("[data-otp]").forEach(inp => {
+    inp.addEventListener("input", (ev) => {
+      const i = Number(inp.dataset.otp);
+      const pasted = ev.target.value.replace(/\D/g,"");
+      if (pasted.length > 1) {
+        for (let k = 0; k < 6; k++) state.otp[k] = pasted[k] || "";
+        render(); if (state.otp.join("").length === 6) verify(); return;
+      }
+      state.otp[i] = pasted.slice(-1); inp.value = state.otp[i];
+      if (state.otp[i] && i < 5) document.querySelector(`[data-otp="${i+1}"]`)?.focus();
+      if (state.otp.join("").length === 6) verify();
+    });
+    inp.addEventListener("paste", (ev) => {
+      const text = (ev.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "");
+      if (text.length < 2) return;
+      ev.preventDefault();
+      for (let k = 0; k < 6; k++) state.otp[k] = text[k] || "";
+      render();
+      const next = Math.min(text.length, 5);
+      document.querySelector(`[data-otp="${next}"]`)?.focus();
+      if (state.otp.join("").length === 6) verify();
+    });
+    inp.addEventListener("keydown", (ev) => {
+      const i = Number(inp.dataset.otp);
+      if (ev.key === "Backspace" && !inp.value && i > 0) {
+        ev.preventDefault(); state.otp[i-1] = "";
+        const prev = document.querySelector(`[data-otp="${i-1}"]`);
+        if (prev) { prev.value = ""; prev.focus(); }
+      }
+    });
+  });
+}
+document.getElementById("jump").onclick = (e) => {
+  const b = e.target.closest("[data-jump]"); if (!b) return;
+  closeSheet();
+  state.feature = b.dataset.f || null;
+  const feat = state.feature && FEATURES.find(x => x.f === state.feature);
+  state.jump = feat ? null : b.dataset.jump;
+  if (feat) feat.go(); else JUMPS.find(j => j.key === b.dataset.jump).go();
+  render();
+};
+document.getElementById("railseg").onclick = (e) => {
+  const b = e.target.closest("[data-rail]"); if (!b) return;
+  state.rail = b.dataset.rail; render();
+};
+document.getElementById("clkAm").onclick = () => { state.jump = null; state.feature = null; state.clock = "am"; state.arrived = false; state.arrivedVia = null; state.nudge = false; state.late = false; render(); };
+document.getElementById("clkPm").onclick = () => { state.jump = null; state.feature = null; state.clock = "pm"; state.late = false; tick(); render(); };
+document.getElementById("sheet").onclick = (e) => { if (e.target.id === "sheet") closeSheet(); };
+document.getElementById("notice").onclick = (e) => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  if (b.dataset.act === "nudge-here") { arrive("nudge"); state.nudge = false; render(); }
+  if (b.dataset.act === "nudge-close") { state.nudge = false; render(); }
+  if (b.dataset.act === "offer-take") { state.offer = false; state.wait = false; bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"8:00pm", teacher:"Soo Kim", className:"Barre", spot: 4, status:"confirmed" }); }
+  if (b.dataset.act === "offer-pass") { state.offer = false; alert("book", "Passed · 8:00pm", "Offer went to the next in line · still " + remainingLine()); toast("Passed · " + remainingLine()); state.wait = false; render(); }
+};
+document.getElementById("tabs").onclick = (e) => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  state.feature = null; state.jump = null; state.view = null; state.tab = b.dataset.act.replace("tab-",""); render();
+};
+document.getElementById("view").addEventListener("cancel-yes", () => {
+  state.booking = null; state.arrived = false; state.arrivedVia = null;
+  alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); toast("Cancelled · " + remainingLine()); render();
+});
+document.getElementById("view").addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (e.target.id === "authForm") sendCode();
+  if (e.target.id === "newPassForm") saveNewPass();
+  if (e.target.id === "aiForm") { const i = document.getElementById("aiText"); aiAsk(i.value); }
+});
+document.getElementById("sheetBox").addEventListener("click", (e) => {
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const act = a.dataset.act;
+  if (act === "close") return closeSheet();
+  if (["pass","alerts","ask","ai","studios"].includes(act)) {
+    closeSheet();
+    if (act === "studios") return openStudios();
+    state.view = act; state.tab = "you"; render();
+  }
+});
+render();
+
+</script>
+</body>
+</html>

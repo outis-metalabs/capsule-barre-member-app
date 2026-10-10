@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Capsule Barre — member app proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520;9..144,640&family=Figtree:wght@420;560;680&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --room: #14110e;
+    --ivory: #f4efe6;
+    --card: #fbf7f1;
+    --ink: #1c1712;
+    --muted: #6d645b;
+    --line: #e4d9c8;
+    --seal: #b43322;
+    --seal-ink: #fff7f4;
+    --moss: #1f4a3e;
+    --moss-bg: #e5f0ea;
+    --amber: #8a4b12;
+    --amber-bg: #f8e7d2;
+    --stamp: #efe6d8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background:
+      radial-gradient(900px 500px at 70% -10%, #3a2a22 0%, transparent 55%),
+      var(--room);
+    color: var(--ivory);
+    font-family: Figtree, sans-serif;
+    font-weight: 420;
+  }
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 22px 64px;
+    display: grid;
+    grid-template-columns: 220px 390px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .brand { font-family: Fraunces, serif; font-size: 22px; margin: 0 0 4px; letter-spacing: -0.03em; }
+  .brand span { color: #e7b2a8; }
+  .quiet { color: #b7aea4; font-size: 13px; line-height: 1.45; margin: 0 0 18px; }
+  .rail { display: flex; flex-direction: column; gap: 4px; }
+  .rail button, .clocks button {
+    text-align: left; border: 0; background: transparent; color: #d9cfc3;
+    font: 560 13px Figtree, sans-serif; padding: 7px 8px; border-radius: 8px; cursor: pointer;
+  }
+  .rail button.on { background: #2a241e; color: white; }
+  .clocks { display: flex; gap: 6px; margin: 16px 0 8px; }
+  .clocks button { border: 1px solid #3a332c; }
+  .clocks button.on { background: var(--ivory); color: var(--ink); }
+  .phone {
+    width: 390px; height: 800px; background: #0c0b0a; border-radius: 38px; padding: 12px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    position: sticky; top: 16px;
+  }
+  .screen {
+    height: 100%; background: var(--ivory); color: var(--ink); border-radius: 28px;
+    overflow: hidden; display: flex; flex-direction: column; position: relative;
+  }
+  .status { display: flex; justify-content: space-between; padding: 12px 18px 0; font-size: 12px; font-weight: 680; }
+  .scroll { flex: 1; overflow: auto; padding: 6px 18px 16px; }
+  h2 { font-family: Fraunces, serif; font-weight: 640; letter-spacing: -0.03em; font-size: 32px; margin: 6px 0; }
+  .time { font-family: Fraunces, serif; font-size: 54px; line-height: .9; letter-spacing: -0.04em; margin: 0; }
+  .kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 680; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 14px; line-height: 1.4; margin: 0 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; margin-bottom: 10px; }
+  .card.press { cursor: pointer; }
+  .row { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .pill { display: inline-flex; border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 680; background: var(--stamp); }
+  .pill.ok { background: var(--moss-bg); color: var(--moss); }
+  .pill.warn { background: var(--amber-bg); color: var(--amber); }
+  .pill.bad { background: #f8e0da; color: var(--seal); }
+  button.seal, button.ghost, button.link {
+    font-family: Figtree, sans-serif; cursor: pointer; border-radius: 14px; width: 100%;
+  }
+  button.seal { border: 0; background: var(--seal); color: var(--seal-ink); padding: 14px; font-weight: 680; font-size: 15px; }
+  button.ghost { border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 12px; font-weight: 560; margin-top: 8px; }
+  button.link { border: 0; background: transparent; color: var(--seal); font-weight: 680; width: auto; padding: 0; text-align: left; }
+  .nav { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: #fbf7f1; padding: 8px 4px 12px; }
+  .nav button { border: 0; background: transparent; color: var(--muted); font: 560 11px Figtree, sans-serif; cursor: pointer; }
+  .nav button.on { color: var(--ink); font-weight: 680; }
+  .field { width: 100%; border: 1px solid var(--line); background: white; border-radius: 12px; padding: 12px; font: 560 16px Figtree, sans-serif; margin: 6px 0 12px; }
+  .slot { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); cursor: pointer; }
+  .reformers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .ref { border: 1px solid var(--line); background: white; border-radius: 12px; min-height: 72px; cursor: pointer; font: 680 13px Figtree, sans-serif; }
+  .ref.on { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+  .ref:disabled { opacity: .4; cursor: default; }
+  .sheet { position: absolute; inset: 0; background: rgba(20,17,14,.4); display: flex; align-items: flex-end; }
+  .sheet .panel { background: var(--ivory); width: 100%; border-radius: 22px 22px 0 0; padding: 16px 18px 22px; }
+  .note h2 { font-size: 28px; margin-top: 0; }
+  .note p { color: #e6ddd2; line-height: 1.5; }
+  .note .tag { color: #e7b2a8; letter-spacing: .12em; text-transform: uppercase; font-size: 11px; font-weight: 680; }
+  .note li { margin: 6px 0; }
+  @media (max-width: 980px) {
+    .page { grid-template-columns: 1fr; }
+    .phone { position: static; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <aside>
+    <p class="brand">Capsule <span>Barre</span></p>
+    <p class="quiet">Member app proposal. The phone never spends a session. The studio does, when she has attended.</p>
+    <div class="clocks" id="clocks"></div>
+    <div class="rail" id="rail"></div>
+  </aside>
+  <div class="phone"><div class="screen" id="screen"></div></div>
+  <aside class="note" id="note"></aside>
+</div>
+<script>
+const STUDIOS = {
+  geumho: { short: "Geumho", name: "Capsule Barre Geumho", left: 8, total: 20, expiry: "12 Nov 2026", warn: false, pass: "20-session barre" },
+  cheongdam: { short: "Cheongdam", name: "Capsule Barre Cheongdam", left: 2, total: 10, expiry: "14 Oct 2026", warn: true, pass: "10-session barre" }
+};
+const state = {
+  screen: "signin",
+  studio: "geumho",
+  sheet: false,
+  lobby: false,
+  here: false,
+  spot: null,
+  waitlist: false,
+  moved: false,
+  ask: false,
+  bookings: { geumho: null, cheongdam: null }
+};
+const RAIL = [
+  ["signin", "Sign in"],
+  ["home", "Today"],
+  ["book", "Book"],
+  ["spot", "Reformer"],
+  ["confirm", "Confirmed"],
+  ["schedule", "Schedule"],
+  ["detail", "Cancel or change"],
+  ["wait", "Waitlist"],
+  ["alerts", "Alerts"],
+  ["ask", "Ask the studio"],
+  ["pass", "Pass"],
+  ["profile", "You"]
+];
+const NOTES = {
+  signin: ["No new account", "The studio already created her from the contract. She proves the phone. She does not pick a password or browse other studios.", ["Staff login stays a different account.", "No shop, no reviews, no open signup."]],
+  home: ["The card is the app", "If she has a class, that is the whole screen: time, instructor, reformer, and what her balance will be after she attends. The number on the pass does not move yet.", ["At 9:41am, I'm here is closed.", "It opens at 6:30pm. Use the clock on the left."]],
+  book: ["Deadline on the same card", "She sees the cancel line before she commits. A full class is a line with a number, not a dead button.", ["8:00pm is full.", "7:00pm is tonight, still inside the 14 Oct pass."]],
+  spot: ["Pick before class", "Six reformers. Taken spots are closed. Her choice locks 15 minutes before class. Other members' names are not on the map.", ["This is Barry's spot idea, without a leaderboard."]],
+  confirm: ["Held, not spent", "Status is Confirmed. Balance stays 2 at Cheongdam, or 8 at Geumho. Attendance in the admin system is the only spend.", ["Same reservation service as the desk.", "Source is marked MEMBER."]],
+  schedule: ["Her rows only", "Upcoming classes for this studio. She cannot see the roster.", ["Empty until she books."]],
+  detail: ["One move, not two calls", "Change sends her to another time on the same booking. Cancel in the morning is free. Neither one restores a session, because none was taken.", ["Late cancel, after 4:00pm, is refused by the server."]],
+  wait: ["A place in line", "She is 2nd. She is booked only if a seat opens before the cancel deadline and she still wants it. After 4:00pm the app asks. It does not trap her.", ["Joining the list does not hold a session."]],
+  alerts: ["She can turn them off", "Confirmed, class changed, one day before, three hours before. The three-hour note is the cancel deadline.", ["Read and unread live on the phone. The ledger does not."]],
+  ask: ["A request, not a button that edits the pass", "Extend and hold both become the owner's to-do. The expiry stays 14 Oct until the studio moves it.", ["The assistant is this, not a chat."]],
+  pass: ["Read the pass", "Name, remaining, total, expiry, and the last finished pass. No price, no discount, no payment method.", ["Those stay on the staff screen."]],
+  profile: ["Two studios, two tokens", "Switching studio asks the server for a new token. The phone does not send a store id and hope.", ["Phone edit is shown, not saved."]]
+};
+
+function studio() { return STUDIOS[state.studio]; }
+function booking() { return state.bookings[state.studio]; }
+function go(screen) { state.screen = screen; state.sheet = false; render(); }
+function switchTo(id) { state.studio = id; state.sheet = false; state.screen = "home"; render(); }
+function book() {
+  state.bookings[state.studio] = { status: "confirmed" };
+  state.screen = "spot";
+  render();
+}
+function clockLabel() { return state.lobby ? "6:40pm" : "9:41"; }
+
+function nav(active) {
+  const items = [["home","Today"],["book","Book"],["schedule","Schedule"],["profile","You"]];
+  return `<nav class="nav">${items.map(([id, label]) => `<button class="${active===id?"on":""}" onclick="go('${id}')">${label}</button>`).join("")}</nav>`;
+}
+function bar() { return `<div class="status"><span>${clockLabel()}</span><span>Thu 8 Oct</span></div>`; }
+
+function todayCard() {
+  const row = booking();
+  if (!row || row.status === "cancelled") {
+    return `<div class="card"><p class="kicker">Tonight</p><p class="sub" style="margin:0">Nothing booked at ${studio().short}.</p></div>`;
+  }
+  const when = state.moved ? "Sat 10 Oct · 10:00am" : "Tonight · 7:00pm";
+  const here = state.lobby && !state.moved
+    ? (state.here
+      ? `<p class="pill ok">You're here · balance still ${studio().left}</p>`
+      : `<button class="seal" onclick="state.here=true;render()">I'm here</button><p class="sub">This tells the studio you arrived. It does not spend a session.</p>`)
+    : `<p class="sub">I'm here opens at 6:30pm, and only if you are still booked.</p>`;
+  return `<div class="card">
+    <p class="kicker">${studio().short} · ${state.moved ? "moved" : "confirmed"}</p>
+    <p class="time">${state.moved ? "10:00" : "7:00"}</p>
+    <p class="sub">${when}<br>Barre · Hana Lee · Reformer ${state.spot || "—"}</p>
+    <p class="sub">After you attend: <strong>${studio().left - 1} left</strong>. Until then: <strong>${studio().left} left</strong>.</p>
+    ${here}
+    <button class="ghost" onclick="go('detail')">Cancel or change</button>
+  </div>`;
+}
+
+function home() {
+  const s = studio();
+  return `${bar()}<div class="scroll">
+    <p class="kicker">Mina Park</p><h2>${s.short}</h2>
+    <button class="link" onclick="state.sheet=true;render()">Switch studio</button>
+    <div class="card press" onclick="go('pass')" style="margin-top:12px">
+      <div class="row"><p class="kicker" style="margin:0">${s.pass}</p>${s.warn ? `<span class="pill warn">Expires in 6 days</span>` : `<span class="pill ok">Active</span>`}</div>
+      <p class="time" style="font-size:42px">${s.left}</p>
+      <p class="sub" style="margin:0">of ${s.total} · until ${s.expiry}</p>
+    </div>
+    ${todayCard()}
+    ${booking() ? "" : `<button class="seal" onclick="go('book')">Book tonight</button>`}
+  </div>${nav("home")}${sheet()}`;
+}
+function sheet() {
+  if (!state.sheet) return "";
+  const rows = Object.entries(STUDIOS).map(([id, s]) => `<div class="slot" onclick="switchTo('${id}')"><div><strong>${s.name}</strong><div class="sub" style="margin:0">${s.left} of ${s.total}</div></div><span>${id===state.studio?"Current":"Switch"}</span></div>`).join("");
+  return `<div class="sheet" onclick="state.sheet=false;render()"><div class="panel" onclick="event.stopImmediatePropagation()"><p class="kicker">On this phone</p><h2 style="font-size:26px">Switch studio</h2>${rows}<button class="ghost" onclick="state.sheet=false;render()">Close</button></div></div>`;
+}
+function bookScreen() {
+  const row = booking();
+  return `${bar()}<div class="scroll"><h2>Book</h2><p class="sub">${studio().name}. Cancel free until 4:00pm. A full class is a line.</p>
+    <div class="card">
+      <div class="slot" style="border:0" onclick="${row ? "go('detail')" : "book()"}">
+        <div><strong>7:00pm · Barre</strong><div class="sub" style="margin:0">Hana Lee · ${row ? "You're in" : "6 of 8"} · free cancel until 4:00pm</div></div>
+        <span class="pill ${row ? "ok" : ""}">${row ? row.status : "Book"}</span>
+      </div>
+      <div class="slot" onclick="state.waitlist=true;go('wait')">
+        <div><strong>8:00pm · Barre</strong><div class="sub" style="margin:0">Full · join the line</div></div>
+        <span class="pill bad">Full</span>
+      </div>
+    </div>
+    <div class="card"><p class="kicker">May not run</p><p class="sub" style="margin:0">Saturday 9:00am has 2 of 3 required. The studio can close it at 6:00am. You would not lose a session.</p></div>
+  </div>${nav("book")}`;
+}
+function spotScreen() {
+  const spots = [1,2,3,4,5,6].map(n => {
+    const taken = n === 2 || n === 5;
+    const on = state.spot === n ? "on" : "";
+    return `<button class="ref ${on}" ${taken ? "disabled" : ""} onclick="state.spot=${n};render()">${taken ? "Taken" : "Reformer "+n}</button>`;
+  }).join("");
+  return `${bar()}<div class="scroll"><p class="kicker">Pick before class</p><h2>Reformer</h2><p class="sub">Locks at 6:45pm. No other names.</p><div class="reformers">${spots}</div>
+    <button class="seal" style="margin-top:16px" ${state.spot?"":"disabled"} onclick="go('confirm')">Use reformer ${state.spot || ""}</button>
+  </div>${nav("book")}`;
+}
+function confirmScreen() {
+  return `${bar()}<div class="scroll"><p class="kicker">${studio().short}</p><h2>You're booked.</h2>
+    <p class="time">7:00</p><p class="sub">Tonight · Barre · Hana Lee · Reformer ${state.spot || "—"}<br>Free cancel until 4:00pm.</p>
+    <div class="card"><p class="kicker">Pass</p><p class="time" style="font-size:42px">${studio().left}</p><p class="sub" style="margin:0">Unchanged. After you attend it becomes ${studio().left - 1}.</p></div>
+    <button class="seal" onclick="go('home')">See today</button></div>${nav("book")}`;
+}
+function schedule() {
+  const row = booking();
+  const body = !row ? `<div class="card"><p class="sub" style="margin:0">No upcoming class at ${studio().short}.</p></div>`
+    : `<div class="card press" onclick="go('detail')"><div class="row"><p class="kicker" style="margin:0">${state.moved?"Sat 10 Oct":"Thu 8 Oct"}</p><span class="pill ${row.status==="cancelled"?"bad":"ok"}">${row.status}</span></div><p class="time" style="font-size:36px">${state.moved?"10:00":"7:00"}</p><p class="sub" style="margin:0">Hana Lee · ${studio().short}</p></div>`;
+  return `${bar()}<div class="scroll"><h2>Schedule</h2><p class="sub">${studio().name}</p>${body}</div>${nav("schedule")}`;
+}
+function detail() {
+  const row = booking();
+  if (!row) return `${bar()}<div class="scroll"><h2>No booking</h2><button class="seal" onclick="go('book')">Book tonight</button></div>${nav("schedule")}`;
+  if (row.status === "cancelled") return `${bar()}<div class="scroll"><h2>Cancelled</h2><p class="sub">In time. Pass is still ${studio().left}. Nothing was given back, because nothing was taken.</p><button class="seal" onclick="go('alerts')">Alerts</button></div>${nav("schedule")}`;
+  return `${bar()}<div class="scroll"><p class="kicker">${studio().short}</p><h2>${state.moved?"Sat 10 Oct":"Tonight"}</h2><p class="sub">${state.moved?"10:00am private":"7:00pm Barre"} · Hana Lee · Reformer ${state.spot||"—"}<br>Free cancel until 4:00pm. It is ${clockLabel()}.</p>
+    <div class="card"><p class="kicker">Pass if you cancel now</p><p class="time" style="font-size:42px">${studio().left}</p><p class="sub" style="margin:0">Still ${studio().left}. A late cancel after 4:00pm is refused here. The desk handles that.</p></div>
+    <button class="seal" onclick="state.moved=true;render()">Change to Sat 10:00am</button>
+    <button class="ghost" onclick="booking().status='cancelled';render()">Cancel tonight</button></div>${nav("schedule")}`;
+}
+function wait() {
+  return `${bar()}<div class="scroll"><p class="kicker">8:00pm · full</p><h2>You are 2nd.</h2><p class="sub">The line does not hold a session. If a seat opens before 4:00pm, you get it only if you still want it. After 4:00pm the app asks. It will not book you into a class you can no longer leave for free.</p>
+    <button class="seal" onclick="state.waitlist=true;go('alerts')">Stay in line</button>
+    <button class="ghost" onclick="go('book')">Leave the line</button></div>${nav("book")}`;
+}
+function alerts() {
+  const rows = [];
+  Object.entries(state.bookings).forEach(([id, row]) => {
+    if (!row) return;
+    const name = STUDIOS[id].short;
+    rows.push(row.status === "cancelled" ? [`Cancelled · ${name}`, `Pass is still ${STUDIOS[id].left}.`] : [`Booked · ${name}`, `Tonight 7:00pm · free cancel until 4:00pm.`]);
+  });
+  if (state.waitlist) rows.push(["Waitlist", "8:00pm Barre · you are 2nd."]);
+  if (state.here) rows.push(["Arrived", "The studio knows. Your pass has not changed."]);
+  if (state.ask) rows.push(["Sent to the studio", "Extend Cheongdam. Expiry is still 14 Oct."]);
+  rows.push(["Expiring", "Cheongdam ends 14 Oct. Tonight is still covered."]);
+  return `${bar()}<div class="scroll"><h2>Alerts</h2><p class="sub">Confirmed, changed, one day before, three hours before. You can turn each off.</p>${rows.map(([t,d]) => `<div class="card"><strong>${t}</strong><p class="sub" style="margin:4px 0 0">${d}</p></div>`).join("")}</div>${nav("home")}`;
+}
+function ask() {
+  return `${bar()}<div class="scroll"><h2>Ask</h2><p class="sub">This does not change the pass. The owner gets a to-do.</p>
+    <div class="card"><p class="kicker">You</p><p style="margin:0">Can I extend my Cheongdam pass? I'm away next week.</p></div>
+    ${state.ask ? `<div class="card"><p class="kicker">Sent</p><p style="margin:0 0 8px">On today's list at Cheongdam. The app cannot move the date.</p><span class="pill warn">Still expires 14 Oct</span></div>` : `<button class="seal" onclick="state.ask=true;render()">Send to the studio</button>`}
+  </div>${nav("home")}`;
+}
+function pass() {
+  const s = studio();
+  return `${bar()}<div class="scroll"><h2>Pass</h2><p class="sub">${s.name}</p><div class="card"><p class="kicker">Current</p><strong>${s.pass}</strong><p class="sub">${s.left} of ${s.total} · until ${s.expiry}</p></div><div class="card"><p class="kicker">Previous</p><strong>10-session intro</strong><p class="sub" style="margin:0">Finished 2 Aug 2026 · 0 left</p></div><button class="ghost" onclick="go('home')">Back</button></div>${nav("home")}`;
+}
+function profile() {
+  const rows = Object.entries(STUDIOS).map(([id,s]) => `<div class="slot" onclick="switchTo('${id}')"><div><strong>${s.name}</strong><div class="sub" style="margin:0">${s.left} of ${s.total}</div></div><span>${id===state.studio?"Current":"Switch"}</span></div>`).join("");
+  return `${bar()}<div class="scroll"><h2>You</h2><p class="sub">Mina Park · 010-5550-1842</p><div class="card"><p class="kicker">Alerts</p><div class="row"><span>Class and expiry</span><span class="pill ok">On</span></div></div><div class="card"><p class="kicker">Studios</p>${rows}</div></div>${nav("profile")}`;
+}
+function signin() {
+  return `${bar()}<div class="scroll" style="padding-top:48px"><p class="kicker">Capsule Barre</p><h2>Welcome back.</h2><p class="sub">The phone number on your contract. There is no sign-up.</p><p class="kicker">Phone</p><input class="field" value="010-5550-1842" readonly /><button class="seal" onclick="go('home')">Continue</button><p class="sub">Opens Geumho. Cheongdam is the other pass.</p></div>`;
+}
+const VIEWS = { signin, home, book: bookScreen, spot: spotScreen, confirm: confirmScreen, schedule, detail, wait, alerts, ask, pass, profile };
+function render() {
+  document.getElementById("screen").innerHTML = (VIEWS[state.screen] || home)();
+  const note = NOTES[state.screen] || NOTES.home;
+  document.getElementById("note").innerHTML = `<p class="tag">${note[0]}</p><h2>${note[0]}</h2><p>${note[1]}</p><ul>${note[2].map(x => `<li>${x}</li>`).join("")}</ul><p class="quiet">Written plan: member-app-proposal/PLAN.md</p>`;
+  document.getElementById("rail").innerHTML = RAIL.map(([id, label]) => `<button class="${state.screen===id?"on":""}" onclick="go('${id}')">${label}</button>`).join("");
+  document.getElementById("clocks").innerHTML = `<button class="${state.lobby?"":"on"}" onclick="state.lobby=false;render()">Now 9:41am</button><button class="${state.lobby?"on":""}" onclick="state.lobby=true;render()">Lobby 6:40pm</button>`;
+}
+render();
+</script>
+</body>
+</html>

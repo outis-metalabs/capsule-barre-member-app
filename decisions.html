@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Capsule Barre member app — decisions and gaps</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root { --paper:#f3f2ee; --ink:#12110f; --mute:#4e4b45; --line:#d8d5cb; --ox:#b8422e; --ox-bg:rgba(184,66,46,.08); --ok:#1f5a45; --ok-bg:#e4efe9; --warn:#8a5a12; --warn-bg:#f5ead6; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#eceae3; color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; font-weight:500; }
+  .wrap { max-width:1080px; margin:0 auto; padding:32px 24px 64px; }
+  .brand { font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; margin:0 0 8px; }
+  .brand em { font-style:normal; color:var(--ox); }
+  h1 { font-size:36px; letter-spacing:-.03em; margin:0 0 8px; }
+  .lede { color:var(--mute); font-size:16px; margin:0 0 32px; max-width:720px; line-height:1.45; }
+  h2 { font-size:24px; letter-spacing:-.02em; margin:40px 0 4px; }
+  .kicker { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); font-weight:700; margin:0 0 16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 20px; }
+  .card .id { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--mute); }
+  .card h3 { font-size:16px; margin:4px 0 8px; line-height:1.3; }
+  .card p { margin:0; font-size:14px; color:var(--mute); line-height:1.45; }
+  .card .default { margin-top:12px; padding:10px 12px; background:var(--paper); border-radius:12px; font-size:14px; line-height:1.4; }
+  .card .default b { color:var(--ox); }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  .tag { display:inline-flex; align-items:center; border-radius:999px; padding:4px 10px; font-size:12px; font-weight:700; background:#e8e6de; color:var(--mute); }
+  .tag.ox { background:var(--ox-bg); color:var(--ox); }
+  .tag.ok { background:var(--ok-bg); color:var(--ok); }
+  .tag.warn { background:var(--warn-bg); color:var(--warn); }
+  .big { border-color:rgba(184,66,46,.35); box-shadow:0 12px 32px rgba(184,66,46,.08); }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; color:var(--mute); font-size:13px; margin:0 0 16px; }
+  .legend span::before { content:""; display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+  .legend .s::before { background:var(--ox); } .legend .d::before { background:var(--warn); } .legend .a::before { background:var(--ok); }
+  footer { margin-top:48px; color:var(--mute); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="brand">Capsule <em>Barre</em> · member app</p>
+  <h1>Decisions and gaps</h1>
+  <p class="lede">Nine decisions, all confirmed on 9 Oct 2026. Seventeen gaps the member app needs filled that neither today's <code>aicc-center</code> nor the first change list covered. Source: <code>FLOWS.md</code>, 9 Oct 2026.</p>
+
+  <h2>Decisions</h2>
+  <p class="kicker">Confirmed · 9 Oct 2026</p>
+  <div class="grid">
+    <div class="card big"><span class="id">OD-6</span><h3>Extend a pass: real operation, or hold in disguise?</h3>
+      <p>Today expiry moves only by releasing a hold. "Extend 7 days" as a hold freezes the pass for 7 real days and is refused whenever she has a class booked.</p>
+      <div class="default"><b>Decided:</b> add an owner-only <code>extend</code> with reason and audit log. The app never changes expiry.</div>
+      <div class="tags"><span class="tag ox">server</span><span class="tag">biggest</span></div></div>
+    <div class="card big"><span class="id">OD-7</span><h3>Do expiry / low-balance pushes need owner approval?</h3>
+      <p>Today the SMS reminder waits for the owner to approve a task.</p>
+      <div class="default"><b>Decided:</b> booking, deadline and class-change pushes fire automatically. Expiry and low-balance follow the same rules as the SMS but need no approval; SMS is suppressed when she has a device — one channel per event.</div>
+      <div class="tags"><span class="tag ox">server</span><span class="tag warn">desk process</span></div></div>
+    <div class="card"><span class="id">OD-1</span><h3>Does SMS opt-out block the login code?</h3>
+      <p>The activation and login code is authentication, not marketing.</p>
+      <div class="default"><b>Decided:</b> no — the code always sends.</div>
+      <div class="tags"><span class="tag ox">server policy</span></div></div>
+    <div class="card"><span class="id">OD-2</span><h3>How strict is the name match at activation?</h3>
+      <p>Phone + name must match a live member row.</p>
+      <div class="default"><b>Decided:</b> trim spaces, then exact. No fuzzy match. Copy: "use the name on your contract."</div>
+      <div class="tags"><span class="tag ox">server</span><span class="tag ok">app copy</span></div></div>
+    <div class="card"><span class="id">OD-3</span><h3>Which studio opens first for a two-studio member?</h3>
+      <div class="default"><b>Decided:</b> the studio of her most recently active pass; switch is one tap away.</div>
+      <div class="tags"><span class="tag ox">server</span></div></div>
+    <div class="card"><span class="id">OD-4</span><h3>Same phone registered twice in one studio?</h3>
+      <p>The server warns but never blocks, for money-history reasons.</p>
+      <div class="default"><b>Decided:</b> keep the server as is; quick-add defaults to <em>use existing</em> on a phone + name match.</div>
+      <div class="tags"><span class="tag warn">desk process</span></div></div>
+    <div class="card"><span class="id">OD-5</span><h3>Capture consent at registration for the app?</h3>
+      <p>SMS opt-out, marketing and app push are three different things.</p>
+      <div class="default"><b>Decided:</b> no change — the app needs none of them.</div>
+      <div class="tags"><span class="tag warn">desk process</span></div></div>
+    <div class="card"><span class="id">OD-8</span><h3>One display status for a pass?</h3>
+      <p>Status + date alone cannot tell the app whether a refunded or voided pass is usable.</p>
+      <div class="default"><b>Decided:</b> yes — ACTIVE · HELD · EXPIRED · VOID · REFUNDED · ENDED in the member projection.</div>
+      <div class="tags"><span class="tag ox">server</span><span class="tag ok">app copy</span></div></div>
+    <div class="card"><span class="id">OD-9</span><h3>Who says which pass a booking will use?</h3>
+      <p>Several active passes are consumed earliest-expiry first.</p>
+      <div class="default"><b>Decided:</b> the server returns it per class; the app labels, never computes.</div>
+      <div class="tags"><span class="tag ox">server</span><span class="tag ok">app copy</span></div></div>
+  </div>
+
+  <h2>Gaps</h2>
+  <p class="kicker">What the app needs that nothing covers yet</p>
+  <div class="legend"><span class="s">server change</span><span class="d">desk process</span><span class="a">app copy</span></div>
+  <div class="grid">
+    <div class="card big"><span class="id">G1</span><h3>No extend-expiry operation</h3><p>Owner-only <code>POST /memberships/{id}/extend</code> with audit, reachable from the request reply.</p><div class="tags"><span class="tag ox">server</span></div></div>
+    <div class="card big"><span class="id">G16</span><h3>Nothing tells a new member the app exists</h3><p>Issue-triggered "install the app" SMS: store link + "create account with this phone and your name". Operational, once per phone.</p><div class="tags"><span class="tag ox">server</span><span class="tag warn">desk</span></div></div>
+    <div class="card"><span class="id">G2</span><h3>Phone corrected at the desk after activation breaks the account link</h3><p>Desk action "Relink app account": new phone on the account, code to the new number, audit.</p><div class="tags"><span class="tag ox">server</span><span class="tag warn">desk</span></div></div>
+    <div class="card"><span class="id">G8</span><h3>Lost phone — every login needs a code</h3><p>Desk relink after identity check. Never "text the dead number".</p><div class="tags"><span class="tag ox">server</span><span class="tag warn">desk</span></div></div>
+    <div class="card"><span class="id">G3</span><h3>Anonymisation orphans the app account</h3><p>Anonymise also revokes the account and tokens for that studio.</p><div class="tags"><span class="tag ox">server</span></div></div>
+    <div class="card"><span class="id">G4</span><h3>Member ended after activation keeps a token</h3><p>Server rejects; studio drops from her list; app says "studio no longer available".</p><div class="tags"><span class="tag ox">server</span><span class="tag ok">app</span></div></div>
+    <div class="card"><span class="id">G6</span><h3>Duplicate phone + name in one studio</h3><p>Activation takes the newest non-ended row; quick-add defaults to reuse.</p><div class="tags"><span class="tag ox">server</span><span class="tag warn">desk</span></div></div>
+    <div class="card"><span class="id">G7</span><h3>Does opt-out block the code?</h3><p>No. Authentication always sends.</p><div class="tags"><span class="tag ox">server policy</span></div></div>
+    <div class="card"><span class="id">G5</span><h3>Children on a parent's phone cannot activate</h3><p>v1: the desk books children. v2: guardian link so a parent sees and books children's passes.</p><div class="tags"><span class="tag warn">desk now</span><span class="tag">server v2</span></div></div>
+    <div class="card"><span class="id">G9</span><h3>PERIOD passes have no session count</h3><p>App shows validity window + weekly frequency; the projection carries pass type. The prototype shows COUNT only.</p><div class="tags"><span class="tag ox">server</span><span class="tag ok">app</span></div></div>
+    <div class="card"><span class="id">G10</span><h3>Double reminder: SMS and push</h3><p>One channel per event; push replaces SMS when a device exists.</p><div class="tags"><span class="tag ox">server</span><span class="tag warn">desk</span></div></div>
+    <div class="card"><span class="id">G11</span><h3>Refund and void mean nothing to the member</h3><p>Display status field; refunded and voided passes are read-only, never usable.</p><div class="tags"><span class="tag ox">server</span><span class="tag ok">app</span></div></div>
+    <div class="card"><span class="id">G12</span><h3>Bookings on a transferred, voided or refunded pass</h3><p>Transfer: bookings stay with the member. Void / refund: future bookings cancelled by the studio, member notified.</p><div class="tags"><span class="tag ox">server</span><span class="tag ok">app</span></div></div>
+    <div class="card"><span class="id">G13</span><h3>Hold refused by upcoming bookings — invisible to her</h3><p>Reply copy: "cancel your upcoming classes first, or we can." Block reason shown to the owner.</p><div class="tags"><span class="tag ok">app</span><span class="tag ox">server</span></div></div>
+    <div class="card"><span class="id">G14</span><h3>Hold limits exist but are not enforced</h3><p>Enforce and expose the allowance, or show nothing quantitative.</p><div class="tags"><span class="tag">server, optional</span></div></div>
+    <div class="card"><span class="id">G15</span><h3>Which pass a booking will use</h3><p>Per-class projection from the server; the app labels "used next".</p><div class="tags"><span class="tag ox">server</span><span class="tag ok">app</span></div></div>
+    <div class="card"><span class="id">G17</span><h3>Trial pass runs out with no path</h3><p>Clear trial status; on exhaustion route to Ask. No in-app purchase.</p><div class="tags"><span class="tag ok">app</span></div></div>
+  </div>
+
+  <footer>Full detail with step tables: <code>FLOWS.md</code>. Server changes: <code>AICC_CENTER_CHANGES.md</code>. Prototype: <code>app.html</code>.</footer>
+</div>
+</body>
+</html>

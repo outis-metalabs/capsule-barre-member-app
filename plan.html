@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Capsule Barre Member App — the plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root { --paper:#f3f2ee; --ink:#12110f; --mute:#4e4b45; --line:#d8d5cb; --ox:#b8422e; --ox-bg:rgba(184,66,46,.08); --ok:#1f5a45; --ok-bg:#e4efe9; --warn:#8a5a12; --warn-bg:#f5ead6; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:#eceae3; color:var(--ink); font-family:"IBM Plex Sans",system-ui,sans-serif; font-weight:500; line-height:1.45; }
+  .shell { max-width:1240px; margin:0 auto; padding:24px; display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:start; }
+  nav.side { position:sticky; top:16px; background:#1a1916; color:#f3f2ee; border-radius:24px; padding:16px 12px 20px; }
+  nav.side .brand { color:#f3f2ee; padding:0 8px; }
+  .brand { font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; margin:0 0 12px; }
+  .brand em { font-style:normal; color:var(--ox); }
+  nav.side a { display:block; color:rgba(243,242,238,.82); text-decoration:none; border-radius:12px; padding:8px 12px; font-size:14px; }
+  nav.side a:hover { background:rgba(255,255,255,.08); }
+  nav.side a.sub { padding-left:24px; font-size:13px; color:rgba(243,242,238,.6); }
+  main { min-width:0; }
+  section { background:#fff; border:1px solid var(--line); border-radius:24px; padding:28px 32px; margin-bottom:16px; }
+  h1 { font-size:40px; letter-spacing:-.03em; margin:0 0 8px; line-height:1.05; }
+  h2 { font-size:26px; letter-spacing:-.02em; margin:0 0 16px; }
+  h3 { font-size:17px; margin:24px 0 8px; }
+  .kicker { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); font-weight:700; margin:0 0 6px; }
+  p { margin:0 0 12px; } .mute { color:var(--mute); }
+  .lede { font-size:17px; max-width:760px; }
+  .rule { background:var(--paper); border-left:4px solid var(--ox); border-radius:0 12px 12px 0; padding:12px 16px; margin:16px 0; font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin:8px 0 16px; }
+  th, td { text-align:left; vertical-align:top; padding:8px 10px; border-bottom:1px solid var(--line); }
+  th { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); }
+  td code, p code, li code { font-family:"IBM Plex Mono",monospace; font-size:12.5px; background:var(--paper); padding:1px 5px; border-radius:6px; }
+  .tag { display:inline-flex; align-items:center; border-radius:999px; padding:3px 9px; font-size:12px; font-weight:700; background:#e8e6de; color:var(--mute); white-space:nowrap; }
+  .tag.ox { background:var(--ox-bg); color:var(--ox); } .tag.ok { background:var(--ok-bg); color:var(--ok); } .tag.warn { background:var(--warn-bg); color:var(--warn); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .grid3 { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+  .card { background:var(--paper); border-radius:16px; padding:16px; }
+  .card h4 { margin:0 0 6px; font-size:15px; } .card p { font-size:14px; color:var(--mute); margin:0; }
+  .num { font-family:"Bebas Neue",sans-serif; font-size:56px; line-height:.9; color:var(--ox); }
+  .steps { counter-reset:s; } .step { display:grid; grid-template-columns:48px 1fr; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .step .n { font-family:"Bebas Neue",sans-serif; font-size:32px; color:var(--ox); line-height:1; }
+  .step b { display:block; } .step span { color:var(--mute); font-size:14px; }
+  ul { margin:0 0 12px 18px; padding:0; } li { margin:4px 0; }
+  .links a { color:var(--ox); font-weight:700; text-decoration:none; }
+  .timeline { display:grid; grid-template-columns:repeat(9,1fr); gap:6px; margin:12px 0 4px; }
+  .timeline div { background:var(--paper); border-radius:12px; padding:10px 8px; font-size:12px; text-align:center; }
+  .timeline div b { display:block; font-family:"Bebas Neue",sans-serif; font-size:24px; color:var(--ox); }
+  @media (max-width:900px) { .shell { grid-template-columns:1fr; } nav.side { position:static; } .grid2 { grid-template-columns:1fr; } .timeline { grid-template-columns:repeat(3,1fr); } }
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="side">
+  <p class="brand">Capsule <em>Barre</em></p>
+  <a href="#summary">Summary</a>
+  <a href="#repos">Two repositories</a>
+  <a href="#today">What exists today</a>
+  <a href="#features">Features</a>
+  <a href="#screens">Screens</a>
+  <a href="#flows">Flows</a>
+  <a href="#flow1" class="sub">Registration → app</a>
+  <a href="#flow2" class="sub">Pass lifecycle</a>
+  <a href="#server">Server changes</a>
+  <a href="#order">Build order</a>
+  <a href="#security">Security proofs</a>
+  <a href="#decisions">Decisions</a>
+  <a href="#gaps">Gaps</a>
+  <a href="#open">Open item</a>
+  <a href="#files">Files</a>
+</nav>
+<main>
+
+<section id="summary">
+  <p class="kicker">Member App · proposal · 9 Oct 2026</p>
+  <h1>The owner stops typing bookings.</h1>
+  <p class="lede">A phone app for Capsule Barre members that uses <code>aicc-center</code> as the system of record. Members create their own bookings, cancel in time, move a class, join a waitlist, say they've arrived, read their pass, and ask the studio — through the same services the desk already uses.</p>
+  <div class="rule">The phone never calculates money, remaining sessions, refunds, or attendance. A session is spent only when the studio marks the class attended.</div>
+  <div class="grid3">
+    <div class="card"><div class="num">37</div><h4>Features</h4><p>34 in v1, 3 deferred. Including Jay's AI assistant, constrained to cards.</p></div>
+    <div class="card"><div class="num">25</div><h4>Screens</h4><p>Four tabs — Today, Book, Schedule, You — plus account, sheets and 7 notifications.</p></div>
+    <div class="card"><div class="num">9</div><h4>Build steps</h4><p>Server first, in <code>aicc-center</code>. Steps 2–5 are what stops the owner typing.</p></div>
+    <div class="card"><div class="num">2</div><h4>Persona night</h4><p>Mina Park, Thu 8 Oct 2026. Cheongdam 2 of 10 — still 2 after book, cancel, and "I'm here".</p></div>
+  </div>
+  <p class="links" style="margin-top:16px">Prototype: <a href="app.html">app.html</a> · Decisions page: <a href="decisions.html">decisions.html</a></p>
+</section>
+
+<section id="repos">
+  <h2>Two repositories, one truth</h2>
+  <p>Jay's master plan draws the line. They never import each other; they meet through a versioned <code>aicc-contracts</code> package.</p>
+  <table><tr><th></th><th>aicc-center — Phase 1</th><th>aicc-crm — Phase 2</th></tr>
+  <tr><td>Users</td><td>Owner, desk, instructors</td><td>Members (and instructors later)</td></tr>
+  <tr><td>Form</td><td>Next.js web + mobile web</td><td>Mobile app, React Native / Expo</td></tr>
+  <tr><td>Data</td><td><b>System of record</b></td><td>None — consumes Phase 1's API; keeps only read/unread and device settings</td></tr>
+  <tr><td>Status</td><td>Exists · 417 migrations · in use</td><td>Not created yet · Jay's start 2027-04 · "contract designed in Phase 1 first"</td></tr>
+  <tr><td>This plan adds</td><td>One module: <code>member-api</code> under <code>/v1/member/*</code>, plus small owner-side screens</td><td>The 25 screens in this proposal</td></tr></table>
+  <p class="mute">So the server work starts now, in <code>aicc-center</code>, and is proven by e2e tests before anyone opens the app repo.</p>
+</section>
+
+<section id="today">
+  <h2>What exists today, and what doesn't</h2>
+  <div class="grid2">
+    <div><h3 style="margin-top:0">Reused untouched</h3><ul>
+      <li>Booking rules: capacity, duplicates, eligibility on the class date, weekly quota, auto-confirm</li>
+      <li>Waitlist join and ordered promotion with the same eligibility</li>
+      <li>Cancel-deadline math; move as one operation carrying makeup</li>
+      <li>Deduction only on ATTENDED, from instructor confirmation</li>
+      <li>Pass balances, holds, expiry cron; member phone and consents</li>
+      <li>Visit-only check-in table; owner task list; SMS with opt-out; idempotency; rate limits</li>
+      <li>The enums <code>ReservationSource.MEMBER</code> and <code>CancelActor.MEMBER</code> — defined, never set</li></ul></div>
+    <div><h3 style="margin-top:0">Missing</h3><ul>
+      <li>Any member identity: no login, token, guard or OTP for members</li>
+      <li>Member actor wiring — create hardcodes DESK, cancel hardcodes STORE</li>
+      <li>Store scope that doesn't come from a staff user</li>
+      <li>Member notifications and push (existing ones are staff Web Push)</li>
+      <li>A per-reformer seat, arrival-window settings, a waitlist <em>offer</em></li>
+      <li>Member requests, opaque ids, an assistant endpoint</li>
+      <li>An <b>extend-expiry</b> operation — expiry moves only by releasing a hold</li>
+      <li>Anything that tells a new member the app exists</li></ul></div>
+  </div>
+</section>
+
+<section id="features">
+  <h2>Features</h2>
+  <p class="mute">Full table with API and rule references in <code>FEATURES.md</code>.</p>
+  <table><tr><th>Area</th><th>v1</th><th>Later</th></tr>
+  <tr><td>Account</td><td>Create (one form + code, studio-registered phone and name only) · Log in (phone + password + code) · Forgot · Stay logged in · Studio switch with separate balances</td><td></td></tr>
+  <tr><td>Today</td><td>Class card: time, teacher, reformer, deadline, now / after-class count · Empty state with one suggestion · Class at the other studio</td><td></td></tr>
+  <tr><td>Book</td><td>Group and private by day · Open / full / may-not-run · Book (no session spent) · Reformer pick, locked at 6:45 · Waitlist with place · Waitlist offer that asks after the deadline</td><td></td></tr>
+  <tr><td>Manage</td><td>Change time as one move · Cancel free until 4:00pm, asks first · After the deadline: button gone, "ask the studio"</td><td></td></tr>
+  <tr><td>Arrival</td><td>"I'm here" 6:30–6:55 only · Opt-in nudge: the phone senses the studio, sends one notification, the tap is the check-in</td><td>iBeacon as the trigger</td></tr>
+  <tr><td>Schedule & pass</td><td>Upcoming and past timeline · Pass balance, expiry, meter · Previous passes and usage · Extend / hold request</td><td>PERIOD pass rendering (window + frequency)</td></tr>
+  <tr><td>Alerts</td><td>Typed activity with unread · Push: booked, changed, 1 day, 3 hours, expiry, offer, reply · Per-type toggles</td><td></td></tr>
+  <tr><td>Ask AI</td><td>Typed sentence → one card from the real schedule or pass → the tap acts. Intents: book, balance, what's on, cancel, extend/hold. Never books or edits a pass by itself</td><td>LLM phrasing behind a flag</td></tr>
+  <tr><td>You</td><td>Profile · Your requests with replies · Studios · Arrival setting · Legal</td><td>Korean copy after English is accepted</td></tr></table>
+  <p class="mute">Not building: pass purchase, credit wallets, reviews, streaks, body charts, nearby-studio shop, free chat, beacon-required check-in, instructor app.</p>
+</section>
+
+<section id="screens">
+  <h2>Screens</h2>
+  <div class="grid3">
+    <div class="card"><h4>Account S1–S4</h4><p>Welcome / log in · Create · Code (paste fills six, backspace clears) · New password</p></div>
+    <div class="card"><h4>Today S5–S7</h4><p>Empty · Booked (time hero, balance card, actions in the thumb zone) · Other-studio class</p></div>
+    <div class="card"><h4>Book S8–S13</h4><p>Group · Private · Reformer · Confirm · Waitlist · Waitlist offer</p></div>
+    <div class="card"><h4>Manage S14–S15</h4><p>Change time sheet · Cancel sheet (Keep it is the primary)</p></div>
+    <div class="card"><h4>Schedule S16–S17</h4><p>Upcoming / past timeline · Past class detail</p></div>
+    <div class="card"><h4>You S18–S25</h4><p>You · Pass · Alerts · Studios · Ask AI · Request form · Arrival setting · Legal · Profile</p></div>
+    <div class="card"><h4>Notifications N1–N7</h4><p>Arrival nudge · reminders · waitlist offer · studio change · expiry · reply · confirmations</p></div>
+  </div>
+  <h3>Rules that shaped them</h3>
+  <ul><li>Four tabs, three taps max from any tab, no dead ends</li>
+  <li>Time is the hero; values outweigh labels; copy is short and never lectures</li>
+  <li>One accent: red for the single primary action; outline secondary; green for state; ink only for selection. In a destructive sheet the safe choice is the primary</li>
+  <li>No disabled button parked in the thumb zone; "I'm here" exists only in its window</li>
+  <li>The remaining-session meter never moves on a member action</li></ul>
+  <p class="mute">Accepted by two independent UX/UI testers, two passes each; every finding fixed and re-verified.</p>
+</section>
+
+<section id="flows">
+  <h2>Flows</h2>
+  <h3 id="flow1" style="margin-top:0">Registration at the desk → app activation</h3>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><b>Contract signed; photographed; extracted</b><span>OCR returns name, product, sessions, expiry, phone with confidence. It creates nothing.</span></div></div>
+    <div class="step"><div class="n">2</div><div><b>Owner confirms; quick-add member with duplicate check; pass issued with payment</b><span>One <code>store_member</code> per studio; <code>membership</code> ACTIVE, remaining = total, expiry server-derived.</span></div></div>
+    <div class="step"><div class="n">3</div><div><b>"Install the app" SMS</b> <span class="tag ox">new</span><span>Sent once per phone at issue: store link + "create account with this phone and your name". Operational — needs no marketing consent.</span></div></div>
+    <div class="step"><div class="n">4</div><div><b>Create account in the app</b><span>Phone and name must match a live member; unknown phone refused before any code is sent. Then the code.</span></div></div>
+    <div class="step"><div class="n">5</div><div><b>She sees the pass the desk just issued</b><span>Same phone at Geumho too → one account, two studio sessions, two balances.</span></div></div>
+  </div>
+  <p class="mute" style="margin-top:12px">Three consent axes — SMS opt-out, marketing, app push — are different things; the app needs none of them. Edge cases (typo, phone corrected later, lost phone, ended, anonymised, children on a parent's phone) are in <code>FLOWS.md</code>.</p>
+
+  <h3 id="flow2">Pass lifecycle</h3>
+  <table><tr><th>Transition</th><th>Who</th><th>Member sees</th><th>App must not</th></tr>
+  <tr><td>Issued → ACTIVE</td><td>Owner</td><td>N / total, expiry, meter</td><td>Show price</td></tr>
+  <tr><td>Book / cancel in time / move</td><td>Member</td><td>Remaining unchanged, every time</td><td>Deduct or restore</td></tr>
+  <tr><td>Attended → remaining − 1</td><td>Instructor / owner</td><td>New remaining on next refresh</td><td>Offer any decrementing button</td></tr>
+  <tr><td>Low balance / expiring</td><td>01:00 cron → push (SMS if no device)</td><td>Alert, meter in warn</td><td>Time the reminder itself</td></tr>
+  <tr><td>Hold requested → HELD</td><td>Member asks; owner holds. Refused while she has bookings</td><td>"Sent — still ends 14 Oct", then HELD</td><td>Hold herself</td></tr>
+  <tr><td>Extend requested → extended <span class="tag ox">new</span></td><td>Member asks; owner uses the new <code>extend</code> with audit</td><td>"Still ends 14 Oct" until the reply, then the new date</td><td>Change expiry</td></tr>
+  <tr><td>EXPIRED</td><td>04:17 cron; unusable from midnight</td><td>"Ended 14 Oct · 3 unused · Ask"</td><td>Trust <code>status = ACTIVE</code></td></tr>
+  <tr><td>Renewed</td><td>Owner issues a new row</td><td>Both passes; server says which is used next</td><td>Merge or choose</td></tr>
+  <tr><td>Transferred · voided · refunded</td><td>Owner</td><td>Read-only via one display status</td><td>Calculate anything</td></tr></table>
+</section>
+
+<section id="server">
+  <h2>Server changes in <code>aicc-center</code></h2>
+  <p class="mute">One module, <code>member-api</code>. Detail with file and line references in <code>AICC_CENTER_CHANGES.md</code>.</p>
+  <table><tr><th>Layer</th><th>Change</th><th>Size</th></tr>
+  <tr><td>Actor refactor</td><td>Reservation services take a <code>ReservationActor</code> instead of a staff <code>User</code>; member cancel after the deadline → 400, no deduction. The only edit to existing code; all current e2e must pass unchanged</td><td><span class="tag">S</span></td></tr>
+  <tr><td>Member auth</td><td><code>member_account</code> keyed by phone, member OTP table, second JWT strategy with <code>typ: member</code>, studio switch = new token, refresh, lockout</td><td><span class="tag">M</span></td></tr>
+  <tr><td>Reads + opaque ids</td><td>Member-safe projections (no price, payroll, notes); <code>publicId</code> UUID on 4 tables; pass <code>type</code>, one <code>displayStatus</code>, "pass used next" per class</td><td><span class="tag">M</span></td></tr>
+  <tr><td>Writes</td><td>Book, cancel, move, waitlist with idempotency keyed to the member</td><td><span class="tag">M</span></td></tr>
+  <tr><td>Presence</td><td>Reuse the visit-only check-in table with <code>MEMBER_TAP</code> / <code>MEMBER_NUDGE</code>; five nullable settings (arrival window, spot lock, offer minutes, app enabled)</td><td><span class="tag">S</span></td></tr>
+  <tr><td>Requests</td><td><code>member_request</code> → a <code>MEMBER_REQUEST</code> task; owner replies from the task; new owner-only <code>extend</code> operation with audit</td><td><span class="tag">S</span></td></tr>
+  <tr><td>Registration side</td><td>Invite SMS at issue; "Relink app account" desk action; revoke on anonymise / end</td><td><span class="tag">S</span></td></tr>
+  <tr><td>Notifications</td><td>Member-keyed tables, devices, per-type settings, FCM; emitters on booking, changes, offers, replies; reminder and expiry crons</td><td><span class="tag">M</span></td></tr>
+  <tr><td>Waitlist offer</td><td>After the deadline, member-sourced rows get an offer (accept / pass, 30 min) instead of auto-promotion</td><td><span class="tag">M</span></td></tr>
+  <tr><td>Assistant</td><td><code>interpret</code> returns one card; no <code>act</code> — the card button calls the ordinary route</td><td><span class="tag">S</span></td></tr>
+  <tr><td>Reformer (if chosen)</td><td><code>spotCount</code> on class, <code>spotNo</code> on reservation, unique per session, lock at start − N min</td><td><span class="tag">S</span></td></tr></table>
+  <h3>Owner-side screens (small)</h3>
+  <ul><li>Settings: the new policy fields next to the cancel deadline</li><li>Tasks: member request card with a reply box; extend from the reply</li><li>Reservations: show source (desk · app), who cancelled, presence source</li><li>Members: "App account" badge, reset password, relink</li></ul>
+  <h3>Not changing</h3>
+  <p class="mute">The deduction path, eligibility / quota / capacity rules, the expiry cron, desk controller contracts, staff JWT, payroll, billing, refunds. If a member feature seems to need any of these to change, the feature is wrong.</p>
+</section>
+
+<section id="order">
+  <h2>Build order</h2>
+  <div class="timeline">
+    <div><b>1</b>Actor refactor</div><div><b>2</b>Auth + reads</div><div><b>3</b>Writes</div><div><b>4</b>Presence</div><div><b>5</b>Requests + extend</div><div><b>6</b>Notifications</div><div><b>7</b>Waitlist offer</div><div><b>8</b>Assistant</div><div><b>9</b>Reformer</div>
+  </div>
+  <table><tr><th>Step</th><th>Done when</th></tr>
+  <tr><td>1 Actor refactor</td><td>Every existing timetable e2e passes unchanged; desk behaviour byte-identical</td></tr>
+  <tr><td>2 Auth + reads + opaque ids</td><td>A1, A2, A16, A18 pass; the app logs in and sees both passes</td></tr>
+  <tr><td>3 Writes + idempotency</td><td>A3, A5, A8, A9, A10; Cheongdam shows 2 after book and cancel on real data</td></tr>
+  <tr><td>4 Presence + settings</td><td>A12, A13</td></tr>
+  <tr><td>5 Requests, extend, invite SMS, relink</td><td>A14; a reply reaches the member; an extend shows the new date</td></tr>
+  <tr><td>6 Notifications</td><td>Booked, reminder, change, reply arrive on a device; one channel per event</td></tr>
+  <tr><td>7 Waitlist offer</td><td>A6, A7</td></tr>
+  <tr><td>8 Assistant</td><td>Five intents return cards on real data</td></tr>
+  <tr><td>9 Reformer</td><td>A4 — if option A is chosen</td></tr></table>
+  <p class="mute">Steps 2–5 are what stops the owner typing bookings; 6–9 are what makes the app pleasant. Korean copy and the app-store build start after step 3 stops changing. The app repo (<code>aicc-crm</code>) is created at step 2, against a real API.</p>
+</section>
+
+<section id="security">
+  <h2>Security proofs (e2e, mapped to the BA's A-checks)</h2>
+  <ol style="margin:0 0 0 18px;padding:0">
+    <li>A member token on any <code>/v1/store/*</code> route → 401; a staff token on <code>/v1/member/*</code> → 401</li>
+    <li>Studio A's token cannot read studio B's rows, including after <code>switch</code></li>
+    <li><code>storeId</code>, <code>memberId</code>, <code>canceledBy</code>, <code>remainingRestored</code>, <code>status</code> in any member body → 400</li>
+    <li>Cancel after the deadline → 400 and the row is unchanged; no deduction</li>
+    <li>Same idempotency key twice → one reservation</li>
+    <li>Activate with an unregistered phone → 404, no account row</li>
+    <li>Presence outside the window → 400, no row; inside → one row, attendance untouched</li>
+    <li><code>remainingSessions</code> is identical before and after every member write in the suite; it changes only in the existing class-confirmation specs</li>
+  </ol>
+</section>
+
+<section id="decisions">
+  <h2>Decisions — all confirmed 9 Oct 2026</h2>
+  <table><tr><th>#</th><th>Question</th><th>Decided</th></tr>
+  <tr><td>OD-6</td><td>Extend a pass: real operation or hold in disguise?</td><td><b>Real operation</b>, owner-only, reason + audit. A hold freezes the pass and is refused while she has a booking</td></tr>
+  <tr><td>OD-7</td><td>Do expiry / low-balance pushes need owner approval?</td><td><b>No.</b> Operational pushes fire automatically; expiry follows the SMS rules without approval; SMS suppressed when a device exists</td></tr>
+  <tr><td>OD-1</td><td>Does SMS opt-out block the login code?</td><td>No — it is authentication</td></tr>
+  <tr><td>OD-2</td><td>Name match at activation</td><td>Trim, then exact; no fuzzy match</td></tr>
+  <tr><td>OD-3</td><td>Which studio opens first</td><td>The one with the most recently active pass</td></tr>
+  <tr><td>OD-4</td><td>Same phone twice in one studio</td><td>Server stays non-blocking; quick-add defaults to "use existing"</td></tr>
+  <tr><td>OD-5</td><td>Consent at registration for the app</td><td>None needed</td></tr>
+  <tr><td>OD-8</td><td>One display status per pass</td><td>Yes: ACTIVE · HELD · EXPIRED · VOID · REFUNDED · ENDED</td></tr>
+  <tr><td>OD-9</td><td>Which pass a booking will use</td><td>The server says, per class; the app labels</td></tr></table>
+  <p class="mute">Earlier design decisions D1–D4 (phone + password + code; opaque ids; DELETE cancel mapped to the existing service; a member notification principal) stand in <code>BA.md</code>.</p>
+</section>
+
+<section id="gaps">
+  <h2>Gaps and their resolutions</h2>
+  <div class="grid2">
+    <div><h4 style="margin:0 0 8px"><span class="tag ox">Server</span></h4><ul>
+      <li><b>G1</b> No extend operation → add it, with audit</li>
+      <li><b>G2</b> Desk phone fix after activation breaks the link → "Relink app account"</li>
+      <li><b>G3 / G4</b> Anonymise or end leaves a live account → revoke, drop the studio</li>
+      <li><b>G16</b> Nothing tells a new member the app exists → invite SMS at issue</li>
+      <li><b>G11 / G15</b> Refund, void, "which pass" mean nothing to the member → display status and per-class projection</li></ul></div>
+    <div><h4 style="margin:0 0 8px"><span class="tag warn">Desk process</span></h4><ul>
+      <li><b>G6</b> Duplicate phone → reuse the existing row</li>
+      <li><b>G8</b> Lost phone → relink after identity check</li>
+      <li><b>G10</b> SMS and push both fire → one channel per event</li>
+      <li><b>G5</b> Children on a parent's phone → desk books them until a guardian link exists</li></ul>
+    <h4 style="margin:12px 0 8px"><span class="tag ok">App copy</span></h4><ul>
+      <li><b>G9</b> PERIOD passes → window + frequency, not a count</li>
+      <li><b>G13</b> Hold refused by bookings → a plain sentence in the reply</li>
+      <li><b>G17</b> Trial runs out → route to Ask</li></ul>
+    <h4 style="margin:12px 0 8px"><span class="tag">Policy</span></h4><ul>
+      <li><b>G7</b> The code always sends · <b>G14</b> hold limits enforced or unmentioned · <b>G12</b> bookings on a transferred pass stay; on a voided or refunded pass are cancelled with a notice</li></ul></div>
+  </div>
+</section>
+
+<section id="open">
+  <h2>Open item</h2>
+  <p><b>Reformer positions.</b> The data model has no per-reformer seat; capacity is a count. Either add numbered spots (additive migration, keeps the reformer-pick screen) or ship v1 without the pick and assign seats at the desk. Nothing else in the plan depends on it. Default if unanswered: <b>add positions</b> — Capsule Barre numbers its reformers, and the screen tested well.</p>
+</section>
+
+<section id="files">
+  <h2>Files</h2>
+  <table><tr><th>File</th><th>Answers</th></tr>
+  <tr><td><code>app.html</code></td><td>The clickable prototype — screens and features in the left rail</td></tr>
+  <tr><td><code>ANALYSIS.md</code></td><td>What <code>aicc-center</code> is and isn't</td></tr>
+  <tr><td><code>FEATURES.md</code></td><td>37 features, 25 screens, 7 notifications, navigation, owner questions</td></tr>
+  <tr><td><code>BA.md</code></td><td>Rules R1–R18, decisions D1–D4, demo checks A1–A18</td></tr>
+  <tr><td><code>FLOWS.md</code></td><td>Registration → app; pass lifecycle; OD-1–OD-9; G1–G17</td></tr>
+  <tr><td><code>AICC_CENTER_CHANGES.md</code></td><td>Server work by layer with file references, migrations, proofs, order</td></tr>
+  <tr><td><code>PLAN.md</code> · <code>UX.md</code></td><td>Two repos and build order · visual and copy rules</td></tr>
+  <tr><td><code>decisions.html</code></td><td>Decisions and gaps as cards</td></tr></table>
+</section>
+
+</main>
+</div>
+</body>
+</html>
