@@ -11,7 +11,7 @@ AICC today is the **admin system** in `aicc-center`. The owner runs the studio f
 
 The Member App is a second product for the person who takes class. It does not keep its own ledger. Every member, pass, booking, and session count stays in `aicc-center`. The app only shows what that system returns and sends requests into the same booking code the desk already uses.
 
-This draft follows Jay's current Phase 2 **member** list only: sign in, home, schedule, group and private booking, cancel, pass history, alerts, profile, and a natural-language assistant. It is not the instructor app, and it is not the old 46-screen Pilagram member app.
+This draft covers the member list only: sign in, home, schedule, group and private booking, cancel, pass history, alerts, profile, and a natural-language assistant. It is not the instructor app, and it is not the old 46-screen Pilagram member app.
 
 The clickable proposal is an appointment card, not a menu. On class day the screen is the class: time, instructor, reformer, cancel deadline, and what the balance will be after she attends. "I'm here" appears only from 6:30pm and does not spend a session; with location allowed, the phone sends one notification when she is close and the tap on it is the check-in. A full class is a numbered waitlist. Changing time is one move.
 
@@ -52,7 +52,7 @@ There is no member login and no `/api/public/v1`. `ReservationSource` already ha
 
 A staff login is one studio. Mina at Geumho and Cheongdam is two member rows, not one account with a studio id in the body. Switching studio has to mean a new login scoped to the other studio.
 
-The assistant endpoints in Jay's contract (`/assistant/interpret`, `/assistant/act`) are not implemented. The owner to-do list they would write into does exist.
+The assistant endpoints (`/assistant/interpret`, `/assistant/act`) are not implemented. The owner to-do list they would write into does exist.
 
 `billing` in this repo is the product's own subscription. It is not member checkout. Do not put pass purchases in the first member app.
 
@@ -92,7 +92,7 @@ Done when: a member token cannot read the other studio, cannot cancel as the stu
 
 ### Step 2 — The phone app, separate repo
 
-New repo. React Native (Expo), unless Jay decides the first version is a phone website. Screens match this proposal, in this order, because this is the order that stops the owner typing bookings:
+New repo. React Native (Expo), unless the first version is a phone website. Screens match this proposal, in this order, because this is the order that stops the owner typing bookings:
 
 1. Sign in and studio switch
 2. Home and pass history
@@ -106,7 +106,7 @@ Done when: the Cheongdam story in the mock runs on the real API with test member
 
 ### Step 3 — Assistant
 
-Jay wants this in the first release (9 Oct). It still ships after Step 2's booking works, because every card button calls the booking, cancel, and request APIs from Step 1 — the assistant adds interpretation, not new writes. The app sends the sentence to the admin system. The admin system returns a card, never a free paragraph. The prototype shows the five v1 intents.
+The assistant is in the first release. It still ships after Step 2's booking works, because every card button calls the booking, cancel, and request APIs from Step 1 — the assistant adds interpretation, not new writes. The app sends the sentence to the admin system. The admin system returns a card, never a free paragraph. The prototype shows the five v1 intents.
 
 - Clear request with several times → open the normal book screen with those filters filled in. The assistant does not book.
 - One exact class, and she confirms the card → the normal book API runs.
@@ -114,7 +114,7 @@ Jay wants this in the first release (9 Oct). It still ships after Step 2's booki
 
 ### Step 4 — Korean copy, then Capsule Barre
 
-Translate after this English flow is accepted. Jay's beta target still stands: members book in the app instead of calling the studio, and the owner's proxy bookings drop. Do not start the binary until Step 1 has stopped changing.
+Translate after this English flow is accepted. The beta target: members book in the app instead of calling the studio, and the owner's proxy bookings drop. Do not start the binary until Step 1 has stopped changing.
 
 ## 4. Out of scope
 

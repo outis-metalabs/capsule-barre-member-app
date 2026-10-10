@@ -43,7 +43,7 @@ The phone never calculates remaining sessions, refunds, or attendance. One line,
 | F28 | Alerts | Push — booked, changed by studio, class cancelled, 1 day and 3 hours before, expiry, waitlist offer, studio reply | ✔ | R17, D4 | `me/push-token` | partial |
 | F29 | Alerts | Per-type toggles | ✔ | R17 | `me/notification-settings` | display only |
 | F30 | Ask | Studio request form — the confirm step behind the assistant's extend / hold card and the Pass screen's button, and the late-cancel path. Types: extend, hold, question → owner task; reply arrives as alert. Not a separate menu entry | ✔ | R16, R18 | `POST requests` | ✔ |
-| F31 | Ask | Assistant — typed sentence → one card from the real schedule or pass; the tap on the card is the action. Intents v1: book, check balance, what's on, cancel, extend/hold. Never books or edits a pass by itself; unknown input → "I can book, check, or send a request" | ✔ (Jay's ask, 9 Oct) | R18 | `assistant/interpret` → card; `assistant/act` only after the tap, which calls the normal book/cancel/request API | ✔ |
+| F31 | Ask | Assistant — typed sentence → one card from the real schedule or pass; the tap on the card is the action. Intents v1: book, check balance, what's on, cancel, extend/hold. Never books or edits a pass by itself; unknown input → "I can book, check, or send a request" | ✔ | R18 | `assistant/interpret` → card; `assistant/act` only after the tap, which calls the normal book/cancel/request API | ✔ |
 | F32 | You | Profile — name, phone (self fields) | ✔ | R1 | `me`, `PATCH me/profile` | ✔ (display) |
 | F33 | You | Studios list with balances | ✔ | R2 | `auth/member/login` response | ✔ |
 | F34 | You | Arrival setting — location on / off | ✔ | R13a | phone-side | ✔ |
@@ -229,7 +229,7 @@ Requests: a member sees past requests and the studio's reply under You → Your 
 
 ## 4a. Questions the owner will ask
 
-Raised by the second tester, playing Jay. The demo does not answer these on screen; the documents do.
+The demo does not answer these on screen; the documents do.
 
 | Question | Answer | Where |
 |---|---|---|

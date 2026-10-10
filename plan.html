@@ -77,7 +77,7 @@
   <p class="lede">A phone app for Capsule Barre members that uses <code>aicc-center</code> as the system of record. Members create their own bookings, cancel in time, move a class, join a waitlist, say they've arrived, read their pass, and ask the studio — through the same services the desk already uses.</p>
   <div class="rule">The phone never calculates money, remaining sessions, refunds, or attendance. A session is spent only when the studio marks the class attended.</div>
   <div class="grid3">
-    <div class="card"><div class="num">37</div><h4>Features</h4><p>34 in v1, 3 deferred. Including Jay's AI assistant, constrained to cards.</p></div>
+    <div class="card"><div class="num">37</div><h4>Features</h4><p>34 in v1, 3 deferred. The assistant answers with a card, not a free reply.</p></div>
     <div class="card"><div class="num">25</div><h4>Screens</h4><p>Four tabs — Today, Book, Schedule, You — plus account, sheets and 7 notifications.</p></div>
     <div class="card"><div class="num">9</div><h4>Build steps</h4><p>Server first, in <code>aicc-center</code>. Steps 2–5 are what stops the owner typing.</p></div>
     <div class="card"><div class="num">2</div><h4>Persona night</h4><p>Mina Park, Thu 8 Oct 2026. Cheongdam 2 of 10 — still 2 after book, cancel, and "I'm here".</p></div>
@@ -87,12 +87,12 @@
 
 <section id="repos">
   <h2>Two repositories, one truth</h2>
-  <p>Jay's master plan draws the line. They never import each other; they meet through a versioned <code>aicc-contracts</code> package.</p>
+  <p>The two products never import each other. They meet through a versioned <code>aicc-contracts</code> package.</p>
   <table><tr><th></th><th>aicc-center — Phase 1</th><th>aicc-crm — Phase 2</th></tr>
   <tr><td>Users</td><td>Owner, desk, instructors</td><td>Members (and instructors later)</td></tr>
   <tr><td>Form</td><td>Next.js web + mobile web</td><td>Mobile app, React Native / Expo</td></tr>
   <tr><td>Data</td><td><b>System of record</b></td><td>None — consumes Phase 1's API; keeps only read/unread and device settings</td></tr>
-  <tr><td>Status</td><td>Exists · 417 migrations · in use</td><td>Not created yet · Jay's start 2027-04 · "contract designed in Phase 1 first"</td></tr>
+  <tr><td>Status</td><td>Exists · 417 migrations · in use</td><td>Not created yet. The API is designed here first.</td></tr>
   <tr><td>This plan adds</td><td>One module: <code>member-api</code> under <code>/v1/member/*</code>, plus small owner-side screens</td><td>The 25 screens in this proposal</td></tr></table>
   <p class="mute">So the server work starts now, in <code>aicc-center</code>, and is proven by e2e tests before anyone opens the app repo.</p>
 </section>

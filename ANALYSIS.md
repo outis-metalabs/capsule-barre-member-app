@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-08  
 **Scope:** member-facing product only; `aicc-center` remains the admin system and system of record.  
-**Evidence:** `aicc-center` at `260d9741e126303e00fbc8e657b80b3a0473f89e`, Jay's `aicc_mvp` documents, `memberApp.pdf`, and `브로셔.pdf`.
+**Evidence:** `aicc-center` at `260d9741e126303e00fbc8e657b80b3a0473f89e`, the Phase 2 plan documents, `memberApp.pdf`, and `브로셔.pdf`.
 
 ## Executive conclusion
 
@@ -139,7 +139,7 @@ Cancellation is an update that preserves history; it is not a delete. `canceledB
 
 Important implementation decisions still required:
 
-1. **Member authentication:** Jay's RFP says phone verification; the 2019 `memberApp.pdf` shows phone + password, signup OTP, forgot password, and password reset. The proposal should modernize this to phone verification/OTP first, not silently revive the old password flow. The contract needs the exact challenge, rate-limit, session, and recovery behavior.
+1. **Member authentication:** the Phase 2 plan says phone verification; the 2019 `memberApp.pdf` shows phone + password, signup OTP, forgot password, and password reset. The proposal should modernize this to phone verification/OTP first, not silently revive the old password flow. The contract needs the exact challenge, rate-limit, session, and recovery behavior.
 2. **Multi-studio switching:** the RFP requires a store-switch UI, but the contract's every-request `storeId` scope rule does not define a switch endpoint. Choose one explicit model before coding: an account-level identity with a server-issued scoped token per selected studio, or a single aggregate token with server-resolved active studio. The client must never choose arbitrary store IDs.
 3. **Cancel shape:** the current staff API uses `POST /store/reservations/:id/cancel`; the public contract draft says `DELETE /reservations/{id}`. Keep the public contract as the decision point and map it to the existing cancellation service. Do not invent a second cancel implementation solely to match a UI.
 4. **Public IDs:** the contract requires UUID v7/opaque IDs while current internal entities use integer PKs. Decide the public identifier strategy before exposing routes.
@@ -178,7 +178,7 @@ The proposal uses an **editorial studio companion** direction rather than copyin
 - warm paper background and dark ink for a premium wellness/editorial tone
 - clay action color for booking, moss for healthy/active states, amber for expiry
 - Fraunces display typography + Outfit UI typography
-- a phone frame beside an implementation note so Jay can see the member value and the admin-system consequence at the same time
+- a phone frame beside an implementation note so the member value and the admin-system consequence are visible at the same time
 - top story rail: sign in → studio switch → home/pass → book → confirmation → schedule → cancel → alerts → assistant → profile
 
 The memorable interaction is the **two-studio switch**. It demonstrates that one member can see two scoped ledgers without letting the app choose an arbitrary store.

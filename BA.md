@@ -236,7 +236,7 @@ These are unresolved in implementation today. Recommendations are normative for 
 
 ### D1 — Member identity
 
-**Issue:** Staff auth is `User`. `store_member` has no login. 2019 mocks used phone+password; Jay’s Phase 2 direction is phone verification against a studio-registered number.
+**Issue:** Staff auth is `User`. `store_member` has no login. 2019 mocks used phone+password; the Phase 2 direction is phone verification against a studio-registered number.
 
 **Recommendation:** phone + password, with an OTP against the studio-registered phone on every create, login, and password reset. The password is the member’s; the OTP proves the phone is still the one on the contract. No public self-signup: “Create account” activates an existing `store_member` and is refused for an unknown phone. One phone may map to multiple studio memberships; each studio requires a scoped member session. Rate-limit challenges; lock out abuse. (Revised 9 Oct 2026 from OTP-only, after the two-screen account flow was accepted.)
 

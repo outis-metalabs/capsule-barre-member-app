@@ -46,7 +46,7 @@ Trigger is a geofence in v1 (no hardware). An iBeacon can replace it in v2 if "c
 
 ## Ask (assistant)
 
-Jay's request, 9 Oct. A text field at the bottom, four example chips when empty. Every answer is one card that names its source — "From Cheongdam's schedule", "From your passes" — with at most two buttons. The first button runs the normal flow: book opens the reformer pick, cancel opens the confirm sheet, extend opens the request. Balance and what's-on cards are read-only. Unknown input gets a help card. The assistant never books, cancels, or edits a pass on its own; the tap on the card is the action, and that tap calls the same API as the button elsewhere.
+A text field at the bottom, four example chips when empty. Every answer is one card that names its source — "From Cheongdam's schedule", "From your passes" — with at most two buttons. The first button runs the normal flow: book opens the reformer pick, cancel opens the confirm sheet, extend opens the request. Balance and what's-on cards are read-only. Unknown input gets a help card. The assistant never books, cancels, or edits a pass on its own; the tap on the card is the action, and that tap calls the same API as the button elsewhere.
 
 ## Visual rules
 

@@ -5,11 +5,11 @@
 
 ## 0. Position
 
-`aicc-center` stays the system of record and grows **one new backend module**: `member-api`. The phone app lives in the separate repo Jay already named (`aicc-crm`) and owns no domain tables. Nothing member-facing is added to the staff Next.js app except the owner-side pieces listed in §9.
+`aicc-center` stays the system of record and grows **one new backend module**: `member-api`. The phone app lives in the separate repo `aicc-crm` and owns no domain tables. Nothing member-facing is added to the staff Next.js app except the owner-side pieces listed in §9.
 
 Why this is the right cut: the repo's own contract says member-app bookings and desk bookings "must pass through the same code" (`timetable/services/store-reservation-create.service.ts:90-97`), the enums for a member actor already exist (`ReservationSource.MEMBER`, `ReservationCancelActor.MEMBER`), and the deduction ledger has exactly one entrance — instructor confirmation (`membership/CLAUDE.md`, "Retired 라우트"). The member API adds callers to that machinery; it adds no second rules engine.
 
-Routes mount under the existing global prefix as `/v1/member/*` (`main.ts:113`). The draft contract's `/api/public/v1/*` becomes a gateway alias if Jay wants that shape externally.
+Routes mount under the existing global prefix as `/v1/member/*` (`main.ts:113`). The draft contract's `/api/public/v1/*` can be a gateway alias if that shape is wanted externally.
 
 ## 1. What exists and is reused untouched
 
