@@ -54,13 +54,13 @@
 <nav class="side">
   <p class="brand">Capsule <em>Barre</em></p>
   <a href="#summary">Summary</a>
+  <a href="#overall">Overall + user flow</a>
+  <a href="#admin">Admin</a>
+  <a href="#admin-now" class="sub">Already there</a>
+  <a href="#admin-need" class="sub">Needed for the app</a>
+  <a href="#member">Member app</a>
   <a href="#repos">Two repositories</a>
-  <a href="#today">What exists today</a>
-  <a href="#features">Features</a>
   <a href="#screens">Screens</a>
-  <a href="#flows">Flows</a>
-  <a href="#flow1" class="sub">Registration → app</a>
-  <a href="#flow2" class="sub">Pass lifecycle</a>
   <a href="#server">Server changes</a>
   <a href="#order">Build order</a>
   <a href="#security">Security proofs</a>
@@ -72,7 +72,7 @@
 <main>
 
 <section id="summary">
-  <p class="kicker">Member App · proposal · 9 Oct 2026</p>
+  <p class="kicker">Member App · proposal · 10 Oct 2026</p>
   <h1>The owner stops typing bookings.</h1>
   <p class="lede">A phone app for Capsule Barre members that uses <code>aicc-center</code> as the system of record. Members create their own bookings, cancel in time, move a class, join a waitlist, say they've arrived, read their pass, and ask the studio — through the same services the desk already uses.</p>
   <div class="rule">The phone never calculates money, remaining sessions, refunds, or attendance. A session is spent only when the studio marks the class attended.</div>
@@ -97,43 +97,76 @@
   <p class="mute">So the server work starts now, in <code>aicc-center</code>, and is proven by e2e tests before anyone opens the app repo.</p>
 </section>
 
-<section id="today">
-  <h2>What exists today, and what doesn't</h2>
-  <div class="grid2">
-    <div><h3 style="margin-top:0">Reused untouched</h3><ul>
-      <li>Booking rules: capacity, duplicates, eligibility on the class date, weekly quota, auto-confirm</li>
-      <li>Waitlist join and ordered promotion with the same eligibility</li>
-      <li>Cancel-deadline math; move as one operation carrying makeup</li>
-      <li>Deduction only on ATTENDED, from instructor confirmation</li>
-      <li>Pass balances, holds, expiry cron; member phone and consents</li>
-      <li>Visit-only check-in table; owner task list; SMS with opt-out; idempotency; rate limits</li>
-      <li>The enums <code>ReservationSource.MEMBER</code> and <code>CancelActor.MEMBER</code> — defined, never set</li></ul></div>
-    <div><h3 style="margin-top:0">Missing</h3><ul>
-      <li>Any member identity: no login, token, guard or OTP for members</li>
-      <li>Member actor wiring — create hardcodes DESK, cancel hardcodes STORE</li>
-      <li>Store scope that doesn't come from a staff user</li>
-      <li>Member notifications and push (existing ones are staff Web Push)</li>
-      <li>A per-reformer seat, arrival-window settings, a waitlist <em>offer</em></li>
-      <li>Member requests, opaque ids, an assistant endpoint</li>
-      <li>An <b>extend-expiry</b> operation — expiry moves only by releasing a hold</li>
-      <li>Anything that tells a new member the app exists</li></ul></div>
+<section id="overall">
+  <h2>Overall features and user flow</h2>
+  <p>One product, two sides. The desk creates the person and the pass. The phone lets her use them. Money and remaining sessions stay in the admin system.</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><b>Desk — register</b><span>Contract photo is read, not saved as a member. The owner confirms name and phone, creates the member, issues the pass, takes payment.</span></div></div>
+    <div class="step"><div class="n">2</div><div><b>Desk — invite</b><span>On issue, one SMS: install the app, create an account with this phone and this name.</span></div></div>
+    <div class="step"><div class="n">3</div><div><b>Member — account</b><span>One form, then a code. Unknown phone is refused. Same phone at two studios is one account, two balances.</span></div></div>
+    <div class="step"><div class="n">4</div><div><b>Member — tonight</b><span>See the class, book, pick a reformer, cancel or move before 4:00pm. Remaining stays 2.</span></div></div>
+    <div class="step"><div class="n">5</div><div><b>Member — arrival</b><span>6:30–6:55, “I’m here”, or one notification if location is on. Presence only. Still 2.</span></div></div>
+    <div class="step"><div class="n">6</div><div><b>Member — ask</b><span>Extend, hold, or a question. It becomes a task on the owner’s list. The pass does not change.</span></div></div>
+    <div class="step"><div class="n">7</div><div><b>Desk — decide and spend</b><span>Owner replies, holds, or extends. After class, the instructor marks attended. Only then does remaining become 1.</span></div></div>
   </div>
+  <table>
+    <tr><th>Who</th><th>Owns</th><th>Never does</th></tr>
+    <tr><td>Member app</td><td>Book, cancel in time, move, waitlist, arrival, read pass, ask</td><td>Spend a session, change expiry, merge studios, buy a pass</td></tr>
+    <tr><td>Admin</td><td>Members, passes, money, attendance, refunds, hold, extend, tasks</td><td>Depend on the app. The desk still works if nobody installs it</td></tr>
+  </table>
 </section>
 
-<section id="features">
-  <h2>Features</h2>
-  <p class="mute">Full table with API and rule references in <code>FEATURES.md</code>.</p>
-  <table><tr><th>Area</th><th>v1</th><th>Later</th></tr>
-  <tr><td>Account</td><td>Create (one form + code, studio-registered phone and name only) · Log in (phone + password + code) · Forgot · Stay logged in · Studio switch with separate balances</td><td></td></tr>
-  <tr><td>Today</td><td>Class card: time, teacher, reformer, deadline, now / after-class count · Empty state with one suggestion · Class at the other studio</td><td></td></tr>
-  <tr><td>Book</td><td>Group and private by day · Open / full / may-not-run · Book (no session spent) · Reformer pick, locked at 6:45 · Waitlist with place · Waitlist offer that asks after the deadline</td><td></td></tr>
-  <tr><td>Manage</td><td>Change time as one move · Cancel free until 4:00pm, asks first · After the deadline: button gone, "ask the studio"</td><td></td></tr>
-  <tr><td>Arrival</td><td>"I'm here" 6:30–6:55 only · Opt-in nudge: the phone senses the studio, sends one notification, the tap is the check-in</td><td>iBeacon as the trigger</td></tr>
-  <tr><td>Schedule & pass</td><td>Upcoming and past timeline · Pass balance, expiry, meter · Previous passes and usage · Extend / hold request</td><td>PERIOD pass rendering (window + frequency)</td></tr>
-  <tr><td>Alerts</td><td>Typed activity with unread · Push: booked, changed, 1 day, 3 hours, expiry, offer, reply · Per-type toggles</td><td></td></tr>
-  <tr><td>Ask AI</td><td>Typed sentence → one card from the real schedule or pass → the tap acts. Intents: book, balance, what's on, cancel, extend/hold. Never books or edits a pass by itself</td><td>LLM phrasing behind a flag</td></tr>
-  <tr><td>You</td><td>Profile · Your requests with replies · Studios · Arrival setting · Legal</td><td>Korean copy after English is accepted</td></tr></table>
-  <p class="mute">Not building: pass purchase, credit wallets, reviews, streaks, body charts, nearby-studio shop, free chat, beacon-required check-in, instructor app.</p>
+<section id="admin">
+  <h2>Admin — current features</h2>
+  <p class="mute" id="admin-now">What <code>aicc-center</code> already does for the desk. The member app calls these; it does not replace them.</p>
+  <table>
+    <tr><th>Area</th><th>Already there</th></tr>
+    <tr><td>Members</td><td>Create (name, phone, birth date). Search. Duplicate phone warns, does not block. Consents are separate: SMS opt-out, marketing, health. End enrolment. Anonymise. Contract photo is extracted only — the owner still confirms before a row exists.</td></tr>
+    <tr><td>Products</td><td>COUNT, PERIOD, TRIAL. Price, sessions, weekly frequency, valid months, which class types the pass covers.</td></tr>
+    <tr><td>Passes</td><td>Issue with payment in one step. Remaining starts equal to total. Expiry is calculated from valid months. Hold and release (release adds the days held). Transfer inside the studio. Same-day void. Several passes: earliest expiry is used first. Expiry job at 04:17. Refunds live in payments, not on the pass screen.</td></tr>
+    <tr><td>Classes</td><td>Timetable, capacity, minimum to run, instructor, room. A full class can go to the waitlist.</td></tr>
+    <tr><td>Reservations</td><td>Create, confirm, cancel, move, report absence. Cancel deadline from studio settings. Waitlist promotes automatically when a seat opens. Source can be marked MEMBER — nothing sets it yet. Cancel-as-member is named in the rules and has no path yet.</td></tr>
+    <tr><td>Attendance</td><td>One way to spend a session: instructor or owner confirms the class. Booking does not spend. Desk or QR check-in is a visit record, not a spend.</td></tr>
+    <tr><td>Owner list</td><td>Tasks: pass expiring, sessions low, class may close, retention. Owner approves, then SMS can go out.</td></tr>
+    <tr><td>Settings</td><td>Cancel deadline hours, auto-confirm, minimum enrolment, hold day and count limits (stored, not enforced).</td></tr>
+  </table>
+
+  <h2 id="admin-need">Admin — needed to support the member app</h2>
+  <p>New work on the same system. The desk screens stay. These let a member act, and let the owner see it.</p>
+  <table>
+    <tr><th>Needed</th><th>Why the app cannot work without it</th><th>Where the owner sees it</th></tr>
+    <tr><td>Member login</td><td>A member is not a staff user. Phone + password + code, only if that phone is already on a member row.</td><td>Member screen: “App account”, reset, relink if the phone was wrong</td></tr>
+    <tr><td>Book, cancel, move as the member</td><td>Same reservation code as the desk, with source MEMBER. After 4:00pm the app is refused. In-time cancel does not restore a session, because none was taken.</td><td>Reservation shows Desk or App, and who cancelled</td></tr>
+    <tr><td>Her own schedule and pass</td><td>Read-only. No prices, no payroll, no other members’ names. Opaque ids, not database numbers.</td><td>No new screen. Existing member and pass screens</td></tr>
+    <tr><td>Arrival</td><td>“I’m here” or the nudge writes a visit, not attendance. Only 6:30–6:55, and only if she is still booked.</td><td>Class list: she is here, from the app</td></tr>
+    <tr><td>Waitlist offer</td><td>Today a free seat books the next person automatically. After the cancel deadline the app must ask her first.</td><td>Same waitlist. Offer expires in 30 minutes</td></tr>
+    <tr><td>Extend</td><td>There is no extend button today. A hold is the wrong tool: it freezes the pass and fails if she has a class booked.</td><td>New owner action on the pass, with a reason kept in the audit log</td></tr>
+    <tr><td>Requests</td><td>Extend, hold, or a question becomes a task. The pass does not change until the owner acts.</td><td>Existing task list, with a reply box</td></tr>
+    <tr><td>Invite SMS</td><td>Nothing today tells a new member the app exists.</td><td>Sent when the pass is issued, once per phone</td></tr>
+    <tr><td>Alerts to the phone</td><td>Current push is for staff browsers, not members.</td><td>Settings: which alerts exist. She turns types off in the app</td></tr>
+    <tr><td>Ask AI, server side</td><td>The sentence is interpreted in the admin system. The card’s button is a normal book, cancel, or request. The assistant does not write the pass.</td><td>No new ledger. Same reservations and tasks</td></tr>
+    <tr><td>Settings for the app</td><td>Arrival window, reformer lock, offer time, app on or off for this studio.</td><td>Studio settings, next to the cancel deadline</td></tr>
+    <tr><td>Reformer numbers</td><td>Open choice. Capacity today is a count, not a numbered seat. Add numbers only if the studio uses them.</td><td>Class setup: how many numbered reformers</td></tr>
+    <tr><td>Pass label for the phone</td><td>One status the app can trust: active, held, expired, void, refunded, ended. And which pass a class will use when she has more than one.</td><td>Already on the member page for the owner. The app only displays it</td></tr>
+  </table>
+</section>
+
+<section id="member">
+  <h2>Member app features</h2>
+  <p class="mute">What she can do on the phone. Each one calls the admin system. Full screen list is below.</p>
+  <table>
+    <tr><th>Area</th><th>v1</th><th>Not in v1</th></tr>
+    <tr><td>Account</td><td>Create: one form, then a code. Only a phone and name the studio already has. Log in: phone, password, code. Forgot: code, then a new password. Switch studio. Log out.</td><td>Open signup. Social login. Buying a pass</td></tr>
+    <tr><td>Today</td><td>If booked: time, teacher, reformer, cancel deadline, sessions now and after class. If not: one suggestion and Book. A class at the other studio is a row, not a merged balance.</td><td>A feed. Streaks</td></tr>
+    <tr><td>Book</td><td>Group or private, by day. Open, full, or may not run. Pick a reformer until 6:45. Join a waitlist and see her place. If a seat opens after 4:00pm, she is asked. She is not booked for her.</td><td>Other members’ names. Price</td></tr>
+    <tr><td>Change and cancel</td><td>Change time is one move. Cancel is free until 4:00pm and asks first. After 4:00pm the button is gone. She can ask the studio.</td><td>Late self-cancel. Cancel then book again as two steps</td></tr>
+    <tr><td>Arrival</td><td>“I’m here” only from 6:30 to 6:55. Optional: allow location once, get one notification when she is close, tap it to check in.</td><td>Silent check-in. Beacon required. Spending a session</td></tr>
+    <tr><td>Schedule and pass</td><td>Upcoming and past. Pass: remaining, total, expiry. Previous passes and visits. Ask to extend or hold from the pass screen.</td><td>PERIOD passes shown as a count. In-app renewal</td></tr>
+    <tr><td>Alerts</td><td>Booked, moved, cancelled, class changed, reminder the day before and 3 hours before, expiry, waitlist offer, studio reply. A switch for each type.</td><td>Marketing push</td></tr>
+    <tr><td>Ask AI</td><td>She types. She gets one card from the real schedule or pass. The tap on the card books, cancels, or sends the request. “How many left?” shows both studios. A second extend while one is waiting is refused.</td><td>Free chat. The assistant editing a pass by itself</td></tr>
+    <tr><td>You</td><td>Name and phone. Your requests, with the studio’s reply. Studios. Arrival on or off. Terms.</td><td>Body charts. Reviews</td></tr>
+  </table>
+  <p class="mute">Korean copy comes after this English flow is accepted. Children on a parent’s phone stay a desk booking until a later version.</p>
 </section>
 
 <section id="screens">
