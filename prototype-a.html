@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A · Cute — Capsule Barre</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root { --ivory:#FDFBF0; --sage:#D3EBC4; --blush:#F6B1A6; --navy:#2F3E46; --ink:#3a3330; --mute:#7d6454; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:#efe6d8; color:var(--ink); font-family:"IBM Plex Sans",sans-serif; display:grid; place-items:center; padding:24px; }
+  .phone { width:390px; height:844px; background:var(--ivory); border-radius:40px; box-shadow:0 24px 60px rgba(47,62,70,.18); overflow:hidden; display:flex; flex-direction:column; position:relative; }
+  .top { display:flex; justify-content:space-between; align-items:center; padding:28px 20px 0; }
+  .pill { border:0; background:#fff; border-radius:999px; padding:8px 14px; font-weight:700; }
+  .body { flex:1; padding:8px 20px 20px; overflow:auto; }
+  h1 { font-size:15px; margin:0; }
+  .date { color:var(--mute); font-size:13px; margin:8px 0 12px; }
+  .bubble { background:#fff; border-radius:22px 22px 22px 8px; padding:16px 18px; box-shadow:0 8px 20px rgba(246,177,166,.25); }
+  .who { color:var(--blush); font-weight:700; font-size:12px; letter-spacing:.06em; }
+  .bubble p { margin:6px 0 0; font-size:16px; line-height:1.4; }
+  .cat { width:140px; margin:8px auto; display:block; }
+  .card { background:#fff; border-radius:20px; padding:14px 16px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; }
+  .card b { font-size:22px; }
+  .card span { color:var(--mute); font-size:12px; }
+  button.act { width:100%; margin-top:16px; border:0; background:var(--blush); color:#fff; border-radius:999px; min-height:52px; font-weight:700; font-size:16px; }
+  button.ghost { width:100%; margin-top:8px; border:0; background:#fff; border-radius:999px; min-height:48px; font-weight:700; }
+  .note { position:fixed; left:24px; top:24px; width:260px; font-size:14px; color:#3a3330; }
+  .note b { display:block; margin-bottom:6px; }
+  @media (max-width:900px) { .note { position:static; width:auto; margin-bottom:16px; } body { display:block; } .phone { margin:0 auto; } }
+</style>
+</head>
+<body>
+<aside class="note"><b>A · Cute</b> Same world as the owner’s butler. The cat talks about class, not sales. Booking does not spend a session.</aside>
+<div class="phone">
+  <div class="top"><button class="pill">Capsule Barre · Cheongdam ▾</button><span>🔔</span></div>
+  <div class="body" id="view"></div>
+</div>
+<script>
+const cat = `<svg class="cat" viewBox="0 0 200 170">
+  <ellipse cx="100" cy="118" rx="46" ry="40" fill="#fff"/>
+  <path d="M62 78 L48 38 L86 66 Z" fill="#fff"/><path d="M138 78 L152 38 L114 66 Z" fill="#fff"/>
+  <path d="M58 70 L52 46 L78 62 Z" fill="#d9d9d9"/><path d="M142 70 L148 46 L122 62 Z" fill="#cfcfcf"/>
+  <circle cx="84" cy="96" r="7" fill="#2F3E46"/><circle cx="116" cy="96" r="7" fill="#2F3E46"/>
+  <ellipse cx="100" cy="108" rx="6" ry="4" fill="#F6B1A6"/>
+  <path d="M92 112 Q100 118 108 112" fill="none" stroke="#E05A53" stroke-width="2"/>
+  <circle cx="74" cy="106" r="5" fill="#F6B1A6" opacity=".7"/><circle cx="126" cy="106" r="5" fill="#F6B1A6" opacity=".7"/>
+  <rect x="78" y="124" width="44" height="28" rx="8" fill="#2F3E46"/>
+  <path d="M90 124 h20 v8 h-20z" fill="#E05A53"/>
+</svg>`;
+const state = { step: "home" };
+function render() {
+  const left = `<div class="card"><div><span>This pass</span><b>2 left</b></div><span>of 10 · 14 Oct</span></div>`;
+  let mid = "";
+  if (state.step === "home") mid = `<div class="bubble"><div class="who">BUTLER</div><p>Good evening. Barre is at 7:00 with Hana. Want me to keep you a spot?</p></div>${cat}<button class="act" id="go">Book 7:00</button>`;
+  if (state.step === "booked") mid = `<div class="bubble"><div class="who">BUTLER</div><p>You’re in. Reformer 3. Still 2 left — class doesn’t spend one.</p></div>${cat}${left}<button class="act" id="here">I’m here</button><button class="ghost" id="back">Not yet</button>`;
+  if (state.step === "here") mid = `<div class="bubble"><div class="who">BUTLER</div><p>The desk knows you’re here. See you at 7. Still 2 left.</p></div>${cat}${left}`;
+  document.getElementById("view").innerHTML = `<p class="date">Thu 8 Oct</p>` + mid;
+  document.getElementById("go")?.addEventListener("click", () => { state.step = "booked"; render(); });
+  document.getElementById("here")?.addEventListener("click", () => { state.step = "here"; render(); });
+  document.getElementById("back")?.addEventListener("click", () => { state.step = "home"; render(); });
+}
+render();
+</script>
+</body>
+</html>
