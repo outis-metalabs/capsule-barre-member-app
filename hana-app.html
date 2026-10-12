@@ -471,7 +471,7 @@ const SEED_REQUESTS = () => [
   { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", reply: "Yes — book her a drop-in at the desk. Soo Kim" }
 ];
 const state = {
-  justBooked: false, clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
+  justBooked: false, daysSinceVisit: 0, clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
   bookTab: "group", day: "thu", otpFor: "create", newPass: "", newConfirm: "",
   studio: "geumho", name: "Mina Park", phone: "010-5550-1842",
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
@@ -492,7 +492,7 @@ function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unre
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
 function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"low", book:"book", wink:"wink", front:"front" };
+const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"paused", book:"book", wink:"wink", front:"front" };
 function hanaSrc(st) { return "assets/hana/" + (HANA_ART[st] || "front") + ".webp"; }
 /* Crossfade: when the state changed since the last render, the previous art fades out under the new one. */
 function hana(st) {
@@ -508,7 +508,7 @@ function hanaState() {
   if (!b) {
     const other = state.booking && state.booking.studio !== state.studio;   /* F8: tonight is at the other studio */
     if (other) return state.clock === "pm" ? "warmup" : "greet";
-    return "nobook";
+    return (state.daysSinceVisit || 0) >= 14 ? "sleep" : "nobook";   /* 14+ days since the last visit, nothing booked */
   }
   if (state.attended && state.sharedDone) return "cleared";
   if (state.justBooked && !state.arrived && !state.attended && !canHere() && !isPaused()) return "book";
@@ -709,7 +709,7 @@ function streakScreen() {
     const label = done ? "Cleared" : now ? "Today" : "Ahead";
     return `<div class="streakday ${done ? "done" : now ? "now" : ""}"><i></i><b>${d}</b><span>${label}</span></div>`;
   }).join("");
-  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana("cleared")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
+  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
 }
 function friendRow(n, d) {
   const letter = (n || "?").slice(0, 1).toUpperCase();
@@ -770,7 +770,7 @@ function shareCard() {
 function shareScreen() {
   const [k, title, sub, foot] = shareCard();
   return `<button class="back" type="button" data-act="share-close">‹ Back</button>
-    <p class="kicker">Share</p><div class="sayrow">${hana(hanaState())}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
+    <p class="kicker">Share</p><div class="sayrow">${hana(state.share==="in"?"cheer":state.share==="done"?"calm":"wink")}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
     <p class="sub">Share uses the phone's sheet. Not a friend in this app. No pass on the card.</p>
     <div class="postcard"><p class="kicker">${k}</p><b>${title}</b><span>${sub}</span><em>${foot}</em></div>
     <button class="btn push" type="button" data-act="share-send">Share</button>
@@ -930,7 +930,7 @@ function assistant() {
     : `<div class="card ai"><p class="kicker">${m.card.kicker}</p><strong>${m.card.title}</strong><p class="sub" style="white-space:pre-line;margin:4px 0 0">${m.card.body}</p>
         ${m.card.acts.length ? `<div class="meta">${m.card.acts.map(([a, l], i) => `<button type="button" class="${i ? "chip-btn" : "btn mini"}" data-act="${a}">${l}</button>`).join("")}</div>` : ""}</div>`).join("");
   return `<button class="link" type="button" data-act="tab-you">Back</button>
-    <div class="sayrow">${hana(hanaState())}<div class="say">Ask me in a line. I answer with a card.</div></div><h1>Ask AI</h1>
+    <div class="sayrow">${hana("greet")}<div class="say">Ask me in a line. I answer with a card.</div></div><h1>Ask AI</h1>
     <p class="sub">${studioName(state.studio)} · ask in a line, get a card. Nothing happens until you tap it.</p>
     ${state.chat.length ? thread : `<div class="chips wrap">${chips}</div>`}
     ${state.requests.length ? `<button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>` : ""}
@@ -1480,6 +1480,8 @@ document.getElementById("sheetBox").addEventListener("click", (e) => {
 });
 render();
 if (new URLSearchParams(location.search).has("dev")) checkJumps();
+/* ?state=sleep: member away 14+ days with nothing booked */
+if (new URLSearchParams(location.search).get("state") === "sleep") { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; state.view = null; render(); }
 </script>
 </body>
 </html>
