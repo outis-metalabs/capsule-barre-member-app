@@ -30,7 +30,7 @@ Unknown phone is refused on the form, before any code is sent.
 
 1. **Geumho, 9:41am** — 8 of 20, until 12 Nov. No class today. One card suggests Cheongdam 7:00pm; it is a suggestion, not a booking.
 2. **Switch to Cheongdam** — 2 of 10, until 14 Oct. Separate balance, separate session.
-3. **Book** — Thu 7:00pm Barre, Hana Lee, 6 of 8. "Free until 4:00pm" and "Here from 6:30" on the row. 8:00pm is full: "You'd be 2nd." Sat 9:00am Kids Barre: "May not run."
+3. **Book** — Thu 7:00pm Barre, Yuna Choi, 6 of 8. "Free until 4:00pm" and "Here from 6:30" on the row. 8:00pm is full: "You'd be 2nd." Sat 9:00am Kids Barre: "May not run."
 4. **Reformer** — six pads, two taken, no names. Yours until 6:45pm.
 5. **Today, booked** — time hero, teacher, reformer. Now **2** / After class **1**. Meter does not move. Change time and Cancel free sit at the bottom.
 6. **Lobby, 6:40pm** — the clock control outside the phone. "I'm here" appears and takes the thumb zone. With location allowed, a notification drops in instead and asks. One tap either way, one rise, "You're here · see you at 7." Still 2 left.

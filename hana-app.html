@@ -753,8 +753,8 @@ function showToast(t) {
   el.textContent = t; el.classList.add("show"); toast.keep = true;
   clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1600);
 }
-function pass() {
-  return state.studio === "geumho"
+function pass(st) {
+  return (st || state.studio) === "geumho"
     ? { left: 8, total: 20, until: "12 Nov", name: "20-session barre" }
     : { left: 2, total: 10, until: "14 Oct", name: "10-session barre" };
 }
@@ -1182,6 +1182,11 @@ function askChips() {
   return ["Book tonight", "What's on tomorrow?", "How many left?", "How are you, Hana?"];
 }
 function setMood(m) { try { localStorage.setItem("hana.mood", JSON.stringify({ m, at: Date.now() })); } catch (e) {} }   /* device only, never sent */
+/* Health words always win: before mood, tips, booking. Word boundaries so "fellow" is not "fell". */
+const HEALTH_RE = /\b(ache|aches|aching|achy|headaches?|backache|stomach ?ache|sick|ill|unwell|cramps?|cramping|period|nausea|nauseous|vomit\w*|throw(ing)? up|migraines?|fever\w*|dizz\w*|injur\w*|hurts?|hurting|pain\w*|sore|sprain\w*|strain\w*|pulled|swollen|pregnan\w*|medic\w*|surgery|chest pain|can.?t breathe|fell|faint\w*|bleed\w*|killing me|condition)\b/;
+const BODY_RE = /\b(back|knee|neck|shoulder|wrist|hip|ankle|foot|feet|elbow|leg|arm|hamstring|spine|joint)s?\b/;
+const COMPLAINT_RE = /\b(my|for( my)?|sore|stiff|tight|bad|weak|clicks?|clicking|pops?|popping|locks?|feels?|is|are|aches?)\b/;
+function isHealth(s) { const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b/g, ""); return HEALTH_RE.test(t) || (BODY_RE.test(t) && COMPLAINT_RE.test(t)); }
 function hanaReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
@@ -1190,12 +1195,20 @@ function hanaReply(q) {
   if (state.aiSim === "offline") return R("My whiskers lost the signal. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
-  if (/chest pain|can.?t breathe|fell|faint|bleed|dizzy|pain|hurt|injur|pregnan|sore|medic|condition|sprain/.test(s)) {
+  if (isHealth(s)) {
     const acts = [["late-ask", "Ask the studio"]]; if (canFreeCancel()) acts.push(["ai-cancel", "Cancel free"]);
     return R("Ouch, I'm sorry. Please see a doctor or your instructor before class.", "calm",
       { k: "care", kicker: "Take care", title: "Check with a doctor or your instructor", body: canFreeCancel() ? "Free cancel until " + T.cancel + " if you need to rest." : "The studio can help with tonight.", acts });
   }
   if (/password|card number|credit card|id number|passport/.test(s)) return R("I never need that. Keep it safe!", "greet");
+  if (/how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
+    const pc = pass("cheongdam"), pg = pass("geumho");
+    return R(`You have ${pc.left} left at Cheongdam and ${pg.left} at Geumho.`, p.left <= 3 ? "low" : "greet",
+      { k: "balance", kicker: "From your passes", title: `Cheongdam ${pc.left} of ${pc.total} · Geumho ${pg.left} of ${pg.total}`, body: `Cheongdam ends ${pc.until}. Geumho ends ${pg.until}.`, acts: [["ai-pass", "Open pass"]] }, ["Ask to extend", "Book next"]);
+  }
+  if (/who.*(instructor|teacher)|my (instructor|teacher)/.test(s)) return b ? R(`${b.teacher} teaches your ${b.time} ${b.className}.`, "greet", { k: "info", kicker: "From your " + studioName(b.studio) + " schedule", title: b.teacher, body: b.when + " · " + b.time + " · " + b.className, acts: [["ai-today", "Open tonight"]] })
+    : R("Nothing booked yet. Want to see who's teaching?", "nobook", null, ["Book tonight"]);
+  if (/what did \w+ book|\w+'s (booking|class|schedule|pass)|where is (jiwoo|alex)|when is (jiwoo|alex)|(jiwoo|alex) (booked|going|coming)/.test(s)) return R("That's theirs to share. Friends shows who already went.", "wink", { k: "info", kicker: "Private", title: "Only your own bookings", body: "I never share other members' classes.", acts: [["friends", "Open Friends"]] });
   if (/price|cost|how much|pay|buy|refund|discount|membership fee/.test(s)) return studioQ("The studio handles that. Want me to send your question?");
   if (state.aiSim === "noPass" && /how many|left\?|pass|book|extend|expire/.test(s)) return R("Your " + sn + " pass ended " + p.until + ". The studio can help.", "paused",
     { k: "info", kicker: "From your passes", title: sn + " pass ended", body: "No sessions to book with. Nothing to buy here.", acts: [["late-ask", "Ask the studio"]] });
@@ -1205,8 +1218,6 @@ function hanaReply(q) {
     ? R("Still deciding. Your pass stays the same for now.", "greet", { k: "request", kicker: "Already asked", title: sn + " is still deciding", body: "Your pass still ends " + p.until + " until they reply.", acts: [["ai-requests", "Your requests"]] })
     : R("I can ask the studio for you. Your pass stays the same until they reply.", p.left <= 3 ? "low" : "greet",
       { k: "request", kicker: "A request, not a change", title: "Ask " + sn + " to extend?", body: "Your pass still ends " + p.until + " until the owner decides.", acts: [["ai-extend", "Send to " + sn]] });
-  if (/how many|left\?|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) return R("You have 2 left at Cheongdam and 8 at Geumho.", p.left <= 3 ? "low" : "greet",
-    { k: "balance", kicker: "From your passes", title: "Cheongdam 2 of 10 · Geumho 8 of 20", body: "Cheongdam ends 14 Oct. Geumho ends 12 Nov.", acts: [["ai-pass", "Open pass"]] }, ["Ask to extend", "Book next"]);
   /* 1 booking */
   if (/cancel/.test(s)) {
     if (!b) return R("Nothing booked, so nothing to cancel.", "nobook", null, ["Book tonight"]);
@@ -1214,21 +1225,22 @@ function hanaReply(q) {
     return R("Cancel is free until " + T.cancel + ". Sure?", "greet", { k: "cancel", kicker: "From your " + studioName(b.studio) + " schedule", title: b.when + " · " + b.time + " · " + b.className, body: "Free to cancel until " + T.cancel + ". Still " + remainingLine() + " either way.", acts: [["ai-keep", "Keep it"], ["ai-cancel", "Cancel free"]] });
   }
   if (/move|change|switch|reschedul/.test(s) && b) return R("Want a different time? One move, not cancel and rebook.", "greet", { k: "change", kicker: "From your " + studioName(b.studio) + " schedule", title: b.time + " " + b.className + " · " + b.teacher, body: "Changing keeps you at " + p.left + " left.", acts: [["ai-move", "Change time"]] });
-  if (/waitlist|8:00|8pm|eight|full/.test(s)) return R("8:00 is full. Want to join the waitlist?", "book", { k: "book", kicker: "From Cheongdam's schedule", title: "Thu 8 Oct · 8:00pm · Barre · Soo Kim", body: "Full · you'd be 2nd. Nothing is held.", acts: [["ai-wait", "Join the waitlist"]] });
-  if (/\bat (6|9|10|11)\b|morning|tomorrow morning/.test(s) && !/sat|weekend/.test(s)) return R("Nothing at that time. These are close!", "nobook",
-    { k: "list", kicker: "From Cheongdam's schedule", title: "Thursday 8 Oct", body: "7:00pm Barre · Yuna Choi · open\n8:00pm Barre · Soo Kim · full", acts: [["ai-book", "See schedule"]] });
-  const b7 = b && b.studio === "cheongdam" && b.time === "7:00pm";
+  const at = "At " + sn + ", ";
+  if (/waitlist|8:00|8pm|eight|full/.test(s)) return R(at + "8:00 is full. Join the waitlist?", "book", { k: "book", kicker: "From " + sn + "'s schedule", title: "Thu 8 Oct · 8:00pm · Barre · Soo Kim", body: "Full · you'd be 2nd. Nothing is held.", acts: [["ai-wait", "Join the waitlist"]] });
+  if (/\bat (6|9|10|11)\b|morning|tomorrow morning/.test(s) && !/sat|weekend/.test(s)) return R(at + "nothing then. These are close!", "nobook",
+    { k: "list", kicker: "From " + sn + "'s schedule", title: "Thursday 8 Oct", body: "7:00pm Barre · Yuna Choi · open\n8:00pm Barre · Soo Kim · full", acts: [["ai-book", "See schedule"]] });
+  const b7 = b && b.studio === state.studio && b.time === "7:00pm";
   if (/book|reserve|tonight|seven|\b7\b|thu|next|class$/.test(s) && b && b.studio === state.studio && !/next/.test(s)) return R("You're all set for tonight!", "greet",
     { k: "booked", kicker: "From your " + studioName(b.studio) + " schedule", title: b.when + " · " + b.time + " · " + b.teacher + (b.spot ? " · Reformer " + b.spot : ""), body: (canFreeCancel() ? "Free cancel until " + T.cancel + ". " : "") + "Still " + remainingLine() + ".", acts: [["ai-today", "Open tonight"], ["ai-move", "Change time"]] }, ["What to bring", "Quick stretch"]);
-  if (/book|reserve|tonight|seven|\b7\b|thu|next/.test(s)) return R(b7 ? "Ooh, Saturday 10:00 has a spot!" : "Ooh, 7:00 Barre has a spot for you!", "book",
-    b7 ? { k: "book", kicker: "From Cheongdam's schedule", title: "Sat 10 Oct · 10:00am · Barre · Yuna Choi", body: "Open. Free cancel until 7:00am.", acts: [["ai-book-sat", "Open Saturday"]] }
-       : { k: "book", kicker: "From Cheongdam's schedule", title: "Thu 8 Oct · 7:00pm · Barre · Yuna Choi", body: "6 of 8 taken. Free cancel until 4:00pm.", acts: [["ai-book-7", "Book"], ["ai-book", "Other times"]] });
-  if (/sat|weekend|what.?s on|schedule|classes|tomorrow/.test(s)) return R("Here's Saturday at Cheongdam.", "greet", { k: "list", kicker: "From Cheongdam's schedule", title: "Saturday 10 Oct",
+  if (/book|reserve|tonight|seven|\b7\b|thu|next/.test(s)) return R(b7 ? at + "Saturday 10:00 has a spot!" : at + "7:00 Barre has a spot!", "book",
+    b7 ? { k: "book", kicker: "From " + sn + "'s schedule", title: "Sat 10 Oct · 10:00am · Barre · Yuna Choi", body: "Open. Free cancel until 7:00am.", acts: [["ai-book-sat", "Open Saturday"]] }
+       : { k: "book", kicker: "From " + sn + "'s schedule", title: "Thu 8 Oct · 7:00pm · Barre · " + (state.studio === "geumho" ? "Soo Kim" : "Yuna Choi"), body: "6 of 8 taken. Free cancel until 4:00pm.", acts: [["ai-book-7", "Book"], ["ai-book", "Other times"]] });
+  if (/sat|weekend|what.?s on|schedule|classes|tomorrow/.test(s)) return R(at + "here's Saturday.", "greet", { k: "list", kicker: "From " + sn + "'s schedule", title: "Saturday 10 Oct",
     body: "9:00am Kids Barre · may not run\n10:00am Barre · Yuna Choi · open\n11:00am private · Jiwon Park · taken", acts: [["ai-book-sat", "Open Saturday"]] });
   /* 3 class info */
   if (/bring|wear|socks|towel needed|need to bring/.test(s)) return R("Grip socks and water! Mats are at the studio.", "warmup", { k: "info", kicker: "From " + sn + "'s studio info", title: "What to bring", body: "Grip socks · water · comfy clothes. Mats and towels are there.", acts: [] }, ["Quick stretch", "When can I check in?"]);
   if (/reformer|what.?s barre|class type|kind of class/.test(s)) return R("Reformer is a sliding bed with springs. Comfy and strong!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Reformer", body: "A sliding carriage with springs. Six pads in each class.", acts: [["ai-book", "See schedule"]] });
-  if (/where|direction|address|map|get there/.test(s)) return R("Here's the way. Check-in opens at " + T.open + ".", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: sn + " studio", body: (state.studio === "geumho" ? "Geumho-ro 12, 2F" : "Dosan-daero 45, 3F") + " · 3 min from the station.", acts: [["ai-map", "Open map"]] });
+  if (/where|direction|address|map|get there/.test(s)) return R(b && b.studio === state.studio ? "Here's the way. Check-in opens at " + T.open + "." : "Here's the way to " + sn + ".", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: sn + " studio", body: (state.studio === "geumho" ? "Geumho-ro 12, 2F" : "Dosan-daero 45, 3F") + " · 3 min from the station.", acts: [["ai-map", "Open map"]] });
   if (/check.?in|when can i/.test(s)) return R("Check-in opens at " + T.open + ". Tap I'm here!", "warmup", { k: "info", kicker: "From your schedule", title: "Check-in " + T.open + " – " + T.close, body: "Presence only. The studio marks attendance.", acts: [["ai-today", "Open Today"]] });
   /* 4 streak & encouragement */
   if (/streak|in a row/.test(s)) return R(state.streak + " days in a row. Your paws are proud!", state.attended && state.sharedDone ? "cleared" : "cheer", { k: "streak", kicker: "From your check-ins", title: state.streak + " day streak", body: "Mon ✓ · Tue ✓ · Wed ✓ · Thu ·", acts: [["streak", "See streak"]] }, ["Book next"]);
@@ -1732,9 +1744,9 @@ function wire() {
     if (act === "ai-extend-ask") { state.view = "ai"; state.tab = "you"; render(); aiAsk("Extend my pass"); }
     if (act === "ai-book-7" && state.aiSim === "seatTaken") { state.aiSim = null; state.chat.push({ role: "ai", line: "Oops, that spot just went. Here's what's open.", pose: "paused", chips: [],
       card: { k: "book", kicker: "From Cheongdam's schedule · refreshed", title: "Sat 10 Oct · 10:00am · Barre · Yuna Choi", body: "Open. Nothing was charged or changed.", acts: [["ai-book-sat", "Open Saturday"]] } }); render(); scrollAsk(); return; }
-    if (act === "ai-book-7") { state.studio = "cheongdam"; state.tab = "book"; state.view = "spot"; state.spotPick = null; render(); }
+    if (act === "ai-book-7") { state.tab = "book"; state.view = "spot"; state.spotPick = null; render(); }
     if (act === "ai-book") { state.tab = "book"; state.view = null; state.bookTab = "group"; state.day = "thu"; render(); }
-    if (act === "ai-book-sat") { state.studio = "cheongdam"; state.tab = "book"; state.view = null; state.bookTab = "group"; state.day = "sat"; render(); }
+    if (act === "ai-book-sat") { state.tab = "book"; state.view = null; state.bookTab = "group"; state.day = "sat"; render(); }
     if (act === "ai-pass") { state.view = "pass"; render(); }
     if (act === "ai-today") { state.studio = "cheongdam"; state.tab = "today"; state.view = null; render(); }
     if (act === "ai-move") { state.studio = "cheongdam"; state.tab = "today"; state.view = null; render(); openMove(); }

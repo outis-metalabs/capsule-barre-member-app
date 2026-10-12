@@ -191,7 +191,7 @@ function todayCard() {
   return `<div class="card">
     <p class="kicker">${studio().short} · ${state.moved ? "moved" : "confirmed"}</p>
     <p class="time">${state.moved ? "10:00" : "7:00"}</p>
-    <p class="sub">${when}<br>Barre · Hana Lee · Reformer ${state.spot || "—"}</p>
+    <p class="sub">${when}<br>Barre · Yuna Choi · Reformer ${state.spot || "—"}</p>
     <p class="sub">After you attend: <strong>${studio().left - 1} left</strong>. Until then: <strong>${studio().left} left</strong>.</p>
     ${here}
     <button class="ghost" onclick="go('detail')">Cancel or change</button>
@@ -222,7 +222,7 @@ function bookScreen() {
   return `${bar()}<div class="scroll"><h2>Book</h2><p class="sub">${studio().name}. Cancel free until 4:00pm. A full class is a line.</p>
     <div class="card">
       <div class="slot" style="border:0" onclick="${row ? "go('detail')" : "book()"}">
-        <div><strong>7:00pm · Barre</strong><div class="sub" style="margin:0">Hana Lee · ${row ? "You're in" : "6 of 8"} · free cancel until 4:00pm</div></div>
+        <div><strong>7:00pm · Barre</strong><div class="sub" style="margin:0">Yuna Choi · ${row ? "You're in" : "6 of 8"} · free cancel until 4:00pm</div></div>
         <span class="pill ${row ? "ok" : ""}">${row ? row.status : "Book"}</span>
       </div>
       <div class="slot" onclick="state.waitlist=true;go('wait')">
@@ -245,21 +245,21 @@ function spotScreen() {
 }
 function confirmScreen() {
   return `${bar()}<div class="scroll"><p class="kicker">${studio().short}</p><h2>You're booked.</h2>
-    <p class="time">7:00</p><p class="sub">Tonight · Barre · Hana Lee · Reformer ${state.spot || "—"}<br>Free cancel until 4:00pm.</p>
+    <p class="time">7:00</p><p class="sub">Tonight · Barre · Yuna Choi · Reformer ${state.spot || "—"}<br>Free cancel until 4:00pm.</p>
     <div class="card"><p class="kicker">Pass</p><p class="time" style="font-size:42px">${studio().left}</p><p class="sub" style="margin:0">Unchanged. After you attend it becomes ${studio().left - 1}.</p></div>
     <button class="seal" onclick="go('home')">See today</button></div>${nav("book")}`;
 }
 function schedule() {
   const row = booking();
   const body = !row ? `<div class="card"><p class="sub" style="margin:0">No upcoming class at ${studio().short}.</p></div>`
-    : `<div class="card press" onclick="go('detail')"><div class="row"><p class="kicker" style="margin:0">${state.moved?"Sat 10 Oct":"Thu 8 Oct"}</p><span class="pill ${row.status==="cancelled"?"bad":"ok"}">${row.status}</span></div><p class="time" style="font-size:36px">${state.moved?"10:00":"7:00"}</p><p class="sub" style="margin:0">Hana Lee · ${studio().short}</p></div>`;
+    : `<div class="card press" onclick="go('detail')"><div class="row"><p class="kicker" style="margin:0">${state.moved?"Sat 10 Oct":"Thu 8 Oct"}</p><span class="pill ${row.status==="cancelled"?"bad":"ok"}">${row.status}</span></div><p class="time" style="font-size:36px">${state.moved?"10:00":"7:00"}</p><p class="sub" style="margin:0">Yuna Choi · ${studio().short}</p></div>`;
   return `${bar()}<div class="scroll"><h2>Schedule</h2><p class="sub">${studio().name}</p>${body}</div>${nav("schedule")}`;
 }
 function detail() {
   const row = booking();
   if (!row) return `${bar()}<div class="scroll"><h2>No booking</h2><button class="seal" onclick="go('book')">Book tonight</button></div>${nav("schedule")}`;
   if (row.status === "cancelled") return `${bar()}<div class="scroll"><h2>Cancelled</h2><p class="sub">In time. Pass is still ${studio().left}. Nothing was given back, because nothing was taken.</p><button class="seal" onclick="go('alerts')">Alerts</button></div>${nav("schedule")}`;
-  return `${bar()}<div class="scroll"><p class="kicker">${studio().short}</p><h2>${state.moved?"Sat 10 Oct":"Tonight"}</h2><p class="sub">${state.moved?"10:00am private":"7:00pm Barre"} · Hana Lee · Reformer ${state.spot||"—"}<br>Free cancel until 4:00pm. It is ${clockLabel()}.</p>
+  return `${bar()}<div class="scroll"><p class="kicker">${studio().short}</p><h2>${state.moved?"Sat 10 Oct":"Tonight"}</h2><p class="sub">${state.moved?"10:00am private":"7:00pm Barre"} · Yuna Choi · Reformer ${state.spot||"—"}<br>Free cancel until 4:00pm. It is ${clockLabel()}.</p>
     <div class="card"><p class="kicker">Pass if you cancel now</p><p class="time" style="font-size:42px">${studio().left}</p><p class="sub" style="margin:0">Still ${studio().left}. A late cancel after 4:00pm is refused here. The desk handles that.</p></div>
     <button class="seal" onclick="state.moved=true;render()">Change to Sat 10:00am</button>
     <button class="ghost" onclick="booking().status='cancelled';render()">Cancel tonight</button></div>${nav("schedule")}`;

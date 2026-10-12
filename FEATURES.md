@@ -201,7 +201,7 @@ Same frame. Card is the code. **Share** opens the phone sheet. The app does not 
 
 ### Notifications (outside the app)
 
-**N1 · Arrival nudge** — "You're at Cheongdam. Barre at 7:00 with Hana Lee. Say you're here?" Actions: **I'm here** / Not yet. Only 6:30–6:55 with an active booking, once per class.
+**N1 · Arrival nudge** — "You're at Cheongdam. Barre at 7:00 with Yuna Choi. Say you're here?" Actions: **I'm here** / Not yet. Only 6:30–6:55 with an active booking, once per class.
 **N2 · Reminders** — 1 day before, 3 hours before (the 3-hour one lands just before the 4:00pm deadline: "Free cancel until 4:00pm").
 **N3 · Waitlist offer** — "A spot opened at 8:00pm. Take it?" Opens S13.
 **N4 · Studio changed / cancelled class** — opens S6 or S16.
