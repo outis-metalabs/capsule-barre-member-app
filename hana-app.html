@@ -1398,7 +1398,7 @@ function assistant() {
   const lastIdx = state.chat.lastIndexOf(last);
   const thread = state.chat.map((m, i) => m.role === "me" ? `<div class="bubble me">${esc(m.text)}</div>`
     : m.role === "think" ? `<div class="bubble her think"><span class="dots3"><i></i><i></i><i></i></span></div>`
-    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${i === lastIdx && !thinking ? "" : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
+    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${i === lastIdx && !thinking ? "" : last && m.line === last.line && /signal/.test(m.line) && !thinking ? `<p class="tiny ask-nosig">No signal, not answered</p>` : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
     : m.card ? aiCardHtml(m.card, offline) : "").join("");
   const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.allChips ? 9 : last.lead ? 3 : 2) : []);
   return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
