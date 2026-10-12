@@ -46,12 +46,19 @@
   .brand em { font-style: normal; color: var(--ox); }
   .rail { background: #3B2E29; color: #f3f2ee; border-radius: 24px; padding: 16px 12px 24px; position: sticky; top: 16px; }
   .rail .brand { color: #f3f2ee; padding: 0 8px; }
-  .clocks { display: flex; gap: 8px; margin-bottom: 16px; }
+  .clocks { display: flex; gap: 6px; margin-bottom: 12px; }
   .clocks button {
     flex: 1; border: 1px solid rgba(255,255,255,.16); background: transparent; color: #f3f2ee; border-radius: 12px; min-height: 40px; padding: 8px 4px;
     font-size: 12px; font-weight: 700; white-space: nowrap;
   }
   .clocks button.on { background: #f3f2ee; border-color: #f3f2ee; color: var(--ink); }
+  .devbtn { width:100%; border:1px dashed rgba(255,255,255,.3); background:transparent; color:#f3f2ee; border-radius:12px; min-height:36px; font-size:12px; margin-bottom:12px; }
+  .okbar { background:var(--ok-bg); color:var(--ok); border-radius:16px; padding:12px 14px; font-weight:800; margin-top:8px; animation: rise .45s ease; }
+  .dots4 { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:8px 0 6px; }
+  .dot4 { display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--mute); }
+  .dot4 i { height:8px; border-radius:999px; background:#F3E9DC; display:block; }
+  .dot4.on i { background:var(--ox); } .dot4.on { color:var(--ink); }
+  .otherrow strong { display:block; font-size:15px; }
   .railseg { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: rgba(255,255,255,.08); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
   .railseg button { border: 0; background: transparent; color: rgba(243,242,238,.7); border-radius: 10px; min-height: 32px; font-size: 12px; font-weight: 700; }
   .railseg button.on { background: rgba(255,255,255,.14); color: #f3f2ee; }
@@ -109,12 +116,15 @@
   .talk { display:flex; gap:8px; margin-top:12px; }
   .talk input { flex:1; border:2px solid var(--line); border-radius:999px; min-height:48px; padding:0 14px; background:#fff; font:inherit; font-weight:800; }
   .talk button { width:48px; height:48px; border:0; border-radius:50%; background:var(--ox); color:#fff; font-size:18px; }
-  .sayrow { display:flex; gap:10px; align-items:flex-end; margin:8px 0; }
-  .sayrow .hw { width:64px; }
+  .sayrow { display:flex; flex-direction:column-reverse; align-items:center; gap:18px; margin:8px 0 12px; }
+  .sayrow .hw { width:72px; }
+  .sayrow .say { position:relative; border-radius:22px; text-align:center; }
+  .sayrow .say::after, .say.up::after { content:""; position:absolute; left:50%; bottom:-8px; width:12px; height:12px; background:#fff; border-right:2px solid var(--line); border-bottom:2px solid var(--line); transform:translateX(-50%) rotate(45deg); }
+  .say.up { position:relative; border-radius:22px; text-align:center; margin-bottom:18px; }
   .hana-stage { display:flex; flex-direction:column; align-items:center; margin: 0 0 8px; }
   .hana-bubble {
     position: relative; background:#fff; border:2px solid var(--line); border-radius:28px;
-    padding:14px 18px; margin-bottom:14px; width:100%; text-align:center;
+    padding:14px 18px; margin-bottom:26px; width:100%; text-align:center;
     font-weight:800; font-size:16px; line-height:1.4; box-shadow:0 5px 0 #F3E6D3;
   }
   .hana-bubble::after {
@@ -380,34 +390,48 @@
   @keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025,1.04)}}
   @keyframes hsway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
   .hw[data-s=greet] .body{animation:hbob 2.6s ease-in-out infinite}
-  .hw[data-s=greet] .armR{animation:hwave 1.1s ease-in-out infinite}
-  @keyframes hwave{0%,100%{transform:rotate(-112deg)}50%{transform:rotate(-80deg)}}
-  .hw[data-s=warmup] .armL{transform:rotate(108deg)} .hw[data-s=warmup] .armR{transform:rotate(-108deg)}
+
+
+
   .hw[data-s=warmup] .body{animation:hstretch 3s ease-in-out infinite}
-  @keyframes hstretch{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
-  .hw[data-s=cheer] .armL{transform:rotate(112deg)} .hw[data-s=cheer] .armR{transform:rotate(-112deg)}
+  @keyframes hstretch{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
   .hw[data-s=cheer] .body{animation:hjump .8s cubic-bezier(.3,0,.4,1) 3}
-  @keyframes hjump{0%,100%{transform:translateY(0) scale(1.04,.96)}15%{transform:translateY(0) scale(1)}45%{transform:translateY(-36px)}75%{transform:translateY(0) scale(1.04,.96)}}
+  @keyframes hjump{0%,100%{transform:translateY(0) scale(1.04,.96)}15%{transform:translateY(0) scale(1)}45%{transform:translateY(-22px)}75%{transform:translateY(0) scale(1.04,.96)}}
   .hw[data-s=cheer] .fxSpark{opacity:1}
   .hw .fxSpark path{transform-box:fill-box;transform-origin:center;animation:htw 1.4s ease-in-out infinite}
   .hw .fxSpark path:nth-child(2){animation-delay:.35s}.hw .fxSpark path:nth-child(3){animation-delay:.7s}.hw .fxSpark path:nth-child(4){animation-delay:1.05s}
   @keyframes htw{0%,100%{transform:scale(.3);opacity:.3}50%{transform:scale(1.1) rotate(20deg);opacity:1}}
-  .hw[data-s=calm] .armL{transform:rotate(-30deg)} .hw[data-s=calm] .armR{transform:rotate(30deg)}
+
   .hw[data-s=calm] .body{animation:hbreathe 4.5s ease-in-out infinite}
   .hw[data-s=calm] .fxCalm{opacity:1} .hw .fxCalm circle{transform-box:fill-box;transform-origin:center;animation:hring 4.5s ease-out infinite}
   .hw .fxCalm circle:nth-child(2){animation-delay:2.25s}
   @keyframes hring{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.35);opacity:0}}
   .hw[data-s=wink] .body{animation:hqb .9s ease-out 1}
   @keyframes hqb{0%,100%{transform:translateY(0)}35%{transform:translateY(-12px)}}
-  .hw[data-s=low] .armL{transform:rotate(-36deg)} .hw[data-s=low] .armR{transform:rotate(36deg)}
+
   .hw[data-s=low] .body{animation:hsway 3.4s ease-in-out infinite}
-  .hw[data-s=nobook] .armR{animation:hyarm 5s ease-in-out infinite}
-  @keyframes hyarm{0%,25%,75%,100%{transform:rotate(0)}40%,60%{transform:rotate(-58deg)}}
+
+
   .hw[data-s=nobook] .mYawn{animation:hyawn 5s ease-in-out infinite;transform-box:fill-box;transform-origin:center top}
   @keyframes hyawn{0%,25%,75%,100%{transform:scale(.55,.4)}40%,60%{transform:scale(1)}}
   .hw[data-s=nobook] .body{animation:hbreathe 4s ease-in-out infinite}
   .hw.tap .body{animation:hpop .4s ease}
   @keyframes hpop{40%{transform:scale(1.05,.95)}}
+  .hw .aChest,.hw .aUp{display:none}
+  /* poses: arms stay short, flat and close to the body (style guide line art) */
+  .hw[data-s=warmup] .aDown,.hw[data-s=calm] .aDown,.hw[data-s=low] .aDown,.hw[data-s=nobook] .armR .aDown{display:none}
+  .hw[data-s=warmup] .aChest,.hw[data-s=calm] .aChest,.hw[data-s=low] .aChest,.hw[data-s=nobook] .armR .aChest{display:inline}
+  .hw[data-s=greet] .armR .aDown,.hw[data-s=wink] .armR .aDown,.hw[data-s=cheer] .aDown{display:none}
+  .hw[data-s=greet] .armR .aUp,.hw[data-s=wink] .armR .aUp,.hw[data-s=cheer] .aUp{display:inline}
+  .hw[data-s=greet] .armR{animation:hwave 1.2s ease-in-out infinite}
+  @keyframes hwave{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+  .hw[data-s=cheer] .armL{animation:hwaveL .5s ease-in-out 6 alternate} .hw[data-s=cheer] .armR{animation:hwave .5s ease-in-out 6 alternate}
+  @keyframes hwaveL{from{transform:rotate(0)}to{transform:rotate(10deg)}}
+  .hw[data-s=cleared] .mOpen{display:inline} .hw[data-s=cleared] .mSmall{display:none}
+  .hw[data-s=cleared] .aDown{display:none} .hw[data-s=cleared] .aChest{display:inline}
+  .hw[data-s=cleared] .fxSpark{opacity:1} .hw[data-s=cleared] .body{animation:hqb .9s ease-out 1}
+  .hw[data-s=paused] .body{animation:hbreathe 4.5s ease-in-out infinite}
   .hw .shadow{position:absolute;left:18%;right:18%;bottom:-4px;height:10px;border-radius:50%;background:rgba(74,59,54,.12)}
   .hana-stage .hw{cursor:pointer}
   @media (prefers-reduced-motion:reduce){ .hw *, .hw{animation:none!important;transition:none!important} }
@@ -432,11 +456,13 @@
     <div class="clocks">
       <button type="button" id="clkAm" class="on">Now 9:41am</button>
       <button type="button" id="clkPm">Lobby 6:40pm</button>
+      <button type="button" id="clkNight">7:10pm</button>
     </div>
     <div class="railseg" id="railseg">
       <button type="button" class="on" data-rail="screens">Screens</button>
       <button type="button" data-rail="features">Features</button>
     </div>
+    <button type="button" id="devAttended" class="devbtn">Dev · studio marks attended</button>
     <nav class="jump" id="jump"></nav>
   </aside>
   <div class="phone">
@@ -498,28 +524,40 @@ const state = {
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS()
+  askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS(),
+  attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
+/* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
+const INITIAL = JSON.parse(JSON.stringify(state));
+function restore(keep) {
+  const kept = {}; (keep || []).forEach(k => kept[k] = state[k]);
+  const fresh = JSON.parse(JSON.stringify(INITIAL));
+  Object.keys(state).forEach(k => { if (!(k in fresh)) delete state[k]; });
+  Object.assign(state, fresh, { rail: state.rail }, kept);
+}
 function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unread: true }); }
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
-function resetSession() {
-  Object.assign(state, { booking: null, wait: false, streak: 3, sharedIn: false, arrived: false, arrivedVia: null, location: "off", nudge: false,
-    late: false, offer: false, ask: false, spotPick: 3, alerts: SEED_ALERTS(), notify: NOTIFY(), feature: null, studio: "geumho",
-    askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS() });
-}
+function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_SVG = '<svg class="hsvg" viewBox="0 0 360 560" aria-hidden="true"> <g class="fx fxCalm" fill="none" stroke="#B5E0CB" stroke-width="4"><circle cx="180" cy="300" r="165"/><circle cx="180" cy="300" r="165"/></g> <g class="body" stroke="#3B2E29" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"> <path d="M250 470C300 472 318 426 300 392" fill="none" stroke-width="26"/> <path d="M250 470C300 472 318 426 300 392" fill="none" stroke="#F8EFD9" stroke-width="18"/> <path d="M306 410C304 402 302 396 300 392" fill="none" stroke="#A9A5A3" stroke-width="18"/> <ellipse cx="136" cy="528" rx="31" ry="17" fill="#F8EFD9"/><ellipse cx="224" cy="528" rx="31" ry="17" fill="#F8EFD9"/> <path d="M136 524v-8M224 524v-8" stroke-width="2.5"/> <path d="M96 398H264C268 430 262 480 256 516H194L184 452H176L166 516H104C98 480 92 430 96 398Z" fill="#F5B5BD"/> <path d="M98 406C96 440 100 480 104 514H114C110 480 106 440 108 406Z" fill="#B5E0CB" stroke="none"/> <path d="M262 406C264 440 260 480 256 514H246C250 480 254 440 252 406Z" fill="#B5E0CB" stroke="none"/> <path d="M96 398H264C268 430 262 480 256 516H194L184 452H176L166 516H104C98 480 92 430 96 398Z" fill="none"/> <path d="M136 262C118 278 96 296 96 330C96 360 98 380 100 400H260C262 380 264 360 264 330C264 296 242 278 224 262Z" fill="#F8EFD9"/> <rect x="96" y="390" width="168" height="12" rx="5" fill="#B5E0CB"/> <path d="M108 286C122 280 132 274 138 270C150 302 210 302 222 270C228 274 238 280 252 286C258 306 258 330 256 346H104C102 330 102 306 108 286Z" fill="#F5B5BD"/> <rect x="102" y="342" width="156" height="12" rx="5" fill="#B5E0CB"/> <g class="head"> <clipPath id="hcX"><path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z"/></clipPath> <path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z" fill="#F8EFD9" stroke="none"/> <path clip-path="url(#hcX)" d="M200 30C196 92 236 140 322 150V0H200Z" fill="#A9A5A3" stroke="none"/> <path d="M78 44L116 66Q94 78 82 100Z" fill="#F4AEB8" stroke="none"/> <path d="M282 44L244 66Q266 78 278 100Z" fill="#F4AEB8" stroke="none"/> <path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z" fill="none"/> <ellipse cx="102" cy="214" rx="17" ry="11" fill="#F4AEB8" stroke="none" opacity=".85"/><ellipse cx="258" cy="214" rx="17" ry="11" fill="#F4AEB8" stroke="none" opacity=".85"/> <path d="M54 198L16 192M54 210L18 220M306 198L344 192M306 210L342 220" stroke-width="3.5"/> <g class="eOpen" stroke="none"><g class="eye-open"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><g class="eye-open"><ellipse cx="234" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="241" cy="168" r="8" fill="#fff"/><circle cx="226" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150M255 166L264 160M252 158L258 150" stroke="#2A1F1B" stroke-width="3.5"/></g> <g class="eWink"><g class="eye-open" stroke="none"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150" stroke="#2A1F1B" stroke-width="3.5"/><path d="M214 180Q234 160 254 180M256 172L264 166" fill="none" stroke="#2A1F1B" stroke-width="5"/></g> <g class="eClosed" fill="none" stroke="#2A1F1B" stroke-width="5"><path d="M102 176Q122 194 142 176M214 176Q234 194 254 176"/><path d="M100 176L91 172M256 176L265 172" stroke-width="3.5"/></g> <path d="M171 194Q178 190 186 194Q182 203 178 204Q174 203 171 194Z" fill="#E8909C" stroke-width="2.5"/> <path class="mSmall" d="M162 209Q170 220 178 209Q186 220 194 209" fill="none" stroke-width="4"/> <g class="mOpen"><path d="M160 208Q178 212 196 208Q194 236 178 236Q162 236 160 208Z" fill="#C85A6E" stroke-width="4"/><path d="M168 228Q178 220 188 228Q184 234 178 234Q172 234 168 228Z" fill="#F4A3B0" stroke="none"/></g> <path class="mYawn" d="M168 210Q178 213 188 210Q187 228 178 228Q169 228 168 210Z" fill="#C85A6E" stroke-width="3.5"/> </g> <g class="armL"><path d="M118 282C86 296 52 338 26 376C12 398 34 422 56 408C72 396 96 376 116 360Z" fill="#F8EFD9"/><ellipse cx="74" cy="334" rx="12" ry="16" transform="rotate(40 74 334)" fill="#A9A5A3" stroke="none"/></g> <g class="armR"><path d="M242 282C274 296 308 338 334 376C348 398 326 422 304 408C288 396 264 376 244 360Z" fill="#F8EFD9"/><ellipse cx="262" cy="304" rx="7" ry="9" fill="#A9A5A3" stroke="none"/></g> </g> <g class="fx fxSpark" fill="#F5C26B"><path d="M20 120l6 16 16 6-16 6-6 16-6-16-16-6 16-6z"/><path fill="#F6B1A6" d="M340 90l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/><path fill="#B5E0CB" d="M30 320l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/><path d="M335 300l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/></g> <g class="fx fxZ" font-family="Nunito" font-weight="900" fill="#8E86A8"><text x="300" y="70" font-size="34">z</text><text x="318" y="48" font-size="27">z</text><text x="334" y="26" font-size="22">Z</text></g> </svg>';
+const HANA_SVG = '<svg class="hsvg" viewBox="0 0 360 560" aria-hidden="true"> <g class="fx fxCalm" fill="none" stroke="#B5E0CB" stroke-width="4"><circle cx="180" cy="300" r="165"/><circle cx="180" cy="300" r="165"/></g> <g class="body" stroke="#3B2E29" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"> <path d="M250 470C300 472 318 426 300 392" fill="none" stroke-width="26"/> <path d="M250 470C300 472 318 426 300 392" fill="none" stroke="#F8EFD9" stroke-width="18"/> <path d="M306 410C304 402 302 396 300 392" fill="none" stroke="#A9A5A3" stroke-width="18"/> <ellipse cx="136" cy="528" rx="31" ry="17" fill="#F8EFD9"/><ellipse cx="224" cy="528" rx="31" ry="17" fill="#F8EFD9"/> <path d="M136 524v-8M224 524v-8" stroke-width="2.5"/> <path d="M96 398H264C268 430 262 480 256 516H194L184 452H176L166 516H104C98 480 92 430 96 398Z" fill="#F5B5BD"/> <path d="M98 406C96 440 100 480 104 514H114C110 480 106 440 108 406Z" fill="#B5E0CB" stroke="none"/> <path d="M262 406C264 440 260 480 256 514H246C250 480 254 440 252 406Z" fill="#B5E0CB" stroke="none"/> <path d="M96 398H264C268 430 262 480 256 516H194L184 452H176L166 516H104C98 480 92 430 96 398Z" fill="none"/> <path d="M136 262C118 278 96 296 96 330C96 360 98 380 100 400H260C262 380 264 360 264 330C264 296 242 278 224 262Z" fill="#F8EFD9"/> <rect x="96" y="390" width="168" height="12" rx="5" fill="#B5E0CB"/> <path d="M108 286C122 280 132 274 138 270C150 302 210 302 222 270C228 274 238 280 252 286C258 306 258 330 256 346H104C102 330 102 306 108 286Z" fill="#F5B5BD"/> <rect x="102" y="342" width="156" height="12" rx="5" fill="#B5E0CB"/> <g class="head"> <clipPath id="hcX"><path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z"/></clipPath> <path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z" fill="#F8EFD9" stroke="none"/> <path clip-path="url(#hcX)" d="M200 30C196 92 236 140 322 150V0H200Z" fill="#A9A5A3" stroke="none"/> <path d="M78 44L116 66Q94 78 82 100Z" fill="#F4AEB8" stroke="none"/> <path d="M282 44L244 66Q266 78 278 100Z" fill="#F4AEB8" stroke="none"/> <path d="M180 272C110 272 52 245 46 190C42 150 50 115 62 95L66 42Q68 26 84 34L128 62C160 52 200 52 232 62L276 34Q292 26 294 42L298 95C310 115 318 150 314 190C308 245 250 272 180 272Z" fill="none"/> <ellipse cx="102" cy="214" rx="17" ry="11" fill="#F4AEB8" stroke="none" opacity=".85"/><ellipse cx="258" cy="214" rx="17" ry="11" fill="#F4AEB8" stroke="none" opacity=".85"/> <path d="M54 198L16 192M54 210L18 220M306 198L344 192M306 210L342 220" stroke-width="3.5"/> <g class="eOpen" stroke="none"><g class="eye-open"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><g class="eye-open"><ellipse cx="234" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="241" cy="168" r="8" fill="#fff"/><circle cx="226" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150M255 166L264 160M252 158L258 150" stroke="#2A1F1B" stroke-width="3.5"/></g> <g class="eWink"><g class="eye-open" stroke="none"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150" stroke="#2A1F1B" stroke-width="3.5"/><path d="M214 180Q234 160 254 180M256 172L264 166" fill="none" stroke="#2A1F1B" stroke-width="5"/></g> <g class="eClosed" fill="none" stroke="#2A1F1B" stroke-width="5"><path d="M102 176Q122 194 142 176M214 176Q234 194 254 176"/><path d="M100 176L91 172M256 176L265 172" stroke-width="3.5"/></g> <path d="M171 194Q178 190 186 194Q182 203 178 204Q174 203 171 194Z" fill="#E8909C" stroke-width="2.5"/> <path class="mSmall" d="M162 209Q170 220 178 209Q186 220 194 209" fill="none" stroke-width="4"/> <g class="mOpen"><path d="M160 208Q178 212 196 208Q194 236 178 236Q162 236 160 208Z" fill="#C85A6E" stroke-width="4"/><path d="M168 228Q178 220 188 228Q184 234 178 234Q172 234 168 228Z" fill="#F4A3B0" stroke="none"/></g> <path class="mYawn" d="M168 210Q178 213 188 210Q187 228 178 228Q169 228 168 210Z" fill="#C85A6E" stroke-width="3.5"/> </g> <g class="armL"><g class="aDown"><path d="M118 282C86 296 52 338 26 376C12 398 34 422 56 408C72 396 96 376 116 360Z" fill="#F8EFD9"/><ellipse cx="74" cy="334" rx="12" ry="16" transform="rotate(40 74 334)" fill="#A9A5A3" stroke="none"/></g><g class="aChest"><path d="M116 284C98 300 92 322 104 336C114 348 134 346 142 334C150 322 140 310 128 304Z" fill="#F8EFD9"/></g><g class="aUp"><path d="M114 292C98 282 76 272 62 256C54 246 36 248 34 262C32 276 54 296 104 314Z" fill="#F8EFD9"/></g></g><g class="armR"><g class="aDown"><path d="M242 282C274 296 308 338 334 376C348 398 326 422 304 408C288 396 264 376 244 360Z" fill="#F8EFD9"/><ellipse cx="262" cy="304" rx="7" ry="9" fill="#A9A5A3" stroke="none"/></g><g class="aChest"><path d="M244 284C262 300 268 322 256 336C246 348 226 346 218 334C210 322 220 310 232 304Z" fill="#F8EFD9"/></g><g class="aUp"><path d="M246 292C262 282 284 272 298 256C306 246 324 248 326 262C328 276 306 296 256 314Z" fill="#F8EFD9"/></g></g> </g> <g class="fx fxSpark" fill="#F5C26B"><path d="M20 120l6 16 16 6-16 6-6 16-6-16-16-6 16-6z"/><path fill="#F6B1A6" d="M340 90l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/><path fill="#B5E0CB" d="M30 320l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/><path d="M335 300l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/></g> <g class="fx fxZ" font-family="Nunito" font-weight="900" fill="#8E86A8"><text x="300" y="70" font-size="34">z</text><text x="318" y="48" font-size="27">z</text><text x="334" y="26" font-size="22">Z</text></g> </svg>';
 function hana(st) { return `<div class="hw" data-s="${st || "greet"}" data-hana>${HANA_SVG}<i class="shadow"></i></div>`; }
 /* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
 function hanaState() {
   const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
-  if (!b) return "nobook";
-  if (state.arrived && state.sharedIn) return "calm";
-  if (state.arrived) return "cheer";
+  if (!b) {
+    const other = state.booking && state.booking.studio !== state.studio;   /* F8: tonight is at the other studio */
+    if (other) return state.clock === "pm" ? "warmup" : "greet";
+    return "nobook";
+  }
+  if (state.attended && state.sharedDone) return "cleared";
+  if (state.attended) return "calm";
+  if (state.arrived) return "cheer";                 /* checked in, shared or not, before the studio marks attended */
+  if (isPaused()) return "paused";
   if (state.nudge || canHere()) return "warmup";
   if (pass().left <= 3) return "low";
   return "greet";
 }
+function isPaused() { const b = state.booking && state.booking.studio === state.studio; return !!b && state.clock === "night" && !state.arrived; }
 function hanaLine(s) { return `<div class="sayrow">${hana("greet")}<div class="say">${s}</div></div>`; }
 function noteFor() {
   if (state.auth !== "app") return ["Account", "Two screens: form, then code. Header has menu and alerts."];
@@ -553,13 +591,13 @@ function meter() {
   const pct = Math.max(8, Math.round((p.left / p.total) * 100));
   return `<div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
 }
-function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : "6:40"; }
+function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : state.clock === "night" ? "7:10" : "6:40"; }
 function canHere() {
   return state.clock === "pm" && state.booking && state.booking.time === "7:00pm" && state.booking.status === "confirmed";
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
-  state.arrived = true; state.arrivedVia = via; if (state.streak < 4) state.streak = 4;
+  state.arrived = true; state.arrivedVia = via;
   alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
   toast("You’re here · still " + remainingLine());
 }
@@ -578,7 +616,7 @@ function fe(f) { return state.formField === f ? "bad" : ""; }
 function em(f) { return state.formField === f && state.formError ? `<p class="err">${state.formError}</p>` : ""; }
 function welcome() {
   const create = state.mode === "create", forgot = state.mode === "forgot";
-  return `<div class="hero">${hana("greet")}</div><div class="say" style="margin-bottom:12px">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Hana."}</div>
+  return `<div class="say up">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Hana."}</div><div class="hero">${hana("greet")}</div>
     <h1>${create ? "Create account" : forgot ? "Reset password" : "Log in"}</h1>
     <form id="authForm">
     ${!forgot ? `<div class="seg">
@@ -645,56 +683,60 @@ function hanaChips() {
 }
 function missionStep() {
   const b = state.booking && state.booking.studio === state.studio;
-  if (!b) return 0;
-  if (!state.arrived) return 1;
-  if (!state.sharedIn) return 2;
-  if (!state.sharedDone) return 3;
-  return 4;
+  if (!b) return 0;            /* Pick */
+  if (!state.arrived) return 1; /* Arrive */
+  if (!state.sharedIn) return 2; /* Share here */
+  if (!state.attended) return 3; /* waiting for the studio */
+  if (!state.sharedDone) return 4; /* Clear */
+  return 5;
 }
 function today() {
-  const step = missionStep();
-  const titles = ["Book today", "Show up at 7", "Share that you came", "Share the result", "Day cleared"];
-  const lines = [
-    "Jiwoo already went. Your turn today.",
-    "Don't lose day " + state.streak + ". Show up at 7.",
-    "You showed up. Share it, like a win.",
-    "Class done. Share the card. Pass stays " + pass().left + "."
-    , "Board cleared. Rest well."
-  ];
+  const step = missionStep(), paused = isPaused();
+  const p = pass();
+  const titles = ["Book today", "Show up at 7", "Share that you came", "After class", "Share the result", "Day cleared"];
+  /* GAME_DESIGN lines: one short line, no pressure, no prizes */
+  const lines = ["Tonight's board is open.", "See you at 7.", "You're here · see you at 7.", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
+  const manage = state.late
+    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at 4:00pm.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
+    : `<p class="sub" style="margin:8px 0 0">Check-in opens 6:30. Free cancel until 4:00pm.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
     `<button class="btn" type="button" data-act="pick-7">BOOK 7:00</button>`,
-    canHere() ? `<button class="btn" type="button" data-act="here">CHECK IN</button>` : `<button class="btn" type="button" data-act="clock-pm">OPEN 6:40 CHECK-IN</button>`,
-    `<button class="btn" type="button" data-act="share-in">SHARE CHECK-IN</button>`,
-    `<button class="btn" type="button" data-act="share-done">SHARE RESULT</button>`,
-    `<p class="sub">Streak is day ${state.streak}. Pass is still ${pass().left} left.</p>`
+    canHere() ? `<button class="btn" type="button" data-act="here">I'M HERE</button>` : manage,
+    `<button class="btn" type="button" data-act="share-in">SHARE CHECK-IN</button><button class="btn ghost" type="button" data-act="skip-in">Not now</button>`,
+    `<div class="okbar">You're here · still ${p.left} left</div><p class="sub" style="margin:8px 0 0">The studio marks attendance after class.</p>`,
+    `<button class="btn" type="button" data-act="share-done">SHARE RESULT</button><button class="btn ghost" type="button" data-act="skip-done">Skip</button>`,
+    `<div class="okbar">Board cleared · day ${state.streak}</div><p class="sub" style="margin:8px 0 0">Pass is ${p.left} left.</p>`
   ];
-  const dots = [0,1,2].map(i => `<i class="${step > i ? "on" : ""}"></i>`).join("");
-  const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
+  const doneSteps = [step > 0, step > 1, step > 2, step > 4];
+  const labels = ["Pick", "Arrive", "Share here", "Clear"];
+  const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
+  const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
   const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
+  const line = paused ? "Board paused. Tomorrow is a new level." : other ? "Tonight is at " + studioName(other.studio) + "." : lines[step];
   return `${topbar()}
-    <div class="hana-stage"><div class="hana-bubble">${lines[step]}</div>${hana(hanaState())}</div>
+    <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(hanaState())}</div>
+    ${other ? `<button class="card press otherrow" type="button" data-act="open-other-class"><strong>You have class at ${studioName(other.studio)} · ${other.time}</strong><span class="what-sub">${other.className} · ${other.teacher} · open it ›</span></button>` : ""}
     <div class="dock">
       <button class="streak-btn" type="button" data-act="streak">${ICONS.flame}<span><small>STREAK</small>Day ${state.streak}</span></button>
-      <button class="friends-btn" type="button" data-act="friends">${ICONS.people}<span><small>FRIENDS</small>Jiwoo just went</span></button>
+      <button class="friends-btn" type="button" data-act="friends">${ICONS.people}<span><small>FRIENDS</small>Jiwoo went today</span></button>
     </div>
     <div class="mission">
-      <div class="k">DAILY MISSION</div>
-      <h1>${titles[step]}</h1>
-      <div class="dots">${dots}</div>
-      ${buttons[step]}
-      ${step === 1 && state.clock === "am" && !state.late ? `<div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel</button></div>` : ""}
+      <div class="k">TODAY'S BOARD</div>
+      <h1>${paused ? "Board paused" : titles[step]}</h1>
+      <div class="dots4">${dots}</div>
+      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at 6:55pm. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
     </div>
-    <p class="passpill">Pass ${pass().left} left · not the streak</p>
+    <p class="passpill">${studioName(state.studio)} · ${p.left} left</p>
     <div class="thread">${thread}</div>`;
 }
 function streakScreen() {
   const names = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   const days = names.map((d,i) => {
     const done = i < state.streak, now = i === state.streak;
-    const label = done ? "Showed up" : now ? "Today" : "Ahead";
+    const label = done ? "Cleared" : now ? "Today" : "Ahead";
     return `<div class="streakday ${done ? "done" : now ? "now" : ""}"><i></i><b>${d}</b><span>${label}</span></div>`;
   }).join("");
-  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana("wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>Show up today to keep it.</p></div>${days}<button class="btn" type="button" data-act="share-streak">SHARE MY STREAK</button>`;
+  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(hanaState())}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">SHARE MY STREAK</button>`;
 }
 function friendRow(n, d) {
   const letter = (n || "?").slice(0, 1).toUpperCase();
@@ -718,16 +760,14 @@ function openShare(kind) {
 }
 function closeShare(sent, via) {
   const back = state.shareBack || "today";
-  if (sent) {
-    if (state.share === "in") state.sharedIn = true;
-    if (state.share === "done") { state.sharedDone = true; if (state.streak < 5) state.streak = 4; }
-    toast(via === "Copy" ? "Copied" : "Shared");
-  }
+  if (sent) { if (state.share === "in") state.sharedIn = true; toast(via === "Copy" ? "Copied" : "Shared"); }
+  if (state.share === "done" && state.attended) clearBoard();   /* shared or skipped: the board clears */
   state.share = null;
   state.view = back === "today" ? null : back;
   state.tab = "today";
   render();
 }
+function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
 function sharePayload() {
   const [k, title, sub, foot] = shareCard();
   return { k, title, sub, foot, text: title + "\n" + sub + "\n" + foot };
@@ -757,7 +797,7 @@ function shareCard() {
 function shareScreen() {
   const [k, title, sub, foot] = shareCard();
   return `<button class="back" type="button" data-act="share-close">‹ Back</button>
-    <p class="kicker">Share</p><div class="sayrow">${hana(state.share === "in" ? "cheer" : state.share === "done" ? "calm" : "wink")}<div class="say">${state.share === "in" ? "You came! Tell someone." : state.share === "done" ? "Nice class. Share it?" : "Send it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
+    <p class="kicker">Share</p><div class="sayrow">${hana(hanaState())}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
     <p class="sub">Share uses the phone's sheet. Not a friend in this app. No pass on the card.</p>
     <div class="postcard"><p class="kicker">${k}</p><b>${title}</b><span>${sub}</span><em>${foot}</em></div>
     <button class="btn push" type="button" data-act="share-send">SHARE</button>
@@ -917,7 +957,7 @@ function assistant() {
     : `<div class="card ai"><p class="kicker">${m.card.kicker}</p><strong>${m.card.title}</strong><p class="sub" style="white-space:pre-line;margin:4px 0 0">${m.card.body}</p>
         ${m.card.acts.length ? `<div class="meta">${m.card.acts.map(([a, l], i) => `<button type="button" class="${i ? "chip-btn" : "btn mini"}" data-act="${a}">${l}</button>`).join("")}</div>` : ""}</div>`).join("");
   return `<button class="link" type="button" data-act="tab-you">Back</button>
-    <div class="sayrow">${hana("greet")}<div class="say">Ask me in a line. I answer with a card.</div></div><h1>Ask AI</h1>
+    <div class="sayrow">${hana(hanaState())}<div class="say">Ask me in a line. I answer with a card.</div></div><h1>Ask AI</h1>
     <p class="sub">${studioName(state.studio)} · ask in a line, get a card. Nothing happens until you tap it.</p>
     ${state.chat.length ? thread : `<div class="chips wrap">${chips}</div>`}
     ${state.requests.length ? `<button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>` : ""}
@@ -959,7 +999,7 @@ function ensureBooked() {
   if (!b || b.studio !== "cheongdam" || b.time !== "7:00pm") { state.booking = { ...BOOKING7 }; state.arrived = false; state.arrivedVia = null; }
   state.studio = "cheongdam";
 }
-function inApp() { state.auth = "app"; state.view = null; state.nudge = false; state.late = false; state.offer = false; }
+function inApp() { state.auth = "app"; }
 const JUMPS = [
   { key: "signin",   label: "Sign in",  note: "Phone and password, then the code. Only a phone the studio already has.", go: () => { state.auth = "welcome"; state.mode = "login"; state.formError = ""; } },
   { key: "create",   label: "Create account", note: "One form, then the code. Terms link outside the checkbox.", go: () => { state.auth = "welcome"; state.mode = "create"; state.formError = ""; } },
@@ -969,7 +1009,7 @@ const JUMPS = [
   { key: "friends",  label: "Friends", note: "Your code, people who used it, and who already went. Not the pass.", go: () => { inApp(); state.tab = "today"; state.view = "friends"; } },
   { key: "add-friend", label: "Add a friend", note: "Type their code. Alex is ALEX-4402. A wrong code finds nobody.", go: () => { inApp(); state.tab = "today"; state.view = "add-friend"; } },
   { key: "share-in", label: "Share check-in", note: "Phone share sheet. Studio, class, day. Not a friend in the app. No pass number.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = false; state.clock = "pm"; state.tab = "today"; state.share = "in"; state.shareBack = "today"; state.view = "share"; } },
-  { key: "share-done", label: "Share result", note: "Done card after class. Day streak only. The pass is not the prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.sharedDone = false; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
+  { key: "share-done", label: "Share result", note: "Done card after class. Day streak only. The pass is not the prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.attended = true; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
   { key: "share-streak", label: "Share streak", note: "Phone share sheet. The number only. Not a friend in the app, and not the pass.", go: () => { inApp(); state.tab = "today"; state.share = "streak"; state.shareBack = "streak"; state.view = "share"; } },
   { key: "share-code", label: "Share code", note: "Phone share sheet with MINA-1842. The app does not pick a friend.", go: () => { inApp(); state.tab = "today"; state.share = "code"; state.shareBack = "friends"; state.view = "share"; } },
   { key: "book",     label: "Book", note: "Group or private, by day, this studio only. Time first.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
@@ -1026,7 +1066,7 @@ const FEATURES = [
   { f: "F39", label: "Friends", note: "Code, incoming ask, and who already went.", go: () => { inApp(); state.tab = "today"; state.view = "friends"; } },
   { f: "F40", label: "Add a friend", note: "Their code. Alex is ALEX-4402.", go: () => { inApp(); state.tab = "today"; state.view = "add-friend"; } },
   { f: "F41", label: "Share check-in", note: "Phone share sheet. I'm at Cheongdam, class, day. Not a friend in the app.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = false; state.clock = "pm"; state.tab = "today"; state.share = "in"; state.shareBack = "today"; state.view = "share"; } },
-  { f: "F42", label: "Share result", note: "Done card. Day only. The pass is not a prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.sharedDone = false; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
+  { f: "F42", label: "Share result", note: "Done card. Day only. The pass is not a prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.attended = true; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
   { f: "F43", label: "Share streak", note: "Phone share sheet. The number only. Not a friend in the app.", go: () => { inApp(); state.tab = "today"; state.share = "streak"; state.shareBack = "streak"; state.view = "share"; } },
   { f: "F44", label: "Share code", note: "Phone share sheet with MINA-1842. The app does not pick a friend.", go: () => { inApp(); state.tab = "today"; state.share = "code"; state.shareBack = "friends"; state.view = "share"; } },
   { g: "You & system" },
@@ -1067,6 +1107,7 @@ function render() {
   document.getElementById("clock").textContent = clockLabel();
   document.getElementById("clkAm").classList.toggle("on", state.clock === "am");
   document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
+  document.getElementById("clkNight").classList.toggle("on", state.clock === "night");
   const tabs = document.getElementById("tabs");
   tabs.hidden = state.auth !== "app" || ["streak","friends","add-friend","share"].includes(state.view);
   if (state.auth === "app") {
@@ -1222,10 +1263,17 @@ function openCancel() {
 function openLegal(title, body) {
   sheetBox(`<p class="kicker">Legal</p><h1>${title}</h1><p class="sub">${body}</p><button class="btn ghost" type="button" data-act="close">Close</button>`);
 }
+/* Long press on Hana asks "How many left?" */
+document.getElementById("view").addEventListener("pointerdown", (e) => {
+  const h = e.target.closest("[data-hana]"); if (!h || state.auth !== "app") return;
+  clearTimeout(hana.t); hana.long = false;
+  hana.t = setTimeout(() => { hana.long = true; state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); state.tab = "today"; state.view = null; render(); }, 550);
+});
+["pointerup", "pointerleave", "pointercancel"].forEach(t => document.getElementById("view").addEventListener(t, () => clearTimeout(hana.t)));
 function wire() {
   document.getElementById("view").onclick = (e) => {
     const h = e.target.closest("[data-hana]");
-    if (h) { h.classList.add("tap"); setTimeout(() => h.classList.remove("tap"), 650); return; }
+    if (h) { if (hana.long) { hana.long = false; return; } h.classList.add("tap"); setTimeout(() => h.classList.remove("tap"), 650); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
     state.feature = null; state.jump = null;
     const act = btn.dataset.act;
@@ -1260,6 +1308,8 @@ function wire() {
     if (act === "here") { arrive("tap"); state.nudge = false; render(); }
     if (act === "share-in") return openShare("in");
     if (act === "share-done") return openShare("done");
+    if (act === "skip-in") { state.sharedIn = true; return render(); }
+    if (act === "skip-done") { clearBoard(); return render(); }
     if (act === "share-send") return openShareSheet();
     if (act === "share-close") return closeShare(false);
     if (act === "streak") { state.view = "streak"; state.tab = "today"; return render(); }
@@ -1354,21 +1404,49 @@ function wire() {
     });
   });
 }
+function runJump(f, key) {
+  closeSheet();
+  restore();
+  const feat = f && FEATURES.find(x => x.f === f);
+  state.feature = feat ? f : null;
+  state.jump = feat ? null : key;
+  if (feat) feat.go(); else JUMPS.find(j => j.key === key).go();
+}
 document.getElementById("jump").onclick = (e) => {
   const b = e.target.closest("[data-jump]"); if (!b) return;
-  closeSheet();
-  state.feature = b.dataset.f || null;
-  const feat = state.feature && FEATURES.find(x => x.f === state.feature);
-  state.jump = feat ? null : b.dataset.jump;
-  if (feat) feat.go(); else JUMPS.find(j => j.key === b.dataset.jump).go();
+  runJump(b.dataset.f || null, b.dataset.jump);
   render();
 };
 document.getElementById("railseg").onclick = (e) => {
   const b = e.target.closest("[data-rail]"); if (!b) return;
   state.rail = b.dataset.rail; render();
 };
-document.getElementById("clkAm").onclick = () => { state.jump = null; state.feature = null; state.clock = "am"; state.arrived = false; state.arrivedVia = null; state.nudge = false; state.late = false; render(); };
-document.getElementById("clkPm").onclick = () => { state.jump = null; state.feature = null; state.clock = "pm"; state.late = false; tick(); render(); };
+/* Clock: time travel keeps who you are and what is booked, and resets the day's progress from the clean copy. */
+function setClock(c) {
+  closeSheet();
+  restore(["auth", "tab", "view", "studio", "booking", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"]);
+  state.clock = c; tick(); render();
+}
+document.getElementById("clkAm").onclick = () => setClock("am");
+document.getElementById("clkPm").onclick = () => setClock("pm");
+document.getElementById("clkNight").onclick = () => setClock("night");
+document.getElementById("devAttended").onclick = () => {   /* dev control: the studio marks attendance (server event) */
+  if (state.booking && state.arrived) { state.attended = true; alert("check", "Attended · Barre", "Marked by the studio"); toast("Studio marked attended"); }
+  else toast("Check in first");
+  render();
+};
+/* Dev check: running the same jump twice must give the same state. Open with ?dev to run it. */
+function checkJumps() {
+  const snap = () => JSON.stringify(state);
+  const bad = [];
+  [...JUMPS.map(j => [null, j.key]), ...FEATURES.filter(x => x.f).map(x => [x.f, null])].forEach(([f, k]) => {
+    runJump(f, k); const a = snap(); runJump(f, k); const b = snap();
+    if (a !== b) bad.push(f || k);
+  });
+  restore(); render();
+  if (bad.length) console.error("jump not repeatable:", bad.join(", ")); else console.log("checkJumps: all jumps repeatable");
+  return bad;
+}
 document.getElementById("sheet").onclick = (e) => { if (e.target.id === "sheet") closeSheet(); };
 document.getElementById("notice").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
@@ -1422,7 +1500,7 @@ document.getElementById("sheetBox").addEventListener("click", (e) => {
   }
 });
 render();
-
+if (new URLSearchParams(location.search).has("dev")) checkJumps();
 </script>
 </body>
 </html>
