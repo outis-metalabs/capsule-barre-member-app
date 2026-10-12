@@ -267,7 +267,36 @@
   @keyframes dot3 { 0%,100%{opacity:.35; transform:translateY(0)} 50%{opacity:1; transform:translateY(-3px)} }
   @media (prefers-reduced-motion:reduce){ .dots3 i{animation:none} }
   .ask-stage .hw { width:180px; height:140px; }
-  .ask-k { margin:0 0 8px; }
+  .ask-k { margin:2px 0 14px; text-align:center; font-size:12px; font-weight:600; color:#6F6760; letter-spacing:0; text-transform:none; }
+  .askhead { display:flex; justify-content:space-between; align-items:center; margin:0 0 4px; }
+  .askhead .link { margin:0; }
+  .reqbtn { position:relative; width:44px; height:44px; min-height:44px; display:grid; place-items:center; border:0; background:transparent; color:#8A8178; padding:0; margin:0 -10px 0 0; border-radius:50%; flex:none; }
+  .reqbtn .ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .reqbtn:focus-visible { outline:2px solid #C4566A; outline-offset:2px; }
+  .reqdot { position:absolute; top:10px; right:9px; width:8px; height:8px; border-radius:50%; background:#E8798A; box-shadow:0 0 0 2px #FFF7EA; }
+  .pawsend svg { width:29px; height:29px; display:block; stroke:none; }
+  .ai-form .btn.pawsend { background:#C4566A; box-shadow:0 3px 0 #9E3F52; }
+  .ai-form .btn.pawsend:disabled { background:#D9D3CC; box-shadow:none; opacity:1; }
+  .ask-dock { margin-top:auto; padding-top:8px; }
+  .ask-stage.grow { flex:1 1 auto; justify-content:center; min-height:0; }
+  .ask-stage.grow .hw { width:230px; height:180px; }
+  @media (min-height: 900px) { .ask-stage.grow .hw { width:260px; height:204px; } }
+  .ask-dock .ask-chips { margin:0 0 10px; }
+  @media (max-height: 640px) {
+    .ask-stage .hw, .ask-stage.grow .hw { width:96px; height:76px; }
+    .ask-stage { margin:0 0 4px; }
+    .ask-stage .hana-bubble { font-size:13px; padding:8px 12px; }
+    .ask-k { margin:0 0 6px; font-size:11px; }
+    .askhead { margin:0; }
+    .ask-dock .ask-chips .chip-btn { min-height:40px; padding:6px 10px; }
+  }
+  .pawsend svg g, .pawsend svg ellipse { fill:#fff !important; stroke:none !important; }
+  .pawsend { transition: transform .18s cubic-bezier(.3,1.6,.5,1), opacity .2s; }
+  .pawsend:active:not(:disabled) { transform: scale(.86, .8); }
+  .pawsend:disabled { cursor:default; }
+  .pawsend.squish svg { animation: pawsquish .38s ease; }
+  @keyframes pawsquish { 35% { transform: scale(1.15,.8) translateY(2px); } 70% { transform: scale(.94,1.08); } }
+  @media (prefers-reduced-motion: reduce) { .pawsend, .pawsend svg { transition:none !important; animation:none !important; } .pawsend:active:not(:disabled) { transform:none; } }
   .ask-thread { margin-bottom:10px; }
   .ask-chips { margin-top:4px; }
   .card.ai strong { display: block; font-size: 15px; }
@@ -612,6 +641,8 @@ const ICONS = {
   bell: '<svg class="ico" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5"/><path d="M5 16h14"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>',
   menu: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
   pass: '<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
+  inbox: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 13l2.2-7.1A1.5 1.5 0 0 1 7.6 5h8.8a1.5 1.5 0 0 1 1.4.9L20 13"/><path d="M4 13v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5h-4.5l-1.2 2h-4.6l-1.2-2z"/></svg>',
+  sendPaw: '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><ellipse cx="12" cy="15.6" rx="4.6" ry="3.9"/><ellipse cx="6.4" cy="10.4" rx="1.9" ry="2.3" transform="rotate(-18 6.4 10.4)"/><ellipse cx="9.9" cy="7" rx="1.9" ry="2.4" transform="rotate(-6 9.9 7)"/><ellipse cx="14.1" cy="7" rx="1.9" ry="2.4" transform="rotate(6 14.1 7)"/><ellipse cx="17.6" cy="10.4" rx="1.9" ry="2.3" transform="rotate(18 17.6 10.4)"/></g></svg>',
   ask: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 19h.01"/><path d="M9 9a3 3 0 1 1 4.2 2.8c-.8.4-1.2.9-1.2 1.7V14"/></svg>',
   studio: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>',
   spark: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',
@@ -644,7 +675,7 @@ const state = {
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
+  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, reqSeen: 0, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
 /* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
@@ -1256,7 +1287,7 @@ function hanaReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
   const studioQ = (line) => { state.askDraft = q; return R(line || "Good question for the studio. Want me to send it?", "greet",
-    { k: "request", kicker: "Question for " + sn, title: "Send your words to " + sn + "?", body: "“" + q + "”\nThey reply in Your requests.", acts: [["ai-question", "Send to " + sn]] }); };
+    { k: "request", kicker: "Question for " + sn, title: "Send your words to " + sn + "?", body: "“" + q + "”\nThey reply in Your requests, up top.", acts: [["ai-question", "Send to " + sn]] }); };
   if (state.aiSim === "offline") return R("My whiskers lost the signal. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
@@ -1401,13 +1432,16 @@ function assistant() {
     : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${i === lastIdx && !thinking ? "" : last && m.line === last.line && /signal/.test(m.line) && !thinking ? `<p class="tiny ask-nosig">No signal, not answered</p>` : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
     : m.card ? aiCardHtml(m.card, offline) : "").join("");
   const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.allChips ? 9 : last.lead ? 3 : 2) : []);
-  return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
-    <div class="hana-stage ask-stage"><div class="hana-bubble">${line}</div>${hana(pose)}</div>
-    <p class="kicker ask-k">Ask Hana · ${studioName(state.studio)} · nothing happens until you tap</p>
+  const waiting = state.requests.filter(r => r.status === "waiting").length, replied = state.requests.filter(r => r.status === "replied").length;
+  const fresh = replied > (state.reqSeen || 0), dot = fresh;
+  const reqLabel = "Your requests: " + waiting + " waiting, " + replied + " replied" + (fresh ? ", new reply" : "");
+  return `<div class="askhead"><button class="link backhit" type="button" data-act="tab-you">Back</button>
+    ${state.requests.length ? `<button class="reqbtn" type="button" data-act="ai-requests" aria-label="${reqLabel}">${ICONS.inbox}${dot ? `<i class="reqdot" aria-hidden="true"></i>` : ""}</button>` : ""}</div>
+    <div class="hana-stage ask-stage${state.chat.length ? "" : " grow"}"><div class="hana-bubble">${line}</div>${hana(pose)}</div>
+    <p class="ask-k">Asking about ${studioName(state.studio)} · I only act when you tap</p>
     <div class="thread ask-thread">${thread}</div>
-    ${chips.length ? `<div class="chips wrap ask-chips">${chips.map(chipHtml).join("")}</div>` : ""}
-    ${state.requests.length ? `<button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>` : ""}
-    <form id="aiForm" class="actions ai-form"><input id="aiText" placeholder="Try: book me tonight at 7" autocomplete="off" maxlength="200" /><button class="btn" type="submit" aria-label="Ask">${ICONS.spark}</button></form>`;
+    <div class="ask-dock">${chips.length ? `<div class="chips wrap ask-chips">${chips.map(chipHtml).join("")}</div>` : ""}
+    <form id="aiForm" class="actions ai-form"><input id="aiText" placeholder="Try: book me tonight at 7" autocomplete="off" maxlength="200" /><button class="btn pawsend" type="submit" aria-label="Send" disabled>${ICONS.sendPaw}</button></form></div>`;
 }
 function requestList() {
   if (!state.requests.length) return "";
@@ -1418,7 +1452,7 @@ function requestList() {
     ${r.reply ? `<div class="reply"><span class="lbl">Reply · ${r.when}</span>${esc(r.reply)}</div>` : `<p class="tiny" style="margin:8px 0 0">Sent ${r.when} · the studio replies here and in Alerts</p>`}</div>`).join("");
 }
 function requests() {
-  return `<button class="link" type="button" data-act="ai">Back</button>
+  return `<button class="link backhit" type="button" data-act="ai">Back</button>
     <h1>Your requests</h1><p class="sub">What you asked the studio, and what they said.</p>${requestList()}`;
 }
 function askLabel() { return { extend: "Extend pass", hold: "Hold pass", question: "Question" }[state.askType]; }
@@ -1834,7 +1868,7 @@ function wire() {
     if (act === "ai-wait") { state.studio = "cheongdam"; state.tab = "book"; state.view = "wait"; render(); }
     if (act === "ai-map") toast("Opening the map");
     if (act === "ai-retry") { state.aiSim = null; const lastQ = [...state.chat].reverse().find(m => m.role === "me"); state.chat = state.chat.filter(m => !(m.role === "ai" && m.pose === "paused" && /signal/.test(m.line || ""))); if (lastQ) { state.chat.pop(); aiAsk(lastQ.text); } else render(); }
-    if (act === "ai-requests") { state.view = "requests"; state.tab = "you"; render(); }
+    if (act === "ai-requests") { state.reqSeen = state.requests.filter(r => r.status === "replied").length; state.view = "requests"; state.tab = "you"; render(); }
     if (act === "late-ask") { state.askType = "question"; state.askText = "Can I still cancel tonight’s 7:00? I know it’s past 4:00."; state.ask = false; state.view = "ask"; state.tab = "you"; render(); }
     if (act === "ai-extend-ask") { state.view = "ai"; state.tab = "you"; render(); aiAsk("Extend my pass"); }
     if (act === "ai-book-7" && state.aiSim === "seatTaken") { state.aiSim = null; state.chat.push({ role: "ai", line: "Oops, that spot just went. Here's what's open.", pose: "paused", chips: [],
@@ -1856,9 +1890,11 @@ function wire() {
       state.chat.push({ role: "ai", line: "That didn't send. Your words are saved.", pose: "paused", chips: [], card: { k: "request", kicker: "Not sent", title: askLabel() + " · saved", body: state.askText, acts: [["ai-question", "Try again"]] } }); state.view = "ai"; render(); return; }
     if (act === "send-ask") { state.askText = document.getElementById("askText")?.value.trim() || askDefault(); state.ask = true;
       state.requests.unshift({ type: state.askType, text: state.askText, studio: state.studio, when: "Today", status: "waiting" });
-      state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Your requests"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent"); render(); }
+      state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Your requests"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent · replies land up top"); render(); }
     if (act === "logout") { resetSession(); state.auth = "welcome"; state.mode = "login"; state.view = null; state.password = ""; render(); }
   };
+  const aiT = document.getElementById("aiText"), aiB = document.querySelector(".pawsend");
+  if (aiT && aiB) { aiT.addEventListener("input", () => { aiB.disabled = !aiT.value.trim(); }); aiB.addEventListener("pointerdown", () => { if (aiB.disabled) return; aiB.classList.remove("squish"); void aiB.offsetWidth; aiB.classList.add("squish"); }); }
   document.querySelectorAll("[data-otp]").forEach(inp => {
     inp.addEventListener("input", (ev) => {
       const i = Number(inp.dataset.otp);
@@ -1978,7 +2014,7 @@ document.getElementById("view").addEventListener("submit", (e) => {
     render();
   }
   if (e.target.id === "newPassForm") saveNewPass();
-  if (e.target.id === "aiForm") { const i = document.getElementById("aiText"); aiAsk(i.value); }
+  if (e.target.id === "aiForm") { const i = document.getElementById("aiText"); if (!i.value.trim()) return; aiAsk(i.value); }
 });
 document.getElementById("sheetBox").addEventListener("click", (e) => {
   const a = e.target.closest("[data-act]"); if (!a) return;
