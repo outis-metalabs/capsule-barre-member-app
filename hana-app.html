@@ -232,6 +232,10 @@
   .notice-acts { display: flex; gap: 8px; }
   .notice-acts button { flex: 1; min-height: 44px; border: 0; border-radius: 14px; background: var(--ox); color: var(--ox-ink); font-weight: 700; font-size: 12px; }
   .notice-acts button.quiet { background: #F3E9DC; color: var(--ink); }
+  .inbox-filter { margin: 0 0 12px; flex-wrap: wrap; }
+  .inbox-filter .chip-btn { flex: 0 0 auto; padding: 0 14px; }
+  .inbox-empty strong { display:block; font-size:15px; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   .alert-row {
     display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left;
     background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; position: relative;
@@ -274,7 +278,7 @@
   .reqbtn { position:relative; width:44px; height:44px; min-height:44px; display:grid; place-items:center; border:0; background:transparent; color:#6F6760; padding:0; margin:0 -10px 0 0; border-radius:50%; flex:none; }
   .reqbtn .ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   .reqbtn:focus-visible { outline:2px solid #B04A5E; outline-offset:2px; }
-  .reqdot { position:absolute; top:10px; right:9px; width:8px; height:8px; border-radius:50%; background:#E8798A; box-shadow:0 0 0 2px #FFF7EA; }
+  .reqbtn .dot, .reqdot { position:absolute; top:10px; right:9px; width:8px; height:8px; border-radius:50%; background:#E8798A; box-shadow:0 0 0 2px #FFF7EA; }
   .pawsend svg { width:29px; height:29px; display:block; stroke:none; }
   .ai-form .btn.pawsend { background:#B04A5E; box-shadow:0 3px 0 #9E3F52; }
   .ai-form .btn.pawsend:disabled { background:#D9D3CC; box-shadow:none; opacity:1; }
@@ -674,7 +678,7 @@ const SEED_ALERTS = () => [
 ];
 const NOTIFY = () => ({ booked: true, changed: true, day: true, hours: true });
 const SEED_REQUESTS = () => [
-  { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", reply: "Yes — book her a drop-in at the desk. Soo Kim" }
+  { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", seen: false, reply: "Yes — book her a drop-in at the desk. Soo Kim" }
 ];
 const state = {
   justBooked: false, daysSinceVisit: 0, clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
@@ -683,7 +687,7 @@ const state = {
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, reqSeen: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
+  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, inboxFilter: "all", inboxNew: [], inboxOrigin: null, reqDetail: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
 /* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
@@ -867,6 +871,14 @@ function closeSheet() {
 document.addEventListener("pointerdown", (e) => { const t = e.target.closest && e.target.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; }, true);
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { const t = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; } }, true);
 document.addEventListener("keydown", (e) => {
+  const t = e.target;
+  if (t && t.matches && t.matches('[role="tab"][data-act="inbox-filter"]') && /^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key)) {
+    const tabs = [...document.querySelectorAll('#view [role="tab"][data-act="inbox-filter"]')], i = tabs.indexOf(t);
+    const n = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : (i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    e.preventDefault(); setInboxFilter(tabs[n].dataset.k); return;
+  }
+});
+document.addEventListener("keydown", (e) => {
   const sh = document.getElementById("sheet"); if (!sh || !sh.classList.contains("open")) return;
   if (e.key === "Escape") { e.preventDefault(); closeSheet(); return; }
   if (e.key !== "Tab") return;
@@ -878,12 +890,18 @@ document.addEventListener("keydown", (e) => {
   else if (e.shiftKey && a === first) { e.preventDefault(); last.focus(); }
   else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
 });
+function inboxUnseen() { return state.alerts.filter(a => a.unread && a.k !== "send").length + state.requests.filter(r => r.status === "replied" && !r.seen).length; }
+function inboxBtn(cls) {
+  const n = inboxUnseen(), w = state.requests.filter(r => r.status === "waiting").length;
+  const label = "Inbox" + (n ? ": " + n + " new" : ": nothing new") + (w ? ", " + w + " waiting for the studio" : "");
+  return `<button class="${cls} inboxbtn" type="button" data-act="inbox" aria-label="${label}">${ICONS.inbox}${n ? '<i class="dot" aria-hidden="true"></i>' : ""}</button>`;
+}
 function topbar() {
   const p = pass();
   return `<div class="top">
     <button class="pill" type="button" data-act="studios">${state.studio === "geumho" ? "Geumho" : "Cheongdam"} ▾</button>
     <span class="chip">${p.left} left · ${p.until}</span>
-    <button class="bell" type="button" data-act="alerts" aria-label="Alerts">${ICONS.bell}${state.alerts.some(a => a.unread) ? '<i class="dot"></i>' : ""}</button>
+    ${inboxBtn("bell")}
     <button class="bell" type="button" data-act="menu" aria-label="Menu">${ICONS.menu}</button>
   </div>`;
 }
@@ -1215,9 +1233,8 @@ function you() {
   const p = pass();
   return `<div class="who"><div class="avatar">MP</div><div><h1>${esc(state.name)}</h1><p class="sub">${esc(state.phone)}</p></div></div>
     <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>${p.left} left</strong><span>${p.name} · ${p.until}</span></div><span class="go">›</span></button>
-    <button class="menu-row" type="button" data-act="alerts">${ICONS.bell}<div><strong>Alerts</strong><span>${state.alerts.filter(a => a.unread).length} new</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="inbox">${ICONS.inbox}<div><strong>Inbox</strong><span>${inboxUnseen() ? inboxUnseen() + " new · " : ""}Studio replies and alerts</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Hana</strong><span>Book, check, extend or hold — by typing</span></div><span class="go">›</span></button>
-    <button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Studios</strong><span>Geumho 8/20 · Cheongdam 2/10</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="${state.location === "on" ? "location-off" : "location-ask"}">${ICONS.pin}<div><strong>Arrival</strong><span>${state.location === "on" ? "Nudge when close · location on" : "Tap I’m here · location off"}</span></div><span class="go">›</span></button>
     <div class="actions"><button class="btn ghost" type="button" data-act="logout">Log out</button></div>`;
@@ -1234,22 +1251,68 @@ function passScreen() {
     <p class="kicker">Usage</p>${used || `<div class="card"><p class="sub" style="margin:0">No visits yet.</p></div>`}
     <div class="actions"><button class="btn ghost" type="button" data-act="ai-extend-ask">Ask to extend or hold</button></div>`;
 }
-function alerts() {
-  const icon = k => { const s = ICONS[k] || ICONS.bell; return s.includes('class="ico"') ? s : s.replace("<svg ", '<svg class="ico" '); };
-  const rows = state.alerts.map((a, i) => `<button class="alert-row ${a.unread ? "unread" : ""}" type="button" data-act="read" data-i="${i}">
-      <span class="alert-ico">${icon(a.k)}</span>
-      <div><strong>${a.t}</strong><span>${a.d}</span></div>
-      <em>${a.when}</em></button>`).join("");
+function inboxItems() {
+  const rank = w => { if (/just now/i.test(w)) return 0; if (/today/i.test(w)) return 1; const d = ["wed","tue","mon","sun","sat","fri","thu"].indexOf((w || "").slice(0, 3).toLowerCase()); return d < 0 ? 9 : 2 + d; };
+  const short = w => /^\w{3} \d/.test(w || "") ? w.slice(0, 3) : w;
+  const lbl = { extend: "Extend pass", hold: "Hold pass", question: "Question" };
+  const items = [];
+  state.alerts.forEach((a, i) => { if (a.k !== "send") items.push({ key: "a" + i, kind: "alerts", ico: a.k, t: a.t, d: a.d, when: a.when, r: rank(a.when), o: items.length }); });
+  state.requests.forEach((q, i) => items.push({ key: "r" + i, kind: "replies", ico: "chat",
+    t: q.status === "replied" ? studioName(q.studio) + " replied" : lbl[q.type] + " · waiting", d: q.status === "replied" ? q.reply : q.text, when: short(q.when), r: rank(q.when), o: items.length }));
+  return items.sort((x, y) => x.r - y.r || x.o - y.o);
+}
+function inboxIcon(k) { const s = ICONS[k] || ICONS.bell; return s.includes('class="ico"') ? s : s.replace("<svg ", '<svg class="ico" '); }
+function inbox() {
+  const f = state.inboxFilter || "all";
+  const items = inboxItems().filter(x => f === "all" || x.kind === f);
+  const tab = (k, l) => `<button type="button" role="tab" id="itab-${k}" class="chip-btn ${f === k ? "on" : ""}" data-act="inbox-filter" data-k="${k}" aria-selected="${f === k}" aria-controls="inbox-list" tabindex="${f === k ? 0 : -1}">${l}</button>`;
+  const rows = items.map(x => `<button class="alert-row ${state.inboxNew.includes(x.key) ? "unread" : ""}" type="button" data-act="inbox-open" data-key="${x.key}">
+      <span class="alert-ico">${inboxIcon(x.ico)}</span>
+      <div><strong>${x.t}</strong><span>${esc(x.d)}</span></div>
+      <em>${state.inboxNew.includes(x.key) ? '<i class="sr">New, </i>' : ""}${x.when}</em></button>`).join("");
+  const empty = `<div class="card inbox-empty"><strong>${f === "replies" ? "No studio replies yet" : f === "alerts" ? "No alerts yet" : "All quiet"}</strong><p class="sub" style="margin:4px 0 0">${f === "alerts" ? "Bookings, reminders and check-ins show up here." : f === "replies" ? "When you ask the studio something, the reply lands here." : "Studio replies and alerts, like bookings and reminders, land here."}</p></div>`;
   const sw = (key, label, sub) => `<button class="switch-row" type="button" data-act="toggle" data-k="${key}" aria-pressed="${state.notify[key]}">
       <div><strong>${label}</strong><span>${sub}</span></div><span class="switch ${state.notify[key] ? "on" : ""}"><i></i></span></button>`;
-  return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
-    <h1>Alerts</h1>
-    ${rows}
-    <p class="kicker" style="margin-top:24px">Notify me</p>
+  return `<button class="link backhit" type="button" data-act="inbox-close">Back</button>
+    <h1>Inbox</h1>
+    <div class="chips inbox-filter" role="tablist" aria-label="Show">${tab("all", "All")}${tab("replies", "Studio replies")}${tab("alerts", "Alerts")}</div>
+    <div id="inbox-list" role="tabpanel" aria-labelledby="itab-${f}">${rows || empty}</div>
+    ${f === "alerts" ? `<p class="kicker" style="margin-top:24px">Notify me</p>
     ${sw("booked", "Booked, moved, cancelled", "Confirmations")}
     ${sw("changed", "Studio changes a class", "Time, teacher, or cancelled")}
     ${sw("day", "1 day before", "The evening before class")}
-    ${sw("hours", "3 hours before", "Just before free cancel ends")}`;
+    ${sw("hours", "3 hours before", "Just before free cancel ends")}` : `<button class="link" type="button" data-act="inbox-filter" data-k="alerts" style="margin-top:8px">Alert settings ›</button>`}`;
+}
+function openInbox(filter) {
+  state.inboxFilter = filter || "all";
+  /* opening the inbox counts as seeing it: the dot clears; this visit still marks the new rows */
+  const f = state.inboxFilter;
+  const shown = inboxItems().filter(x => f === "all" || x.kind === f);
+  const fresh = shown.filter(x => x.key[0] === "a" ? state.alerts[+x.key.slice(1)].unread : state.requests[+x.key.slice(1)].status === "replied" && !state.requests[+x.key.slice(1)].seen).map(x => x.key);
+  state.inboxNew = fresh;
+  /* only what this filter shows counts as seen */
+  fresh.forEach(k => { const i = +k.slice(1); if (k[0] === "a") state.alerts[i].unread = false; else state.requests[i].seen = true; });
+  if (state.view !== "inbox" && state.view !== "reqdetail") state.inboxOrigin = { tab: state.tab, view: state.view };
+  state.view = "inbox"; state.tab = "you"; render();
+}
+function setInboxFilter(k, focus) {
+  state.inboxFilter = k;
+  /* switching filter shows more rows: mark those as seen too, keep their new marker for this visit */
+  inboxItems().filter(x => k === "all" || x.kind === k).forEach(x => { const i = +x.key.slice(1);
+    if (x.key[0] === "a" && state.alerts[i].unread) { state.alerts[i].unread = false; state.inboxNew.push(x.key); }
+    if (x.key[0] === "r" && state.requests[i].status === "replied" && !state.requests[i].seen) { state.requests[i].seen = true; state.inboxNew.push(x.key); } });
+  render();
+  document.querySelector(`#view [data-act="inbox-filter"][data-k="${k}"]`)?.focus();
+}
+function reqDetail() {
+  const q = state.requests[state.reqDetail]; if (!q) return inbox();
+  const lbl = { extend: "Extend pass", hold: "Hold pass", question: "Question" };
+  return `<button class="link backhit" type="button" data-act="inbox-back">Back</button>
+    <p class="kicker">${studioName(q.studio)} · ${q.when}</p><h1>${lbl[q.type]}</h1>
+    <div class="card req"><div class="row"><div><strong>You asked</strong><p class="sub" style="margin:4px 0 0">${esc(q.text)}</p></div>
+    <span class="tag ${q.status === "replied" ? "ok" : "warn"}">${q.status === "replied" ? "Replied" : "Waiting"}</span></div>
+    ${q.reply ? `<div class="reply"><span class="lbl">Reply from ${studioName(q.studio)}</span>${esc(q.reply)}</div>` : `<p class="tiny" style="margin:8px 0 0">Sent ${q.when} · the reply lands in your inbox</p>`}</div>
+    <p class="sub">${q.type === "question" ? "A question, not a change." : "A request, not a change. Your pass stays the same until the owner decides."}</p>`;
 }
 function askDefault() {
   const s = studioName(state.studio);
@@ -1320,7 +1383,7 @@ function hanaReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
   const studioQ = (line) => { state.askDraft = q; return R(line || "Good question for the studio. Want me to send it?", "greet",
-    { k: "request", kicker: "Question for " + sn, title: "Send your words to " + sn + "?", body: "“" + q + "”\nThey reply in Your requests, up top.", acts: [["ai-question", "Send to " + sn]] }); };
+    { k: "request", kicker: "Question for " + sn, title: "Send your words to " + sn + "?", body: "“" + q + "”\nReplies land in your inbox, up top.", acts: [["ai-question", "Send to " + sn]] }); };
   if (state.aiSim === "offline") return R("My whiskers lost the signal. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
@@ -1358,7 +1421,7 @@ function hanaReply(q) {
   /* 2 pass */
   const pending = state.requests.find(r => r.status === "waiting" && r.studio === state.studio && r.type !== "question");
   if (/\b(extend|extension|hold|freeze|pause)\b|more time|away next/.test(s)) return pending
-    ? R("Still deciding. Your pass stays the same for now.", "greet", { k: "request", kicker: "Already asked", title: sn + " is still deciding", body: "Your pass still ends " + p.until + " until they reply.", acts: [["ai-requests", "Your requests"]] })
+    ? R("Still deciding. Your pass stays the same for now.", "greet", { k: "request", kicker: "Already asked", title: sn + " is still deciding", body: "Your pass still ends " + p.until + " until they reply.", acts: [["ai-requests", "Open inbox"]] })
     : R("I can ask the studio for you. Your pass stays the same until they reply.", p.left <= 3 ? "low" : "greet",
       { k: "request", kicker: "A request, not a change", title: "Ask " + sn + " to extend?", body: "Your pass still ends " + p.until + " until the owner decides.", acts: [["ai-extend", "Send to " + sn]] });
   /* 1 booking */
@@ -1468,10 +1531,8 @@ function assistant() {
     : m.card ? aiCardHtml(m.card, offline) : "").join("");
   const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.allChips ? 9 : last.lead ? 3 : 2) : []);
   const waiting = state.requests.filter(r => r.status === "waiting").length, replied = state.requests.filter(r => r.status === "replied").length;
-  const fresh = replied > (state.reqSeen || 0), dot = fresh;
-  const reqLabel = "Your requests: " + waiting + " waiting, " + replied + " replied" + (fresh ? ", new reply" : "");
   return `<div class="askhead"><button class="link backhit" type="button" data-act="tab-you">Back</button>
-    ${state.requests.length ? `<button class="reqbtn" type="button" data-act="ai-requests" aria-label="${reqLabel}">${ICONS.inbox}${dot ? `<i class="reqdot" aria-hidden="true"></i>` : ""}</button>` : ""}</div>
+    ${inboxBtn("reqbtn")}</div>
     <div class="hana-stage ask-stage${state.chat.length ? "" : " grow"}"><div class="hana-bubble">${line}</div>${hana(pose)}</div>
     <p class="ask-k">Asking about ${studioName(state.studio)} · I only act when you tap</p>
     <div class="thread ask-thread">${thread}</div>
@@ -1484,12 +1545,9 @@ function requestList() {
   return state.requests.map(r => `<div class="card req">
     <div class="row"><div><strong>${lbl[r.type]} · ${studioName(r.studio)}</strong><p class="sub" style="margin:4px 0 0">${esc(r.text)}</p></div>
     <span class="tag ${r.status === "replied" ? "ok" : "warn"}">${r.status === "replied" ? "Replied" : "Waiting"}</span></div>
-    ${r.reply ? `<div class="reply"><span class="lbl">Reply · ${r.when}</span>${esc(r.reply)}</div>` : `<p class="tiny" style="margin:8px 0 0">Sent ${r.when} · the studio replies here and in Alerts</p>`}</div>`).join("");
+    ${r.reply ? `<div class="reply"><span class="lbl">Reply · ${r.when}</span>${esc(r.reply)}</div>` : `<p class="tiny" style="margin:8px 0 0">Sent ${r.when} · the reply lands in your inbox</p>`}</div>`).join("");
 }
-function requests() {
-  return `<button class="link backhit" type="button" data-act="ai">Back</button>
-    <h1>Your requests</h1><p class="sub">What you asked the studio, and what they said.</p>${requestList()}`;
-}
+
 function askLabel() { return { extend: "Extend pass", hold: "Hold pass", question: "Question" }[state.askType]; }
 function ask() {
   const p = pass();
@@ -1498,14 +1556,14 @@ function ask() {
     <h1>Sent to ${studioName(state.studio)}</h1>
     <div class="card"><div class="meta"><span class="tag ok">${askLabel()}</span><span class="tag warn">Still ends ${p.until}</span></div>
       <p class="sub" style="margin:12px 0 0">${esc(state.askText)}</p></div>
-    <p class="sub">The owner sees this on today’s list. The reply lands here and in Alerts. Nothing changes on your pass until they decide.</p>
-    <div class="actions"><button class="btn ghost" type="button" data-act="ai-requests">Your requests</button></div>`;
+    <p class="sub">The owner sees this on today’s list. The reply lands in your inbox, up top. Nothing changes on your pass until they decide.</p>
+    <div class="actions"><button class="btn ghost" type="button" data-act="ai-requests">Open inbox</button></div>`;
   return `<button class="link backhit" type="button" data-act="ai">Back</button>
     <h1>Request to ${studioName(state.studio)}</h1>
     <p class="sub">${studioName(state.studio)} · ${p.left} of ${p.total} left · ends ${p.until}</p>
     <div class="chips">${chip("extend", "Extend pass")}${chip("hold", "Hold pass")}${chip("question", "Question")}</div>
     <div class="field"><label>Message</label><textarea id="askText" rows="4" placeholder="Ask in one line">${esc(state.askText || askDefault())}</textarea></div>
-    <p class="tiny">The studio replies in Alerts. Your pass still ends ${p.until} until they say otherwise.</p>
+    <p class="tiny">The studio replies in your inbox. Your pass still ends ${p.until} until they say otherwise.</p>
     <div class="actions"><button class="btn" type="button" data-act="send-ask">Send to ${studioName(state.studio)}</button></div>`;
 }
 const BOOKING7 = { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Yuna Choi", className:"Barre", spot:3, status:"confirmed" };
@@ -1554,7 +1612,8 @@ const JUMPS = [
   { key: "schedule", label: "Schedule", note: "Upcoming on top, history below the line.", go: () => { inApp(); state.tab = "schedule"; } },
   { key: "manage",   label: "Cancel or change", note: "Change is one move. Cancel is free until 4:00pm and asks first.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
   { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
-  { key: "alerts",   label: "Alerts", note: "Booked, expiry, attended, arrived. Toggles at the bottom.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { key: "alerts",   label: "Inbox", note: "One inbox: studio replies and alerts, newest first. Filters: All, Studio replies, Alerts. One dot for unseen items.", go: () => { inApp(); state.tab = "you"; state.view = "inbox"; state.inboxFilter = "all"; state.inboxNew = ["a0", "r0"]; } },
+  { key: "inbox-detail", label: "Inbox · request detail", note: "A studio reply opens its request: what you asked, the reply, the status.", go: () => { inApp(); state.tab = "you"; state.view = "reqdetail"; state.reqDetail = 0; } },
   { key: "ai",       label: "Ask Hana", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Book me tonight at 7", true); } },
   { key: "pass",     label: "Pass", note: "2 / 10 until 14 Oct, as the server returns it. Previous pass and visits.", go: () => { inApp(); state.tab = "you"; state.view = "pass"; } },
   { key: "you",      label: "You", note: "Pass, alerts, ask, studios, arrival, log out.", go: () => { inApp(); state.tab = "you"; } }
@@ -1591,9 +1650,9 @@ const FEATURES = [
   { f: "F25", label: "Previous passes", note: "The finished intro pass and the visits on this one.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "pass"; } },
   { f: "F26", label: "Extend or hold", note: "From Pass or by typing. The card says “a request, not a change”; Send opens one short form to the owner’s to-do. The screen still says 14 Oct.", go: () => { inApp(); state.studio = "cheongdam"; state.ask = false; state.askType = "extend"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Extend my pass", true); } },
   { g: "Alerts & ask" },
-  { f: "F27", label: "Activity list", note: "Typed rows with a time. Unread rows carry a dot. Read state lives on the phone; the events live on the server.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { f: "F27", label: "Activity list", note: "Typed rows with a time. Lives in the one inbox, newest first. New rows carry a dot. Read state lives on the phone; the events live on the server.", go: () => { inApp(); state.tab = "you"; state.view = "inbox"; state.inboxFilter = "all"; state.inboxNew = ["a0", "r0"]; } },
   { f: "F28", label: "Push", note: "The arrival nudge is the push you can see here. Reminders, offers and replies use the same channel.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
-  { f: "F29", label: "Alert toggles", note: "Four switches under the list: confirmations, studio changes, 1 day before, 3 hours before.", go: () => { inApp(); state.tab = "you"; state.view = "alerts"; } },
+  { f: "F29", label: "Alert toggles", note: "Four switches under the Alerts filter of the inbox: confirmations, studio changes, 1 day before, 3 hours before.", go: () => { inApp(); state.tab = "you"; state.view = "inbox"; state.inboxFilter = "alerts"; } },
   { f: "F30", label: "Studio request form", note: "The confirm step behind the extend / hold card. Three types, one line, one button. Not a menu item of its own.", go: () => { inApp(); state.studio = "cheongdam"; state.ask = false; state.askType = "extend"; state.tab = "you"; state.view = "ask"; } },
   { f: "F31", label: "Assistant", note: "“Book me tonight at 7” → a card from Cheongdam’s schedule with one button. “How many left?” → both balances. “Extend my pass” → a request, not a change. Cards, never free chat.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Book me tonight at 7", true); aiAsk("How many left?", true); } },
   { g: "Streak & friends" },
@@ -1617,8 +1676,8 @@ function currentJump() {
   if (state.auth === "newpass") return "signin";
   if (state.view === "spot") return "reformer";
   if (state.view === "wait") return "wait";
-  if (state.view === "alerts") return "alerts";
-  if (state.view === "ask" || state.view === "ai" || state.view === "requests") return state.jump && state.jump.startsWith("ask-") ? state.jump : "ai";
+  if (state.view === "alerts" || state.view === "inbox" || state.view === "reqdetail") return state.jump && /^(alerts|inbox|inbox-)/.test(state.jump) ? state.jump : "alerts";
+  if (state.view === "ask" || state.view === "ai") return state.jump && state.jump.startsWith("ask-") ? state.jump : "ai";
   if (state.view === "pass") return "pass";
   if (state.view === "low") return "m-low";
   if (state.view === "streak") return "streak";
@@ -1676,10 +1735,10 @@ function render() {
   else if (state.view === "wait") view.innerHTML = waitlist();
   else if (state.view === "pass") view.innerHTML = passScreen();
   else if (state.view === "low") view.innerHTML = lowScreen();
-  else if (state.view === "alerts") view.innerHTML = alerts();
+  else if (state.view === "inbox" || state.view === "alerts" || state.view === "requests") view.innerHTML = inbox();
+  else if (state.view === "reqdetail") view.innerHTML = reqDetail();
   else if (state.view === "ask") view.innerHTML = ask();
   else if (state.view === "ai") view.innerHTML = assistant();
-  else if (state.view === "requests") view.innerHTML = requests();
   else if (state.view === "streak") view.innerHTML = streakScreen();
   else if (state.view === "friends") view.innerHTML = friendsScreen();
   else if (state.view === "add-friend") view.innerHTML = addFriendScreen();
@@ -1765,7 +1824,7 @@ function openStudios() {
 function openMenu() {
   sheetBox(`<p class="kicker">Menu</p><h1>More</h1>
     <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>Pass</strong><span>History and remaining</span></div></button>
-    <button class="menu-row" type="button" data-act="alerts">${ICONS.bell}<div><strong>Alerts</strong></div></button>
+    <button class="menu-row" type="button" data-act="inbox">${ICONS.inbox}<div><strong>Inbox</strong><span>Studio replies and alerts</span></div></button>
     <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Hana</strong></div></button>
     <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Switch studio</strong></div></button>
     <button class="btn ghost" type="button" data-act="close">Close</button>`);
@@ -1897,7 +1956,13 @@ function wire() {
     if (act === "move") openMove();
     if (act === "pass") { state.view = "pass"; render(); }
     if (act === "low") { state.tab = "today"; state.view = "low"; render(); }
-    if (act === "alerts") { state.view = "alerts"; render(); }
+    if (act === "alerts") return openInbox("alerts");
+    if (act === "inbox") return openInbox("all");
+    if (act === "inbox-filter") { setInboxFilter(btn.dataset.k); return; }
+    if (act === "inbox-close") { const o = state.inboxOrigin || { tab: "you", view: null }; state.tab = o.tab; state.view = o.view; state.inboxOrigin = null; render(); return; }
+    if (act === "inbox-back") { state.view = "inbox"; render(); return; }
+    if (act === "inbox-open") { const k = btn.dataset.key, i = +k.slice(1); state.inboxNew = state.inboxNew.filter(x => x !== k);
+      if (k[0] === "r") { state.reqDetail = i; state.view = "reqdetail"; } render(); return; }
     if (act === "ask") { state.view = "ask"; render(); }
     if (act === "ai") { state.view = "ai"; state.tab = "you"; render(); }
     if (act === "ai-chip") { if (["Great", "Okay", "Tired", "Stressed"].includes(btn.dataset.q)) aiAsk("I feel " + btn.dataset.q.toLowerCase()); else aiAsk(btn.dataset.q); }
@@ -1907,7 +1972,7 @@ function wire() {
     if (act === "ai-wait") { state.studio = "cheongdam"; state.tab = "book"; state.view = "wait"; render(); }
     if (act === "ai-map") toast("Opening the map");
     if (act === "ai-retry") { state.aiSim = null; const lastQ = [...state.chat].reverse().find(m => m.role === "me"); state.chat = state.chat.filter(m => !(m.role === "ai" && m.pose === "paused" && /signal/.test(m.line || ""))); if (lastQ) { state.chat.pop(); aiAsk(lastQ.text); } else render(); }
-    if (act === "ai-requests") { state.reqSeen = state.requests.filter(r => r.status === "replied").length; state.view = "requests"; state.tab = "you"; render(); }
+    if (act === "ai-requests") return openInbox("replies");
     if (act === "late-ask") { state.askType = "question"; state.askText = "Can I still cancel tonight’s 7:00? I know it’s past 4:00."; state.ask = false; state.view = "ask"; state.tab = "you"; render(); }
     if (act === "ai-extend-ask") { state.view = "ai"; state.tab = "you"; render(); aiAsk("Extend my pass"); }
     if (act === "ai-book-7" && state.aiSim === "seatTaken") { state.aiSim = null; state.chat.push({ role: "ai", line: "Oops, that spot just went. Here's what's open.", pose: "paused", chips: [],
@@ -1929,7 +1994,7 @@ function wire() {
       state.chat.push({ role: "ai", line: "That didn't send. Your words are saved.", pose: "paused", chips: [], card: { k: "request", kicker: "Not sent", title: askLabel() + " · saved", body: state.askText, acts: [["ai-question", "Try again"]] } }); state.view = "ai"; render(); return; }
     if (act === "send-ask") { state.askText = document.getElementById("askText")?.value.trim() || askDefault(); state.ask = true;
       state.requests.unshift({ type: state.askType, text: state.askText, studio: state.studio, when: "Today", status: "waiting" });
-      state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Your requests"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent · replies land up top"); render(); }
+      state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Open inbox"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent · replies land up top"); render(); }
     if (act === "logout") { resetSession(); state.auth = "welcome"; state.mode = "login"; state.view = null; state.password = ""; render(); }
   };
   const aiT = document.getElementById("aiText"), aiB = document.querySelector(".pawsend");
@@ -2060,9 +2125,10 @@ document.getElementById("sheetBox").addEventListener("click", (e) => {
   const act = a.dataset.act;
   if (act === "close" || act === "share-cancel") return closeSheet();
   if (act === "share-app") { closeSheet(); return closeShare(true, a.dataset.app); }
-  if (["pass","alerts","ask","ai","studios"].includes(act)) {
+  if (["pass","alerts","ask","ai","studios","inbox"].includes(act)) {
     closeSheet();
     if (act === "studios") return openStudios();
+    if (act === "inbox" || act === "alerts") return openInbox(act === "alerts" ? "alerts" : "all");
     state.view = act; state.tab = "you"; render();
   }
 });
