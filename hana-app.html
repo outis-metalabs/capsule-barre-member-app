@@ -1393,7 +1393,7 @@ const schedBody = (rows) => rows.map(c => c[0] + " " + c[1] + (c[2] ? " · " + c
 /* canonical safety wording (ask-hana-spec §3) */
 const SAFE_LINE = "Please see a doctor or your instructor before class.";
 const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
-const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collaps\w*|chest (pain|hurts?|tight\w*|pressure)|heart attack|seizures?|convulsi\w*|heavy bleeding|bleeding (a lot|heavily|badly|won.?t stop)|bleeding heavily|(can.?t|cannot|can not|trouble|hard to|difficulty|struggling to) breath(e|ing)?|short(ness)? of breath|emergency)\b/;
+const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collaps\w*|chest (pain|hurts?|tight\w*|pressure)|heart attack|seizures?|convulsi\w*|heavy bleeding|bleeding (a lot|heavily|badly|won.?t stop)|bleeding heavily|(can.?t|cannot|can not|trouble|hard to|difficulty|struggling to) breath(e|ing)?|short(ness)? of breath|emergency|ambulances?|sos|call (a|the|my) (doctor|dr\.?|gp)|(need|get|see|want) (a|the|my) (doctor|dr\.?) (now|right now|right away|asap|urgently|immediately)|urgent(ly)? (need )?(a )?doctor)(?![\w-])/;
 function hanaReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
@@ -1721,7 +1721,41 @@ function currentJump() {
   }
   return state.tab;
 }
+/* Keep keyboard focus across re-renders: same control if it still exists, the Ask input on Ask,
+   the control you left from when you come back, else the screen heading. Never steals focus on load or from sheets. */
+function focusKey(el) {
+  if (!el || el === document.body) return null;
+  if (el.id) return "#" + CSS.escape(el.id);
+  const a = ["data-act","data-k","data-key","data-jump","data-f","data-rail","data-otp","data-i"].filter(n => el.hasAttribute(n)).map(n => `[${n}="${CSS.escape(el.getAttribute(n))}"]`).join("");
+  if (!a) return null;
+  const box = el.closest("#tabs") ? "#tabs " : el.closest("#view") ? "#view " : "";
+  const all = [...document.querySelectorAll(box + a)];
+  return { sel: box + a, n: Math.max(0, all.indexOf(el)) };
+}
+function findKey(k) { if (!k) return null; if (typeof k === "string") return document.querySelector(k); const all = document.querySelectorAll(k.sel); return all[k.n] || all[0] || null; }
+function screenKey() { return state.auth + "|" + state.tab + "|" + (state.view || ""); }
 function render() {
+  const fa = document.activeElement, sheet = document.getElementById("sheetBox");
+  const fWas = fa && fa !== document.body && !(sheet && sheet.contains(fa)) && document.contains(fa) ? focusKey(fa) : null;
+  const scrPrev = render.lastScr || screenKey(); render.leftFrom = render.leftFrom || {};
+  _render();
+  const scr = screenKey(), changed = scr !== scrPrev; render.lastScr = scr;
+  if (changed && fWas) render.leftFrom[scrPrev] = fWas;
+  if (!fWas || (document.activeElement && document.activeElement !== document.body && document.contains(document.activeElement) && document.activeElement !== fa)) return;
+  if (document.activeElement === fa && document.contains(fa)) return;
+  const go = el => { if (!el) return false; el.focus({ preventScroll: true }); return document.activeElement === el; };
+  if (!changed && go(findKey(fWas))) return;
+  if (state.view === "ai" && go(document.getElementById("aiText"))) return;
+  const back = render.leftFrom[scr]; delete render.leftFrom[scr];
+  const viaTab = typeof fWas === "object" && fWas.sel.startsWith("#tabs");
+  if (viaTab && go(findKey(fWas))) return;   /* tab bar: stay on the tab you pressed */
+  const isBack = typeof fWas === "object" && /data-act="[^"]*(back|close)/.test(fWas.sel);
+  if (changed && isBack && back && go(findKey(back))) return;   /* Back: the control you left from */
+  if (go(findKey(fWas))) return;
+  const h = document.querySelector("#view h1") || document.querySelector("#view h2") || document.querySelector("#view .backhit, #view button");
+  if (h) { if (/^H/.test(h.tagName) && !h.hasAttribute("tabindex")) h.setAttribute("tabindex", "-1"); go(h); }
+}
+function _render() {
   const onToday = state.auth === "app" && state.tab === "today" && !state.view;
   if (onToday) { if (render.prev !== "today" && state.justBooked === "seen") state.justBooked = false; else if (state.justBooked === true) state.justBooked = "seen"; }
   render.prev = onToday ? "today" : "other";
@@ -1783,7 +1817,11 @@ function render() {
   else view.innerHTML = you();
   /* FX-02: remember Ask's opener (the screen shown before Ask); inbox / request form round-trips keep the first opener */
   const AI_SIDE = ["ai", "ask", "inbox", "alerts", "requests", "reqdetail"];
-  if (state.view === "ai" && render.snap && !AI_SIDE.includes(render.snap.view) && state.auth === "app") state.aiFrom = render.snap;
+  const snapIsInbox = render.snap && ["inbox", "alerts", "requests", "reqdetail"].includes(render.snap.view);
+  const inboxFromAsk = snapIsInbox && render.snapInboxOrigin && (render.snapInboxOrigin.view === "ai" || render.snapInboxOrigin.view === "ask");
+  /* an inbox opened from somewhere else counts as Ask's opener; an inbox round-trip that started in Ask keeps the first opener */
+  if (state.view === "ai" && render.snap && state.auth === "app" && (!AI_SIDE.includes(render.snap.view) || (snapIsInbox && !inboxFromAsk))) state.aiFrom = render.snap;
+  render.snapInboxOrigin = state.inboxOrigin;
   render.snap = state.auth === "app" ? { tab: state.tab, view: state.view } : null;
   const feat = state.feature && FEATURES.find(x => x.f === state.feature);
   const jmp = state.jump && JUMPS.find(j => j.key && j.key === state.jump);
