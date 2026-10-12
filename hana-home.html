@@ -182,7 +182,6 @@
             <g id="eOpen" stroke="none"><g class="eye-open"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><g class="eye-open"><ellipse cx="234" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="241" cy="168" r="8" fill="#fff"/><circle cx="226" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150M255 166L264 160M252 158L258 150" stroke="#2A1F1B" stroke-width="3.5"/></g>
             <g id="eWink"><g class="eye-open" stroke="none"><ellipse cx="122" cy="176" rx="22" ry="23" fill="#2A1F1B"/><circle cx="129" cy="168" r="8" fill="#fff"/><circle cx="114" cy="184" r="3" fill="#fff"/></g><path d="M101 166L92 160M104 158L98 150" stroke="#2A1F1B" stroke-width="3.5"/><path d="M214 180Q234 160 254 180M256 172L264 166" fill="none" stroke="#2A1F1B" stroke-width="5"/></g>
             <g id="eClosed" fill="none" stroke="#2A1F1B" stroke-width="5"><path d="M102 176Q122 194 142 176M214 176Q234 194 254 176"/><path d="M100 176L91 172M256 176L265 172" stroke-width="3.5"/></g>
-            <g id="eSleepy"><path d="M100 176A22 18 0 0 0 144 176Z" fill="#2A1F1B" stroke="none"/><path d="M212 176A22 18 0 0 0 256 176Z" fill="#2A1F1B" stroke="none"/><circle cx="130" cy="183" r="4" fill="#fff" stroke="none"/><circle cx="242" cy="183" r="4" fill="#fff" stroke="none"/><path d="M98 176H146M210 176H258" stroke="#2A1F1B" stroke-width="5"/><path d="M98 176L90 171M258 176L266 171" stroke="#2A1F1B" stroke-width="3.5"/></g>
             <path d="M171 194Q178 190 186 194Q182 203 178 204Q174 203 171 194Z" fill="#E8909C" stroke-width="2.5"/>
             <path id="mSmall" d="M162 209Q170 220 178 209Q186 220 194 209" fill="none" stroke-width="4"/>
             <g id="mOpen"><path d="M160 208Q178 212 196 208Q194 236 178 236Q162 236 160 208Z" fill="#C85A6E" stroke-width="4"/><path d="M168 228Q178 220 188 228Q184 234 178 234Q172 234 168 228Z" fill="#F4A3B0" stroke="none"/></g>
@@ -216,10 +215,10 @@ const $=s=>document.querySelector(s);
 const CLASS={time:'19:00',label:'7:00pm',cls:'Barre',teacher:'Hana Lee',deadline:'16:00'};
 const base={name:'Mina',now:'09:41',cur:'cheongdam',streak:6,daysSinceVisit:1,
   studios:{
-    cheongdam:{name:'Cheongdam',remaining:2,total:10,until:'14 Oct',daysToExpiry:6,booking:{...CLASS,reformer:3},presence:false,shareHere:false,attended:false,cleared:false},
-    geumho:{name:'Geumho',remaining:8,total:20,until:'12 Nov',daysToExpiry:35,booking:null,presence:false,shareHere:false,attended:false,cleared:false}}};
+    cheongdam:{name:'Cheongdam',remaining:2,afterClass:1,total:10,until:'14 Oct',daysToExpiry:6,booking:{...CLASS,reformer:3},presence:false,shareHere:false,attended:false,cleared:false},
+    geumho:{name:'Geumho',remaining:8,afterClass:8,total:20,until:'12 Nov',daysToExpiry:35,booking:null,presence:false,shareHere:false,attended:false,cleared:false}}};
 /* Review presets change the DATA only; Hana's state is always derived. */
-const healthy={remaining:6,until:'12 Nov',daysToExpiry:35};
+const healthy={remaining:6,afterClass:5,until:'12 Nov',daysToExpiry:35};
 const presets={
   greet:{c:healthy},
   low:{},
@@ -248,7 +247,7 @@ function deriveState(){
   return 'greet';
 }
 const face={greet:['eOpen','mOpen'],warmup:['eOpen','mSmall'],cheer:['eOpen','mOpen'],calm:['eClosed','mSmall'],paused:['eOpen','mSmall'],
-  streak:['eWink','mSmall'],low:['eOpen','mSmall'],nobook:['eSleepy','mYawn'],sleep:['eClosed','mSmall']};
+  streak:['eWink','mSmall'],low:['eOpen','mSmall'],nobook:['eClosed','mYawn'],sleep:['eClosed','mSmall']};
 function line(st){const s=S();return{
   greet:`Morning, ${m.name}. See you at 7.`,
   low:`${s.remaining} left · pass ends ${s.until}.`,
@@ -259,7 +258,7 @@ function line(st){const s=S();return{
   paused:`Board paused. Tomorrow is a new level.`,
   nobook:`Tonight's board is open.`,
   sleep:`Nothing on the board. Want a seat?`}[st]}
-const ALL=['eOpen','eWink','eClosed','eSleepy','mSmall','mOpen','mYawn'];
+const ALL=['eOpen','eWink','eClosed','mSmall','mOpen','mYawn'];
 function render(){
   const s=S(), st=deriveState();
   $('#studioName').textContent=s.name;
@@ -285,7 +284,7 @@ function ticket(st){
     h+=`<div class="cls"><div><div class="t">Empty</div><div class="s">Tonight at ${s.name}: 7:00pm Barre · 6 of 8 open</div></div></div>
         <div class="acts"><button class="btn p" id="find">Find a class</button></div>`;
   } else {
-    const after=s.attended?s.remaining:s.remaining-1;
+    const after=s.afterClass; /* server value (BA R3/F6), never computed on the phone */
     h+=`<div class="cls"><div><div class="t">${b.label}</div><div class="s">${b.cls} · ${b.teacher} · Reformer ${b.reformer}</div></div>
         <div class="now">${s.attended?'Now':'Now · after class'}<b>${s.attended?s.remaining:s.remaining+' · '+after}</b></div></div>`;
     const late=mins(m.now)>=mins(b.deadline);
@@ -297,7 +296,8 @@ function ticket(st){
     else if(inWindow()) h+=`<div class="dead">Check-in open 6:30–6:55pm · your reformer is held until 6:45pm</div><div class="acts"><button class="btn p" id="here">I'm here</button></div>`;
     else {
       h+=`<div class="dead ${late?'late':''}">${late?'Free cancel ended · contact the studio':'Free cancel until 4:00pm'} · check-in opens 6:30pm</div>
-          <div class="acts"><button class="btn s" id="move">Change time</button>`+(late?`<button class="btn s" id="ask">Ask the studio</button>`:`<button class="btn s" id="cancel">Cancel free</button>`)+`</div>`;
+          <div class="acts"><button class="btn s" id="move">Change time</button>`+(late?`<button class="btn s" id="ask">Ask the studio</button>`:`<button class="btn s" id="cancel">Cancel free</button>`)+`</div>`+
+          (isLow(s)?`<div class="acts"><button class="btn t" id="extend" style="flex:1">${s.remaining} left · ends ${s.until} · Ask about extending →</button></div>`:'');
     }
   }
   t.innerHTML=h;
@@ -309,7 +309,8 @@ function ticket(st){
   on('shareRes',()=>shareSheet('result'));
   on('skipRes',()=>clearBoard());
   on('move',()=>toast('Change time · one move, never cancel + rebook'));
-  on('ask',()=>toast('Opens a request to the studio'));
+  on('ask',()=>requestSheet('question'));
+  on('extend',()=>requestSheet('extend'));
   on('cancel',cancelSheet);
 }
 function clearBoard(){const s=S();s.cleared=true;m.streak+=1;render();}  /* streak grows only when the board clears */
@@ -321,16 +322,19 @@ function openBook(){ /* S8 list → S10 reformer pick; never books instantly */
   const s=S();
   sheet(`<h3>Book · ${s.name}</h3><p class="sub">Thu 8 Oct · booking does not use a session</p>
     <button class="row" id="open7"><span>7:00pm Barre<small>${CLASS.teacher} · 6 of 8 · free cancel until 4:00pm</small></span><span class="tag">Open</span></button>
-    <div class="row"><span>8:00pm Barre<small>${CLASS.teacher} · 8 of 8 · you'd be 2nd</small></span><span class="tag full">Full</span></div>
+    <button class="row" id="full8"><span>8:00pm Barre<small>${CLASS.teacher} · 8 of 8 · you'd be 2nd</small></span><span class="tag full">Full · waitlist</span></button>
     <button class="btn t" id="x">Not now</button>`);
   $('#x').onclick=close;
+  $('#full8').onclick=()=>{sheet(`<h3>Join the 8:00pm waitlist?</h3><p class="sub">You'd be 2nd. A seat is never held for you; if one opens we ask first, and you have 30 minutes to take it.</p>
+    <div class="acts"><button class="btn p" id="wj">Join waitlist</button><button class="btn s" id="wb">Back</button></div>`);
+    $('#wb').onclick=openBook; $('#wj').onclick=()=>{close();toast("On the waitlist · you're 2nd")};};
   $('#open7').onclick=()=>{
     let pick=null;
     sheet(`<h3>Pick your reformer</h3><p class="sub">7:00pm Barre · yours until 6:45pm · no names shown</p>
       <div class="pads">${[1,2,3,4,5,6].map(n=>`<button class="pad" data-n="${n}" ${n===2||n===5?'disabled':''}>${n}${n===2||n===5?' · taken':''}</button>`).join('')}</div>
-      <div class="acts"><button class="btn p" id="lock" disabled style="opacity:.5">Lock spot</button></div><button class="btn t" id="x">Back</button>`);
+      <div class="acts"><button class="btn s" id="lock" disabled>Pick a reformer</button></div><button class="btn t" id="x">Back</button>`);
     $('#x').onclick=openBook;
-    document.querySelectorAll('.pad:not([disabled])').forEach(b=>b.onclick=()=>{pick=+b.dataset.n;document.querySelectorAll('.pad').forEach(x=>x.classList.toggle('on',x===b));const l=$('#lock');l.disabled=false;l.style.opacity=1});
+    document.querySelectorAll('.pad:not([disabled])').forEach(b=>b.onclick=()=>{pick=+b.dataset.n;document.querySelectorAll('.pad').forEach(x=>x.classList.toggle('on',x===b));const l=$('#lock');l.disabled=false;l.className='btn p';l.textContent='Lock spot '+pick});
     $('#lock').onclick=()=>{if(!pick)return;s.booking={...CLASS,reformer:pick};m.daysSinceVisit=0;close();toast(`Booked · reformer ${pick} · see you at 7`);render();};
   };
 }
@@ -355,10 +359,21 @@ $('#studioBtn').onclick=()=>{
     Object.entries(m.studios).map(([k,v])=>`<button class="row" data-k="${k}"><span>${v.name}<small>${v.remaining} of ${v.total} · until ${v.until}</small></span><span class="tag ${k===m.cur?'':'full'}">${k===m.cur?'Here':'Train here'}</span></button>`).join(''));
   document.querySelectorAll('.row[data-k]').forEach(r=>r.onclick=()=>switchStudio(r.dataset.k));
 };
-$('#passLine').onclick=()=>toast('Opens Pass');
+$('#passLine').onclick=()=>{const s=S();
+  sheet(`<h3>Pass · ${s.name}</h3><p class="sub">Separate from other studios.</p><div class="card"><div class="k">REMAINING</div><div class="big">${s.remaining} of ${s.total}</div><div>Until ${s.until}</div></div>
+    <div class="acts"><button class="btn s" id="rq">Ask about extending</button></div><button class="btn t" id="x">Close</button>`);
+  $('#rq').onclick=()=>requestSheet('extend'); $('#x').onclick=close;};
+function requestSheet(kind){ /* F26/F30: request goes to the owner; the pass is unchanged until they act */
+  const s=S();
+  sheet(`<h3>Ask ${s.name}</h3><p class="sub">The studio replies in Alerts. Your pass still ends ${s.until} until they act.</p>
+    <div class="acts" id="kinds">${['extend','hold','question'].map(k=>`<button class="btn s" data-k="${k}" style="${k===kind?'background:#2F3E46;color:#fff':''}">${{extend:'Extend',hold:'Hold',question:'Question'}[k]}</button>`).join('')}</div>
+    <textarea id="msg" rows="3" style="width:100%;margin-top:10px;border-radius:14px;border:1px solid #E8DDD0;padding:10px;font:inherit" placeholder="Anything to add? (optional)"></textarea>
+    <div class="acts"><button class="btn p" id="send">Send request</button></div><button class="btn t" id="x">Not now</button>`);
+  document.querySelectorAll('#kinds button').forEach(b=>b.onclick=()=>requestSheet(b.dataset.k));
+  $('#x').onclick=close; $('#send').onclick=()=>{close();toast(`Asked · still ends ${s.until}`)};
+}
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1600)}
-$('#hana').onclick=()=>{const h=$('#hana'),f=face[cur];if(cur==='sleep'){toast('Shh… Hana is napping');return}
-  ALL.forEach(id=>{if(id[0]==='e')$('#'+id).style.display='none'});$('#eWink').style.display='';h.classList.add('tap');
+$('#hana').onclick=()=>{const h=$('#hana'),f=face[cur];  ALL.forEach(id=>{if(id[0]==='e')$('#'+id).style.display='none'});$('#eWink').style.display='';h.classList.add('tap');
   setTimeout(()=>{ALL.forEach(id=>$('#'+id).style.display=f.includes(id)?'':'none');h.classList.remove('tap')},650)};
 /* review-only switcher */
 const q=new URLSearchParams(location.search), st=q.get('state');
@@ -367,9 +382,9 @@ function load(name){m=JSON.parse(JSON.stringify(base));const p=presets[name]||{}
   cur=null;close();render();document.querySelectorAll('.dev button[data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===name))}
 if(st!==null||q.has('dev')){const d=$('#dev');d.hidden=false;
   Object.keys(presets).forEach(k=>{const b=document.createElement('button');b.textContent=k;b.dataset.p=k;b.onclick=()=>{history.replaceState(null,'','?state='+k);load(k)};d.append(b)});
-  [['⏩ 6:40pm',()=>{m.now='18:40';render()}],['⏩ 7:10pm',()=>{m.now='19:10';render()}],['✓ studio marks attended',()=>{const s=S();if(s.booking&&s.presence&&!s.attended){s.attended=true;s.remaining-=1;m.now='20:05';render()}}]]
+  [['⏩ 6:40pm',()=>{m.now='18:40';render()}],['⏩ 7:10pm',()=>{m.now='19:10';render()}],['✓ studio marks attended',()=>{const s=S();if(s.booking&&s.presence&&!s.attended){/* dev only: simulates the server after the studio marks attended */s.attended=true;s.remaining=s.afterClass;m.now='20:05';render()}}]]
    .forEach(([l,f])=>{const b=document.createElement('button');b.textContent=l;b.className='act';b.onclick=f;d.append(b)});}
-load(presets[st]?st:'greet');
+load(presets[st]?st:null); /* default = base member: 2 of 10 left, ends 14 Oct */
 </script>
 </body>
 </html>
