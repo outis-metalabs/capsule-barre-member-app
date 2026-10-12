@@ -136,6 +136,8 @@
   .dots { display:flex; gap:8px; margin:8px 0 4px; }
   .dots i { width:36px; height:10px; border-radius:999px; background:#eadfd4; display:block; }
   .dots i.on { background:var(--ox); }
+  .passpill.lowlink { display:inline-flex; align-items:center; gap:6px; border:0; font:inherit; font-size:12px; cursor:pointer; }
+  .passpill.lowlink img { height:22px; width:auto; }
   .passpill { display:inline-block; background:#fff; border-radius:999px; padding:4px 10px; font-size:12px; color:#7d6454; }
   button.friend { width:100%; cursor:pointer; font:inherit; text-align:left; color:inherit; }
   .dock { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
@@ -368,26 +370,55 @@
   .who h1, .who .sub { margin: 0; }
   .tiny { font-size: 15px; color: var(--mute); margin: 0 0 8px; }
 
-  /* Hana: the member's real artwork, one image per state. Motion is transforms on the whole image only. */
-  .hw { position:relative; display:flex; align-items:flex-end; justify-content:center; width:96px; height:120px; flex:none; }
-  .hw img { position:absolute; bottom:0; left:50%; max-width:100%; max-height:100%; width:auto; height:auto; transform-origin:50% 100%; translate:-50% 0; -webkit-user-drag:none; user-select:none; pointer-events:none; }
+  /* Hana: the member's real artwork, one image per state (+ separate prop layers for ? and trophy).
+     Motion is transform/opacity only: a one-shot entrance when the state changes, then a looping idle per pose. */
+  .hw { position:relative; width:96px; height:120px; flex:none; }
   .hero .hw, .hana-stage .hw { width:220px; height:172px; margin:0 auto 8px; }
   .sayrow .hw { width:80px; height:96px; }
-  .hw .cur { animation:hin .35s ease both, var(--idle, hbob 2.8s ease-in-out .35s infinite); }
-  .hw .prev { animation:hout .35s ease both; }
-  @keyframes hin{from{opacity:0}to{opacity:1}} @keyframes hout{from{opacity:1}to{opacity:0}}
-  @keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  @keyframes hhop{0%,60%,100%{transform:translateY(0) scale(1)}10%{transform:scale(1.04,.96)}30%{transform:translateY(-16px) scale(.98,1.03)}50%{transform:translateY(0) scale(1.03,.97)}}
-  @keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.02,1.035)}}
-  @keyframes hsway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
-  @keyframes hsquash{0%,100%{transform:scale(1)}30%{transform:scale(1.08,.9)}60%{transform:scale(.96,1.05)}}
-  .hw[data-s=cheer] .cur, .hw[data-s=cleared] .cur { --idle: hhop 1.4s ease-in-out .35s infinite; }
-  .hw[data-s=calm] .cur, .hw[data-s=paused] .cur, .hw[data-s=low] .cur, .hw[data-s=nobook] .cur { --idle: hbreathe 4.5s ease-in-out .35s infinite; }
-  .hw[data-s=warmup] .cur { --idle: hsway 2.6s ease-in-out .35s infinite; }
-  .hw.tap .cur { animation:hsquash .45s ease; }
+  .hw .fig { position:absolute; inset:0; transform-origin:50% 100%; }
+  .hw img { position:absolute; bottom:0; left:50%; max-width:100%; max-height:100%; width:auto; height:auto; translate:-50% 0; -webkit-user-drag:none; user-select:none; pointer-events:none; }
+  .hw .prop { transform-origin:50% 50%; }
+  .hw .fig.prevfig { animation:hout .35s ease both !important; pointer-events:none; }
+  .hw .glow { position:absolute; left:8%; right:8%; top:6%; bottom:4%; border-radius:50%; background:radial-gradient(closest-side, rgba(181,224,203,.55), rgba(181,224,203,0)); opacity:0; pointer-events:none; }
   .hw .shadow{position:absolute;left:24%;right:24%;bottom:-3px;height:8px;border-radius:50%;background:rgba(74,59,54,.10)}
   .hana-stage .hw{cursor:pointer}
-  @media (prefers-reduced-motion:reduce){ .hw img{animation:none!important;transition:none!important} }
+  @keyframes hout{from{opacity:1}to{opacity:0}}
+  @keyframes hin{from{opacity:0;transform:translateY(6px) scale(.94)}to{opacity:1;transform:none}}
+  /* idle loops */
+  @keyframes hgreet{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(2deg)}}
+  @keyframes hsway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  @keyframes hhop{0%,100%{transform:translateY(0) scale(1)}12%{transform:translateY(0) scale(1.05,.94)}40%{transform:translateY(-14px) scale(.97,1.04)}62%{transform:translateY(0) scale(1.06,.93)}76%{transform:translateY(0) scale(.99,1.01)}}
+  @keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+  @keyframes hglow{0%,100%{opacity:.25}50%{opacity:.8}}
+  @keyframes htilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.5deg)}}
+  @keyframes hpuzzle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes hqbob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(6deg)}}
+  @keyframes hqpop{0%{opacity:0;transform:scale(0)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+  @keyframes hsigh{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.97)}}
+  @keyframes hbounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}55%{transform:translateY(0)}}
+  @keyframes hproud{0%,40%,100%{transform:translateY(0)}10%{transform:translateY(-9px)}20%{transform:translateY(0) scale(1.02,.98)}30%{transform:translateY(-6px)}}
+  @keyframes hwiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(0)}}
+  @keyframes hwinkpop{0%{transform:scale(1)}25%{transform:scale(1.08,.9)}50%{transform:scale(.95,1.06)}75%{transform:scale(1.02,.98)}100%{transform:scale(1)}}
+  .hw .fig { --idle: hgreet 3s ease-in-out infinite; animation: var(--idle); }
+  .hw .fig.enter { animation: hin .4s ease-out both, var(--idle-d, var(--idle)); animation-delay: 0s, .4s; }
+  .hw[data-s=greet] .fig { --idle: hgreet 3s ease-in-out infinite; }
+  .hw[data-s=warmup] .fig { --idle: hsway 2.8s ease-in-out infinite; }
+  .hw[data-s=cheer] .fig { --idle: hhop 1.2s ease-in-out infinite; }
+  .hw[data-s=calm] .fig { --idle: hbreathe 4s ease-in-out infinite; }
+  .hw[data-s=calm] .glow { animation: hglow 4s ease-in-out infinite; }
+  .hw[data-s=paused] .fig { --idle: htilt 4s ease-in-out infinite; }
+  .hw[data-s=paused] .prop { animation: hqbob 2.2s ease-in-out infinite; }
+  .hw[data-s=low] .fig { --idle: hsigh 4.5s ease-in-out infinite; }
+  .hw[data-s=nobook] .fig, .hw[data-s=sleep] .fig { --idle: hpuzzle 3.6s ease-in-out infinite; }
+  .hw[data-s=nobook] .prop, .hw[data-s=sleep] .prop { animation: hqpop .5s ease-out .3s both, hqbob 2.4s ease-in-out .8s infinite; }
+  .hw[data-s=book] .fig { --idle: hbounce 1.8s ease-in-out infinite; }
+  .hw[data-s=cleared] .fig { --idle: hproud 2.6s ease-in-out infinite; }
+  .hw[data-s=cleared] .prop { transform-origin:85% 22%; animation: hwiggle 2.6s ease-in-out infinite; }
+  .hw[data-s=wink] .fig { --idle: hwinkpop .5s ease-out 1; }
+  .hw[data-s=front] .fig { --idle: hgreet 3.4s ease-in-out infinite; }
+  .hw.tap .fig { animation: hwinkpop .5s ease-out 1 !important; }
+  .hw.tap .prop { visibility:hidden; }
+  @media (prefers-reduced-motion:reduce){ .hw .fig, .hw .prop, .hw .glow, .hw .prevfig { animation:none!important; transition:none!important; } .hw .prevfig{display:none} }
   @media (max-width: 960px) {
     .shell { grid-template-columns: 1fr; max-width: 430px; padding: 12px; }
     .phone { position: static; margin: 0 auto; width: 100%; max-width: 390px; }
@@ -492,16 +523,22 @@ function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unre
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
 function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"paused", book:"book", wink:"wink", front:"front" };
+const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", front:"front" };
+const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
 function hanaSrc(st) { return "assets/hana/" + (HANA_ART[st] || "front") + ".webp"; }
-/* Crossfade: when the state changed since the last render, the previous art fades out under the new one. */
-function hana(st) {
-  st = HANA_ART[st] ? st : "front";
-  const prev = hana.last && hana.last !== st ? `<img class="prev" src="${hanaSrc(hana.last)}" alt="">` : "";
-  hana.last = st;
-  return `<div class="hw" data-s="${st}" data-hana>${prev}<img class="cur" src="${hanaSrc(st)}" alt="Hana" draggable="false"><i class="shadow"></i></div>`;
+function hanaFig(st, cls) {
+  const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
+  return `<div class="fig ${cls}"><img class="body" src="assets/hana/${art}.webp" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" src="assets/hana/${prop}.webp" alt="">` : ""}</div>`;
 }
-Object.keys(HANA_ART).forEach(k => { const i = new Image(); i.src = hanaSrc(k); });
+/* Entrance + crossfade when the state changed since the last render; otherwise just the pose's idle loop. */
+function hana(st) {
+  st = (window.__hanaForce) || (HANA_ART[st] ? st : "front");
+  const changed = hana.last !== st;
+  const prev = hana.last && changed ? hanaFig(hana.last, "prevfig") : "";
+  hana.last = st;
+  return `<div class="hw" data-s="${st}" data-hana><i class="glow"></i>${prev}${hanaFig(st, changed ? "enter" : "")}<i class="shadow"></i></div>`;
+}
+[...new Set([...Object.values(HANA_ART), ...Object.values(HANA_PROP)])].forEach(k => { const i = new Image(); i.src = "assets/hana/" + k + ".webp"; });
 /* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
 function hanaState() {
   const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
@@ -516,7 +553,6 @@ function hanaState() {
   if (state.arrived) return "cheer";                 /* checked in, shared or not, before the studio marks attended */
   if (isPaused()) return "paused";
   if (state.nudge || canHere()) return "warmup";
-  if (pass().left <= 3) return "low";
   return "greet";
 }
 function isPaused() { const b = state.booking && state.booking.studio === state.studio; return !!b && state.clock === "night" && !state.arrived; }
@@ -684,7 +720,7 @@ function today() {
   const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
   const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
   const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
-  const line = paused ? "Board paused. Tomorrow is a new level." : other ? "Tonight is at " + studioName(other.studio) + "." : lines[step];
+  const line = hanaState() === "sleep" ? "Welcome back. Want a seat tonight?" : paused ? "Board paused. Tomorrow is a new level." : other ? "Tonight is at " + studioName(other.studio) + "." : lines[step];
   return `${topbar()}
     <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(hanaState())}</div>
     ${other ? `<button class="card press otherrow" type="button" data-act="open-other-class"><strong>You have class at ${studioName(other.studio)} · ${other.time}</strong><span class="what-sub">${other.className} · ${other.teacher} · open it ›</span></button>` : ""}
@@ -699,7 +735,7 @@ function today() {
       ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at 6:55pm. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
       ${boardMsg()}
     </div>
-    <p class="passpill">${studioName(state.studio)} · ${p.left} left</p>
+    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="pass"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
     <div class="thread">${thread}</div>`;
 }
 function streakScreen() {
@@ -867,6 +903,7 @@ function passScreen() {
     `<div class="card"><strong>${h.when} · ${h.time}</strong><p class="sub" style="margin:4px 0 0">${h.teacher} · attended</p></div>`).join("");
   return `<button class="link" type="button" data-act="tab-you">Back</button>
     <p class="kicker" style="margin-top:12px">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Pass</h1>
+    <div class="sayrow">${hana(p.left <= 3 ? "low" : "greet")}<div class="say">${p.left <= 3 ? p.left + " left, until " + p.until + ". Want to ask about extending?" : p.left + " left, until " + p.until + "."}</div></div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
     <div class="card"><div class="lbl">Previous</div><strong>10-session intro</strong><p class="sub" style="margin:0">Finished 2 Aug 2026 · 0 left</p></div>
     <p class="kicker">Usage</p>${used || `<div class="card"><p class="sub" style="margin:0">No visits yet.</p></div>`}
@@ -1246,7 +1283,7 @@ document.getElementById("view").addEventListener("pointerdown", (e) => {
 function wire() {
   document.getElementById("view").onclick = (e) => {
     const h = e.target.closest("[data-hana]");
-    if (h) { if (hana.long) { hana.long = false; return; } const img = h.querySelector(".cur"), back = img.getAttribute("src"); clearTimeout(h.wt); h.querySelector(".prev")?.remove();
+    if (h) { if (hana.long) { hana.long = false; return; } const img = h.querySelector(".fig:not(.prevfig) .body"), back = img.getAttribute("src"); clearTimeout(h.wt); h.querySelector(".prevfig")?.remove();
       img.src = hanaSrc("wink"); h.classList.remove("tap"); void h.offsetWidth; h.classList.add("tap");
       h.wt = setTimeout(() => { if (img.isConnected) img.src = back; h.classList.remove("tap"); }, 1200); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
