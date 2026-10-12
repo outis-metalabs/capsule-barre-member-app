@@ -687,7 +687,7 @@ const state = {
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, inboxFilter: "all", inboxNew: [], reqDetail: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
+  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, inboxFilter: "all", inboxNew: [], inboxOrigin: null, reqDetail: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
 /* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
@@ -870,6 +870,14 @@ function closeSheet() {
 }
 document.addEventListener("pointerdown", (e) => { const t = e.target.closest && e.target.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; }, true);
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { const t = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; } }, true);
+document.addEventListener("keydown", (e) => {
+  const t = e.target;
+  if (t && t.matches && t.matches('[role="tab"][data-act="inbox-filter"]') && /^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key)) {
+    const tabs = [...document.querySelectorAll('#view [role="tab"][data-act="inbox-filter"]')], i = tabs.indexOf(t);
+    const n = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : (i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    e.preventDefault(); setInboxFilter(tabs[n].dataset.k); return;
+  }
+});
 document.addEventListener("keydown", (e) => {
   const sh = document.getElementById("sheet"); if (!sh || !sh.classList.contains("open")) return;
   if (e.key === "Escape") { e.preventDefault(); closeSheet(); return; }
@@ -1257,18 +1265,18 @@ function inboxIcon(k) { const s = ICONS[k] || ICONS.bell; return s.includes('cla
 function inbox() {
   const f = state.inboxFilter || "all";
   const items = inboxItems().filter(x => f === "all" || x.kind === f);
-  const tab = (k, l) => `<button type="button" class="chip-btn ${f === k ? "on" : ""}" data-act="inbox-filter" data-k="${k}" aria-pressed="${f === k}">${l}</button>`;
+  const tab = (k, l) => `<button type="button" role="tab" id="itab-${k}" class="chip-btn ${f === k ? "on" : ""}" data-act="inbox-filter" data-k="${k}" aria-selected="${f === k}" aria-controls="inbox-list" tabindex="${f === k ? 0 : -1}">${l}</button>`;
   const rows = items.map(x => `<button class="alert-row ${state.inboxNew.includes(x.key) ? "unread" : ""}" type="button" data-act="inbox-open" data-key="${x.key}">
       <span class="alert-ico">${inboxIcon(x.ico)}</span>
       <div><strong>${x.t}</strong><span>${esc(x.d)}</span></div>
       <em>${state.inboxNew.includes(x.key) ? '<i class="sr">New, </i>' : ""}${x.when}</em></button>`).join("");
-  const empty = `<div class="card inbox-empty"><strong>${f === "replies" ? "No studio replies yet" : f === "alerts" ? "No alerts yet" : "All quiet"}</strong><p class="sub" style="margin:4px 0 0">${f === "alerts" ? "Bookings, reminders and check-ins show up here." : "When you ask the studio something, the reply lands here."}</p></div>`;
+  const empty = `<div class="card inbox-empty"><strong>${f === "replies" ? "No studio replies yet" : f === "alerts" ? "No alerts yet" : "All quiet"}</strong><p class="sub" style="margin:4px 0 0">${f === "alerts" ? "Bookings, reminders and check-ins show up here." : f === "replies" ? "When you ask the studio something, the reply lands here." : "Studio replies and alerts, like bookings and reminders, land here."}</p></div>`;
   const sw = (key, label, sub) => `<button class="switch-row" type="button" data-act="toggle" data-k="${key}" aria-pressed="${state.notify[key]}">
       <div><strong>${label}</strong><span>${sub}</span></div><span class="switch ${state.notify[key] ? "on" : ""}"><i></i></span></button>`;
-  return `<button class="link backhit" type="button" data-act="${state.inboxBack || "tab-you"}">Back</button>
+  return `<button class="link backhit" type="button" data-act="inbox-close">Back</button>
     <h1>Inbox</h1>
-    <div class="chips inbox-filter" role="group" aria-label="Show">${tab("all", "All")}${tab("replies", "Studio replies")}${tab("alerts", "Alerts")}</div>
-    ${rows || empty}
+    <div class="chips inbox-filter" role="tablist" aria-label="Show">${tab("all", "All")}${tab("replies", "Studio replies")}${tab("alerts", "Alerts")}</div>
+    <div id="inbox-list" role="tabpanel" aria-labelledby="itab-${f}">${rows || empty}</div>
     ${f === "alerts" ? `<p class="kicker" style="margin-top:24px">Notify me</p>
     ${sw("booked", "Booked, moved, cancelled", "Confirmations")}
     ${sw("changed", "Studio changes a class", "Time, teacher, or cancelled")}
@@ -1278,11 +1286,23 @@ function inbox() {
 function openInbox(filter) {
   state.inboxFilter = filter || "all";
   /* opening the inbox counts as seeing it: the dot clears; this visit still marks the new rows */
-  const fresh = inboxItems().filter(x => x.key[0] === "a" ? state.alerts[+x.key.slice(1)].unread : state.requests[+x.key.slice(1)].status === "replied" && !state.requests[+x.key.slice(1)].seen).map(x => x.key);
+  const f = state.inboxFilter;
+  const shown = inboxItems().filter(x => f === "all" || x.kind === f);
+  const fresh = shown.filter(x => x.key[0] === "a" ? state.alerts[+x.key.slice(1)].unread : state.requests[+x.key.slice(1)].status === "replied" && !state.requests[+x.key.slice(1)].seen).map(x => x.key);
   state.inboxNew = fresh;
-  state.alerts.forEach(a => { a.unread = false; }); state.requests.forEach(r => { if (r.status === "replied") r.seen = true; });
-  state.inboxBack = state.view === "ai" ? "ai" : "tab-you";
+  /* only what this filter shows counts as seen */
+  fresh.forEach(k => { const i = +k.slice(1); if (k[0] === "a") state.alerts[i].unread = false; else state.requests[i].seen = true; });
+  if (state.view !== "inbox" && state.view !== "reqdetail") state.inboxOrigin = { tab: state.tab, view: state.view };
   state.view = "inbox"; state.tab = "you"; render();
+}
+function setInboxFilter(k, focus) {
+  state.inboxFilter = k;
+  /* switching filter shows more rows: mark those as seen too, keep their new marker for this visit */
+  inboxItems().filter(x => k === "all" || x.kind === k).forEach(x => { const i = +x.key.slice(1);
+    if (x.key[0] === "a" && state.alerts[i].unread) { state.alerts[i].unread = false; state.inboxNew.push(x.key); }
+    if (x.key[0] === "r" && state.requests[i].status === "replied" && !state.requests[i].seen) { state.requests[i].seen = true; state.inboxNew.push(x.key); } });
+  render();
+  document.querySelector(`#view [data-act="inbox-filter"][data-k="${k}"]`)?.focus();
 }
 function reqDetail() {
   const q = state.requests[state.reqDetail]; if (!q) return inbox();
@@ -1938,7 +1958,8 @@ function wire() {
     if (act === "low") { state.tab = "today"; state.view = "low"; render(); }
     if (act === "alerts") return openInbox("alerts");
     if (act === "inbox") return openInbox("all");
-    if (act === "inbox-filter") { state.inboxFilter = btn.dataset.k; render(); return; }
+    if (act === "inbox-filter") { setInboxFilter(btn.dataset.k); return; }
+    if (act === "inbox-close") { const o = state.inboxOrigin || { tab: "you", view: null }; state.tab = o.tab; state.view = o.view; state.inboxOrigin = null; render(); return; }
     if (act === "inbox-back") { state.view = "inbox"; render(); return; }
     if (act === "inbox-open") { const k = btn.dataset.key, i = +k.slice(1); state.inboxNew = state.inboxNew.filter(x => x !== k);
       if (k[0] === "r") { state.reqDetail = i; state.view = "reqdetail"; } render(); return; }
