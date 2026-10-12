@@ -3,31 +3,33 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hana — member app</title>
+<title>Capsule Barre — Hana member app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --paper: #FDFBF0;
-    --ink: #2F3E46;
-    --soft: #2a2824;
-    --mute: #4e4b45;
-    --line: #d8d5cb;
+    --paper: #FFF8EC;
+    --ink: #4A3B36;
+    --soft: #5A4A44;
+    --mute: #8C7B72;
+    --line: #EEDFCC;
     --card: #fff;
-    --ox: #58cc02;
-    --ox-ink: #163000;
-    --ok: #1f5a45;
-    --ok-bg: #e4efe9;
-    --warn: #8a5a12;
-    --warn-bg: #f5ead6;
-    --ox-bg: rgba(184,66,46,.08);
+    --ox: #E98597;
+    --ox-ink: #fff;
+    --pink-l: #FDE7EA;
+    --mint: #B5E0CB;
+    --ok: #2E6B52;
+    --ok-bg: #E3F4EC;
+    --warn: #9A6A4A;
+    --warn-bg: #FBEDE2;
+    --ox-bg: #FDE7EA;
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   html, body { margin: 0; min-height: 100%; }
   body {
-    background: #e7f0df;
+    background: #F4EBDD;
     color: var(--ink);
     font-family: Nunito, system-ui, sans-serif;
     font-weight: 700;
@@ -42,14 +44,21 @@
   .lede { color: var(--mute); font-size: 15px; line-height: 1.45; margin: 0 0 16px; font-weight: 500; }
   .brand { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; margin: 0 0 8px; }
   .brand em { font-style: normal; color: var(--ox); }
-  .rail { background: #1a1916; color: #f3f2ee; border-radius: 24px; padding: 16px 12px 24px; position: sticky; top: 16px; }
+  .rail { background: #3B2E29; color: #f3f2ee; border-radius: 24px; padding: 16px 12px 24px; position: sticky; top: 16px; }
   .rail .brand { color: #f3f2ee; padding: 0 8px; }
-  .clocks { display: flex; gap: 8px; margin-bottom: 16px; }
+  .clocks { display: flex; gap: 6px; margin-bottom: 12px; }
   .clocks button {
     flex: 1; border: 1px solid rgba(255,255,255,.16); background: transparent; color: #f3f2ee; border-radius: 12px; min-height: 40px; padding: 8px 4px;
     font-size: 12px; font-weight: 700; white-space: nowrap;
   }
   .clocks button.on { background: #f3f2ee; border-color: #f3f2ee; color: var(--ink); }
+  .devbtn { width:100%; border:1px dashed rgba(255,255,255,.3); background:transparent; color:#f3f2ee; border-radius:12px; min-height:36px; font-size:12px; margin-bottom:12px; }
+  .okbar { background:var(--ok-bg); color:var(--ok); border-radius:16px; padding:12px 14px; font-weight:800; margin-top:8px; animation: rise .45s ease; }
+  .dots4 { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:8px 0 6px; }
+  .dot4 { display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--mute); }
+  .dot4 i { height:8px; border-radius:999px; background:#F3E9DC; display:block; }
+  .dot4.on i { background:var(--ox); } .dot4.on { color:var(--ink); }
+  .otherrow strong { display:block; font-size:15px; }
   .railseg { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: rgba(255,255,255,.08); border-radius: 12px; padding: 3px; margin-bottom: 12px; }
   .railseg button { border: 0; background: transparent; color: rgba(243,242,238,.7); border-radius: 10px; min-height: 32px; font-size: 12px; font-weight: 700; }
   .railseg button.on { background: rgba(255,255,255,.14); color: #f3f2ee; }
@@ -66,7 +75,7 @@
   .jump button:hover { background: rgba(255,255,255,.06); }
   .jump button.on { background: #f3f2ee; color: var(--ink); font-weight: 700; }
   .phone {
-    width: 390px; height: 844px; background: #1a1916; border-radius: 40px; padding: 12px;
+    width: 390px; height: 844px; background: #3B2E29; border-radius: 40px; padding: 12px;
     box-shadow: 0 32px 64px rgba(18,17,15,.16); position: sticky; top: 16px;
   }
   .screen {
@@ -80,75 +89,78 @@
   .scroll::-webkit-scrollbar { width: 0; }
   .tabs {
     display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; border-top: 1px solid var(--line);
-    background: #fbfaf6; padding: 0 4px 10px; overflow: visible;
+    background: #fff; padding: 0 4px 10px; overflow: visible; border-radius: 22px 22px 0 0;
   }
   .tabs button {
     border: 0; background: transparent; color: var(--mute); font-size: 11px; font-weight: 500;
     min-height: 44px; padding: 4px 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
   }
-  .tabs button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .tabs button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .tabs button.on { color: var(--ink); font-weight: 700; }
-  .tabs button.on svg { stroke: var(--ox); }
-  .tabs button.ask { position: relative; top: -18px; margin-bottom: -18px; color: #c45c56; font-weight: 800; gap: 2px; }
+  .tabs button.on { color: var(--ox); }
+  .tabs button.ask { position: relative; top: -20px; margin-bottom: -20px; color: var(--ink); font-weight: 800; gap: 2px; }
   .tabs button.ask .fab {
-    width: 56px; height: 56px; border-radius: 50%; background: #F6B1A6; display: grid; place-items: center;
-    box-shadow: 0 8px 16px rgba(246,177,166,.55);
+    width: 60px; height: 60px; border-radius: 50%; background: #F5B5BD; display: grid; place-items: center;
+    border: 5px solid var(--paper); box-shadow: 0 6px 14px rgba(233,133,151,.35);
   }
-  .tabs button.ask svg, .tabs button.ask.on svg { width: 26px; height: 26px; stroke: #2F3E46; }
-  .hana { width: 88px; display:block; flex:none; }
+  .tabs button.ask svg, .tabs button.ask.on svg { width: 28px; height: 28px; stroke: #fff; stroke-width: 2; }
   .hero { text-align:center; margin-bottom:8px; }
-  .hero .hana { width: 168px; margin: 0 auto 8px; }
   .thread { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
   .bubble { max-width:86%; padding:10px 12px; font-weight:800; font-size:15px; }
-  .bubble.her { align-self:flex-start; background:#fff; border:2px solid #F6B1A6; border-radius:4px 16px 16px 16px; }
-  .bubble.me { align-self:flex-end; background:#2F3E46; color:#FDFBF0; border-radius:16px 16px 4px 16px; }
+  .bubble.her { align-self:flex-start; background:#fff; border:2px solid var(--line); border-radius:4px 16px 16px 16px; }
+  .bubble.me { align-self:flex-end; background:var(--ink); color:#FFF8EC; border-radius:16px 16px 4px 16px; }
   .replies { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-  .replies button { border:2px solid #F6B1A6; background:#fff; color:#2F3E46; border-radius:999px; min-height:40px; padding:0 14px; }
+  .replies button { border:2px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; min-height:40px; padding:0 14px; }
   .talk { display:flex; gap:8px; margin-top:12px; }
   .talk input { flex:1; border:2px solid var(--line); border-radius:999px; min-height:48px; padding:0 14px; background:#fff; font:inherit; font-weight:800; }
-  .talk button { width:48px; height:48px; border:0; border-radius:50%; background:#F6B1A6; color:#fff; font-size:18px; }
-  .sayrow { display:flex; gap:8px; align-items:flex-end; margin:8px 0; }
+  .talk button { width:48px; height:48px; border:0; border-radius:50%; background:var(--ox); color:#fff; font-size:18px; }
+  .sayrow { display:flex; flex-direction:column-reverse; align-items:center; gap:18px; margin:8px 0 12px; }
+  .sayrow .say { position:relative; border-radius:22px; text-align:center; }
+  .sayrow .say::after, .say.up::after { content:""; position:absolute; left:50%; bottom:-8px; width:12px; height:12px; background:#fff; border-right:2px solid var(--line); border-bottom:2px solid var(--line); transform:translateX(-50%) rotate(45deg); }
+  .say.up { position:relative; border-radius:22px; text-align:center; margin-bottom:18px; }
   .hana-stage { display:flex; flex-direction:column; align-items:center; margin: 0 0 8px; }
   .hana-bubble {
-    position: relative; background:#fff; border:2px solid #f3d2cc; border-radius:22px;
-    padding:12px 16px; margin-bottom:10px; max-width:280px; text-align:center;
-    font-weight:800; font-size:15px; line-height:1.35;
+    position: relative; background:#fff; border:2px solid var(--line); border-radius:28px;
+    padding:14px 18px; margin-bottom:26px; width:100%; text-align:center;
+    font-weight:800; font-size:16px; line-height:1.4; box-shadow:0 5px 0 #F3E6D3;
   }
   .hana-bubble::after {
     content:""; position:absolute; left:50%; bottom:-8px; width:14px; height:14px;
-    background:#fff; border-right:2px solid #f3d2cc; border-bottom:2px solid #f3d2cc;
+    background:#fff; border-right:2px solid var(--line); border-bottom:2px solid var(--line);
     transform:translateX(-50%) rotate(45deg);
   }
-  .hana-stage .hana { width:176px; height:auto; }
   .say { background:#fff; border:2px solid var(--line); border-radius:16px; padding:10px 12px; font-weight:800; }
-  .mission { background:#fff; border:2px solid #F6B1A6; border-radius:24px; padding:16px; margin-top:8px; }
-  .mission .k { font-size:12px; letter-spacing:.14em; color:#E05A53; }
+  .mission { background:#fff; border:2px solid #F5B5BD; border-radius:26px; padding:16px; margin-top:8px; }
+  .mission .k { font-size:12px; letter-spacing:.14em; color:var(--ox); }
   .mission h1 { font-size:26px; margin:4px 0 8px; }
   .dots { display:flex; gap:8px; margin:8px 0 4px; }
   .dots i { width:36px; height:10px; border-radius:999px; background:#eadfd4; display:block; }
-  .dots i.on { background:#58cc02; }
+  .dots i.on { background:var(--ox); }
+  .passpill.lowlink { display:inline-flex; align-items:center; gap:6px; border:0; font:inherit; font-size:12px; cursor:pointer; }
+  .passpill.lowlink img { height:22px; width:auto; }
   .passpill { display:inline-block; background:#fff; border-radius:999px; padding:4px 10px; font-size:12px; color:#7d6454; }
   button.friend { width:100%; cursor:pointer; font:inherit; text-align:left; color:inherit; }
   .dock { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
   .dock button { min-height:56px; border-radius:16px; border:0; text-align:left; padding:8px 12px; font-weight:800; width:100%; }
-  .dock .streak-btn { background:#2F3E46; color:#FDFBF0; }
-  .dock .friends-btn { background:#F6B1A6; color:#2F3E46; }
+  .dock .streak-btn { background:#fff; color:var(--ink); border:2px solid var(--line) !important; display:flex; gap:10px; align-items:center; }
+  .dock .friends-btn { background:var(--pink-l); color:var(--ink); display:flex; gap:10px; align-items:center; }
+  .dock svg { width:24px; height:24px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:none; }
   .dock small { display:block; font-size:11px; letter-spacing:.08em; opacity:.85; }
   .friend { display:flex; gap:12px; align-items:center; background:#fff; border:1px solid #e4dfd4; border-radius:16px; padding:12px; margin-top:8px; }
-  .friend i { width:36px; height:36px; border-radius:50%; background:#F6B1A6; color:#2F3E46; display:grid; place-items:center; font-style:normal; font-weight:800; flex:none; }
+  .friend i { width:36px; height:36px; border-radius:50%; background:var(--paper); border:1.5px solid var(--ink); color:var(--ink); display:grid; place-items:center; font-style:normal; font-weight:800; flex:none; }
   .friend b { display:block; font-size:14px; }
   .friend span { display:block; margin-top:2px; color:#7d6454; font-size:12px; font-weight:700; }
   .friend > div { min-width: 0; }
   .back { align-self:flex-start; border:0; background:transparent; color:var(--ink); font-weight:800; font-size:15px; min-height:44px; padding:0 4px; margin:0 0 8px; }
   .bigcount { margin:0 0 8px; font-size:72px; line-height:.9; letter-spacing:-.04em; font-weight:800; }
-  .streakhead { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:0 0 16px; }
-  .streakhead .bigcount { margin:0; }
-  .streakhead p { margin:0 0 8px; max-width:150px; text-align:right; color:#7d6454; font-size:15px; font-weight:700; line-height:1.3; }
+  .streakhead { display:block; margin:0 0 16px; }
+  .streakhead .bigcount { margin:0; font-size:72px; color:var(--ink); }
+  .streakhead p { margin:4px 0 0; text-align:left; color:var(--mute); font-size:15px; font-weight:700; line-height:1.3; }
   .streakday { display:grid; grid-template-columns:20px 1fr auto; align-items:center; gap:12px; background:#fff; border:1px solid #e4dfd4; border-radius:16px; min-height:52px; padding:12px 16px; margin-bottom:8px; }
   .streakday b { font-size:15px; font-weight:800; }
   .streakday span { font-size:13px; font-weight:700; color:#7d6454; }
   .streakday i { width:20px; height:20px; border-radius:50%; border:2px solid #eadfd4; }
-  .streakday.done i { background:#58cc02; border-color:#46a302; }
+  .streakday.done i { background:var(--mint); border-color:#8FCBAF; }
   .streakday.now { border-color:#2F3E46; }
   .streakday.now i { background:#2F3E46; border-color:#2F3E46; }
   .streakday.now span { color:#2F3E46; }
@@ -159,11 +171,11 @@
   .askcard > b { display:block; font-size:16px; }
   .pair { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
   .pair .btn, .pair .quiet { margin-top:0; }
-  .quiet { border:0; background:#e8e6de; color:var(--ink); border-radius:16px; min-height:48px; padding:12px 8px; font-weight:800; font-size:14px; }
-  .nudge { background:#2F3E46; color:#FDFBF0; border-radius:16px; padding:12px 14px; margin:8px 0; font-weight:800; }
-  .streak { color:#ff9600; font-weight:800; margin:0 0 8px; }
-  .share { background:#fff7e8; border:2px dashed #ff9600; border-radius:16px; padding:12px 14px; margin-top:8px; }
-  .postcard { background:#fff; border:1px solid #e4dfd4; border-radius:24px; padding:20px; margin:8px 0 16px; box-shadow:8px 8px 0 #F6B1A6; }
+  .quiet { border:0; background:#F3E9DC; color:var(--ink); border-radius:16px; min-height:48px; padding:12px 8px; font-weight:800; font-size:14px; }
+  .nudge { background:var(--ink); color:#FFF8EC; border-radius:16px; padding:12px 14px; margin:8px 0; font-weight:800; }
+  .streak { color:var(--ox); font-weight:800; margin:0 0 8px; }
+  .share { background:#fff; border:2px dashed var(--ox); border-radius:16px; padding:12px 14px; margin-top:8px; }
+  .postcard { background:#fff; border:1px solid #e4dfd4; border-radius:24px; padding:20px; margin:8px 0 16px; box-shadow:6px 6px 0 #F5B5BD; }
   .postcard b { display:block; font-size:32px; line-height:1.05; letter-spacing:-.03em; margin:4px 0 8px; }
   .postcard span, .postcard em { display:block; font-style:normal; font-weight:700; }
   .postcard span { font-size:15px; }
@@ -171,30 +183,27 @@
   .grab { display:block; width:36px; height:4px; border-radius:999px; background:#d8d5cb; margin:0 auto 12px; }
   .apps { display:flex; gap:8px; overflow:auto; padding:4px 0 8px; }
   .apps button { width:72px; flex:none; border:0; background:transparent; font-size:11px; font-weight:800; padding:0; }
-  .apps i { width:56px; height:56px; border-radius:14px; display:grid; place-items:center; margin:0 auto 6px; font-style:normal; color:#fff; font-size:16px; font-weight:800; }
-  .apps .msg i { background:#34c759; }
-  .apps .kakao i { background:#fee500; color:#3c1e1e; }
-  .apps .ig i { background:#e1306c; }
-  .apps .copy i { background:#e8e6de; color:#2F3E46; }
+  .apps i { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; margin:0 auto 6px; font-style:normal; background:var(--paper); border:1.5px solid var(--line); color:var(--ink); }
+  .apps i svg { width:26px; height:26px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
   .sheet-line { margin:0 0 12px; font-size:13px; font-weight:700; color:#7d6454; }
   .kicker { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); font-weight: 700; }
   h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -.03em; line-height: 1.1; font-weight: 700; }
   .sub { margin: 0 0 16px; color: var(--mute); font-size: 15px; line-height: 1.4; font-weight: 500; }
-  .time { font-family: "Bebas Neue", sans-serif; font-size: 96px; line-height: .82; margin: 0 0 8px; letter-spacing: .02em; }
+  .time { font-family: Nunito, sans-serif; font-weight: 900; font-size: 96px; line-height: .82; margin: 0 0 8px; letter-spacing: .02em; }
   .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 8px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 16px; margin-bottom: 8px;
     width: 100%; text-align: left;
   }
-  .balance { padding: 24px; box-shadow: 0 12px 32px rgba(184,66,46,.08); }
-  .count { margin: 8px 0; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; letter-spacing: -.03em; line-height: 1; }
-  .count small { font-size: 15px; color: var(--mute); font-family: "IBM Plex Sans", sans-serif; }
+  .balance { padding: 24px; box-shadow: 0 6px 0 #F3E6D3; }
+  .count { margin: 8px 0; font-family: Nunito, sans-serif; font-size: 28px; font-weight: 500; letter-spacing: -.03em; line-height: 1; }
+  .count small { font-size: 15px; color: var(--mute); font-family: Nunito, sans-serif; }
   .slot {
-    width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 22px;
     padding: 16px; margin-bottom: 8px;
   }
   .slot-row { display: flex; align-items: center; gap: 12px; }
   .when { width: 72px; flex: none; }
-  .when b { display: block; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; line-height: 1; letter-spacing: -.03em; }
+  .when b { display: block; font-family: Nunito, sans-serif; font-size: 28px; font-weight: 500; line-height: 1; letter-spacing: -.03em; }
   .when small { font-size: 12px; color: var(--mute); font-weight: 500; }
   .what { flex: 1; min-width: 0; }
   .what strong { display: block; font-size: 15px; font-weight: 700; }
@@ -216,14 +225,14 @@
   .notice strong { display: block; font-size: 15px; }
   .notice p { margin: 4px 0 8px; font-size: 12px; color: var(--soft); }
   .notice-acts { display: flex; gap: 8px; }
-  .notice-acts button { flex: 1; min-height: 44px; border: 0; border-radius: 12px; background: var(--ox); color: var(--ox-ink); font-weight: 700; font-size: 12px; }
-  .notice-acts button.quiet { background: #e8e6de; color: var(--ink); }
+  .notice-acts button { flex: 1; min-height: 44px; border: 0; border-radius: 14px; background: var(--ox); color: var(--ox-ink); font-weight: 700; font-size: 12px; }
+  .notice-acts button.quiet { background: #F3E9DC; color: var(--ink); }
   .alert-row {
     display: flex; align-items: flex-start; gap: 12px; width: 100%; text-align: left;
     background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; position: relative;
   }
-  .alert-row .alert-ico { width: 36px; height: 36px; border-radius: 50%; background: #e8e6de; display: grid; place-items: center; flex: none; color: var(--soft); }
-  .alert-row.unread .alert-ico { background: var(--ox-bg); color: var(--ox); }
+  .alert-row .alert-ico { width: 40px; height: 40px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--line); display: grid; place-items: center; flex: none; color: var(--soft); }
+  .alert-row.unread .alert-ico { background: var(--ox-bg); color: var(--ink); }
   .alert-row > div { flex: 1; min-width: 0; }
   .alert-row strong { display: block; font-size: 15px; font-weight: 700; }
   .alert-row span:not(.alert-ico) { display: block; margin-top: 4px; font-size: 12px; color: var(--mute); font-weight: 500; }
@@ -238,7 +247,7 @@
   .switch-row span:not(.switch) { display: block; margin-top: 2px; font-size: 12px; color: var(--mute); font-weight: 500; }
   .switch { width: 44px; height: 26px; border-radius: 999px; background: #d8d5cb; position: relative; flex: none; transition: background .16s; }
   .switch i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .16s; box-shadow: 0 1px 2px rgba(18,17,15,.2); }
-  .switch.on { background: var(--ok); }
+  .switch.on { background: #8FCBAF; }
   .switch.on i { transform: translateX(18px); }
   .chips { display: flex; gap: 8px; margin-bottom: 16px; }
   .chips.wrap { flex-wrap: wrap; }
@@ -246,7 +255,7 @@
   .card.req .reply { margin-top: 12px; padding: 12px; background: var(--paper); border-radius: 12px; font-size: 15px; font-weight: 500; }
   .card.req .reply .lbl { display: block; margin-bottom: 4px; }
   .bubble.me { align-self: flex-end; max-width: 80%; background: var(--ink); color: #f3f2ee; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 15px; font-weight: 500; margin: 8px 0; }
-  .card.ai { border-color: rgba(184,66,46,.25); }
+  .card.ai { border-color: #F5B5BD; }
   .card.ai strong { display: block; font-size: 15px; }
   .card.ai .meta { margin-top: 12px; }
   .btn.mini { width: auto; min-height: 40px; padding: 8px 14px; font-size: 12px; margin: 0; box-shadow: none; }
@@ -254,7 +263,7 @@
   .ai-form input { flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 999px; padding: 12px 16px; background: #fff; font-size: 15px; font-weight: 500; }
   .ai-form .btn { width: 48px; min-height: 48px; padding: 0; margin: 0; border-radius: 50%; display: grid; place-items: center; flex: none; }
   .chip-btn { flex: 1; min-height: 44px; border: 1px solid var(--line); background: #fff; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--soft); }
-  .chip-btn.on { background: var(--ink); border-color: var(--ink); color: #f3f2ee; }
+  .chip-btn.on { background: var(--ox); border-color: var(--ox); color: #fff; }
   .field textarea {
     width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 12px 16px; font-size: 15px; font-weight: 500; line-height: 1.4; resize: none; font-family: inherit; color: var(--ink);
   }
@@ -268,16 +277,16 @@
   .card.press { cursor: pointer; }
   .card.press:active { transform: scale(.99); }
   .row { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
-  .tag { display: inline-flex; align-items: center; min-height: 24px; border-radius: 999px; padding: 4px 8px; font-size: 12px; font-weight: 700; background: #e8e6de; color: var(--soft); }
+  .tag { display: inline-flex; align-items: center; min-height: 24px; border-radius: 999px; padding: 4px 8px; font-size: 12px; font-weight: 700; background: #F3E9DC; color: var(--soft); }
   .tag.ok { background: var(--ok-bg); color: var(--ok); }
   .tag.warn { background: var(--warn-bg); color: var(--warn); }
-  .tag.ox { background: var(--ox-bg); color: var(--ox); }
+  .tag.ox { background: var(--ox-bg); color: #C4566A; }
   .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   /* Button system: .btn primary (one per screen, oxidized red) · .btn.ghost secondary · .link tertiary · .btn.done is a state, not a control */
   .btn {
-    width: 100%; border: 0; border-radius: 16px; min-height: 48px; padding: 12px 16px; font-weight: 700; font-size: 15px;
+    width: 100%; border: 0; border-radius: 20px; min-height: 50px; padding: 12px 16px; font-weight: 800; font-size: 15px;
     background: var(--ox); color: var(--ox-ink); margin-top: 8px;
-    box-shadow: 0 8px 20px rgba(70,163,2,.28), inset 0 1px 0 rgba(255,255,255,.35);
+    box-shadow: 0 6px 0 #F3C9CF;
   }
   .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
   .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
@@ -285,7 +294,7 @@
   .btn.done { background: var(--ok); color: #fff; }
   .peak { animation: rise .45s ease; }
   @keyframes rise { from { transform: translateY(8px); opacity: .4; } to { transform: none; opacity: 1; } }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; background: #e8e6de; border-radius: 16px; padding: 4px; margin-bottom: 16px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: #F3E9DC; border-radius: 16px; padding: 4px; margin-bottom: 16px; }
   .seg button { border: 0; background: transparent; border-radius: 12px; min-height: 44px; padding: 8px; font-weight: 500; font-size: 15px; }
   .seg button.on { background: #fff; font-weight: 700; box-shadow: 0 4px 12px rgba(18,17,15,.06); }
   .field { margin-bottom: 12px; }
@@ -293,35 +302,35 @@
   .field input {
     width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-height: 48px; padding: 12px 16px; font-size: 15px; font-weight: 700;
   }
-  .err { color: var(--ox); font-size: 12px; font-weight: 700; margin: 4px 0 0; }
+  .err { color: #C4566A; font-size: 12px; font-weight: 700; margin: 4px 0 0; }
   .field.bad input { border-color: var(--ox); }
   .otp { display: flex; gap: 8px; justify-content: space-between; }
   .otp input { width: 48px; height: 56px; text-align: center; font-size: 28px; font-weight: 700; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
   .check { display: flex; gap: 8px; align-items: flex-start; font-size: 15px; color: var(--soft); margin: 8px 0 16px; }
   .check input { width: 20px; height: 20px; margin-top: 2px; }
-  .link { border: 0; background: transparent; color: var(--ox); font-weight: 700; font-size: 15px; padding: 8px 0; min-height: 44px; width: auto; align-self: flex-start; text-align: left; }
+  .link { border: 0; background: transparent; color: #C4566A; font-weight: 700; font-size: 15px; padding: 8px 0; min-height: 44px; width: auto; align-self: flex-start; text-align: left; }
   .top { display: flex; align-items: center; margin-bottom: 16px; gap: 8px; }
-  .pill { border: 1px solid var(--line); background: #fff; border-radius: 999px; min-height: 44px; padding: 8px 12px; font-size: 12px; font-weight: 700; }
-  .chip { margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500; background: #e8e6de; color: var(--ink); border-radius: 8px; padding: 8px; white-space: nowrap; }
+  .pill { border: 1px solid var(--line); background: #fff; border-radius: 999px; min-height: 44px; padding: 8px 14px; font-size: 15px; font-weight: 900; }
+  .chip { margin-left: auto; border-radius: 999px !important; background: var(--pink-l) !important; font-family: Nunito, sans-serif; font-size: 12px; font-weight: 500; background: #F3E9DC; color: var(--ink); border-radius: 8px; padding: 8px; white-space: nowrap; }
   .map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 16px; }
   .pad {
     min-height: 88px; border: 1px solid var(--line); background: #fff; border-radius: 16px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; font-size: 28px;
   }
   .pad small { font-size: 12px; font-weight: 500; color: var(--mute); margin-top: 4px; }
-  .pad.taken { background: #e8e6de; color: var(--mute); }
-  .pad.mine { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 0 8px 24px rgba(18,17,15,.16); }
+  .pad.taken { background: #F3E9DC; color: var(--mute); }
+  .pad.mine { background: var(--ox); color: #fff; border-color: var(--ox); box-shadow: 0 6px 0 #F3C9CF; }
   .pad.mine small { color: rgba(255,255,255,.72); }
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
   .stat { background: var(--paper); border-radius: 12px; padding: 16px; }
-  .stat b { display: block; font-family: "IBM Plex Mono", monospace; font-size: 28px; font-weight: 500; letter-spacing: -.03em; }
-  .stat small { font-family: "IBM Plex Sans", sans-serif; font-size: 12px; font-weight: 500; }
+  .stat b { display: block; font-family: Nunito, sans-serif; font-size: 28px; font-weight: 500; letter-spacing: -.03em; }
+  .stat small { font-family: Nunito, sans-serif; font-size: 12px; font-weight: 500; }
   .stat.after b { color: var(--ox); }
   .lbl { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); font-weight: 700; }
-  .meter { height: 8px; background: #e8e6de; border-radius: 999px; overflow: hidden; margin-top: 16px; }
-  .meter span { display: block; height: 100%; background: var(--ox); border-radius: inherit; }
+  .meter { height: 8px; background: #F3E9DC; border-radius: 999px; overflow: hidden; margin-top: 16px; }
+  .meter span { display: block; height: 100%; background: #F5B5BD; border-radius: inherit; }
   .toast {
-    position: absolute; left: 16px; right: 16px; top: 104px; background: var(--ink); color: #fff;
+    position: absolute; left: 16px; right: 16px; bottom: 168px; background: var(--ink); border-radius: 999px !important; color: #fff;
     border-radius: 16px; padding: 12px 16px; font-size: 15px; font-weight: 700; z-index: 2;
     transform: translateY(-8px); opacity: 0; pointer-events: none; transition: .24s ease;
     box-shadow: 0 16px 32px rgba(18,17,15,.2);
@@ -329,7 +338,7 @@
   .toast.show { transform: none; opacity: 1; }
   .sheet { position: absolute; inset: 0; background: rgba(18,17,15,.32); display: none; align-items: end; }
   .sheet.open { display: flex; }
-  .sheet .box { width: 100%; background: #fff; border-radius: 24px 24px 0 0; padding: 16px 16px 24px; }
+  .sheet .box { width: 100%; background: var(--paper); border-radius: 28px 28px 0 0; padding: 16px 16px 24px; }
   .note { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
   .note h2 { margin: 0 0 8px; font-size: 28px; letter-spacing: -.02em; }
   .note p { margin: 0; color: var(--soft); font-size: 15px; line-height: 1.45; }
@@ -337,9 +346,9 @@
   .week button {
     flex: 1; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-height: 56px; padding: 8px 0; font-size: 12px; font-weight: 700;
   }
-  .week button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .week button.on { background: var(--ox); color: #fff; border-color: var(--ox); }
   .week button:disabled { opacity: .55; cursor: not-allowed; background: transparent; border-style: dashed; color: var(--mute); text-decoration: line-through; }
-  .ico { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; flex: none; }
+  .ico { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   .menu-row {
     display: flex; align-items: center; gap: 16px; width: 100%; text-align: left;
     border: 1px solid var(--line); background: #fff; border-radius: 16px; min-height: 64px; padding: 12px 16px; margin-bottom: 8px;
@@ -347,18 +356,69 @@
   .menu-row strong { display: block; font-size: 15px; font-weight: 700; }
   .menu-row span { color: var(--mute); font-size: 12px; font-weight: 500; }
   .menu-row .go { margin-left: auto; color: var(--mute); font-size: 22px; }
+  .menu-row > svg { color: var(--ink); }
   .avatar {
-    width: 48px; height: 48px; border-radius: 50%; background: var(--ink); color: #f7f6f1;
+    width: 56px; height: 56px; border-radius: 50%; background: var(--pink-l); color: var(--ink); border: 2px solid #F5B5BD;
     display: grid; place-items: center; font-weight: 700; font-size: 15px;
   }
   .bell {
     border: 1px solid var(--line); background: #fff; border-radius: 50%; width: 44px; height: 44px;
     display: grid; place-items: center; position: relative; flex: none;
   }
-  .bell .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--ox); border-radius: 50%; }
+  .bell .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; background: var(--ox); border-radius: 50%; }
   .who { display: flex; align-items: center; gap: 16px; margin: 8px 0 24px; }
   .who h1, .who .sub { margin: 0; }
   .tiny { font-size: 15px; color: var(--mute); margin: 0 0 8px; }
+
+  /* Hana: the member's real artwork, one image per state (+ separate prop layers for ? and trophy).
+     Motion is transform/opacity only: a one-shot entrance when the state changes, then a looping idle per pose. */
+  .hw { position:relative; width:96px; height:120px; flex:none; }
+  .hero .hw, .hana-stage .hw { width:220px; height:172px; margin:0 auto 8px; }
+  .sayrow .hw { width:80px; height:96px; }
+  .hw .fig { position:absolute; inset:0; transform-origin:50% 100%; }
+  .hw img { position:absolute; bottom:0; left:50%; max-width:100%; max-height:100%; width:auto; height:auto; translate:-50% 0; -webkit-user-drag:none; user-select:none; pointer-events:none; }
+  .hw .prop { transform-origin:50% 50%; }
+  .hw .fig.prevfig { animation:hout .35s ease both !important; pointer-events:none; }
+  .hw .glow { position:absolute; left:8%; right:8%; top:6%; bottom:4%; border-radius:50%; background:radial-gradient(closest-side, rgba(181,224,203,.55), rgba(181,224,203,0)); opacity:0; pointer-events:none; }
+  .hw .shadow{position:absolute;left:24%;right:24%;bottom:-3px;height:8px;border-radius:50%;background:rgba(74,59,54,.10)}
+  .hana-stage .hw{cursor:pointer}
+  @keyframes hout{from{opacity:1}to{opacity:0}}
+  @keyframes hin{from{opacity:0;transform:translateY(6px) scale(.94)}to{opacity:1;transform:none}}
+  /* idle loops */
+  @keyframes hgreet{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(2deg)}}
+  @keyframes hsway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  @keyframes hhop{0%,100%{transform:translateY(0) scale(1)}12%{transform:translateY(0) scale(1.05,.94)}40%{transform:translateY(-14px) scale(.97,1.04)}62%{transform:translateY(0) scale(1.06,.93)}76%{transform:translateY(0) scale(.99,1.01)}}
+  @keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+  @keyframes hglow{0%,100%{opacity:.25}50%{opacity:.8}}
+  @keyframes htilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.5deg)}}
+  @keyframes hpuzzle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes hqbob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(6deg)}}
+  @keyframes hqpop{0%{opacity:0;transform:scale(0)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+  @keyframes hsigh{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.97)}}
+  @keyframes hbounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}55%{transform:translateY(0)}}
+  @keyframes hproud{0%,40%,100%{transform:translateY(0)}10%{transform:translateY(-9px)}20%{transform:translateY(0) scale(1.02,.98)}30%{transform:translateY(-6px)}}
+  @keyframes hwiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(0)}}
+  @keyframes hwinkpop{0%{transform:scale(1)}25%{transform:scale(1.08,.9)}50%{transform:scale(.95,1.06)}75%{transform:scale(1.02,.98)}100%{transform:scale(1)}}
+  .hw .fig { --idle: hgreet 3s ease-in-out infinite; animation: var(--idle); }
+  .hw .fig.enter { animation: hin .4s ease-out both, var(--idle-d, var(--idle)); animation-delay: 0s, .4s; }
+  .hw[data-s=greet] .fig { --idle: hgreet 3s ease-in-out infinite; }
+  .hw[data-s=warmup] .fig { --idle: hsway 2.8s ease-in-out infinite; }
+  .hw[data-s=cheer] .fig { --idle: hhop 1.2s ease-in-out infinite; }
+  .hw[data-s=calm] .fig { --idle: hbreathe 4s ease-in-out infinite; }
+  .hw[data-s=calm] .glow { animation: hglow 4s ease-in-out infinite; }
+  .hw[data-s=paused] .fig { --idle: htilt 4s ease-in-out infinite; }
+  .hw[data-s=paused] .prop { animation: hqbob 2.2s ease-in-out infinite; }
+  .hw[data-s=low] .fig { --idle: hsigh 4.5s ease-in-out infinite; }
+  .hw[data-s=nobook] .fig, .hw[data-s=sleep] .fig { --idle: hpuzzle 3.6s ease-in-out infinite; }
+  .hw[data-s=nobook] .prop, .hw[data-s=sleep] .prop { animation: hqpop .5s ease-out .3s both, hqbob 2.4s ease-in-out .8s infinite; }
+  .hw[data-s=book] .fig { --idle: hbounce 1.8s ease-in-out infinite; }
+  .hw[data-s=cleared] .fig { --idle: hproud 2.6s ease-in-out infinite; }
+  .hw[data-s=cleared] .prop { transform-origin:85% 22%; animation: hwiggle 2.6s ease-in-out infinite; }
+  .hw[data-s=wink] .fig { --idle: hwinkpop .5s ease-out 1; }
+  .hw[data-s=front] .fig { --idle: hgreet 3.4s ease-in-out infinite; }
+  .hw.tap .fig { animation: hwinkpop .5s ease-out 1 !important; }
+  .hw.tap .prop { visibility:hidden; }
+  @media (prefers-reduced-motion:reduce){ .hw .fig, .hw .prop, .hw .glow, .hw .prevfig { animation:none!important; transition:none!important; } .hw .prevfig{display:none} }
   @media (max-width: 960px) {
     .shell { grid-template-columns: 1fr; max-width: 430px; padding: 12px; }
     .phone { position: static; margin: 0 auto; width: 100%; max-width: 390px; }
@@ -380,11 +440,13 @@
     <div class="clocks">
       <button type="button" id="clkAm" class="on">Now 9:41am</button>
       <button type="button" id="clkPm">Lobby 6:40pm</button>
+      <button type="button" id="clkNight">7:10pm</button>
     </div>
     <div class="railseg" id="railseg">
       <button type="button" class="on" data-rail="screens">Screens</button>
       <button type="button" data-rail="features">Features</button>
     </div>
+    <button type="button" id="devAttended" class="devbtn">Dev · studio marks attended</button>
     <nav class="jump" id="jump"></nav>
   </aside>
   <div class="phone">
@@ -420,7 +482,14 @@ const ICONS = {
   check: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   send: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-7z"/></svg>',
   pin: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
-  out: '<svg class="ico" viewBox="0 0 24 24"><path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2"/><path d="M4 12h12M13 9l3 3-3 3"/></svg>'
+  out: '<svg class="ico" viewBox="0 0 24 24"><path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2"/><path d="M4 12h12M13 9l3 3-3 3"/></svg>',
+  paw: '<svg viewBox="0 0 24 24"><path d="M12 13.5c-3 0-5 2.6-5 4.5 0 1.4 1.2 2 2.4 2 1.1 0 1.6-.6 2.6-.6s1.5.6 2.6.6c1.2 0 2.4-.6 2.4-2 0-1.9-2-4.5-5-4.5z"/><ellipse cx="5.5" cy="10.5" rx="1.8" ry="2.3"/><ellipse cx="9.3" cy="6.3" rx="1.8" ry="2.4"/><ellipse cx="14.7" cy="6.3" rx="1.8" ry="2.4"/><ellipse cx="18.5" cy="10.5" rx="1.8" ry="2.3"/></svg>',
+  flame: '<svg viewBox="0 0 24 24"><path d="M12 21c-3.9 0-6.5-2.6-6.5-6 0-3.2 2.3-5 3.4-7.6.3 1.6 1.2 2.8 2.3 3.3C11.4 7.6 12.8 5 15.5 3c-.4 3 .8 4.9 2 6.6 1 1.4 1.5 2.9 1.5 4.6 0 3.9-3 6.8-7 6.8z"/></svg>',
+  people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.8-3 2.9-4.6 5.5-4.6s4.7 1.6 5.5 4.6"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.5 14.5c2.4 0 4.2 1.4 5 4"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/></svg>',
+  bubble: '<svg viewBox="0 0 24 24"><path d="M12 4c4.7 0 8 2.9 8 6.5S16.7 17 12 17c-.9 0-1.8-.1-2.6-.3L5 19l1.2-3.4C4.8 14.4 4 12.9 4 10.5 4 6.9 7.3 4 12 4z"/></svg>',
+  camera: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><path d="M16.8 7.2h.01"/></svg>',
+  copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>'
 };
 const SEED_ALERTS = () => [
   { k: "pass", t: "Pass ends in 5 days", d: "Cheongdam · 2 of 10 left · 14 Oct", when: "Today", unread: true },
@@ -433,24 +502,61 @@ const SEED_REQUESTS = () => [
   { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", reply: "Yes — book her a drop-in at the desk. Soo Kim" }
 ];
 const state = {
-  clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
+  justBooked: false, daysSinceVisit: 0, clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
   bookTab: "group", day: "thu", otpFor: "create", newPass: "", newConfirm: "",
   studio: "geumho", name: "Mina Park", phone: "010-5550-1842",
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS()
+  askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS(),
+  attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
+/* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
+const INITIAL = JSON.parse(JSON.stringify(state));
+function restore(keep) {
+  const kept = {}; (keep || []).forEach(k => kept[k] = state[k]);
+  const fresh = JSON.parse(JSON.stringify(INITIAL));
+  Object.keys(state).forEach(k => { if (!(k in fresh)) delete state[k]; });
+  Object.assign(state, fresh, { rail: state.rail }, kept);
+}
 function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unread: true }); }
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
-function resetSession() {
-  Object.assign(state, { booking: null, wait: false, streak: 3, sharedIn: false, arrived: false, arrivedVia: null, location: "off", nudge: false,
-    late: false, offer: false, ask: false, spotPick: 3, alerts: SEED_ALERTS(), notify: NOTIFY(), feature: null, studio: "geumho",
-    askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS() });
-}
+function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA = '<svg class="hana" viewBox="0 0 220 230"><path d="M24 78 l2.2 5.2 5.4 1.6 -4.2 3.6 1.4 5.4 -4.8 -3 -4.8 3 1.4 -5.4 -4.2 -3.6 5.4 -1.6 z" fill="#F6B1A6"/><path d="M186 52 l2.2 5.2 5.4 1.6 -4.2 3.6 1.4 5.4 -4.8 -3 -4.8 3 1.4 -5.4 -4.2 -3.6 5.4 -1.6 z" fill="#E8C56A"/><path d="M176 128 l2.2 5.2 5.4 1.6 -4.2 3.6 1.4 5.4 -4.8 -3 -4.8 3 1.4 -5.4 -4.2 -3.6 5.4 -1.6 z" fill="#F6B1A6"/><path d="M34 140 l2.2 5.2 5.4 1.6 -4.2 3.6 1.4 5.4 -4.8 -3 -4.8 3 1.4 -5.4 -4.2 -3.6 5.4 -1.6 z" fill="#E8C56A"/><ellipse cx="110" cy="214" rx="40" ry="6" fill="#2F3E46" opacity=".08"/><ellipse cx="86" cy="196" rx="16" ry="10" fill="#fff"/><ellipse cx="134" cy="196" rx="16" ry="10" fill="#fff"/><ellipse cx="110" cy="164" rx="46" ry="40" fill="#fff"/><ellipse cx="68" cy="166" rx="14" ry="12" fill="#fff"/><ellipse cx="152" cy="166" rx="14" ry="12" fill="#fff"/><path d="M78 150 h64 v36 a18 18 0 0 1 -18 16 h-28 a18 18 0 0 1 -18 -16 z" fill="#2F3E46"/><path d="M100 148 l10 8 10 -8 -10 4 z" fill="#E05A53"/><circle cx="110" cy="156" r="3" fill="#E8C56A"/><ellipse cx="110" cy="86" rx="56" ry="50" fill="#fff"/><path d="M64 72 L50 24 L92 58 Z" fill="#2F3E46"/><path d="M156 72 L170 24 L128 58 Z" fill="#2F3E46"/><path d="M66 66 L56 34 L86 56 Z" fill="#F6B1A6"/><path d="M154 66 L164 34 L134 56 Z" fill="#F6B1A6"/><path d="M64 74 q46 -36 92 0 q-12 18 -46 14 q-34 4 -46 -14 z" fill="#2F3E46"/><ellipse cx="78" cy="108" rx="9" ry="6" fill="#F6B1A6" opacity=".85"/><ellipse cx="142" cy="108" rx="9" ry="6" fill="#F6B1A6" opacity=".85"/><circle cx="90" cy="96" r="16" fill="#fff" stroke="#2F3E46" stroke-width="2.4"/><circle cx="130" cy="96" r="16" fill="#fff" stroke="#2F3E46" stroke-width="2.4"/><path d="M106 96 h8" stroke="#2F3E46" stroke-width="2.4"/><ellipse cx="90" cy="98" rx="5" ry="6.5" fill="#2F3E46"/><ellipse cx="130" cy="98" rx="5" ry="6.5" fill="#2F3E46"/><circle cx="92" cy="95" r="2" fill="#fff"/><circle cx="132" cy="95" r="2" fill="#fff"/><path d="M102 114 q8 8 16 0" fill="none" stroke="#E05A53" stroke-width="2.2" stroke-linecap="round"/></svg>';
-function hanaLine(s) { return `<div class="sayrow">${HANA}<div class="say">${s}</div></div>`; }
+const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", front:"front" };
+const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
+function hanaSrc(st) { return "assets/hana/" + (HANA_ART[st] || "front") + ".webp"; }
+function hanaFig(st, cls) {
+  const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
+  return `<div class="fig ${cls}"><img class="body" src="assets/hana/${art}.webp" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" src="assets/hana/${prop}.webp" alt="">` : ""}</div>`;
+}
+/* Entrance + crossfade when the state changed since the last render; otherwise just the pose's idle loop. */
+function hana(st) {
+  st = (window.__hanaForce) || (HANA_ART[st] ? st : "front");
+  const changed = hana.last !== st;
+  const prev = hana.last && changed ? hanaFig(hana.last, "prevfig") : "";
+  hana.last = st;
+  return `<div class="hw" data-s="${st}" data-hana><i class="glow"></i>${prev}${hanaFig(st, changed ? "enter" : "")}<i class="shadow"></i></div>`;
+}
+[...new Set([...Object.values(HANA_ART), ...Object.values(HANA_PROP)])].forEach(k => { const i = new Image(); i.src = "assets/hana/" + k + ".webp"; });
+/* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
+function hanaState() {
+  const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
+  if (!b) {
+    const other = state.booking && state.booking.studio !== state.studio;   /* F8: tonight is at the other studio */
+    if (other) return state.clock === "pm" ? "warmup" : "greet";
+    return (state.daysSinceVisit || 0) >= 14 ? "sleep" : "nobook";   /* 14+ days since the last visit, nothing booked */
+  }
+  if (state.attended && state.sharedDone) return "cleared";
+  if (state.justBooked && !state.arrived && !state.attended && !canHere() && !isPaused()) return "book";
+  if (state.attended) return "calm";
+  if (state.arrived) return "cheer";                 /* checked in, shared or not, before the studio marks attended */
+  if (isPaused()) return "paused";
+  if (state.nudge || canHere()) return "warmup";
+  return "greet";
+}
+function isPaused() { const b = state.booking && state.booking.studio === state.studio; return !!b && state.clock === "night" && !state.arrived; }
+function hanaLine(s) { return `<div class="sayrow">${hana("greet")}<div class="say">${s}</div></div>`; }
 function noteFor() {
   if (state.auth !== "app") return ["Account", "Two screens: form, then code. Header has menu and alerts."];
   if (state.view === "streak") return ["Streak", "Its own screen. The number grows when today's board is cleared, not when a session is spent."];
@@ -468,6 +574,16 @@ function noteFor() {
   return ["You", "Icon menu: pass, alerts, ask, studios."];
 }
 function toast(t) {
+  toast.msg = { t, at: Date.now() };
+  /* screens with a board show the message as its green status bar; others get the floating toast */
+  setTimeout(() => {
+    const m = document.querySelector("#view .mission");
+    if (m) { if (!m.querySelector(".okbar.msg")) m.insertAdjacentHTML("beforeend", `<div class="okbar msg">${t}</div>`); return; }
+    showToast(t);
+  }, 0);
+}
+function boardMsg() { return toast.msg && Date.now() - toast.msg.at < 4000 ? `<div class="okbar msg">${toast.msg.t}</div>` : ""; }
+function showToast(t) {
   const el = document.getElementById("toast");
   el.textContent = t; el.classList.add("show"); toast.keep = true;
   clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1600);
@@ -483,13 +599,13 @@ function meter() {
   const pct = Math.max(8, Math.round((p.left / p.total) * 100));
   return `<div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
 }
-function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : "6:40"; }
+function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : state.clock === "night" ? "7:10" : "6:40"; }
 function canHere() {
   return state.clock === "pm" && state.booking && state.booking.time === "7:00pm" && state.booking.status === "confirmed";
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
-  state.arrived = true; state.arrivedVia = via; if (state.streak < 4) state.streak = 4;
+  state.arrived = true; state.arrivedVia = via;
   alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
   toast("You’re here · still " + remainingLine());
 }
@@ -508,7 +624,7 @@ function fe(f) { return state.formField === f ? "bad" : ""; }
 function em(f) { return state.formField === f && state.formError ? `<p class="err">${state.formError}</p>` : ""; }
 function welcome() {
   const create = state.mode === "create", forgot = state.mode === "forgot";
-  return `<div class="hero">${HANA}</div><div class="say" style="margin-bottom:12px">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Hana."}</div>
+  return `<div class="say up">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Hana."}</div><div class="hero">${hana("greet")}</div>
     <h1>${create ? "Create account" : forgot ? "Reset password" : "Log in"}</h1>
     <form id="authForm">
     ${!forgot ? `<div class="seg">
@@ -526,7 +642,7 @@ function welcome() {
 }
 function otp() {
   const boxes = state.otp.map((d,i) => `<input maxlength="1" inputmode="numeric" data-otp="${i}" value="${d}" />`).join("");
-  return `<div class="hero">${HANA}</div><button class="link" type="button" data-act="back-auth">Back</button>
+  return `<div class="hero">${hana("greet")}</div><button class="link" type="button" data-act="back-auth">Back</button>
     <p class="kicker" style="margin-top:12px">Code</p><h1>Enter the 6 digits</h1>
     <p class="sub">Sent to ${esc(state.phone)}.</p>
     ${state.otpError ? `<p class="err">${state.otpError}</p>` : ""}
@@ -575,56 +691,61 @@ function hanaChips() {
 }
 function missionStep() {
   const b = state.booking && state.booking.studio === state.studio;
-  if (!b) return 0;
-  if (!state.arrived) return 1;
-  if (!state.sharedIn) return 2;
-  if (!state.sharedDone) return 3;
-  return 4;
+  if (!b) return 0;            /* Pick */
+  if (!state.arrived) return 1; /* Arrive */
+  if (!state.sharedIn) return 2; /* Share here */
+  if (!state.attended) return 3; /* waiting for the studio */
+  if (!state.sharedDone) return 4; /* Clear */
+  return 5;
 }
 function today() {
-  const step = missionStep();
-  const titles = ["Book today", "Show up at 7", "Share that you came", "Share the result", "Day cleared"];
-  const lines = [
-    "Jiwoo already went. Your turn today.",
-    "Don't lose day " + state.streak + ". Show up at 7.",
-    "You showed up. Share it, like a win.",
-    "Class done. Share the card. Pass stays " + pass().left + "."
-    , "Board cleared. Rest well."
-  ];
+  const step = missionStep(), paused = isPaused();
+  const p = pass();
+  const titles = ["Book today", "Show up at 7", "Share that you came", "After class", "Share the result", "Day cleared"];
+  /* GAME_DESIGN lines: one short line, no pressure, no prizes */
+  const lines = ["Tonight's board is open.", "See you at 7.", "You're here · see you at 7.", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
+  const manage = state.late
+    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at 4:00pm.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
+    : `<p class="sub" style="margin:8px 0 0">Check-in opens 6:30. Free cancel until 4:00pm.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
-    `<button class="btn" type="button" data-act="pick-7">BOOK 7:00</button>`,
-    canHere() ? `<button class="btn" type="button" data-act="here">CHECK IN</button>` : `<button class="btn" type="button" data-act="clock-pm">OPEN 6:40 CHECK-IN</button>`,
-    `<button class="btn" type="button" data-act="share-in">SHARE CHECK-IN</button>`,
-    `<button class="btn" type="button" data-act="share-done">SHARE RESULT</button>`,
-    `<p class="sub">Streak is day ${state.streak}. Pass is still ${pass().left} left.</p>`
+    `<button class="btn" type="button" data-act="pick-7">Book 7:00</button>`,
+    canHere() ? `<button class="btn" type="button" data-act="here">I'm here</button>` : manage,
+    `<button class="btn" type="button" data-act="share-in">Share check-in</button><button class="btn ghost" type="button" data-act="skip-in">Not now</button>`,
+    `<div class="okbar">You're here · still ${p.left} left</div><p class="sub" style="margin:8px 0 0">The studio marks attendance after class.</p>`,
+    `<button class="btn" type="button" data-act="share-done">Share result</button><button class="btn ghost" type="button" data-act="skip-done">Skip</button>`,
+    `<div class="okbar">Board cleared · day ${state.streak}</div><p class="sub" style="margin:8px 0 0">Pass is ${p.left} left.</p>`
   ];
-  const dots = [0,1,2].map(i => `<i class="${step > i ? "on" : ""}"></i>`).join("");
-  const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
-  const thread = (state.chat || []).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
+  const doneSteps = [step > 0, step > 1, step > 2, step > 4];
+  const labels = ["Pick", "Arrive", "Share here", "Clear"];
+  const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
+  const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
+  const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
+  const line = hanaState() === "sleep" ? "Welcome back. Want a seat tonight?" : paused ? "Board paused. Tomorrow is a new level." : other ? "Tonight is at " + studioName(other.studio) + "." : lines[step];
   return `${topbar()}
-    <div class="hana-stage"><div class="hana-bubble">${lines[step]}</div>${HANA}</div>
+    <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(hanaState())}</div>
+    ${other ? `<button class="card press otherrow" type="button" data-act="open-other-class"><strong>You have class at ${studioName(other.studio)} · ${other.time}</strong><span class="what-sub">${other.className} · ${other.teacher} · open it ›</span></button>` : ""}
     <div class="dock">
-      <button class="streak-btn" type="button" data-act="streak"><small>STREAK</small>Day ${state.streak}</button>
-      <button class="friends-btn" type="button" data-act="friends"><small>FRIENDS</small>Jiwoo just went</button>
+      <button class="streak-btn" type="button" data-act="streak">${ICONS.flame}<span><small>STREAK</small>Day ${state.streak}</span></button>
+      <button class="friends-btn" type="button" data-act="friends">${ICONS.people}<span><small>FRIENDS</small>Jiwoo went today</span></button>
     </div>
     <div class="mission">
-      <div class="k">DAILY MISSION</div>
-      <h1>${titles[step]}</h1>
-      <div class="dots">${dots}</div>
-      ${buttons[step]}
-      ${step === 1 && state.clock === "am" && !state.late ? `<div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel</button></div>` : ""}
+      <div class="k">TODAY'S BOARD</div>
+      <h1>${paused ? "Board paused" : titles[step]}</h1>
+      <div class="dots4">${dots}</div>
+      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at 6:55pm. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
+      ${boardMsg()}
     </div>
-    <p class="passpill">Pass ${pass().left} left · not the streak</p>
+    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="pass"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
     <div class="thread">${thread}</div>`;
 }
 function streakScreen() {
   const names = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   const days = names.map((d,i) => {
     const done = i < state.streak, now = i === state.streak;
-    const label = done ? "Showed up" : now ? "Today" : "Ahead";
+    const label = done ? "Cleared" : now ? "Today" : "Ahead";
     return `<div class="streakday ${done ? "done" : now ? "now" : ""}"><i></i><b>${d}</b><span>${label}</span></div>`;
   }).join("");
-  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="streakhead"><p class="bigcount">${state.streak}</p><p>Show up today to keep it.</p></div>${days}<button class="btn" type="button" data-act="share-streak">SHARE MY STREAK</button>`;
+  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
 }
 function friendRow(n, d) {
   const letter = (n || "?").slice(0, 1).toUpperCase();
@@ -633,12 +754,12 @@ function friendRow(n, d) {
 function friendsScreen() {
   const rows = state.friends.map(f => friendRow(f.n, f.d)).join("") || `<div class="card"><span>No friends yet. Share your code.</span></div>`;
   const waiting = (state.outgoing || []).map(f => friendRow(f.n, "Waiting · not a friend until they accept")).join("");
-  const asks = state.incoming.map((f,i) => `<div class="card askcard"><b>${f.n} used your code</b><span>They want to add you.</span><div class="pair"><button class="btn" type="button" data-act="accept-friend" data-i="${i}">ACCEPT</button><button class="btn ghost" type="button" data-act="decline-friend" data-i="${i}">NOT NOW</button></div></div>`).join("");
+  const asks = state.incoming.map((f,i) => `<div class="card askcard"><b>${f.n} used your code</b><span>They want to add you.</span><div class="pair"><button class="btn" type="button" data-act="accept-friend" data-i="${i}">Accept</button><button class="btn ghost" type="button" data-act="decline-friend" data-i="${i}">Not now</button></div></div>`).join("");
   return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">People</p><h1>Friends</h1>
     <div class="card codebox"><p class="kicker">Your code</p><b>${state.myCode}</b><span>Send this so someone can add you.</span></div>
     ${asks}${waiting}${rows}
-    <div class="push"><button class="btn" type="button" data-act="add-friend">ADD A FRIEND</button>
-    <button class="btn ghost" type="button" data-act="share-code">SHARE MY CODE</button></div>`;
+    <div class="push"><button class="btn" type="button" data-act="add-friend">Add a friend</button>
+    <button class="btn ghost" type="button" data-act="share-code">Share my code</button></div>`;
 }
 function openShare(kind) {
   if (state.view !== "share") state.shareBack = state.view || "today";
@@ -648,16 +769,14 @@ function openShare(kind) {
 }
 function closeShare(sent, via) {
   const back = state.shareBack || "today";
-  if (sent) {
-    if (state.share === "in") state.sharedIn = true;
-    if (state.share === "done") { state.sharedDone = true; if (state.streak < 5) state.streak = 4; }
-    toast(via === "Copy" ? "Copied" : "Shared");
-  }
+  if (sent) { if (state.share === "in") state.sharedIn = true; toast(via === "Copy" ? "Copied" : "Shared"); }
+  if (state.share === "done" && state.attended) clearBoard();   /* shared or skipped: the board clears */
   state.share = null;
   state.view = back === "today" ? null : back;
   state.tab = "today";
   render();
 }
+function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
 function sharePayload() {
   const [k, title, sub, foot] = shareCard();
   return { k, title, sub, foot, text: title + "\n" + sub + "\n" + foot };
@@ -668,10 +787,10 @@ function openShareSheet() {
     <p class="kicker">Share</p>
     <p class="sheet-line">${card.title} · ${card.sub}</p>
     <div class="apps">
-      <button type="button" class="msg" data-act="share-app" data-app="Messages"><i>M</i>Messages</button>
-      <button type="button" class="kakao" data-act="share-app" data-app="KakaoTalk"><i>K</i>KakaoTalk</button>
-      <button type="button" class="ig" data-act="share-app" data-app="Instagram"><i>I</i>Instagram</button>
-      <button type="button" class="copy" data-act="share-app" data-app="Copy"><i>C</i>Copy</button>
+      <button type="button" class="msg" data-act="share-app" data-app="Messages"><i>${ICONS.chat}</i>Messages</button>
+      <button type="button" class="kakao" data-act="share-app" data-app="KakaoTalk"><i>${ICONS.bubble}</i>KakaoTalk</button>
+      <button type="button" class="ig" data-act="share-app" data-app="Instagram"><i>${ICONS.camera}</i>Instagram</button>
+      <button type="button" class="copy" data-act="share-app" data-app="Copy"><i>${ICONS.copy}</i>Copy</button>
     </div>
     <button class="btn ghost" type="button" data-act="share-cancel">Cancel</button>`);
 }
@@ -687,18 +806,18 @@ function shareCard() {
 function shareScreen() {
   const [k, title, sub, foot] = shareCard();
   return `<button class="back" type="button" data-act="share-close">‹ Back</button>
-    <p class="kicker">Share</p><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
+    <p class="kicker">Share</p><div class="sayrow">${hana(state.share==="in"?"cheer":state.share==="done"?"calm":"wink")}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
     <p class="sub">Share uses the phone's sheet. Not a friend in this app. No pass on the card.</p>
     <div class="postcard"><p class="kicker">${k}</p><b>${title}</b><span>${sub}</span><em>${foot}</em></div>
-    <button class="btn push" type="button" data-act="share-send">SHARE</button>
-    <button class="btn ghost" type="button" data-act="share-close">NOT NOW</button>`;
+    <button class="btn push" type="button" data-act="share-send">Share</button>
+    <button class="btn ghost" type="button" data-act="share-close">Not now</button>`;
 }
 function addFriendScreen() {
   return `<button class="back" type="button" data-act="friends">‹ Back</button><h1>Add a friend</h1>
     <p class="sub">Type their code. Yours is ${state.myCode}.</p>
     <div class="field"><label>Their code</label><input id="friendCode" value="${state.friendCode}" placeholder="ALEX-4402" /></div>
     <p class="sub">Alex is ALEX-4402. A wrong code finds nobody.</p>
-    <button class="btn" type="button" data-act="do-add">SEND ASK</button>`;
+    <button class="btn" type="button" data-act="do-add">Send ask</button>`;
 }
 function book() {
   const geumho = state.studio === "geumho", thu = state.day !== "sat";
@@ -784,6 +903,7 @@ function passScreen() {
     `<div class="card"><strong>${h.when} · ${h.time}</strong><p class="sub" style="margin:4px 0 0">${h.teacher} · attended</p></div>`).join("");
   return `<button class="link" type="button" data-act="tab-you">Back</button>
     <p class="kicker" style="margin-top:12px">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Pass</h1>
+    <div class="sayrow">${hana(p.left <= 3 ? "low" : "greet")}<div class="say">${p.left <= 3 ? p.left + " left, until " + p.until + ". Want to ask about extending?" : p.left + " left, until " + p.until + "."}</div></div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
     <div class="card"><div class="lbl">Previous</div><strong>10-session intro</strong><p class="sub" style="margin:0">Finished 2 Aug 2026 · 0 left</p></div>
     <p class="kicker">Usage</p>${used || `<div class="card"><p class="sub" style="margin:0">No visits yet.</p></div>`}
@@ -847,7 +967,7 @@ function assistant() {
     : `<div class="card ai"><p class="kicker">${m.card.kicker}</p><strong>${m.card.title}</strong><p class="sub" style="white-space:pre-line;margin:4px 0 0">${m.card.body}</p>
         ${m.card.acts.length ? `<div class="meta">${m.card.acts.map(([a, l], i) => `<button type="button" class="${i ? "chip-btn" : "btn mini"}" data-act="${a}">${l}</button>`).join("")}</div>` : ""}</div>`).join("");
   return `<button class="link" type="button" data-act="tab-you">Back</button>
-    <h1>Ask AI</h1>
+    <div class="sayrow">${hana("greet")}<div class="say">Ask me in a line. I answer with a card.</div></div><h1>Ask AI</h1>
     <p class="sub">${studioName(state.studio)} · ask in a line, get a card. Nothing happens until you tap it.</p>
     ${state.chat.length ? thread : `<div class="chips wrap">${chips}</div>`}
     ${state.requests.length ? `<button class="menu-row" type="button" data-act="ai-requests">${ICONS.ask}<div><strong>Your requests</strong><span>${state.requests.filter(r => r.status === "waiting").length} waiting · ${state.requests.filter(r => r.status === "replied").length} replied</span></div><span class="go">›</span></button>` : ""}
@@ -889,7 +1009,7 @@ function ensureBooked() {
   if (!b || b.studio !== "cheongdam" || b.time !== "7:00pm") { state.booking = { ...BOOKING7 }; state.arrived = false; state.arrivedVia = null; }
   state.studio = "cheongdam";
 }
-function inApp() { state.auth = "app"; state.view = null; state.nudge = false; state.late = false; state.offer = false; }
+function inApp() { state.auth = "app"; }
 const JUMPS = [
   { key: "signin",   label: "Sign in",  note: "Phone and password, then the code. Only a phone the studio already has.", go: () => { state.auth = "welcome"; state.mode = "login"; state.formError = ""; } },
   { key: "create",   label: "Create account", note: "One form, then the code. Terms link outside the checkbox.", go: () => { state.auth = "welcome"; state.mode = "create"; state.formError = ""; } },
@@ -899,12 +1019,12 @@ const JUMPS = [
   { key: "friends",  label: "Friends", note: "Your code, people who used it, and who already went. Not the pass.", go: () => { inApp(); state.tab = "today"; state.view = "friends"; } },
   { key: "add-friend", label: "Add a friend", note: "Type their code. Alex is ALEX-4402. A wrong code finds nobody.", go: () => { inApp(); state.tab = "today"; state.view = "add-friend"; } },
   { key: "share-in", label: "Share check-in", note: "Phone share sheet. Studio, class, day. Not a friend in the app. No pass number.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = false; state.clock = "pm"; state.tab = "today"; state.share = "in"; state.shareBack = "today"; state.view = "share"; } },
-  { key: "share-done", label: "Share result", note: "Done card after class. Day streak only. The pass is not the prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.sharedDone = false; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
+  { key: "share-done", label: "Share result", note: "Done card after class. Day streak only. The pass is not the prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.attended = true; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
   { key: "share-streak", label: "Share streak", note: "Phone share sheet. The number only. Not a friend in the app, and not the pass.", go: () => { inApp(); state.tab = "today"; state.share = "streak"; state.shareBack = "streak"; state.view = "share"; } },
   { key: "share-code", label: "Share code", note: "Phone share sheet with MINA-1842. The app does not pick a friend.", go: () => { inApp(); state.tab = "today"; state.share = "code"; state.shareBack = "friends"; state.view = "share"; } },
   { key: "book",     label: "Book", note: "Group or private, by day, this studio only. Time first.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
   { key: "reformer", label: "Reformer", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
-  { key: "booked",   label: "Confirmed", note: "Tonight. Now 2, after class 1. The meter did not move.", go: () => { inApp(); ensureBooked(); state.tab = "today"; } },
+  { key: "booked",   label: "Confirmed", note: "Tonight. Now 2, after class 1. The meter did not move.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.tab = "today"; } },
   { key: "arrive",   label: "Arrival nudge", note: "6:40, location on. The phone asks; the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { key: "schedule", label: "Schedule", note: "Upcoming on top, history below the line.", go: () => { inApp(); state.tab = "schedule"; } },
   { key: "manage",   label: "Cancel or change", note: "Change is one move. Cancel is free until 4:00pm and asks first.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
@@ -956,7 +1076,7 @@ const FEATURES = [
   { f: "F39", label: "Friends", note: "Code, incoming ask, and who already went.", go: () => { inApp(); state.tab = "today"; state.view = "friends"; } },
   { f: "F40", label: "Add a friend", note: "Their code. Alex is ALEX-4402.", go: () => { inApp(); state.tab = "today"; state.view = "add-friend"; } },
   { f: "F41", label: "Share check-in", note: "Phone share sheet. I'm at Cheongdam, class, day. Not a friend in the app.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = false; state.clock = "pm"; state.tab = "today"; state.share = "in"; state.shareBack = "today"; state.view = "share"; } },
-  { f: "F42", label: "Share result", note: "Done card. Day only. The pass is not a prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.sharedDone = false; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
+  { f: "F42", label: "Share result", note: "Done card. Day only. The pass is not a prize.", go: () => { inApp(); ensureBooked(); state.arrived = true; state.sharedIn = true; state.attended = true; state.clock = "pm"; state.tab = "today"; state.share = "done"; state.shareBack = "today"; state.view = "share"; } },
   { f: "F43", label: "Share streak", note: "Phone share sheet. The number only. Not a friend in the app.", go: () => { inApp(); state.tab = "today"; state.share = "streak"; state.shareBack = "streak"; state.view = "share"; } },
   { f: "F44", label: "Share code", note: "Phone share sheet with MINA-1842. The app does not pick a friend.", go: () => { inApp(); state.tab = "today"; state.share = "code"; state.shareBack = "friends"; state.view = "share"; } },
   { g: "You & system" },
@@ -997,6 +1117,7 @@ function render() {
   document.getElementById("clock").textContent = clockLabel();
   document.getElementById("clkAm").classList.toggle("on", state.clock === "am");
   document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
+  document.getElementById("clkNight").classList.toggle("on", state.clock === "night");
   const tabs = document.getElementById("tabs");
   tabs.hidden = state.auth !== "app" || ["streak","friends","add-friend","share"].includes(state.view);
   if (state.auth === "app") {
@@ -1004,7 +1125,7 @@ function render() {
     const labels = { today: "Today", book: "Book", ask: "Ask", schedule: "Schedule", you: "You" };
     tabs.innerHTML = ["today","book","ask","schedule","you"].map(t => {
       const on = t === "ask" ? askOn : state.tab === t && !askOn;
-      const icon = t === "ask" ? `<span class="fab">${ICONS.spark}</span>` : ICONS[t];
+      const icon = t === "ask" ? `<span class="fab">${ICONS.paw}</span>` : ICONS[t];
       return `<button type="button" class="${t === "ask" ? "ask " : ""}${on ? "on" : ""}" data-act="tab-${t}">${icon}<span>${labels[t]}</span></button>`;
     }).join("");
   }
@@ -1087,7 +1208,7 @@ function enterApp() {
 }
 function remainingLine() { return pass().left + " left"; }
 function bookClass(spec) {
-  state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
+  state.justBooked = true; state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
   alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
   state.tab = "today"; state.view = null;
   toast("Booked · still " + remainingLine()); render();
@@ -1152,8 +1273,19 @@ function openCancel() {
 function openLegal(title, body) {
   sheetBox(`<p class="kicker">Legal</p><h1>${title}</h1><p class="sub">${body}</p><button class="btn ghost" type="button" data-act="close">Close</button>`);
 }
+/* Long press on Hana asks "How many left?" */
+document.getElementById("view").addEventListener("pointerdown", (e) => {
+  const h = e.target.closest("[data-hana]"); if (!h || state.auth !== "app") return;
+  clearTimeout(hana.t); hana.long = false;
+  hana.t = setTimeout(() => { hana.long = true; state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); state.tab = "today"; state.view = null; render(); }, 550);
+});
+["pointerup", "pointerleave", "pointercancel"].forEach(t => document.getElementById("view").addEventListener(t, () => clearTimeout(hana.t)));
 function wire() {
   document.getElementById("view").onclick = (e) => {
+    const h = e.target.closest("[data-hana]");
+    if (h) { if (hana.long) { hana.long = false; return; } const img = h.querySelector(".fig:not(.prevfig) .body"), back = img.getAttribute("src"); clearTimeout(h.wt); h.querySelector(".prevfig")?.remove();
+      img.src = hanaSrc("wink"); h.classList.remove("tap"); void h.offsetWidth; h.classList.add("tap");
+      h.wt = setTimeout(() => { if (img.isConnected) img.src = back; h.classList.remove("tap"); }, 1200); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
     state.feature = null; state.jump = null;
     const act = btn.dataset.act;
@@ -1188,6 +1320,8 @@ function wire() {
     if (act === "here") { arrive("tap"); state.nudge = false; render(); }
     if (act === "share-in") return openShare("in");
     if (act === "share-done") return openShare("done");
+    if (act === "skip-in") { state.sharedIn = true; return render(); }
+    if (act === "skip-done") { clearBoard(); return render(); }
     if (act === "share-send") return openShareSheet();
     if (act === "share-close") return closeShare(false);
     if (act === "streak") { state.view = "streak"; state.tab = "today"; return render(); }
@@ -1282,21 +1416,53 @@ function wire() {
     });
   });
 }
+function runJump(f, key) {
+  toast.msg = null;
+  closeSheet();
+  restore();
+  const feat = f && FEATURES.find(x => x.f === f);
+  state.feature = feat ? f : null;
+  state.jump = feat ? null : key;
+  if (feat) feat.go(); else JUMPS.find(j => j.key === key).go();
+}
 document.getElementById("jump").onclick = (e) => {
   const b = e.target.closest("[data-jump]"); if (!b) return;
-  closeSheet();
-  state.feature = b.dataset.f || null;
-  const feat = state.feature && FEATURES.find(x => x.f === state.feature);
-  state.jump = feat ? null : b.dataset.jump;
-  if (feat) feat.go(); else JUMPS.find(j => j.key === b.dataset.jump).go();
+  runJump(b.dataset.f || null, b.dataset.jump);
   render();
 };
 document.getElementById("railseg").onclick = (e) => {
   const b = e.target.closest("[data-rail]"); if (!b) return;
   state.rail = b.dataset.rail; render();
 };
-document.getElementById("clkAm").onclick = () => { state.jump = null; state.feature = null; state.clock = "am"; state.arrived = false; state.arrivedVia = null; state.nudge = false; state.late = false; render(); };
-document.getElementById("clkPm").onclick = () => { state.jump = null; state.feature = null; state.clock = "pm"; state.late = false; tick(); render(); };
+/* Clock: time travel keeps who you are and what is booked, and resets the day's progress from the clean copy. */
+function setClock(c) {
+  closeSheet();
+  const order = { am: 0, pm: 1, night: 2 };
+  const keep = ["auth", "tab", "view", "studio", "booking", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"];
+  if (order[c] >= order[state.clock]) keep.push("arrived", "arrivedVia", "sharedIn", "attended", "sharedDone", "streak");  /* forward in time keeps the day's progress */
+  restore(keep);
+  state.clock = c; tick(); render();
+}
+document.getElementById("clkAm").onclick = () => setClock("am");
+document.getElementById("clkPm").onclick = () => setClock("pm");
+document.getElementById("clkNight").onclick = () => setClock("night");
+document.getElementById("devAttended").onclick = () => {   /* dev control: the studio marks attendance (server event) */
+  if (state.booking && state.arrived) { state.attended = true; alert("check", "Attended · Barre", "Marked by the studio"); toast("Studio marked attended"); }
+  else toast("Check in first");
+  render();
+};
+/* Dev check: running the same jump twice must give the same state. Open with ?dev to run it. */
+function checkJumps() {
+  const snap = () => JSON.stringify(state);
+  const bad = [];
+  [...JUMPS.map(j => [null, j.key]), ...FEATURES.filter(x => x.f).map(x => [x.f, null])].forEach(([f, k]) => {
+    runJump(f, k); const a = snap(); runJump(f, k); const b = snap();
+    if (a !== b) bad.push(f || k);
+  });
+  restore(); render();
+  if (bad.length) console.error("jump not repeatable:", bad.join(", ")); else console.log("checkJumps: all jumps repeatable");
+  return bad;
+}
 document.getElementById("sheet").onclick = (e) => { if (e.target.id === "sheet") closeSheet(); };
 document.getElementById("notice").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
@@ -1350,7 +1516,9 @@ document.getElementById("sheetBox").addEventListener("click", (e) => {
   }
 });
 render();
-
+if (new URLSearchParams(location.search).has("dev")) checkJumps();
+/* ?state=sleep: member away 14+ days with nothing booked */
+if (new URLSearchParams(location.search).get("state") === "sleep") { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; state.view = null; render(); }
 </script>
 </body>
 </html>
