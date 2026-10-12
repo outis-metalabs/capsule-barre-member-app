@@ -12,16 +12,17 @@
     --paper: #FFF8EC;
     --ink: #4A3B36;
     --soft: #5A4A44;
-    --mute: #8C7B72;
+    --mute: #6F6760;
     --line: #EEDFCC;
     --card: #fff;
-    --ox: #E98597;
+    --ox: #B04A5E;
+    --ox-soft: #E98597;
     --ox-ink: #fff;
     --pink-l: #FDE7EA;
     --mint: #B5E0CB;
     --ok: #2E6B52;
     --ok-bg: #E3F4EC;
-    --warn: #9A6A4A;
+    --warn: #80563A;
     --warn-bg: #FBEDE2;
     --ox-bg: #FDE7EA;
   }
@@ -88,7 +89,7 @@
   .scroll { flex: 1; overflow: auto; padding: 8px 16px 24px; display: flex; flex-direction: column; }
   .scroll::-webkit-scrollbar { width: 0; }
   .tabs {
-    display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: end; border-top: 1px solid var(--line);
     background: #fff; padding: 0 4px 10px; overflow: visible; border-radius: 22px 22px 0 0;
   }
   .tabs button {
@@ -270,12 +271,12 @@
   .ask-k { margin:2px 0 14px; text-align:center; font-size:12px; font-weight:600; color:#6F6760; letter-spacing:0; text-transform:none; }
   .askhead { display:flex; justify-content:space-between; align-items:center; margin:0 0 4px; }
   .askhead .link { margin:0; }
-  .reqbtn { position:relative; width:44px; height:44px; min-height:44px; display:grid; place-items:center; border:0; background:transparent; color:#8A8178; padding:0; margin:0 -10px 0 0; border-radius:50%; flex:none; }
+  .reqbtn { position:relative; width:44px; height:44px; min-height:44px; display:grid; place-items:center; border:0; background:transparent; color:#6F6760; padding:0; margin:0 -10px 0 0; border-radius:50%; flex:none; }
   .reqbtn .ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-  .reqbtn:focus-visible { outline:2px solid #C4566A; outline-offset:2px; }
+  .reqbtn:focus-visible { outline:2px solid #B04A5E; outline-offset:2px; }
   .reqdot { position:absolute; top:10px; right:9px; width:8px; height:8px; border-radius:50%; background:#E8798A; box-shadow:0 0 0 2px #FFF7EA; }
   .pawsend svg { width:29px; height:29px; display:block; stroke:none; }
-  .ai-form .btn.pawsend { background:#C4566A; box-shadow:0 3px 0 #9E3F52; }
+  .ai-form .btn.pawsend { background:#B04A5E; box-shadow:0 3px 0 #9E3F52; }
   .ai-form .btn.pawsend:disabled { background:#D9D3CC; box-shadow:none; opacity:1; }
   .ask-dock { margin-top:auto; padding-top:8px; }
   .ask-stage.grow { flex:1 1 auto; justify-content:center; min-height:0; }
@@ -288,7 +289,7 @@
     .ask-stage .hana-bubble { font-size:13px; padding:8px 12px; }
     .ask-k { margin:0 0 6px; font-size:11px; }
     .askhead { margin:0; }
-    .ask-dock .ask-chips .chip-btn { min-height:40px; padding:6px 10px; }
+    .ask-dock .ask-chips .chip-btn { min-height:44px; padding:6px 10px; }
   }
   .pawsend svg g, .pawsend svg ellipse { fill:#fff !important; stroke:none !important; }
   .pawsend { transition: transform .18s cubic-bezier(.3,1.6,.5,1), opacity .2s; }
@@ -323,7 +324,7 @@
   .tag { display: inline-flex; align-items: center; min-height: 24px; border-radius: 999px; padding: 4px 8px; font-size: 12px; font-weight: 700; background: #F3E9DC; color: var(--soft); }
   .tag.ok { background: var(--ok-bg); color: var(--ok); }
   .tag.warn { background: var(--warn-bg); color: var(--warn); }
-  .tag.ox { background: var(--ox-bg); color: #C4566A; }
+  .tag.ox { background: var(--ox-bg); color: #B04A5E; }
   .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   /* Button system: .btn primary (one per screen, oxidized red) · .btn.ghost secondary · .link tertiary · .btn.done is a state, not a control */
   .btn {
@@ -345,13 +346,13 @@
   .field input {
     width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-height: 48px; padding: 12px 16px; font-size: 15px; font-weight: 700;
   }
-  .err { color: #C4566A; font-size: 12px; font-weight: 700; margin: 4px 0 0; }
+  .err { color: #B04A5E; font-size: 12px; font-weight: 700; margin: 4px 0 0; }
   .field.bad input { border-color: var(--ox); }
   .otp { display: flex; gap: 8px; justify-content: space-between; }
   .otp input { width: 48px; height: 56px; text-align: center; font-size: 28px; font-weight: 700; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
   .check { display: flex; gap: 8px; align-items: flex-start; font-size: 15px; color: var(--soft); margin: 8px 0 16px; }
   .check input { width: 20px; height: 20px; margin-top: 2px; }
-  .link { border: 0; background: transparent; color: #C4566A; font-weight: 700; font-size: 15px; padding: 8px 0; min-height: 44px; width: auto; align-self: flex-start; text-align: left; }
+  .link { border: 0; background: transparent; color: #B04A5E; font-weight: 700; font-size: 15px; padding: 8px 0; min-height: 44px; width: auto; align-self: flex-start; text-align: left; }
   .top { display: flex; align-items: center; margin-bottom: 16px; gap: 8px; }
   .pill { border: 1px solid var(--line); background: #fff; border-radius: 999px; min-height: 44px; padding: 8px 14px; font-size: 15px; font-weight: 900; }
   .chip { margin-left: auto; border-radius: 999px !important; background: var(--pink-l) !important; font-family: Nunito, sans-serif; font-size: 12px; font-weight: 500; background: #F3E9DC; color: var(--ink); border-radius: 8px; padding: 8px; white-space: nowrap; }
@@ -582,7 +583,8 @@
     .hw .fx, .hw .prevfig { display:none; }
   }
   @media (max-width: 960px) {
-    .shell { grid-template-columns: 1fr; max-width: 430px; padding: 12px; }
+    .shell { grid-template-columns: minmax(0, 1fr); max-width: 430px; padding: 12px; }
+    .shell > * { min-width: 0; }
     .phone { position: static; margin: 0 auto; width: 100%; max-width: 390px; }
     .rail { position: static; }
     .jump { max-height: 240px; }
@@ -595,7 +597,13 @@
   }
   .aifoot { margin: 10px 0 0; font-size: 12px; line-height: 1.4; color: #6F6760; }
   .bubble, .card.ai .sub { overflow-wrap: anywhere; }
-  .link.backhit { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; padding: 0 8px 0 0; }
+  .link.backhit, .back.backhit { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; padding: 0 8px 0 0; }
+  .link { min-width: 44px; }
+  .passpill.lowlink { min-height: 44px; padding: 6px 12px; }
+  .check { min-height: 44px; align-items: center; margin: 4px 0 12px; cursor: pointer; }
+  .check input { appearance: none; -webkit-appearance: none; flex: none; width: 44px; height: 44px; margin: -10px -6px -10px -11px; border: 11px solid transparent; border-radius: 16px; background: #fff padding-box; box-shadow: inset 0 0 0 2px #6F6760; cursor: pointer; }
+  .check input:checked { background: #B04A5E url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat padding-box; box-shadow: none; }
+  .check input:focus-visible { outline: 2px solid #B04A5E; outline-offset: -9px; }
 </style>
 </head>
 <body>
@@ -675,7 +683,7 @@ const state = {
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
-  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, reqSeen: 0, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
+  askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, reqSeen: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
 };
 /* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
@@ -846,7 +854,19 @@ function arrive(via) {
   toast("You’re here · still " + remainingLine());
 }
 function tick() { state.nudge = state.location === "on" && canHere() && !state.arrived; }
-function closeSheet() { document.getElementById("sheet").classList.remove("open"); }
+function closeSheet() {
+  const sh = document.getElementById("sheet"); if (!sh.classList.contains("open")) return;
+  sh.classList.remove("open");
+  const o = closeSheet.opener || closeSheet.last; closeSheet.opener = null;
+  setTimeout(() => {
+    if (!o) return;
+    const el = o.el && o.el.isConnected ? o.el : (o.act ? document.querySelector(`#view [data-act="${o.act}"], .tabs [data-act="${o.act}"]`) : null);
+    el?.focus();
+  }, 40);
+}
+document.addEventListener("pointerdown", (e) => { const t = e.target.closest && e.target.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; }, true);
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { const t = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; } }, true);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.getElementById("sheet")?.classList.contains("open")) { e.preventDefault(); closeSheet(); } });
 function topbar() {
   const p = pass();
   return `<div class="top">
@@ -878,7 +898,7 @@ function welcome() {
 }
 function otp() {
   const boxes = state.otp.map((d,i) => `<input maxlength="1" inputmode="numeric" data-otp="${i}" value="${d}" />`).join("");
-  return `<div class="hero">${hana("greet")}</div><button class="link" type="button" data-act="back-auth">Back</button>
+  return `<div class="hero">${hana("greet")}</div><button class="link backhit" type="button" data-act="back-auth">Back</button>
     <p class="kicker" style="margin-top:12px">Code</p><h1>Enter the 6 digits</h1>
     <p class="sub">Sent to ${esc(state.phone)}.</p>
     ${state.otpError ? `<p class="err">${state.otpError}</p>` : ""}
@@ -917,7 +937,7 @@ function hanaChips() {
   else if (!state.arrived && canHere()) chips.push(["here", "I'm here"]);
   else if (!state.arrived) chips.push(["clock-pm", "It's " + clockLabel.at("pm")]);
   if (b && !state.arrived && state.clock === "am" && !state.late) {
-    chips.push(["move", "Change time"]);
+    if (!state.moved) chips.push(["move", "Change time"]);
     chips.push(["cancel", "Cancel"]);
   }
   if (state.arrived && !state.sharedIn) chips.push(["share-in", "Share check-in"]);
@@ -998,7 +1018,7 @@ function today() {
   const lines = ["Tonight's board is open.", "See you at " + T.at + ".", "You're here · see you at " + T.at + ".", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
   const manage = (state.late || state.lateCancel)
     ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at ${T.cancel}.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
-    : `<p class="sub" style="margin:8px 0 0">Check-in opens ${T.open}. Free cancel until ${T.cancel}.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
+    : `<p class="sub" style="margin:8px 0 0">Check-in opens ${T.open}. Free cancel until ${T.cancel}.</p><div class="pair">${state.moved ? "" : `<button class="quiet" type="button" data-act="move">Change time</button>`}<button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
     `<button class="btn" type="button" data-act="pick-7">Book 7:00</button>`,
     canHere() ? `<button class="btn" type="button" data-act="here">I'm here</button>` : manage,
@@ -1039,7 +1059,7 @@ function streakScreen() {
     const label = done ? "Cleared" : now ? "Today" : "Ahead";
     return `<div class="streakday ${done ? "done" : now ? "now" : ""}"><i></i><b>${d}</b><span>${label}</span></div>`;
   }).join("");
-  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
+  return `<button class="back backhit" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
 }
 function friendRow(n, d) {
   const letter = (n || "?").slice(0, 1).toUpperCase();
@@ -1049,7 +1069,7 @@ function friendsScreen() {
   const rows = state.friends.map(f => friendRow(f.n, f.d)).join("") || `<div class="card"><span>No friends yet. Share your code.</span></div>`;
   const waiting = (state.outgoing || []).map(f => friendRow(f.n, "Waiting · not a friend until they accept")).join("");
   const asks = state.incoming.map((f,i) => `<div class="card askcard"><b>${f.n} used your code</b><span>They want to add you.</span><div class="pair"><button class="btn" type="button" data-act="accept-friend" data-i="${i}">Accept</button><button class="btn ghost" type="button" data-act="decline-friend" data-i="${i}">Not now</button></div></div>`).join("");
-  return `<button class="back" type="button" data-act="tab-today">‹ Back</button><p class="kicker">People</p><h1>Friends</h1>
+  return `<button class="back backhit" type="button" data-act="tab-today">‹ Back</button><p class="kicker">People</p><h1>Friends</h1>
     <div class="card codebox"><p class="kicker">Your code</p><b>${state.myCode}</b><span>Send this so someone can add you.</span></div>
     ${asks}${waiting}${rows}
     <div class="push"><button class="btn" type="button" data-act="add-friend">Add a friend</button>
@@ -1063,7 +1083,7 @@ function openShare(kind) {
 }
 function closeShare(sent, via) {
   const back = state.shareBack || "today";
-  if (sent) { if (state.share === "in") state.sharedIn = true; toast(via === "Copy" ? "Copied" : "Shared"); }
+  if (sent) { if (state.share === "in") state.sharedIn = true; const msg = via === "Copy" ? "Copied" : "Shared"; setTimeout(() => showToast(msg), 30); }
   if (state.share === "done" && state.attended) clearBoard();   /* shared or skipped: the board clears */
   state.share = null;
   state.view = back === "today" ? null : back;
@@ -1099,7 +1119,7 @@ function shareCard() {
 }
 function shareScreen() {
   const [k, title, sub, foot] = shareCard();
-  return `<button class="back" type="button" data-act="share-close">‹ Back</button>
+  return `<button class="back backhit" type="button" data-act="share-close">‹ Back</button>
     <p class="kicker">Share</p><div class="sayrow">${hana(state.share==="in"?"cheer":state.share==="done"?"calm":"wink")}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
     <p class="sub">Share uses the phone's sheet. Not a friend in this app. No pass on the card.</p>
     <div class="postcard"><p class="kicker">${k}</p><b>${title}</b><span>${sub}</span><em>${foot}</em></div>
@@ -1107,7 +1127,7 @@ function shareScreen() {
     <button class="btn ghost" type="button" data-act="share-close">Not now</button>`;
 }
 function addFriendScreen() {
-  return `<button class="back" type="button" data-act="friends">‹ Back</button><h1>Add a friend</h1>
+  return `<button class="back backhit" type="button" data-act="friends">‹ Back</button><h1>Add a friend</h1>
     <p class="sub">Type their code. Yours is ${state.myCode}.</p>
     <div class="field"><label>Their code</label><input id="friendCode" value="${state.friendCode}" placeholder="ALEX-4402" /></div>
     <p class="sub">Alex is ALEX-4402. A wrong code finds nobody.</p>
@@ -1152,13 +1172,13 @@ function spot() {
   const pads = [1,2,3,4,5,6].map(n => TAKEN.has(n)
     ? `<div class="pad taken">${n}<small>Taken</small></div>`
     : `<button type="button" class="pad ${n===mine?"mine":""}" data-act="spot" data-n="${n}">${n}<small>${n===mine?"Yours":"Open"}</small></button>`).join("");
-  return `${topbar()}<button class="link" type="button" data-act="tab-book">Back</button>
+  return `${topbar()}<button class="link backhit" type="button" data-act="tab-book">Back</button>
     <p class="kicker">Thu · 7:00pm</p><h1>Pick a reformer</h1>
     <p class="sub">Yours until 6:45pm.</p><div class="map">${pads}</div>
     <div class="actions"><button class="btn" type="button" data-act="confirm-spot" ${mine ? "" : "disabled"}>${mine ? "Use reformer " + mine : "Choose a reformer"}</button></div>`;
 }
 function waitlist() {
-  return `${topbar()}<button class="link" type="button" data-act="tab-book">Back</button>
+  return `${topbar()}<button class="link backhit" type="button" data-act="tab-book">Back</button>
     <p class="kicker">8:00pm · full</p>
     <h1>${state.wait?"You’re 2nd":"Join the line?"}</h1>
     <p class="sub">${state.wait?"We’ll ask before booking you in. Still 2 left.":"You’d be 2nd. Still 2 left."}</p>
@@ -1195,7 +1215,7 @@ function passScreen() {
   const p = pass();
   const used = HISTORY.filter(h => h.studio === state.studio && h.status === "attended").map(h =>
     `<div class="card"><strong>${h.when} · ${h.time}</strong><p class="sub" style="margin:4px 0 0">${h.teacher} · attended</p></div>`).join("");
-  return `<button class="link" type="button" data-act="tab-you">Back</button>
+  return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
     <p class="kicker" style="margin-top:12px">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Pass</h1>
     <div class="sayrow">${hana(p.left <= 3 ? "low" : "greet")}<div class="say">${p.left <= 3 ? p.left + " left, until " + p.until + ". Want to ask about extending?" : p.left + " left, until " + p.until + "."}</div></div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
@@ -1211,7 +1231,7 @@ function alerts() {
       <em>${a.when}</em></button>`).join("");
   const sw = (key, label, sub) => `<button class="switch-row" type="button" data-act="toggle" data-k="${key}" aria-pressed="${state.notify[key]}">
       <div><strong>${label}</strong><span>${sub}</span></div><span class="switch ${state.notify[key] ? "on" : ""}"><i></i></span></button>`;
-  return `<button class="link" type="button" data-act="tab-you">Back</button>
+  return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
     <h1>Alerts</h1>
     ${rows}
     <p class="kicker" style="margin-top:24px">Notify me</p>
@@ -1272,7 +1292,9 @@ const BODY_RE = new RegExp("\\b(" + BODY + ")s?\\b");
 const COMPLAINT_RE = /\b(sore|stiff|tight|aches?|clicks?|clicking|pops?|popping|locks?|locking|weak|bad)\b/;
 const WENT_RE = new RegExp("\\b(stuck|locked|locking) (my )?(" + BODY + ")s?\\b|\\b(" + BODY + ")s? (is |feels |got |gets |keeps )?(went out|gave out|giving out|stuck|locked|locking up|locked up)\\b|\\b(can.?t|cannot|couldn.?t) (put|bear) (any )?weight on\\b|\\bweight on (my|it)\\b.*\\b(hurt|pain|can.?t)");
 const HURTS_RE = new RegExp("\\b(it|that|this|" + BODY + ")s?\\s+(really |still |kinda |so |is )?hurts?\\b");
+const URGENT_RE = /\b(emergency|emergencies|ambulance|urgent|urgently|911|999|sos|call (a |an )?doctor|need a doctor|someone help|please help|help please|help!+)(?=\W|$)|^(i need help|help me|help|need help|i need some help)\W*$|\bhelp me(?! (to )?(book|with|find|choose|pick|cancel|move|change|extend|understand|out with|decide|reschedul\w*|get there|check in|sign|log))\b(?!.*\b(book|class|pass|schedule)\b)/;
 function isHealth(s) {
+  if (URGENT_RE.test(s)) return true;
   const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b|\bair.?condition\w*|\bterms (and|&) conditions\b|\b(pass|booking|cancel\w*|membership|class|weather|studio|road|refund|good|great|mint|perfect|working) conditions?\b|\bconditions? (of|for) (the |my )?(pass|booking|membership|refund|cancel\w*|use|entry)\b|\bin (good|great|bad) condition\b|\bbroken (up|into|down)\b|\bbroke (up|into|down)\b|\bperiod of\b|\bcough drops?\b|\bsick (moves|class|beat|beats)\b|\b(beat|song|music|playlist|set|routine|choreo|class) (was|is) (so )?sick\b|\bdepression era\b|\blocked out\b|\bspinning class\b|\bstuck in (traffic|a meeting|work|the office|line)\b|\b(i.?m|so|totally|im) broke\b|\bbroke (as|af|until|lol)\b|\b(phone|screen|app|card|laptop|car|locker|link|website|site|printer|machine) (is |got |was )?(broke|broken)\b|\bbroken (phone|app|link|screen|card|locker|website|machine)\b|\bsick (of|and tired)\b/g, " ");
   return HEALTH_RE.test(t) || HURTS_RE.test(t) || WENT_RE.test(t) || (BODY_RE.test(t) && COMPLAINT_RE.test(t));
 }
@@ -1307,12 +1329,12 @@ function hanaReply(q) {
   /* tips: whole-word topic + a request word, or an exact chip */
   const CHIP_TIP = { "rib breathing": 0, "breathing tip": 0, "tiny tuck": 1, "quick stretch": 2, "cool-down": 3, "cool down": 3, "how often": 4, "next tip": -1 };
   const bare = s.replace(/[?!.…\s]+$/, ""), ti = bare in CHIP_TIP ? CHIP_TIP[bare] : (/\b(tips?|show me)\b|\bhow (do|to|should|can|often)\b|\btimes a week\b|\b(any|a|quick|good|best) (stretch|stretches|breathing)\b/.test(s) ? TIPS.findIndex(t => t.q.test(s)) : -1);
-  if (ti < 0 && /^(a |any |one |another |give me a |got a )?tips?( please| pls| plz)?\W*$|^(can i have|can you give me|give me) (a |some )?tips?\b/.test(s)) return { ...R("Pick a tiny one?", "warmup", null, TIPS.map(t => t.t)), allChips: true };
+  if (ti < 0 && /^(a |any |one |another |give me a |got a )?tips?( please| pls| plz)?\W*$|^(can i have|can you give me|give me|tell me|show me|got|i want|i.?d like) (a |some |any |one |another )?tips?\b/.test(s)) return { ...R("Pick a tiny one?", "warmup", null, TIPS.map(t => t.t)), allChips: true };
   if (ti < 0 && /\btips?\b/.test(s)) { state.fbChips = TIPS.map(t => t.t); return null; }   /* a tip ask with no known topic: fallback, never the balance */
   if (ti >= 0) { state.tipIdx = ti; return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(ti)); }
   if (state.aiSim === "noPass" && /how many|left\?|pass|book|extend|expire/.test(s)) return R("Your " + sn + " pass ended " + p.until + ". The studio can help.", "paused",
     { k: "info", kicker: "From your passes", title: sn + " pass ended", body: "No sessions to book with. Nothing to buy here.", acts: [["late-ask", "Ask the studio"]] });
-  if (/how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
+  if (/\bhelp (me )?with (my )?pass\b/.test(s) || /how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
     const pc = pass("cheongdam"), pg = pass("geumho");
     return R(`You have ${pc.left} left at Cheongdam and ${pg.left} at Geumho.`, p.left <= 3 ? "low" : "greet",
       { k: "balance", kicker: "From your passes", title: `Cheongdam ${pc.left} of ${pc.total} · Geumho ${pg.left} of ${pg.total}`, body: `Cheongdam ends ${pc.until}. Geumho ends ${pg.until}.`, acts: [["ai-pass", "Open pass"]] }, ["Ask to extend", "Book next"]);
@@ -1337,6 +1359,7 @@ function hanaReply(q) {
   }
   const notClass = /\b(phone|number|email|address|name|password|card)\b/.test(s);
   if (/^good (morning|evening|afternoon|night)\b/.test(s)) return R("Good " + s.match(/^good (\w+)/)[1] + ", " + state.name.split(" ")[0] + "!", "greet", null, [askChips()[0]]);
+  if (/\b(move|change|switch|reschedul\w*)\b/.test(s) && b && !notClass && state.moved) return R("You've used your one move. The studio can help.", "greet", { k: "change", kicker: "From your " + studioName(b.studio) + " schedule", title: b.when + " · " + b.time + " " + b.className, body: "Moved once already. Cancel stays free until " + T.cancel + ".", acts: [["late-ask", "Ask the studio"]] });
   if (/\b(move|change|switch|reschedul\w*)\b/.test(s) && b && !notClass) return R("Want a different time? One move, not cancel and rebook.", "greet", { k: "change", kicker: "From your " + studioName(b.studio) + " schedule", title: b.time + " " + b.className + " · " + b.teacher, body: "Changing keeps you at " + passFor(b.studio).left + " left.", acts: [["ai-move", "Change time"]] });
   if (/\b(move|change|switch|reschedul\w*)\b/.test(s) && !b && !notClass && /class|booking|\bto \d|time|\bit\b/.test(s)) return R("Nothing booked to move. Book one?", "nobook", null, ["Book tonight"]);
   const at = "At " + sn + ", ", SD = SCHED[state.studio], thuL = { k: "list", kicker: "From " + sn + "'s schedule", title: "Thursday 8 Oct", body: schedBody(SD.thu), acts: [["ai-book", "See schedule"]] };
@@ -1459,13 +1482,13 @@ function askLabel() { return { extend: "Extend pass", hold: "Hold pass", questio
 function ask() {
   const p = pass();
   const chip = (k, l) => `<button type="button" class="chip-btn ${state.askType === k ? "on" : ""}" data-act="ask-type" data-k="${k}">${l}</button>`;
-  if (state.ask) return `<button class="link" type="button" data-act="ai">Back</button>
+  if (state.ask) return `<button class="link backhit" type="button" data-act="ai">Back</button>
     <h1>Sent to ${studioName(state.studio)}</h1>
     <div class="card"><div class="meta"><span class="tag ok">${askLabel()}</span><span class="tag warn">Still ends ${p.until}</span></div>
       <p class="sub" style="margin:12px 0 0">${esc(state.askText)}</p></div>
     <p class="sub">The owner sees this on today’s list. The reply lands here and in Alerts. Nothing changes on your pass until they decide.</p>
     <div class="actions"><button class="btn ghost" type="button" data-act="ai-requests">Your requests</button></div>`;
-  return `<button class="link" type="button" data-act="ai">Back</button>
+  return `<button class="link backhit" type="button" data-act="ai">Back</button>
     <h1>Request to ${studioName(state.studio)}</h1>
     <p class="sub">${studioName(state.studio)} · ${p.left} of ${p.total} left · ends ${p.until}</p>
     <div class="chips">${chip("extend", "Extend pass")}${chip("hold", "Hold pass")}${chip("question", "Question")}</div>
@@ -1687,7 +1710,7 @@ function sendCode() {
 function verify() {
   const code = state.otp.join("");
   if (code.length < 6) { state.otpError = "Enter all 6 digits."; return render(); }
-  if (code === "000000") { state.otpError = "That code is wrong."; return render(); }
+  if (code === "000000") { state.otpError = "That code is wrong. Try again."; state.otp = ["","","","","",""]; render(); setTimeout(() => document.querySelector("[data-otp='0']")?.focus(), 30); return; }
   if (state.otpFor === "forgot") { state.auth = "newpass"; state.formError = ""; return render(); }
   enterApp();
 }
@@ -1704,15 +1727,19 @@ function enterApp() {
   toast("Welcome in"); render();
 }
 function bookClass(spec) {
+  state.moved = false;
   state.justBooked = true; state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
   alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
   state.tab = "today"; state.view = null;
   toast("Booked · still " + remainingLine()); render();
 }
 function sheetBox(html) {
-  const box = document.getElementById("sheetBox");
-  document.getElementById("sheet").classList.add("open");
+  const box = document.getElementById("sheetBox"), sh = document.getElementById("sheet");
+  if (!sh.classList.contains("open")) { const a = document.activeElement; closeSheet.opener = a && a !== document.body && !a.closest("#sheet") ? { el: a, act: a.dataset && a.dataset.act } : (closeSheet.last || null); }
+  sh.classList.add("open");
+  box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.tabIndex = -1;
   box.innerHTML = html;
+  setTimeout(() => (box.querySelector("button, input, [href], select, textarea") || box).focus(), 30);
   box.querySelector("[data-act=close]")?.addEventListener("click", closeSheet);
   return box;
 }
@@ -1747,7 +1774,7 @@ function openMove() {
     <button class="btn" type="button" id="doMove">Move</button>
     <button class="btn ghost" type="button" data-act="close">Keep ${onSat ? "Saturday" : "Thursday"}</button>`);
   box.querySelector("#doMove").onclick = () => {
-    state.booking = target;
+    state.booking = target; state.moved = true;
     state.arrived = false; state.arrivedVia = null; closeSheet(); toast("Moved · " + remainingLine()); render();
   };
 }
