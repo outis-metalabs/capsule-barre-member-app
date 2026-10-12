@@ -536,6 +536,18 @@
   .hw.tap .fx .xtb { animation:tburst .7s ease-out !important; }
   .hw.tap .prop.hide-on-tap { visibility:hidden; }
 
+
+  /* Animated WebP mode: the body motion is baked into the art, so the CSS body loops are switched off
+     (entrance/exit, ambient fx, tap reactions and the ? pop-in stay). Cheer bakes its own hop shadow. */
+  .hw.anim[data-s] .fig { --fig: none; }
+  .hw.anim[data-s] .sq { --sq: none; animation:none; }
+  .hw.anim[data-s] .prop { animation:none; }
+  .hw.anim[data-s=nobook] .prop, .hw.anim[data-s=sleep] .prop { animation:hqpop .5s cubic-bezier(.2,1.6,.4,1) .5s both; }
+  .hw.anim[data-s] .shadow { animation:none; }
+  .hw.anim[data-s=cheer] .shadow { display:none; }
+  .hw.anim.l-hop .life { animation:none; }
+  /* cheer loop canvas is 402px tall (346 art + 40 hop headroom + 16 shadow): keep Hana the same size and feet on the same line */
+  .hw img.body.tall { max-height:calc(100% * 402 / 346); bottom:calc(-100% * 16 / 346); }
   @media (prefers-reduced-motion:reduce){
     .hw *, .hw, .hw .fig.enter, .hw .fig.prevfig, .hw .sq, .hw .prop { animation:none !important; transition:none !important; }
     .hw .fx, .hw .prevfig { display:none; }
@@ -681,10 +693,28 @@ const HFX = {
   front:  []
 };
 const HTAP_WINK = { greet:1, book:1, front:1, wink:1 };
-function hanaSrc(st) { return "assets/hana/" + (HANA_ART[st] || "front") + ".webp"; }
+/* Animated WebP loops (real art, baked motion) in assets/hana/anim/; stills stay as the reduced-motion fallback. */
+const HANA_REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
+function hanaAnimOn() { return !HANA_REDUCED.matches && !window.__hanaStill; }
+/* Lazy loops: a pose shows its small still at once and swaps to its loop as soon as that loop has loaded.
+   Only loops that are actually shown get fetched; the wink loop (tap reaction) is prefetched when idle. */
+const HANA_LOOP = new Set(), HANA_LOOP_REQ = {};
+function hanaWant(art) {
+  if (HANA_LOOP.has(art) || HANA_LOOP_REQ[art]) return;
+  const i = new Image(); HANA_LOOP_REQ[art] = i;
+  i.onload = () => { HANA_LOOP.add(art); if (!hanaAnimOn()) return;
+    document.querySelectorAll(`.hw img[data-art="${art}"]`).forEach(el => { if (el.closest(".hw.tap") && el.classList.contains("body")) return; el.src = hanaFile(art); el.classList.toggle("tall", art === "cheer"); }); };
+  i.src = "assets/hana/anim/" + art + ".webp";
+}
+function hanaFile(art) {
+  if (!hanaAnimOn()) return "assets/hana/" + art + ".webp";
+  if (HANA_LOOP.has(art)) return "assets/hana/anim/" + art + ".webp";
+  hanaWant(art); return "assets/hana/" + art + ".webp";
+}
+function hanaSrc(st) { return hanaFile(HANA_ART[st] || "front"); }
 function hanaFig(st, cls) {
   const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
-  return `<div class="fig ${cls}"><div class="sq"><img class="body" src="assets/hana/${art}.webp" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" src="assets/hana/${prop}.webp" alt="">` : ""}</div></div>`;
+  return `<div class="fig ${cls}"><div class="sq"><img class="body${art === "cheer" && hanaAnimOn() && HANA_LOOP.has(art) ? " tall" : ""}" data-art="${art}" src="${hanaFile(art)}" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" data-art="${prop}" src="${hanaFile(prop)}" alt="">` : ""}</div></div>`;
 }
 function hanaFx(st) {
   const items = (HFX[st] || []).map(([k, pos]) => `<i class="x${k}" style="${pos}">${HSHAPE[k.split(" ")[0]]}</i>`).join("");
@@ -696,7 +726,7 @@ function hana(st) {
   const changed = hana.last !== st;
   const prev = hana.last && changed ? hanaFig(hana.last, "prevfig") : "";
   hana.last = st;
-  return `<div class="hw" data-s="${st}" data-hana><i class="veil"></i><div class="life">${prev}${hanaFig(st, changed ? "enter" : "")}</div>${hanaFx(st)}<i class="shadow"></i></div>`;
+  return `<div class="hw${hanaAnimOn() ? " anim" : ""}" data-s="${st}" data-hana><i class="veil"></i><div class="life">${prev}${hanaFig(st, changed ? "enter" : "")}</div>${hanaFx(st)}<i class="shadow"></i></div>`;
 }
 /* Idle 'life': every few seconds the stage Hana does one small random thing. */
 setInterval(() => {
@@ -706,7 +736,7 @@ setInterval(() => {
   const c = ["l-twitch", "l-look", "l-hop"][Math.floor(Math.random() * 3)];
   h.classList.add(c); setTimeout(() => h.classList.remove(c), 900);
 }, 2600);
-[...new Set([...Object.values(HANA_ART), ...Object.values(HANA_PROP)])].forEach(k => { const i = new Image(); i.src = "assets/hana/" + k + ".webp"; });
+(window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => { if (hanaAnimOn()) hanaWant("wink"); });
 /* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
 function hanaState() {
   const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
