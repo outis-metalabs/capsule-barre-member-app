@@ -1194,7 +1194,7 @@ const HEALTH_RE = new RegExp("\\b(" + [
   "flu", "covid(.?19)?", "corona", "(have|got|caught|with|getting) (a |the )?(bad |bit of a |head |chest )?cold", "(a|bad|bit of a|head|chest) cold", "pass(ed|ing)? out", "black(ed)? out", "blood pressure", "asthma\\w*", "inhaler",
   "diabet\\w*", "heart (attack|condition|problems?|issues?|rate|racing|palpitations?|surgery)", "palpitations?", "my heart (hurts|races|is racing|pounds)",
   "(feel|feeling|am|i.?m|been|got|getting) ill", "bruis(e|ed|es|ing)",
-  "osteo\\w*", "arthritis", "anemi\\w*", "anaemi\\w*", "heart skipp\\w*", "skipped (a )?beats?", "anxiety attacks?", "panic attacks?", "panicking", "panicky", "hyperventil\\w*",
+  "osteo\\w*", "scolio\\w*", "(knee|wrist|ankle|back|neck) brace", "(wearing|wear|in) a brace", "giving birth", "chemo\\w*", "cancer", "radiotherapy", "radiation (therapy|treatment)", "kyphos\\w*", "lordos\\w*", "conditions?", "diagnos\\w*", "arthritis", "anemi\\w*", "anaemi\\w*", "heart skipp\\w*", "skipped (a )?beats?", "anxiety attacks?", "panic attacks?", "panicking", "panicky", "hyperventil\\w*",
   "dislocat\\w*", "torn (acl|muscle|ligament|meniscus|tendon|rotator|hamstring|calf)", "i tore", "acl", "menisc\\w*", "rotator", "whiplash", "shin splints", "splints", "fasciitis", "carpal",
   "jammed (my|a)", "weeks along", "i.?m expecting(?! (a |an |the )?(call|friend|package|parcel|reply|delivery|email|text))", "expecting (a baby|twins)", "conceiv\\w*", "trying to conceive", "had a baby",
   "woozy", "queasy", "(room|head|world) (is |keeps )?spinning", "spinning (head|room)", "tummy (ache|hurts|bug|is|feels|upset)", "upset (tummy|stomach)", "food poisoning",
@@ -1210,7 +1210,7 @@ const COMPLAINT_RE = /\b(sore|stiff|tight|aches?|clicks?|clicking|pops?|popping|
 const WENT_RE = new RegExp("\\b(stuck|locked|locking) (my )?(" + BODY + ")s?\\b|\\b(" + BODY + ")s? (is |feels |got |gets |keeps )?(went out|gave out|giving out|stuck|locked|locking up|locked up)\\b|\\b(can.?t|cannot|couldn.?t) (put|bear) (any )?weight on\\b|\\bweight on (my|it)\\b.*\\b(hurt|pain|can.?t)");
 const HURTS_RE = new RegExp("\\b(it|that|this|" + BODY + ")s?\\s+(really |still |kinda |so |is )?hurts?\\b");
 function isHealth(s) {
-  const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b|\bbroken (up|into|down)\b|\bbroke (up|into|down)\b|\bperiod of\b|\bcough drops?\b|\bsick (moves|class|beat|beats)\b|\b(beat|song|music|playlist|set|routine|choreo|class) (was|is) (so )?sick\b|\bdepression era\b|\blocked out\b|\bspinning class\b|\bstuck in (traffic|a meeting|work|the office|line)\b|\b(i.?m|so|totally|im) broke\b|\bbroke (as|af|until|lol)\b|\b(phone|screen|app|card|laptop|car|locker|link|website|site|printer|machine) (is |got |was )?(broke|broken)\b|\bbroken (phone|app|link|screen|card|locker|website|machine)\b|\bsick (of|and tired)\b/g, " ");
+  const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b|\bair.?condition\w*|\bterms (and|&) conditions\b|\b(pass|booking|cancel\w*|membership|class|weather|studio|road|refund|good|great|mint|perfect|working) conditions?\b|\bconditions? (of|for) (the |my )?(pass|booking|membership|refund|cancel\w*|use|entry)\b|\bin (good|great|bad) condition\b|\bbroken (up|into|down)\b|\bbroke (up|into|down)\b|\bperiod of\b|\bcough drops?\b|\bsick (moves|class|beat|beats)\b|\b(beat|song|music|playlist|set|routine|choreo|class) (was|is) (so )?sick\b|\bdepression era\b|\blocked out\b|\bspinning class\b|\bstuck in (traffic|a meeting|work|the office|line)\b|\b(i.?m|so|totally|im) broke\b|\bbroke (as|af|until|lol)\b|\b(phone|screen|app|card|laptop|car|locker|link|website|site|printer|machine) (is |got |was )?(broke|broken)\b|\bbroken (phone|app|link|screen|card|locker|website|machine)\b|\bsick (of|and tired)\b/g, " ");
   return HEALTH_RE.test(t) || HURTS_RE.test(t) || WENT_RE.test(t) || (BODY_RE.test(t) && COMPLAINT_RE.test(t));
 }
 /* per-studio schedule, same data the Book tab shows */
@@ -1233,6 +1233,9 @@ function hanaReply(q) {
     return R("Ouch, I'm sorry. Please see a doctor or your instructor before class.", "calm",
       { k: "care", kicker: "Take care", title: "Check with a doctor or your instructor", body: canFreeCancel() ? "Free cancel until " + T.cancel + " if you need to rest." : (b ? "The studio can help with tonight." : "The studio can help."), acts });
   }
+  /* 'can I / is it ok / safe ... with / after ...' is a body question: never an info card */
+  if (/^(can i|could i|may i|should i|is it (ok|okay|safe|fine|alright|bad)|am i (allowed|ok|okay)|is (barre|reformer|pilates|class) (ok|okay|safe|fine))\b.*\b(with|after|while|during|since|if i have|if i.?m)\b/.test(s)
+    && !/\b(with|after|during) (a |my |the )?(friend|friends|alex|jiwoo|yuna|soo|jiwon|partner|work|school|lunch|dinner|my pass|card|cash|the app|coupon|code)\b/.test(s)) return null;
   if (/(what|which) (number|spot|reformer)|reformer (number|no)|my (spot|reformer)\b/.test(s)) return b
     ? R(b.spot ? "You're on Reformer " + b.spot + "!" : "No reformer number on this one.", "greet", { k: "info", kicker: "From your " + studioName(b.studio) + " schedule", title: b.spot ? "Reformer " + b.spot : b.className, body: b.when + " · " + b.time + " · " + b.teacher, acts: [["ai-today", "Open tonight"]] })
     : R("Nothing booked yet, so no reformer.", "nobook", null, ["Book tonight"]);
@@ -1241,7 +1244,7 @@ function hanaReply(q) {
   /* tips: whole-word topic + a request word, or an exact chip */
   const CHIP_TIP = { "rib breathing": 0, "breathing tip": 0, "tiny tuck": 1, "quick stretch": 2, "cool-down": 3, "cool down": 3, "how often": 4, "next tip": -1 };
   const bare = s.replace(/[?!.…\s]+$/, ""), ti = bare in CHIP_TIP ? CHIP_TIP[bare] : (/\b(tips?|show me)\b|\bhow (do|to|should|can|often)\b|\btimes a week\b|\b(any|a|quick|good|best) (stretch|stretches|breathing)\b/.test(s) ? TIPS.findIndex(t => t.q.test(s)) : -1);
-  if (ti < 0 && /\btips?\b/.test(s)) return null;   /* a tip ask with no known topic: fallback, never the balance */
+  if (ti < 0 && /\btips?\b/.test(s)) { state.fbChips = TIPS.map(t => t.t); return null; }   /* a tip ask with no known topic: fallback, never the balance */
   if (ti >= 0) { state.tipIdx = ti; return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(ti)); }
   if (/how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
     const pc = pass("cheongdam"), pg = pass("geumho");
@@ -1275,6 +1278,7 @@ function hanaReply(q) {
   const at = "At " + sn + ", ", SD = SCHED[state.studio], thuL = { k: "list", kicker: "From " + sn + "'s schedule", title: "Thursday 8 Oct", body: schedBody(SD.thu), acts: [["ai-book", "See schedule"]] };
   const satL = SD.sat.length ? { k: "list", kicker: "From " + sn + "'s schedule", title: "Saturday 10 Oct", body: schedBody(SD.sat), acts: [["ai-book-sat", "Open Saturday"]] } : null;
   if (/\b(see you|see ya|cya|bye|be back|back|until|till|catch you)\b.*\btomorrow\b|\btomorrow then\b/.test(s)) return R("See you tomorrow! I'll keep your mat warm.", "wink", null, ["What's on tomorrow?"]);
+  if (/^happy (mon|tues|wednes|thurs|fri|satur|sun)day\b|^happy (weekend|birthday|new year|holidays?)\b/.test(s)) return R("Happy " + s.match(/^happy ([a-z ]+?)(\W|$)/)[1].replace(/\b\w/g, x => x.toUpperCase()) + " to you too!", "wink", null, [askChips()[0]]);
   if (/\btomorrow\b|\bfri(day)?\b/.test(s)) return R(at + "Friday 9 Oct isn't posted yet." + (satL ? " Saturday is!" : ""), "nobook",
     satL || { k: "list", kicker: "From " + sn + "'s schedule", title: "Friday 9 Oct", body: "Not posted yet.", acts: [["ai-book", "See schedule"]] });
   const full = SD.thu.find(c => c[3] === "full");
@@ -1300,7 +1304,7 @@ function hanaReply(q) {
   /* 3 class info */
   if (/\bbring (a |my |our )?(friend|guest|kid|kids|child|partner|baby|dog|pet|son|daughter)s?\b/.test(s)) return studioQ();
   if (/\b(bring|wear|socks|grip socks)\b|towel needed/.test(s)) return R("Grip socks and water! Mats are at the studio.", "warmup", { k: "info", kicker: "From " + sn + "'s studio info", title: "What to bring", body: "Grip socks · water · comfy clothes. Mats and towels are there.", acts: [] }, ["Quick stretch", "When can I check in?"]);
-  if (/\breformer\b|\bwhat.?s barre\b|class type|kind of class/.test(s)) return R("Reformer is a sliding bed with springs. Comfy and strong!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Reformer", body: "A sliding carriage with springs. Six pads in each class.", acts: [["ai-book", "See schedule"]] });
+  if (/\bwhat('s| is)( a)? reformer\b|\breformer like\b|\bhow does (the )?reformer\b|\bwhat.?s barre\b|\bclass type\b|\bkind of class\b/.test(s)) return R("Reformer is a sliding bed with springs. Comfy and strong!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Reformer", body: "A sliding carriage with springs. Six pads in each class.", acts: [["ai-book", "See schedule"]] });
   if (/\b(where|directions?|address|map|get there)\b/.test(s)) return R(b && b.studio === state.studio ? "Here's the way. Check-in opens at " + T.open + "." : "Here's the way to " + sn + ".", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: sn + " studio", body: (state.studio === "geumho" ? "Geumho-ro 12, 2F" : "Dosan-daero 45, 3F") + " · 3 min from the station.", acts: [["ai-map", "Open map"]] });
   if (/\bcheck.?in\b|\bwhen can i\b/.test(s)) return R("Check-in opens at " + T.open + ". Tap I'm here!", "warmup", { k: "info", kicker: "From your schedule", title: "Check-in " + T.open + " – " + T.close, body: "Presence only. The studio marks attendance.", acts: [["ai-today", "Open Today"]] });
   /* 4 streak & encouragement */
@@ -1335,7 +1339,7 @@ function hanaAnswer(q) {
   state.fallbacks = (state.fallbacks || 0) + 1;
   const ask = { k: "request", kicker: "Ask the studio", title: "Send it to " + studioName(state.studio) + "?", body: "“" + q + "”", foot: "About your health? Please see a doctor or your instructor.", acts: [["ai-question", "Ask the studio"]] };
   state.askDraft = q;
-  return { line: state.fallbacks >= 2 ? "The studio will know this one. Send it?" : "Hmm, I'm not sure about that one. Try one of these?", pose: "paused", card: ask, chips: askChips().slice(0, 3), lead: state.fallbacks >= 2 };
+  return { line: state.fallbacks >= 2 ? "The studio will know this one. Send it?" : "Hmm, I'm not sure about that one. Try one of these?", pose: "paused", card: ask, chips: (() => { const c = state.fbChips || askChips().slice(0, 3); state.fbChips = null; return c; })(), lead: state.fallbacks >= 2 };
 }
 /* Thinking: a 3-dot bubble first (input stays usable); jumps pass instant=true so they stay repeatable. */
 function aiAsk(q, instant) {
