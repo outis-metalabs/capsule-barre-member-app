@@ -617,7 +617,7 @@ const state = {
   bookTab: "group", day: "thu", otpFor: "create", newPass: "", newConfirm: "",
   studio: "geumho", name: "Mina Park", phone: "010-5550-1842",
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
-  otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
+  otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
   askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
@@ -718,7 +718,7 @@ function noteFor() {
   if (state.view === "friends" || state.view === "add-friend") return ["Friends", "Its own screen. A code adds a person. It does not touch the pass."];
   if (state.view === "share") return ["Share", "The phone\'s share sheet. Messages, KakaoTalk, Instagram, or Copy. Not a friend in this app. No pass number."];
   if (state.tab === "today") {
-    if (state.arrived && state.arrivedVia === "nudge") return ["Nearby", "Location was allowed. At 6:40 the phone sensed the studio and sent a notification. One tap on it. Still 2 left."];
+    if (state.arrived && state.arrivedVia === "nudge") return ["Nearby", "Location was allowed. At " + clockLabel.at("pm") + " the phone sensed the studio and sent a notification. One tap on it. Still 2 left."];
     if (state.nudge) return ["Nudge", "The phone knows she's close. It asks; it does not decide. Tap the notification."];
     if (state.arrived) return ["Here", "One tap in the window. Presence only. Still 2 left."];
     if (canHere()) return ["Lobby", "I’m here takes the thumb zone. Allow location on the morning card and the phone will ask instead."];
@@ -754,9 +754,15 @@ function meter() {
   const pct = Math.max(8, Math.round((p.left / p.total) * 100));
   return `<div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
 }
-function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : state.clock === "night" ? "7:10" : "6:40"; }
+clockLabel.at = (c) => { const k = state.clock, l = state.late; state.clock = c; state.late = false; const v = clockLabel(); state.clock = k; state.late = l; return v; };
+function clockLabel() {
+  if (state.late) return "4:30";
+  if (state.clock === "am") return "9:41";
+  const T = classTimes(state.booking && state.booking.status === "confirmed" ? state.booking : null);
+  return state.clock === "night" ? T.fmt(T.startMin + 10) : T.fmt(T.startMin - 20);   /* lobby 20 min before, night 10 min after */
+}
 function canHere() {
-  return state.clock === "pm" && state.booking && state.booking.time === "7:00pm" && state.booking.status === "confirmed";
+  const b = state.booking; return state.clock === "pm" && !!b && b.status === "confirmed";
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
@@ -834,7 +840,7 @@ function hanaChips() {
   const chips = [];
   if (!b) chips.push(["pick-7", "Book 7:00"]);
   else if (!state.arrived && canHere()) chips.push(["here", "I'm here"]);
-  else if (!state.arrived) chips.push(["clock-pm", "It's 6:40"]);
+  else if (!state.arrived) chips.push(["clock-pm", "It's " + clockLabel.at("pm")]);
   if (b && !state.arrived && state.clock === "am" && !state.late) {
     chips.push(["move", "Change time"]);
     chips.push(["cancel", "Cancel"]);
@@ -859,7 +865,7 @@ function classTimes(b) {
   let start = (+m[1] % 12) * 60 + +m[2] + (m[3].toLowerCase() === "pm" ? 720 : 0);
   const f = (t, suf) => { const h = Math.floor(t / 60), mm = t % 60, h12 = ((h + 11) % 12) + 1; return h12 + ":" + String(mm).padStart(2, "0") + (suf ? (h >= 12 ? "pm" : "am") : ""); };
   const short = t => { const h = Math.floor(t / 60), mm = t % 60; return ((h + 11) % 12 + 1) + (mm ? ":" + String(mm).padStart(2, "0") : ""); };
-  return { at: short(start), open: f(start - 30), close: f(start - 5), closePm: f(start - 5, true), cancel: f(start - 180, true) };
+  return { startMin: start, fmt: t => f(t), at: short(start), open: f(start - 30), close: f(start - 5), closePm: f(start - 5, true), cancel: f(start - 180, true) };
 }
 /* Today is one screen per activity moment; the moment comes from member data, so the real flow walks through them. */
 function todayMoment() {
@@ -891,7 +897,7 @@ function momentCard(m) {
   const b = state.booking, p = pass(), T = classTimes(b);
   const cls = b ? `${b.time} ${b.className} · ${b.teacher}${b.spot ? " · Reformer " + b.spot : ""}` : "";
   const card = (k, t, sub, extra = "") => `<div class="card moment m-${m}"><p class="kicker">${k}</p><strong>${t}</strong>${sub ? `<p class="sub">${sub}</p>` : ""}${extra}</div>`;
-  if (m === "greet" && b && b.studio === state.studio) return card("Tonight", cls, `Check-in opens ${T.open}. Free cancel until ${T.cancel}.`);
+  if (m === "greet" && b && b.studio === state.studio) return card("Tonight", cls, state.late || state.lateCancel ? `Check-in opens ${T.open}. Free cancel ended at ${T.cancel}.` : `Check-in opens ${T.open}. Free cancel until ${T.cancel}.`, state.late || state.lateCancel ? `<button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : "");
   if (m === "book") return card("Booked", `<span class="okmark">✓</span> ${cls}`, `${b.when || "Thu 8 Oct"} · still ${p.left} left. Nothing is spent until the studio marks attended.`);
   if (m === "nobook") return card("Today", "No class booked", "7:00pm Barre at " + studioName(state.studio) + " has seats.");
   if (m === "sleep") return card("It's been " + state.daysSinceVisit + " days", "Your pass is still here", `${p.left} of ${p.total} left, until ${p.until}. No pressure, one class is plenty.`);
@@ -915,8 +921,8 @@ function today() {
   const titles = ["Book today", "Show up at " + T.at, "Share that you came", "After class", "Share the result", "Day cleared"];
   /* GAME_DESIGN lines: one short line, no pressure, no prizes */
   const lines = ["Tonight's board is open.", "See you at " + T.at + ".", "You're here · see you at " + T.at + ".", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
-  const manage = state.late
-    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at 4:00pm.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
+  const manage = (state.late || state.lateCancel)
+    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at ${T.cancel}.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
     : `<p class="sub" style="margin:8px 0 0">Check-in opens ${T.open}. Free cancel until ${T.cancel}.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
     `<button class="btn" type="button" data-act="pick-7">Book 7:00</button>`,
@@ -1233,11 +1239,11 @@ const JUMPS = [
   { key: "m-book",    label: "Just booked", note: "Right after booking. Check pops, nothing spent.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.clock = "am"; state.tab = "today"; } },
   { key: "m-nobook",  label: "No booking", note: "Nothing booked. One suggestion.", go: () => { inApp(); state.booking = null; state.studio = "geumho"; state.tab = "today"; } },
   { key: "m-sleep",   label: "Welcome back", note: "15 days since the last visit, nothing booked. No pressure.", go: () => { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; } },
-  { key: "m-warmup",  label: "Warm-up / check-in", note: "6:40pm, in the window. I'm here takes the thumb zone.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.tab = "today"; } },
+  { key: "m-warmup",  label: "Warm-up / check-in", get note() { return clockLabel.at("pm") + "pm, in the window. I'm here takes the thumb zone."; }, go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.tab = "today"; } },
   { key: "m-cheer",   label: "Checked in", note: "She tapped I'm here. Presence only.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.tab = "today"; } },
   { key: "m-calm",    label: "After class", note: "The studio marked attended. Share or skip.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.sharedIn = true; state.attended = true; state.tab = "today"; } },
   { key: "m-cleared", label: "Board cleared", note: "Shared or skipped after class. Streak grows.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.sharedIn = true; state.attended = true; state.sharedDone = true; state.streak = (INITIAL.streak || 3) + 1; state.tab = "today"; } },
-  { key: "m-paused",  label: "Missed check-in", note: "7:10pm, no check-in. Board paused, streak unchanged.", go: () => { inApp(); ensureBooked(); state.clock = "night"; state.tab = "today"; } },
+  { key: "m-paused",  label: "Missed check-in", get note() { return clockLabel.at("night") + "pm, no check-in. Board paused, streak unchanged."; }, go: () => { inApp(); ensureBooked(); state.clock = "night"; state.tab = "today"; } },
   { key: "m-low",     label: "Low sessions", note: "2 left. From the pass pill on Today.", go: () => { inApp(); ensureBooked(); state.tab = "today"; state.view = "low"; } },
   { g: "Screens" },
   { key: "streak",   label: "Streak", note: "The week. It grows when today's board is cleared. Not the pass.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; state.view = "streak"; } },
@@ -1250,7 +1256,7 @@ const JUMPS = [
   { key: "book",     label: "Book", note: "Group or private, by day, this studio only. Time first.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
   { key: "reformer", label: "Reformer", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
   { key: "booked",   label: "Confirmed", note: "Tonight. Now 2, after class 1. The meter did not move.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.tab = "today"; } },
-  { key: "arrive",   label: "Arrival nudge", note: "6:40, location on. The phone asks; the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { key: "arrive",   label: "Arrival nudge", get note() { return clockLabel.at("pm") + ", location on. The phone asks; the tap is the check-in. Still 2 left."; }, _n: " the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { key: "schedule", label: "Schedule", note: "Upcoming on top, history below the line.", go: () => { inApp(); state.tab = "schedule"; } },
   { key: "manage",   label: "Cancel or change", note: "Change is one move. Cancel is free until 4:00pm and asks first.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
   { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
@@ -1281,8 +1287,8 @@ const FEATURES = [
   { f: "F17", label: "Cancel free", note: "Before 4:00pm. The bottom button asks first. Still 2 left after.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; } },
   { f: "F18", label: "Late cancel", note: "4:30pm. Free cancel ended at 4:00. The cancel button is gone; the studio can help. Still 2 left.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; state.late = true; } },
   { g: "Arrival" },
-  { f: "F19", label: "I’m here", note: "6:40pm, location off. The button appears in the window only. Presence, not attendance.", go: () => { inApp(); ensureBooked(); state.location = "off"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; } },
-  { f: "F20", label: "Arrival nudge", note: "Location on. At 6:40 the phone senses the studio and asks. The tap on the notification is the check-in.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { f: "F19", label: "I’m here", get note() { return clockLabel.at("pm") + "pm, location off. The button appears in the window only. Presence, not attendance."; }, _n: " appears in the window only. Presence, not attendance.", go: () => { inApp(); ensureBooked(); state.location = "off"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; } },
+  { f: "F20", label: "Arrival nudge", get note() { return "Location on. At " + clockLabel.at("pm") + " the phone senses the studio and asks. The tap on the notification is the check-in."; }, _n: " the studio and asks. The tap on the notification is the check-in.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { f: "F21", label: "iBeacon (v2)", note: "Spec only — this is the same notification. In v2 a Bluetooth beacon fires it instead of the geofence if 'close' turns out to mean next door.", spec: true, go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { g: "Schedule & pass" },
   { f: "F22", label: "Upcoming", note: "Tonight at the top of the timeline, waitlist under it.", go: () => { inApp(); ensureBooked(); state.tab = "schedule"; } },
@@ -1332,6 +1338,9 @@ function currentJump() {
   return state.tab;
 }
 function render() {
+  const onToday = state.auth === "app" && state.tab === "today" && !state.view;
+  if (onToday) { if (render.prev !== "today" && state.justBooked === "seen") state.justBooked = false; else if (state.justBooked === true) state.justBooked = "seen"; }
+  render.prev = onToday ? "today" : "other";
   if (!toast.keep) document.getElementById("toast")?.classList.remove("show");
   toast.keep = false;
   const cur = state.jump || currentJump();
@@ -1341,6 +1350,8 @@ function render() {
         : `<button type="button" class="${x.f === state.feature ? "on" : ""} ${x.spec ? "spec" : ""}" data-jump="feature" data-f="${x.f}">${x.label}</button>`).join("")
     : JUMPS.map(j => j.g ? `<div class="group">${j.g}</div>` : `<button type="button" class="${j.key === cur ? "on" : ""}" data-jump="${j.key}">${j.label}</button>`).join("");
   document.getElementById("clock").textContent = clockLabel();
+  document.getElementById("clkPm").textContent = "Lobby " + clockLabel.at("pm") + "pm";
+  document.getElementById("clkNight").textContent = clockLabel.at("night") + "pm";
   document.getElementById("clkAm").classList.toggle("on", state.clock === "am");
   document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
   document.getElementById("clkNight").classList.toggle("on", state.clock === "night");
@@ -1668,7 +1679,7 @@ document.getElementById("railseg").onclick = (e) => {
 function setClock(c) {
   closeSheet();
   const order = { am: 0, pm: 1, night: 2 };
-  const keep = ["auth", "tab", "view", "studio", "booking", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"];
+  const keep = ["auth", "tab", "view", "studio", "booking", "lateCancel", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"];
   if (order[c] >= order[state.clock]) keep.push("arrived", "arrivedVia", "sharedIn", "attended", "sharedDone", "streak");  /* forward in time keeps the day's progress */
   restore(keep);
   state.clock = c; tick(); render();
@@ -1698,7 +1709,7 @@ document.getElementById("notice").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   if (b.dataset.act === "nudge-here") { arrive("nudge"); state.nudge = false; render(); }
   if (b.dataset.act === "nudge-close") { state.nudge = false; render(); }
-  if (b.dataset.act === "offer-take") { state.offer = false; state.wait = false; bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"8:00pm", teacher:"Soo Kim", className:"Barre", spot: 4, status:"confirmed" }); }
+  if (b.dataset.act === "offer-take") { state.offer = false; state.wait = false; state.lateCancel = true; bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"8:00pm", teacher:"Soo Kim", className:"Barre", spot: 4, status:"confirmed" }); }
   if (b.dataset.act === "offer-pass") { state.offer = false; alert("book", "Passed · 8:00pm", "Offer went to the next in line · still " + remainingLine()); toast("Passed · " + remainingLine()); state.wait = false; render(); }
 };
 document.getElementById("tabs").onclick = (e) => {
