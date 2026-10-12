@@ -827,7 +827,7 @@ function hanaNow() {
   if (state.arrived && state.sharedIn) return "Class is over. Share the result? Still " + p.left + " left.";
   if (state.arrived) return "Day " + state.streak + ". Tell someone you came. Still " + p.left + " left.";
   if (canHere()) return "You're at the studio. Check in? The pass stays at " + p.left + ".";
-  return "You're in for " + b.time + " " + b.className + ". Check-in opens at 6:30. Still " + p.left + " left.";
+  return "You're in for " + b.time + " " + b.className + ". Check-in opens at " + classTimes(b).open + ". Still " + p.left + " left.";
 }
 function hanaChips() {
   const b = state.booking && state.booking.studio === state.studio;
@@ -853,6 +853,14 @@ function missionStep() {
   if (!state.sharedDone) return 4; /* Clear */
   return 5;
 }
+/* Times derived from the booked class: check-in opens 30 min before, closes 5 min before; free cancel ends 3 h before. */
+function classTimes(b) {
+  const m = /(\d+):(\d+)\s*(am|pm)/i.exec((b && b.time) || "7:00pm");
+  let start = (+m[1] % 12) * 60 + +m[2] + (m[3].toLowerCase() === "pm" ? 720 : 0);
+  const f = (t, suf) => { const h = Math.floor(t / 60), mm = t % 60, h12 = ((h + 11) % 12) + 1; return h12 + ":" + String(mm).padStart(2, "0") + (suf ? (h >= 12 ? "pm" : "am") : ""); };
+  const short = t => { const h = Math.floor(t / 60), mm = t % 60; return ((h + 11) % 12 + 1) + (mm ? ":" + String(mm).padStart(2, "0") : ""); };
+  return { at: short(start), open: f(start - 30), close: f(start - 5), closePm: f(start - 5, true), cancel: f(start - 180, true) };
+}
 /* Today is one screen per activity moment; the moment comes from member data, so the real flow walks through them. */
 function todayMoment() {
   const b = state.booking && state.booking.studio === state.studio;
@@ -867,48 +875,49 @@ function todayMoment() {
   return "greet";
 }
 const MOMENTS = {
-  greet:   { k: "Morning",          line: "Morning! See you at 7." },
-  book:    { k: "Just booked",      line: "Booked! Your mat is waiting." },
+  greet:   { k: "Morning",          line: () => "See you at " + classTimes(state.booking).at + "." },
+  book:    { k: "Just booked",      line: "Booked. Your mat is waiting." },
   nobook:  { k: "No booking",       line: "Nothing booked yet. One class tonight?" },
   sleep:   { k: "Welcome back",     line: "Welcome back. Want a seat tonight?" },
   warmup:  { k: "Check-in window",  line: "Warm up. Tap I'm here when you're in." },
-  cheer:   { k: "Checked in",       line: "You're here! Enjoy class." },
+  cheer:   { k: "Checked in",       line: "You're here. Enjoy class." },
   calm:    { k: "After class",      line: "Nice and calm. Share or skip." },
   cleared: { k: "Board cleared",    line: "Board cleared. Rest well." },
   paused:  { k: "Missed check-in",  line: "Board paused. Tomorrow is a new level." },
-  low:     { k: "Low sessions",     line: "Only a few sessions left." }
+  low:     { k: "Low sessions",     line: () => pass().left + " left. Want to ask about extending?" }
 };
+function momentLine(m) { const l = MOMENTS[m].line; return typeof l === "function" ? l() : l; }
 function momentCard(m) {
-  const b = state.booking, p = pass();
+  const b = state.booking, p = pass(), T = classTimes(b);
   const cls = b ? `${b.time} ${b.className} · ${b.teacher}${b.spot ? " · Reformer " + b.spot : ""}` : "";
   const card = (k, t, sub, extra = "") => `<div class="card moment m-${m}"><p class="kicker">${k}</p><strong>${t}</strong>${sub ? `<p class="sub">${sub}</p>` : ""}${extra}</div>`;
-  if (m === "greet" && b && b.studio === state.studio) return card("Tonight", cls, "Check-in opens 6:30. Free cancel until 4:00pm.");
+  if (m === "greet" && b && b.studio === state.studio) return card("Tonight", cls, `Check-in opens ${T.open}. Free cancel until ${T.cancel}.`);
   if (m === "book") return card("Booked", `<span class="okmark">✓</span> ${cls}`, `${b.when || "Thu 8 Oct"} · still ${p.left} left. Nothing is spent until the studio marks attended.`);
   if (m === "nobook") return card("Today", "No class booked", "7:00pm Barre at " + studioName(state.studio) + " has seats.");
   if (m === "sleep") return card("It's been " + state.daysSinceVisit + " days", "Your pass is still here", `${p.left} of ${p.total} left, until ${p.until}. No pressure, one class is plenty.`);
-  if (m === "warmup") return card("6:30 – 6:55", "Check-in is open", studioName(state.studio) + " · " + cls);
+  if (m === "warmup") return card(`${T.open} – ${T.close}`, "Check-in is open", studioName(state.studio) + " · " + cls);
   if (m === "cheer") return card("Here", "Checked in · " + clockLabel() + "pm", "Presence only. Still " + p.left + " left.");
   if (m === "calm") return card("Attended", cls, "The studio marked it. Pass now " + p.left + " left.");
   if (m === "cleared") return card("Streak", `<span class="mstreak">${state.streak}</span> days`, "It grows when today's board is cleared.", `<button class="link" type="button" data-act="streak">See the week ›</button>`);
-  if (m === "paused") return card("6:55pm", "Check-in closed", "Streak unchanged. Tomorrow is a new level.");
+  if (m === "paused") return card(T.closePm, "Check-in closed", "Streak unchanged. Tomorrow is a new level.");
   return "";
 }
 function lowScreen() {
   const p = pass();
   return `<button class="link" type="button" data-act="tab-today">‹ Back</button><p class="kicker" style="margin-top:12px">Today · ${MOMENTS.low.k}</p>
-    <div class="hana-stage"><div class="hana-bubble">${p.left} left. Want to ask about extending?</div>${hana("low")}</div>
+    <div class="hana-stage"><div class="hana-bubble">${momentLine("low")}</div>${hana("low")}</div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
     <div class="actions"><button class="btn" type="button" data-act="ai-extend-ask">Ask about extending</button><button class="btn ghost" type="button" data-act="pass">See the pass</button></div>`;
 }
 function today() {
-  const step = missionStep(), paused = isPaused(), mom = todayMoment();
+  const step = missionStep(), paused = isPaused(), mom = todayMoment(), T = classTimes(state.booking);
   const p = pass();
-  const titles = ["Book today", "Show up at 7", "Share that you came", "After class", "Share the result", "Day cleared"];
+  const titles = ["Book today", "Show up at " + T.at, "Share that you came", "After class", "Share the result", "Day cleared"];
   /* GAME_DESIGN lines: one short line, no pressure, no prizes */
-  const lines = ["Tonight's board is open.", "See you at 7.", "You're here · see you at 7.", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
+  const lines = ["Tonight's board is open.", "See you at " + T.at + ".", "You're here · see you at " + T.at + ".", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
   const manage = state.late
     ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at 4:00pm.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
-    : `<p class="sub" style="margin:8px 0 0">Check-in opens 6:30. Free cancel until 4:00pm.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
+    : `<p class="sub" style="margin:8px 0 0">Check-in opens ${T.open}. Free cancel until ${T.cancel}.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
     `<button class="btn" type="button" data-act="pick-7">Book 7:00</button>`,
     canHere() ? `<button class="btn" type="button" data-act="here">I'm here</button>` : manage,
@@ -922,7 +931,7 @@ function today() {
   const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
   const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
   const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
-  const line = other ? "Tonight is at " + studioName(other.studio) + "." : MOMENTS[mom].line;
+  const line = other ? "Tonight is at " + studioName(other.studio) + "." : momentLine(mom);
   return `${topbar()}
     <p class="kicker moment-k">Today · ${MOMENTS[mom].k}</p>
     <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(mom)}</div>
@@ -936,7 +945,7 @@ function today() {
       <div class="k">TODAY'S BOARD</div>
       <h1>${paused ? "Board paused" : titles[step]}</h1>
       <div class="dots4">${dots}</div>
-      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at 6:55pm. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
+      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at ${T.closePm}. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
       ${boardMsg()}
     </div>
     ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="low"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
@@ -1375,7 +1384,7 @@ function render() {
   else if (state.tab === "schedule") view.innerHTML = schedule();
   else view.innerHTML = you();
   const feat = state.feature && FEATURES.find(x => x.f === state.feature);
-  const jmp = state.jump && JUMPS.find(j => j.key === state.jump);
+  const jmp = state.jump && JUMPS.find(j => j.key && j.key === state.jump);
   const n = feat ? [feat.f + " · " + feat.label, feat.note] : jmp ? [jmp.label, jmp.note] : noteFor();
   document.getElementById("note").innerHTML = `<p class="kicker">${n[0]}</p><h2>${n[0]}</h2><p>${n[1]}</p>`;
   wire();
@@ -1503,7 +1512,7 @@ function wire() {
     const h = e.target.closest("[data-hana]");
     if (h) { if (hana.long) { hana.long = false; return; }
       clearTimeout(h.wt); h.querySelector(".prevfig")?.remove(); h.classList.remove("tap", "l-twitch", "l-look", "l-hop"); void h.offsetWidth; h.classList.add("tap");
-      const img = h.querySelector(".fig .body"), back = img.getAttribute("src"), swap = HTAP_WINK[h.dataset.s];
+      const img = h.querySelector(".fig .body"), back = hanaSrc(h.dataset.s), swap = HTAP_WINK[h.dataset.s];
       if (swap) { img.src = hanaSrc("wink"); h.querySelector(".prop")?.classList.add("hide-on-tap"); }
       h.wt = setTimeout(() => { if (swap && img.isConnected) img.src = back; h.querySelector(".prop")?.classList.remove("hide-on-tap"); h.classList.remove("tap"); }, swap ? 1200 : 750); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
@@ -1516,9 +1525,9 @@ function wire() {
     if (act === "verify") verify();
     if (act === "resend") toast("Code sent");
     if (act === "tab-today") { state.tab = "today"; state.view = null; render(); }
-    if (act === "tab-book") { state.tab = "book"; state.view = null; render(); }
-    if (act === "tab-schedule") { state.tab = "schedule"; state.view = null; render(); }
-    if (act === "tab-you") { state.tab = "you"; state.view = null; render(); }
+    if (act === "tab-book") { state.justBooked = false; state.tab = "book"; state.view = null; render(); }
+    if (act === "tab-schedule") { state.justBooked = false; state.tab = "schedule"; state.view = null; render(); }
+    if (act === "tab-you") { state.justBooked = false; state.tab = "you"; state.view = null; render(); }
     if (act === "day-thu") { state.day = "thu"; render(); }
     if (act === "day-sat") { state.day = "sat"; render(); }
     if (act === "book-group") { state.bookTab = "group"; render(); }
@@ -1644,7 +1653,7 @@ function runJump(f, key) {
   const feat = f && FEATURES.find(x => x.f === f);
   state.feature = feat ? f : null;
   state.jump = feat ? null : key;
-  if (feat) feat.go(); else JUMPS.find(j => j.key === key).go();
+  if (feat) feat.go(); else (JUMPS.find(j => j.key && j.key === key) || JUMPS.find(j => j.key === "today")).go();
 }
 document.getElementById("jump").onclick = (e) => {
   const b = e.target.closest("[data-jump]"); if (!b) return;
@@ -1696,6 +1705,7 @@ document.getElementById("tabs").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   state.feature = null; state.jump = null;
   const tab = b.dataset.act.replace("tab-", "");
+  if (tab !== state.tab) state.justBooked = false;   /* "Just booked" lasts until she leaves Today */
   state.tab = tab;
   state.view = tab === "ask" ? "ai" : null;
   if (tab === "ask" && !state.chat) state.chat = [];
