@@ -1164,7 +1164,7 @@ function askDefault() {
    One short line + at most one card; the card names its source; nothing happens until a tap.
    Card actions reuse the existing flows (reformer pick, change time, cancel sheet, F30 request form, pass, streak). */
 const TIPS = [
-  { t: "Rib breathing", s: ["Hands on your ribs.", "Breathe in through your nose, ribs widen.", "Out through your mouth, ribs knit in."], q: /breath/ },
+  { t: "Rib breathing", s: ["Hands on your ribs.", "Breathe in through your nose, ribs widen.", "Out through your mouth, ribs knit in."], q: /rib breathing|how (do i|to|should i) breathe|breath(ing)? tips?|breathing (exercise|help)/ },
   { t: "Tiny tuck", s: ["Stand tall, knees soft.", "Draw your tailbone gently down.", "Keep your ribs stacked over your hips."], q: /pelvis|tuck/ },
   { t: "Quick stretch", s: ["Reach both arms up.", "Lean gently to one side, then the other.", "Slow breaths, three each side."], q: /stretch|warm/ },
   { t: "Cool-down", s: ["Lie on your back, knees hugged in.", "Rock side to side.", "Five slow breaths."], q: /cool/ },
@@ -1189,18 +1189,19 @@ const HEALTH_RE = new RegExp("\\b(" + [
   "cramps?", "cramping", "period( pain| cramps)?", "vomm?it\\w*", "puk(e|ed|ing)", "throw(ing|n)? up", "threw up", "migr(a|ai|ia|i|e)ne?s?",
   "fever\\w*", "dizz\\w*", "dizy", "light.?headed", "injur\\w*", "injery", "pain(ful|s)?", "sore", "sprain\\w*", "strain(ed)?", "pulled (a )?muscle", "swollen",
   "pregn?an\\w*", "preg[ae]nt", "postpartum", "post.?partum", "c.?section", "gave birth", "medic(al|ine|ines|ation|ations)", "surgery",
-  "chest pains?", "can.?t breathe", "short of breath", "faint\\w*", "bleed\\w*", "bleeding", "killing me", "concuss\\w*", "ouch", "owie",
-  "flu", "covid(.?19)?", "corona", "(have|got|caught|with|getting) (a |the )?cold", "pass(ed|ing)? out", "black(ed)? out", "blood pressure", "asthma\\w*", "inhaler",
+  "chest pains?", "shortness of breath", "out of breath", "breathless", "wheez\\w*", "tight(ness)? (in )?(my )?chest", "chest tight\\w*", "heart ?beat\\w*", "irregular heart", "hit my head", "twist(ed|ing)? (my|an?|the)", "i twisted", "numb(ness|ed)?", "tingl\\w*", "pins and needles", "can.?t breathe", "short of breath", "faint\\w*", "bleed\\w*", "bleeding", "killing me", "concuss\\w*", "ouch", "owie",
+  "flu", "covid(.?19)?", "corona", "(have|got|caught|with|getting) (a |the )?(bad |bit of a |head |chest )?cold", "(a|bad|bit of a|head|chest) cold", "pass(ed|ing)? out", "black(ed)? out", "blood pressure", "asthma\\w*", "inhaler",
   "diabet\\w*", "heart (attack|condition|problems?|issues?|rate|racing|palpitations?|surgery)", "palpitations?", "my heart (hurts|races|is racing|pounds)",
   "(feel|feeling|am|i.?m|been|got|getting) ill", "i fell(?! (in love|asleep|for))", "fell (down|over|off|on)", "i hurt", "hurt (my|myself)"
 ].join("|") + ")\\b");
-const BODY = "back|knee|neck|shoulder|wrist|hip|ankle|foot|feet|elbow|leg|arm|hamstring|spine|joint|head|stomach|tummy|toe";
+const BODY = "an[ck]+le|kne+|wri?st|sholder|shouler|finger|hand|back|knee|neck|shoulder|wrist|hip|ankle|foot|feet|elbow|leg|arm|hamstring|spine|joint|head|stomach|tummy|toe";
 const BODY_RE = new RegExp("\\b(" + BODY + ")s?\\b");
 const COMPLAINT_RE = /\b(sore|stiff|tight|aches?|clicks?|clicking|pops?|popping|locks?|locking|weak|bad)\b/;
+const WENT_RE = new RegExp("\\b(" + BODY + ")s? (went|gave) out\\b");
 const HURTS_RE = new RegExp("\\b(it|that|this|" + BODY + ")s?\\s+(really |still |kinda |so |is )?hurts?\\b");
 function isHealth(s) {
-  const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b/g, " ");
-  return HEALTH_RE.test(t) || HURTS_RE.test(t) || (BODY_RE.test(t) && COMPLAINT_RE.test(t));
+  const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b|\bsick (of|and tired)\b/g, " ");
+  return HEALTH_RE.test(t) || HURTS_RE.test(t) || WENT_RE.test(t) || (BODY_RE.test(t) && COMPLAINT_RE.test(t));
 }
 /* per-studio schedule, same data the Book tab shows */
 const SCHED = {
@@ -1292,7 +1293,8 @@ function hanaReply(q) {
   if (/not in the mood|don.?t feel like|lazy/.test(s)) { setMood("low"); return R("No class needed. I'll be here.", "paused"); }
   /* 8 tips */
   const ti = TIPS.findIndex(t => t.q.test(s));
-  if (ti >= 0 || /tip/.test(s)) { state.tipIdx = Math.max(ti, 0); return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(state.tipIdx)); }
+  if (ti < 0 && /tip/.test(s)) return R("Pick a tiny one?", "warmup", null, TIPS.map(t => t.t));
+  if (ti >= 0) { state.tipIdx = Math.max(ti, 0); return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(state.tipIdx)); }
   /* 5 studio questions */
   if (/parking|towel|lost|left my|kids|private|late fee|refund|teacher|instructor/.test(s)) return studioQ();
   /* 6 small talk (two exchanges, then a useful chip) */
