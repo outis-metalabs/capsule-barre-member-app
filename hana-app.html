@@ -136,6 +136,10 @@
   .dots { display:flex; gap:8px; margin:8px 0 4px; }
   .dots i { width:36px; height:10px; border-radius:999px; background:#eadfd4; display:block; }
   .dots i.on { background:var(--ox); }
+  .moment-k { margin:4px 0 6px; }
+  .card.moment { margin:0 0 10px; } .card.moment .kicker { margin:0 0 2px; } .card.moment .sub { margin:4px 0 0; }
+  .okmark { display:inline-grid; place-items:center; width:20px; height:20px; border-radius:50%; background:#B5E0CB; border:1.5px solid #3B2E29; font-size:12px; margin-right:4px; }
+  .mstreak { font-size:34px; font-weight:900; color:var(--ox); margin-right:4px; }
   .passpill.lowlink { display:inline-flex; align-items:center; gap:6px; border:0; font:inherit; font-size:12px; cursor:pointer; }
   .passpill.lowlink img { height:22px; width:auto; }
   .passpill { display:inline-block; background:#fff; border-radius:999px; padding:4px 10px; font-size:12px; color:#7d6454; }
@@ -370,55 +374,162 @@
   .who h1, .who .sub { margin: 0; }
   .tiny { font-size: 15px; color: var(--mute); margin: 0 0 8px; }
 
-  /* Hana: the member's real artwork, one image per state (+ separate prop layers for ? and trophy).
-     Motion is transform/opacity only: a one-shot entrance when the state changes, then a looping idle per pose. */
+  /* Hana: the member's real artwork + layered motion.
+     .fig  = travel (hop / sway / tilt), .sq = squash & stretch from the feet, .prop = ?/trophy layer,
+     .fx   = ambient palette shapes (hearts, sparkles, zzz, drops, rings, leaves, cloud, check, stars, notes).
+     Transform/opacity only. One-shot entrance/exit between poses, looping idle, random 'life' micro-actions, per-pose tap. */
   .hw { position:relative; width:96px; height:120px; flex:none; }
   .hero .hw, .hana-stage .hw { width:220px; height:172px; margin:0 auto 8px; }
   .sayrow .hw { width:80px; height:96px; }
-  .hw .fig { position:absolute; inset:0; transform-origin:50% 100%; }
+  .hw .fig, .hw .sq { position:absolute; inset:0; transform-origin:50% 100%; }
   .hw img { position:absolute; bottom:0; left:50%; max-width:100%; max-height:100%; width:auto; height:auto; translate:-50% 0; -webkit-user-drag:none; user-select:none; pointer-events:none; }
-  .hw .prop { transform-origin:50% 50%; }
-  .hw .fig.prevfig { animation:hout .35s ease both !important; pointer-events:none; }
-  .hw .glow { position:absolute; left:8%; right:8%; top:6%; bottom:4%; border-radius:50%; background:radial-gradient(closest-side, rgba(181,224,203,.55), rgba(181,224,203,0)); opacity:0; pointer-events:none; }
-  .hw .shadow{position:absolute;left:24%;right:24%;bottom:-3px;height:8px;border-radius:50%;background:rgba(74,59,54,.10)}
-  .hana-stage .hw{cursor:pointer}
-  @keyframes hout{from{opacity:1}to{opacity:0}}
-  @keyframes hin{from{opacity:0;transform:translateY(6px) scale(.94)}to{opacity:1;transform:none}}
-  /* idle loops */
-  @keyframes hgreet{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(2deg)}}
-  @keyframes hsway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
-  @keyframes hhop{0%,100%{transform:translateY(0) scale(1)}12%{transform:translateY(0) scale(1.05,.94)}40%{transform:translateY(-14px) scale(.97,1.04)}62%{transform:translateY(0) scale(1.06,.93)}76%{transform:translateY(0) scale(.99,1.01)}}
-  @keyframes hbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-  @keyframes hglow{0%,100%{opacity:.25}50%{opacity:.8}}
-  @keyframes htilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.5deg)}}
-  @keyframes hpuzzle{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-  @keyframes hqbob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(6deg)}}
-  @keyframes hqpop{0%{opacity:0;transform:scale(0)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
-  @keyframes hsigh{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.97)}}
-  @keyframes hbounce{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}55%{transform:translateY(0)}}
-  @keyframes hproud{0%,40%,100%{transform:translateY(0)}10%{transform:translateY(-9px)}20%{transform:translateY(0) scale(1.02,.98)}30%{transform:translateY(-6px)}}
-  @keyframes hwiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(0)}}
-  @keyframes hwinkpop{0%{transform:scale(1)}25%{transform:scale(1.08,.9)}50%{transform:scale(.95,1.06)}75%{transform:scale(1.02,.98)}100%{transform:scale(1)}}
-  .hw .fig { --idle: hgreet 3s ease-in-out infinite; animation: var(--idle); }
-  .hw .fig.enter { animation: hin .4s ease-out both, var(--idle-d, var(--idle)); animation-delay: 0s, .4s; }
-  .hw[data-s=greet] .fig { --idle: hgreet 3s ease-in-out infinite; }
-  .hw[data-s=warmup] .fig { --idle: hsway 2.8s ease-in-out infinite; }
-  .hw[data-s=cheer] .fig { --idle: hhop 1.2s ease-in-out infinite; }
-  .hw[data-s=calm] .fig { --idle: hbreathe 4s ease-in-out infinite; }
-  .hw[data-s=calm] .glow { animation: hglow 4s ease-in-out infinite; }
-  .hw[data-s=paused] .fig { --idle: htilt 4s ease-in-out infinite; }
-  .hw[data-s=paused] .prop { animation: hqbob 2.2s ease-in-out infinite; }
-  .hw[data-s=low] .fig { --idle: hsigh 4.5s ease-in-out infinite; }
-  .hw[data-s=nobook] .fig, .hw[data-s=sleep] .fig { --idle: hpuzzle 3.6s ease-in-out infinite; }
-  .hw[data-s=nobook] .prop, .hw[data-s=sleep] .prop { animation: hqpop .5s ease-out .3s both, hqbob 2.4s ease-in-out .8s infinite; }
-  .hw[data-s=book] .fig { --idle: hbounce 1.8s ease-in-out infinite; }
-  .hw[data-s=cleared] .fig { --idle: hproud 2.6s ease-in-out infinite; }
-  .hw[data-s=cleared] .prop { transform-origin:85% 22%; animation: hwiggle 2.6s ease-in-out infinite; }
-  .hw[data-s=wink] .fig { --idle: hwinkpop .5s ease-out 1; }
-  .hw[data-s=front] .fig { --idle: hgreet 3.4s ease-in-out infinite; }
-  .hw.tap .fig { animation: hwinkpop .5s ease-out 1 !important; }
-  .hw.tap .prop { visibility:hidden; }
-  @media (prefers-reduced-motion:reduce){ .hw .fig, .hw .prop, .hw .glow, .hw .prevfig { animation:none!important; transition:none!important; } .hw .prevfig{display:none} }
+  .hw .fx { position:absolute; inset:-14px; pointer-events:none; }
+  .hw .fx > * { position:absolute; display:block; opacity:0; transform-origin:50% 50%; }
+  .hw .fx svg { overflow:visible; }
+  .hw .shadow { position:absolute; left:26%; right:26%; bottom:-3px; height:9px; border-radius:50%; background:rgba(74,59,54,.12); transform-origin:50% 50%; }
+  .hw .veil { position:absolute; inset:-6px; border-radius:40%; background:radial-gradient(closest-side, rgba(201,194,188,.35), rgba(201,194,188,0)); opacity:0; pointer-events:none; }
+  .hana-stage .hw, .hero .hw { cursor:pointer; }
+  .sayrow .hw .fx { display:none; }
+
+  /* entrance / exit */
+  .hw .fig.prevfig { animation:hexit .32s cubic-bezier(.5,0,.8,.4) both !important; pointer-events:none; }
+  .hw .fig.prevfig .sq, .hw .fig.prevfig .prop { animation:none !important; }
+  .hw .fig.enter { animation:henter .55s cubic-bezier(.2,1.5,.4,1) both, var(--fig) !important; animation-delay:.12s, .67s !important; }
+  @keyframes hexit { to { opacity:0; transform:translateY(8px) scale(.9,.84); } }
+  @keyframes henter { 0%{opacity:0; transform:translateY(14px) scale(.7,.6)} 55%{opacity:1; transform:translateY(-6px) scale(1.06,.96)} 100%{opacity:1; transform:none} }
+
+  /* default idle: a breathing bob, staggered between travel and squash */
+  .hw .fig { --fig: hbobT 3.2s cubic-bezier(.45,0,.55,1) infinite; animation: var(--fig); }
+  .hw .sq  { --sq: hbreath 3.2s cubic-bezier(.45,0,.55,1) .4s infinite; animation: var(--sq); }
+  @keyframes hbobT { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  @keyframes hbreath { 0%,100%{transform:scale(1,1)} 50%{transform:scale(1.015,.985)} }
+
+  /* greet: wave bob, rocks toward the waving paw, hearts pop */
+  @keyframes hgreetT { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(-6px) rotate(2.5deg)} 50%{transform:translateY(0) rotate(0)} 70%{transform:translateY(-3px) rotate(1.5deg)} }
+  @keyframes hgreetS { 0%,100%{transform:scale(1)} 48%{transform:scale(1.04,.95)} 56%{transform:scale(.98,1.02)} }
+  .hw[data-s=greet] .fig { --fig: hgreetT 2.6s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=greet] .sq  { --sq: hgreetS 2.6s ease-in-out infinite; }
+  @keyframes hheart { 0%{opacity:0; transform:translateY(8px) scale(.3)} 15%{opacity:1; transform:translateY(0) scale(1.15)} 25%{transform:scale(1)} 70%{opacity:1; transform:translateY(-22px) rotate(-8deg)} 85%,100%{opacity:0; transform:translateY(-30px) scale(.8)} }
+  .hw[data-s=greet] .fx .xheart { animation:hheart 2.6s ease-out infinite; }
+  .hw[data-s=greet] .fx .xheart:nth-child(2) { animation-delay:.9s; } .hw[data-s=greet] .fx .xheart:nth-child(3) { animation-delay:1.7s; }
+  @keyframes hnote { 0%{opacity:0; transform:translate(0,6px) rotate(-10deg)} 20%{opacity:1} 50%{transform:translate(6px,-12px) rotate(10deg)} 80%{opacity:1} 100%{opacity:0; transform:translate(-2px,-26px) rotate(-6deg)} }
+  .hw[data-s=greet] .fx .xnote { animation:hnote 3.4s ease-in-out .5s infinite; }
+
+  /* warmup: side-stretch sway from the feet, sweat drop, stretch lines */
+  @keyframes hswayT { 0%,100%{transform:rotate(-4deg)} 50%{transform:rotate(4deg)} }
+  @keyframes hswayS { 0%,50%,100%{transform:scale(1)} 25%,75%{transform:scale(.98,1.03)} }
+  .hw[data-s=warmup] .fig { --fig: hswayT 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=warmup] .sq  { --sq: hswayS 2.8s ease-in-out infinite; }
+  @keyframes hdrop { 0%,30%{opacity:0; transform:translate(0,-4px) scale(.5)} 40%{opacity:1; transform:scale(1)} 80%{opacity:1; transform:translate(-4px,16px)} 100%{opacity:0; transform:translate(-5px,22px)} }
+  .hw[data-s=warmup] .fx .xdrop { animation:hdrop 2.2s ease-in infinite; }
+  @keyframes hlines { 0%,100%{opacity:0; transform:scaleX(.4)} 30%,60%{opacity:.9; transform:scaleX(1)} }
+  .hw[data-s=warmup] .fx .xlines { animation:hlines 1.4s ease-in-out infinite; }
+  .hw[data-s=warmup] .fx .xlines.r { animation-delay:.7s; }
+
+  /* cheer: high hop with squash/stretch, shadow shrinks, sparkle bursts, rest beats between hops */
+  @keyframes hcheerT { 0%{transform:translateY(0)} 8%{transform:translateY(0)} 22%{transform:translateY(-26px)} 34%{transform:translateY(0)} 42%{transform:translateY(-9px)} 50%,100%{transform:translateY(0)} }
+  @keyframes hcheerS { 0%{transform:scale(1)} 7%{transform:scale(1.1,.86)} 13%{transform:scale(.92,1.1)} 30%{transform:scale(1)} 35%{transform:scale(1.12,.86)} 40%{transform:scale(.97,1.04)} 49%{transform:scale(1.04,.96)} 56%,100%{transform:scale(1)} }
+  @keyframes hcheerSh { 0%,8%{transform:scale(1); opacity:1} 22%{transform:scale(.55); opacity:.5} 34%{transform:scale(1.1); opacity:1} 42%{transform:scale(.82)} 50%,100%{transform:scale(1); opacity:1} }
+  .hw[data-s=cheer] .fig { --fig: hcheerT 2.4s linear infinite; }
+  .hw[data-s=cheer] .sq  { --sq: hcheerS 2.4s linear infinite; }
+  .hw[data-s=cheer] .shadow { animation:hcheerSh 2.4s linear infinite; }
+  @keyframes hburst { 0%,18%{opacity:0; transform:scale(.2) rotate(0)} 26%{opacity:1; transform:scale(1.2) rotate(30deg)} 40%{opacity:1; transform:scale(.9) rotate(60deg)} 52%,100%{opacity:0; transform:scale(.3) rotate(90deg)} }
+  .hw[data-s=cheer] .fx .xspark, .hw[data-s=cheer] .fx .xsparkm { animation:hburst 2.4s ease-out infinite; }
+  .hw[data-s=cheer] .fx .xsparkm { animation-delay:.1s; }
+  .hw[data-s=cheer] .fx .xspark:nth-child(2){animation-delay:.06s} .hw[data-s=cheer] .fx .xspark:nth-child(3){animation-delay:.12s} .hw[data-s=cheer] .fx .xspark:nth-child(4){animation-delay:.18s}
+
+  /* calm: slow breathing, expanding mint ring, floating leaves */
+  @keyframes hcalmT { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+  @keyframes hcalmS { 0%,100%{transform:scale(1)} 45%,55%{transform:scale(1.03)} }
+  .hw[data-s=calm] .fig { --fig: hcalmT 4s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=calm] .sq  { --sq: hcalmS 4s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes hring { 0%{opacity:0; transform:scale(.55)} 20%{opacity:.8} 100%{opacity:0; transform:scale(1.25)} }
+  .hw[data-s=calm] .fx .xring { animation:hring 4s ease-out infinite; } .hw[data-s=calm] .fx .xring.b { animation-delay:2s; }
+  @keyframes hleaf { 0%{opacity:0; transform:translate(0,10px) rotate(0)} 20%{opacity:1} 50%{transform:translate(10px,-14px) rotate(40deg)} 80%{opacity:1} 100%{opacity:0; transform:translate(-4px,-36px) rotate(-20deg)} }
+  .hw[data-s=calm] .fx .xleaf { animation:hleaf 5s ease-in-out infinite; } .hw[data-s=calm] .fx .xleaf.b { animation-delay:2.4s; }
+
+  /* paused: tilt, ? bobbing from its own corner, soft dim */
+  @keyframes htiltT { 0%,100%{transform:rotate(0)} 40%,60%{transform:rotate(-2.5deg)} }
+  @keyframes hqbob { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-5px) rotate(8deg)} }
+  @keyframes hveil { 0%,100%{opacity:.5} 50%{opacity:1} }
+  .hw[data-s=paused] .fig { --fig: htiltT 4.4s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=paused] .prop { transform-origin:78% 13%; animation:hqbob 2.2s ease-in-out infinite; }
+  .hw[data-s=paused] .veil { animation:hveil 4.4s ease-in-out infinite; }
+
+  /* low: slow droopy sigh, small grey cloud */
+  @keyframes hsighS { 0%,100%{transform:scale(1,1)} 40%{transform:scale(1.01,.97)} 60%{transform:scale(1.01,.97)} }
+  @keyframes hsighT { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
+  .hw[data-s=low] .fig { --fig: hsighT 4.6s ease-in-out infinite; }
+  .hw[data-s=low] .sq  { --sq: hsighS 4.6s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes hcloud { 0%,100%{opacity:.85; transform:translateX(0)} 50%{opacity:1; transform:translateX(6px)} }
+  @keyframes hrain { 0%{opacity:0; transform:translateY(0)} 30%{opacity:.9} 100%{opacity:0; transform:translateY(14px)} }
+  .hw[data-s=low] .fx .xcloud { animation:hcloud 4.6s ease-in-out infinite; }
+  .hw[data-s=low] .fx .xrain { animation:hrain 1.6s ease-in infinite; } .hw[data-s=low] .fx .xrain.b { animation-delay:.8s; }
+
+  /* nobook + sleep: puzzled tilt, ? pops in then bobs; sleep adds zzz */
+  @keyframes hpuzzT { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+  @keyframes hqpop { 0%{opacity:0; transform:scale(0)} 60%{opacity:1; transform:scale(1.2)} 100%{opacity:1; transform:scale(1)} }
+  .hw[data-s=nobook] .fig, .hw[data-s=sleep] .fig { --fig: hpuzzT 3.6s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=nobook] .prop, .hw[data-s=sleep] .prop { transform-origin:85% 13%; animation:hqpop .5s cubic-bezier(.2,1.6,.4,1) .5s both, hqbob 2.4s ease-in-out 1s infinite; }
+  @keyframes hz { 0%{opacity:0; transform:translate(0,4px) scale(.5)} 25%{opacity:1} 100%{opacity:0; transform:translate(14px,-24px) scale(1.15)} }
+  .hw[data-s=sleep] .fx .xz { animation:hz 2.7s ease-out infinite; } .hw[data-s=sleep] .fx .xz:nth-child(2){animation-delay:.9s} .hw[data-s=sleep] .fx .xz:nth-child(3){animation-delay:1.8s}
+  .hw[data-s=sleep] .sq { --sq: hcalmS 4.4s ease-in-out infinite; }
+
+  /* book: unroll bounce, check pops */
+  @keyframes hbookT { 0%,100%{transform:translateY(0)} 18%{transform:translateY(-8px)} 32%{transform:translateY(0)} 42%{transform:translateY(-3px)} 52%{transform:translateY(0)} }
+  @keyframes hbookS { 0%,100%{transform:scale(1)} 6%{transform:scale(1.06,.93)} 32%{transform:scale(1.05,.95)} 38%{transform:scale(.99,1.01)} }
+  @keyframes hcheck { 0%,20%{opacity:0; transform:scale(0) rotate(-20deg)} 30%{opacity:1; transform:scale(1.25) rotate(6deg)} 38%{transform:scale(1) rotate(0)} 85%{opacity:1; transform:scale(1)} 100%{opacity:0; transform:scale(.8)} }
+  .hw[data-s=book] .fig { --fig: hbookT 2.2s ease-in-out infinite; }
+  .hw[data-s=book] .sq  { --sq: hbookS 2.2s ease-in-out infinite; }
+  .hw[data-s=book] .fx .xcheck { animation:hcheck 2.2s ease-out infinite; }
+  .hw[data-s=book] .fx .xspark { animation:hburst 2.2s ease-out .1s infinite; }
+
+  /* cleared: proud double bounce, trophy shines and wiggles, stars */
+  @keyframes hproudT { 0%{transform:translateY(0)} 10%{transform:translateY(-12px)} 20%{transform:translateY(0)} 30%{transform:translateY(-8px)} 40%,100%{transform:translateY(0)} }
+  @keyframes hproudS { 0%{transform:scale(1)} 3%{transform:scale(1.06,.93)} 8%{transform:scale(.96,1.05)} 20%{transform:scale(1.07,.92)} 26%{transform:scale(.98,1.03)} 40%{transform:scale(1.04,.96)} 46%,100%{transform:scale(1)} }
+  @keyframes hproudSh { 0%,100%{transform:scale(1)} 10%{transform:scale(.7)} 20%{transform:scale(1.05)} 30%{transform:scale(.8)} 40%{transform:scale(1)} }
+  @keyframes hwiggle { 0%,45%,100%{transform:rotate(0)} 55%{transform:rotate(-8deg)} 65%{transform:rotate(8deg)} 75%{transform:rotate(-4deg)} 85%{transform:rotate(0)} }
+  @keyframes hshine { 0%,40%{opacity:0; transform:scale(.6) rotate(0)} 55%{opacity:1; transform:scale(1.1) rotate(20deg)} 100%{opacity:0; transform:scale(1) rotate(60deg)} }
+  @keyframes htwinkle { 0%,100%{opacity:0; transform:scale(.3)} 50%{opacity:1; transform:scale(1.1) rotate(25deg)} }
+  .hw[data-s=cleared] .fig { --fig: hproudT 2.8s linear infinite; }
+  .hw[data-s=cleared] .sq  { --sq: hproudS 2.8s linear infinite; }
+  .hw[data-s=cleared] .shadow { animation:hproudSh 2.8s linear infinite; }
+  .hw[data-s=cleared] .prop { transform-origin:85% 22%; animation:hwiggle 2.8s ease-in-out infinite; }
+  .hw[data-s=cleared] .fx .xshine { animation:hshine 2.8s ease-out infinite; }
+  .hw[data-s=cleared] .fx .xstar { animation:htwinkle 1.8s ease-in-out infinite; }
+  .hw[data-s=cleared] .fx .xstar:nth-child(3){animation-delay:.6s} .hw[data-s=cleared] .fx .xstar:nth-child(4){animation-delay:1.2s}
+
+  /* wink: thumbs-up pop once, sparkle, then a soft settle */
+  @keyframes hwinkS { 0%{transform:scale(1)} 20%{transform:scale(1.1,.88)} 45%{transform:scale(.94,1.08)} 70%{transform:scale(1.03,.97)} 100%{transform:scale(1)} }
+  .hw[data-s=wink] .sq { --sq: hwinkS .6s cubic-bezier(.3,1.4,.5,1) 1, hbreath 3.2s ease-in-out .6s infinite; }
+  .hw[data-s=wink] .fx .xspark { animation:hburst 1.6s ease-out infinite; }
+
+  /* random 'life' micro-actions (JS adds one class for ~0.7s): ear twitch, little look, tiny hop */
+  @keyframes ltwitch { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-2.5deg)} 50%{transform:rotate(1.5deg)} 75%{transform:rotate(-1deg)} }
+  @keyframes llook { 0%,100%{transform:translateX(0) skewX(0)} 30%,70%{transform:translateX(3px) skewX(-2deg)} }
+  @keyframes lhop { 0%,100%{transform:translateY(0) scale(1)} 30%{transform:translateY(-5px) scale(.98,1.02)} 60%{transform:translateY(0) scale(1.03,.97)} }
+  .hw .life { position:absolute; inset:0; transform-origin:50% 100%; }
+  .hw.l-twitch .life { animation:ltwitch .6s ease-in-out; transform-origin:50% 30%; }
+  .hw.l-look .life { animation:llook .9s ease-in-out; }
+  .hw.l-hop .life { animation:lhop .6s ease-out; }
+
+  /* tap: per-pose reaction on .life + a burst; standing poses also show the wink art briefly */
+  @keyframes tpop { 0%,100%{transform:scale(1)} 25%{transform:scale(1.12,.86)} 55%{transform:scale(.92,1.1)} 80%{transform:scale(1.03,.97)} }
+  @keyframes tspin { 0%{transform:rotate(0) translateY(0)} 40%{transform:rotate(-8deg) translateY(-14px)} 80%{transform:rotate(4deg) translateY(0)} 100%{transform:none} }
+  @keyframes tshake { 0%,100%{transform:rotate(0)} 20%,60%{transform:rotate(-5deg)} 40%,80%{transform:rotate(5deg)} }
+  @keyframes tnod { 0%,100%{transform:translateY(0)} 30%{transform:translateY(3px) scale(1.02,.97)} 60%{transform:translateY(-2px)} }
+  .hw.tap .life { animation:tpop .5s ease-out; }
+  .hw.tap[data-s=cheer] .life, .hw.tap[data-s=cleared] .life { animation:tspin .6s cubic-bezier(.3,1.3,.5,1); }
+  .hw.tap[data-s=warmup] .life, .hw.tap[data-s=nobook] .life, .hw.tap[data-s=sleep] .life { animation:tshake .55s ease-in-out; }
+  .hw.tap[data-s=calm] .life, .hw.tap[data-s=low] .life, .hw.tap[data-s=paused] .life { animation:tnod .7s ease-in-out; }
+  @keyframes tburst { 0%{opacity:0; transform:scale(.2)} 30%{opacity:1; transform:scale(1.2) rotate(25deg)} 100%{opacity:0; transform:scale(1.4) rotate(70deg)} }
+  .hw.tap .fx .xtb { animation:tburst .7s ease-out !important; }
+  .hw.tap .prop.hide-on-tap { visibility:hidden; }
+
+  @media (prefers-reduced-motion:reduce){
+    .hw *, .hw, .hw .fig.enter, .hw .fig.prevfig, .hw .sq, .hw .prop { animation:none !important; transition:none !important; }
+    .hw .fx, .hw .prevfig { display:none; }
+  }
   @media (max-width: 960px) {
     .shell { grid-template-columns: 1fr; max-width: 430px; padding: 12px; }
     .phone { position: static; margin: 0 auto; width: 100%; max-width: 390px; }
@@ -506,7 +617,7 @@ const state = {
   bookTab: "group", day: "thu", otpFor: "create", newPass: "", newConfirm: "",
   studio: "geumho", name: "Mina Park", phone: "010-5550-1842",
   password: "", confirm: "", terms: false, otp: ["","","","","",""],
-  otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
+  otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
   askType: "extend", askText: "", chat: [], requests: SEED_REQUESTS(),
   attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
@@ -525,19 +636,63 @@ function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
 const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", front:"front" };
 const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
+/* Ambient props: small palette shapes in the guide's brown line. Positions are % of the stage box. */
+const HSHAPE = {
+  heart: '<svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 15C4 11 1 8.5 1 5.2 1 2.8 2.9 1 5.1 1 6.7 1 8.2 2 9 3.4 9.8 2 11.3 1 12.9 1 15.1 1 17 2.8 17 5.2 17 8.5 14 11 9 15Z" fill="#F4AEB8" stroke="#3B2E29" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  note: '<svg width="16" height="20" viewBox="0 0 16 20"><path d="M6 15V3l8-2v11" fill="none" stroke="#3B2E29" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="4" cy="15.5" rx="3" ry="2.4" fill="#B5E0CB" stroke="#3B2E29" stroke-width="1.6"/><ellipse cx="12" cy="12.5" rx="3" ry="2.4" fill="#B5E0CB" stroke="#3B2E29" stroke-width="1.6"/></svg>',
+  spark: '<svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#F5C26B" stroke="#3B2E29" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+  sparkm: '<svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 1l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#B5E0CB" stroke="#3B2E29" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+  drop: '<svg width="12" height="16" viewBox="0 0 12 16"><path d="M6 1C3.5 5.5 1.5 8 1.5 10.5A4.5 4.5 0 0 0 10.5 10.5C10.5 8 8.5 5.5 6 1Z" fill="#DDF1F7" stroke="#3B2E29" stroke-width="1.5"/></svg>',
+  lines: '<svg width="16" height="22" viewBox="0 0 16 22"><path d="M3 3q6 8 0 16M10 6q4 5 0 10" fill="none" stroke="#3B2E29" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  ring: '<svg width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" fill="none" stroke="#B5E0CB" stroke-width="3"/></svg>',
+  leaf: '<svg width="16" height="14" viewBox="0 0 16 14"><path d="M1 13C1 6 6 1 15 1 15 8 10 13 1 13Z" fill="#B5E0CB" stroke="#3B2E29" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 12 10 5" stroke="#3B2E29" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  cloud: '<svg width="34" height="20" viewBox="0 0 34 20"><path d="M8 18A6 6 0 0 1 8 6 8 8 0 0 1 23 5 6.5 6.5 0 0 1 27 18Z" fill="#EDE8E4" stroke="#3B2E29" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+  rain: '<svg width="6" height="9" viewBox="0 0 6 9"><path d="M3 1C2 3.5 1 5 1 6.2A2 2 0 0 0 5 6.2C5 5 4 3.5 3 1Z" fill="#DDF1F7" stroke="#3B2E29" stroke-width="1"/></svg>',
+  z: '<svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2h10L2 12h10" fill="none" stroke="#8E86A8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  check: '<svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#B5E0CB" stroke="#3B2E29" stroke-width="2"/><path d="M9 15.5l4 4 8-9" fill="none" stroke="#3B2E29" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  shine: '<svg width="56" height="56" viewBox="0 0 56 56"><g stroke="#F5C26B" stroke-width="3" stroke-linecap="round"><path d="M28 3v9M28 44v9M3 28h9M44 28h9M10 10l6 6M40 40l6 6M46 10l-6 6M16 40l-6 6"/></g></svg>',
+  star: '<svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 1l2.3 5.3L17 7l-4.3 3.8L14 17l-5-3-5 3 1.3-6.2L1 7l5.7-.7z" fill="#F5C26B" stroke="#3B2E29" stroke-width="1.3" stroke-linejoin="round"/></svg>'
+};
+const HFX = {
+  greet:  [["heart","left:72%;top:22%"],["heart","left:80%;top:34%"],["heart","left:66%;top:12%"],["note","left:14%;top:24%"]],
+  warmup: [["drop","left:28%;top:16%"],["lines","left:8%;top:40%"],["lines r","left:84%;top:36%"]],
+  cheer:  [["spark","left:16%;top:8%"],["spark","left:78%;top:6%"],["sparkm","left:10%;top:36%"],["sparkm","left:86%;top:32%"]],
+  calm:   [["ring","left:calc(50% - 100px);top:calc(50% - 85px)"],["ring b","left:calc(50% - 100px);top:calc(50% - 85px)"],["leaf","left:16%;top:56%"],["leaf b","left:78%;top:50%"]],
+  paused: [],
+  low:    [["cloud","left:60%;top:4%"],["rain","left:66%;top:22%"],["rain b","left:74%;top:22%"]],
+  nobook: [],
+  sleep:  [["z","left:66%;top:20%"],["z","left:70%;top:14%"],["z","left:74%;top:8%"]],
+  book:   [["check","left:72%;top:6%"],["spark","left:20%;top:12%"]],
+  cleared:[["shine","left:72%;top:calc(-2% + 7px)"],["star","left:14%;top:10%"],["star","left:22%;top:28%"],["star","left:8%;top:46%"]],
+  wink:   [["spark","left:82%;top:30%"]],
+  front:  []
+};
+const HTAP_WINK = { greet:1, book:1, front:1, wink:1 };
 function hanaSrc(st) { return "assets/hana/" + (HANA_ART[st] || "front") + ".webp"; }
 function hanaFig(st, cls) {
   const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
-  return `<div class="fig ${cls}"><img class="body" src="assets/hana/${art}.webp" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" src="assets/hana/${prop}.webp" alt="">` : ""}</div>`;
+  return `<div class="fig ${cls}"><div class="sq"><img class="body" src="assets/hana/${art}.webp" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" src="assets/hana/${prop}.webp" alt="">` : ""}</div></div>`;
 }
-/* Entrance + crossfade when the state changed since the last render; otherwise just the pose's idle loop. */
+function hanaFx(st) {
+  const items = (HFX[st] || []).map(([k, pos]) => `<i class="x${k}" style="${pos}">${HSHAPE[k.split(" ")[0]]}</i>`).join("");
+  return `<div class="fx" aria-hidden="true">${items}<i class="xtb" style="left:44%;top:-4%">${HSHAPE.spark}</i></div>`;
+}
+/* Entrance/exit when the state changed since the last render; otherwise the pose's idle loop continues. */
 function hana(st) {
   st = (window.__hanaForce) || (HANA_ART[st] ? st : "front");
   const changed = hana.last !== st;
   const prev = hana.last && changed ? hanaFig(hana.last, "prevfig") : "";
   hana.last = st;
-  return `<div class="hw" data-s="${st}" data-hana><i class="glow"></i>${prev}${hanaFig(st, changed ? "enter" : "")}<i class="shadow"></i></div>`;
+  return `<div class="hw" data-s="${st}" data-hana><i class="veil"></i><div class="life">${prev}${hanaFig(st, changed ? "enter" : "")}</div>${hanaFx(st)}<i class="shadow"></i></div>`;
 }
+/* Idle 'life': every few seconds the stage Hana does one small random thing. */
+setInterval(() => {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || window.__hanaNoLife) return;
+  const h = document.querySelector(".hana-stage .hw, .hero .hw"); if (!h || h.classList.contains("tap")) return;
+  if (Math.random() < .45) return;
+  const c = ["l-twitch", "l-look", "l-hop"][Math.floor(Math.random() * 3)];
+  h.classList.add(c); setTimeout(() => h.classList.remove(c), 900);
+}, 2600);
 [...new Set([...Object.values(HANA_ART), ...Object.values(HANA_PROP)])].forEach(k => { const i = new Image(); i.src = "assets/hana/" + k + ".webp"; });
 /* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
 function hanaState() {
@@ -563,7 +718,7 @@ function noteFor() {
   if (state.view === "friends" || state.view === "add-friend") return ["Friends", "Its own screen. A code adds a person. It does not touch the pass."];
   if (state.view === "share") return ["Share", "The phone\'s share sheet. Messages, KakaoTalk, Instagram, or Copy. Not a friend in this app. No pass number."];
   if (state.tab === "today") {
-    if (state.arrived && state.arrivedVia === "nudge") return ["Nearby", "Location was allowed. At 6:40 the phone sensed the studio and sent a notification. One tap on it. Still 2 left."];
+    if (state.arrived && state.arrivedVia === "nudge") return ["Nearby", "Location was allowed. At " + clockLabel.at("pm") + " the phone sensed the studio and sent a notification. One tap on it. Still 2 left."];
     if (state.nudge) return ["Nudge", "The phone knows she's close. It asks; it does not decide. Tap the notification."];
     if (state.arrived) return ["Here", "One tap in the window. Presence only. Still 2 left."];
     if (canHere()) return ["Lobby", "I’m here takes the thumb zone. Allow location on the morning card and the phone will ask instead."];
@@ -599,9 +754,15 @@ function meter() {
   const pct = Math.max(8, Math.round((p.left / p.total) * 100));
   return `<div class="meter" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
 }
-function clockLabel() { return state.late ? "4:30" : state.clock === "am" ? "9:41" : state.clock === "night" ? "7:10" : "6:40"; }
+clockLabel.at = (c) => { const k = state.clock, l = state.late; state.clock = c; state.late = false; const v = clockLabel(); state.clock = k; state.late = l; return v; };
+function clockLabel() {
+  if (state.late) return "4:30";
+  if (state.clock === "am") return "9:41";
+  const T = classTimes(state.booking && state.booking.status === "confirmed" ? state.booking : null);
+  return state.clock === "night" ? T.fmt(T.startMin + 10) : T.fmt(T.startMin - 20);   /* lobby 20 min before, night 10 min after */
+}
 function canHere() {
-  return state.clock === "pm" && state.booking && state.booking.time === "7:00pm" && state.booking.status === "confirmed";
+  const b = state.booking; return state.clock === "pm" && !!b && b.status === "confirmed";
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
@@ -672,14 +833,14 @@ function hanaNow() {
   if (state.arrived && state.sharedIn) return "Class is over. Share the result? Still " + p.left + " left.";
   if (state.arrived) return "Day " + state.streak + ". Tell someone you came. Still " + p.left + " left.";
   if (canHere()) return "You're at the studio. Check in? The pass stays at " + p.left + ".";
-  return "You're in for " + b.time + " " + b.className + ". Check-in opens at 6:30. Still " + p.left + " left.";
+  return "You're in for " + b.time + " " + b.className + ". Check-in opens at " + classTimes(b).open + ". Still " + p.left + " left.";
 }
 function hanaChips() {
   const b = state.booking && state.booking.studio === state.studio;
   const chips = [];
   if (!b) chips.push(["pick-7", "Book 7:00"]);
   else if (!state.arrived && canHere()) chips.push(["here", "I'm here"]);
-  else if (!state.arrived) chips.push(["clock-pm", "It's 6:40"]);
+  else if (!state.arrived) chips.push(["clock-pm", "It's " + clockLabel.at("pm")]);
   if (b && !state.arrived && state.clock === "am" && !state.late) {
     chips.push(["move", "Change time"]);
     chips.push(["cancel", "Cancel"]);
@@ -698,15 +859,71 @@ function missionStep() {
   if (!state.sharedDone) return 4; /* Clear */
   return 5;
 }
-function today() {
-  const step = missionStep(), paused = isPaused();
+/* Times derived from the booked class: check-in opens 30 min before, closes 5 min before; free cancel ends 3 h before. */
+function classTimes(b) {
+  const m = /(\d+):(\d+)\s*(am|pm)/i.exec((b && b.time) || "7:00pm");
+  let start = (+m[1] % 12) * 60 + +m[2] + (m[3].toLowerCase() === "pm" ? 720 : 0);
+  const f = (t, suf) => { const h = Math.floor(t / 60), mm = t % 60, h12 = ((h + 11) % 12) + 1; return h12 + ":" + String(mm).padStart(2, "0") + (suf ? (h >= 12 ? "pm" : "am") : ""); };
+  const short = t => { const h = Math.floor(t / 60), mm = t % 60; return ((h + 11) % 12 + 1) + (mm ? ":" + String(mm).padStart(2, "0") : ""); };
+  return { startMin: start, fmt: t => f(t), at: short(start), open: f(start - 30), close: f(start - 5), closePm: f(start - 5, true), cancel: f(start - 180, true) };
+}
+/* Today is one screen per activity moment; the moment comes from member data, so the real flow walks through them. */
+function todayMoment() {
+  const b = state.booking && state.booking.studio === state.studio;
+  if (!state.booking) return (state.daysSinceVisit || 0) >= 14 ? "sleep" : "nobook";
+  if (!b) return "greet";                       /* F8: class at the other studio */
+  if (state.attended && state.sharedDone) return "cleared";
+  if (state.attended) return "calm";
+  if (state.arrived) return "cheer";
+  if (isPaused()) return "paused";
+  if (state.nudge || canHere()) return "warmup";
+  if (state.justBooked) return "book";
+  return "greet";
+}
+const MOMENTS = {
+  greet:   { k: "Morning",          line: () => "See you at " + classTimes(state.booking).at + "." },
+  book:    { k: "Just booked",      line: "Booked. Your mat is waiting." },
+  nobook:  { k: "No booking",       line: "Nothing booked yet. One class tonight?" },
+  sleep:   { k: "Welcome back",     line: "Welcome back. Want a seat tonight?" },
+  warmup:  { k: "Check-in window",  line: "Warm up. Tap I'm here when you're in." },
+  cheer:   { k: "Checked in",       line: "You're here. Enjoy class." },
+  calm:    { k: "After class",      line: "Nice and calm. Share or skip." },
+  cleared: { k: "Board cleared",    line: "Board cleared. Rest well." },
+  paused:  { k: "Missed check-in",  line: "Board paused. Tomorrow is a new level." },
+  low:     { k: "Low sessions",     line: () => pass().left + " left. Want to ask about extending?" }
+};
+function momentLine(m) { const l = MOMENTS[m].line; return typeof l === "function" ? l() : l; }
+function momentCard(m) {
+  const b = state.booking, p = pass(), T = classTimes(b);
+  const cls = b ? `${b.time} ${b.className} · ${b.teacher}${b.spot ? " · Reformer " + b.spot : ""}` : "";
+  const card = (k, t, sub, extra = "") => `<div class="card moment m-${m}"><p class="kicker">${k}</p><strong>${t}</strong>${sub ? `<p class="sub">${sub}</p>` : ""}${extra}</div>`;
+  if (m === "greet" && b && b.studio === state.studio) return card("Tonight", cls, state.late || state.lateCancel ? `Check-in opens ${T.open}. Free cancel ended at ${T.cancel}.` : `Check-in opens ${T.open}. Free cancel until ${T.cancel}.`, state.late || state.lateCancel ? `<button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : "");
+  if (m === "book") return card("Booked", `<span class="okmark">✓</span> ${cls}`, `${b.when || "Thu 8 Oct"} · still ${p.left} left. Nothing is spent until the studio marks attended.`);
+  if (m === "nobook") return card("Today", "No class booked", "7:00pm Barre at " + studioName(state.studio) + " has seats.");
+  if (m === "sleep") return card("It's been " + state.daysSinceVisit + " days", "Your pass is still here", `${p.left} of ${p.total} left, until ${p.until}. No pressure, one class is plenty.`);
+  if (m === "warmup") return card(`${T.open} – ${T.close}`, "Check-in is open", studioName(state.studio) + " · " + cls);
+  if (m === "cheer") return card("Here", "Checked in · " + clockLabel() + "pm", "Presence only. Still " + p.left + " left.");
+  if (m === "calm") return card("Attended", cls, "The studio marked it. Pass now " + p.left + " left.");
+  if (m === "cleared") return card("Streak", `<span class="mstreak">${state.streak}</span> days`, "It grows when today's board is cleared.", `<button class="link" type="button" data-act="streak">See the week ›</button>`);
+  if (m === "paused") return card(T.closePm, "Check-in closed", "Streak unchanged. Tomorrow is a new level.");
+  return "";
+}
+function lowScreen() {
   const p = pass();
-  const titles = ["Book today", "Show up at 7", "Share that you came", "After class", "Share the result", "Day cleared"];
+  return `<button class="link" type="button" data-act="tab-today">‹ Back</button><p class="kicker" style="margin-top:12px">Today · ${MOMENTS.low.k}</p>
+    <div class="hana-stage"><div class="hana-bubble">${momentLine("low")}</div>${hana("low")}</div>
+    <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
+    <div class="actions"><button class="btn" type="button" data-act="ai-extend-ask">Ask about extending</button><button class="btn ghost" type="button" data-act="pass">See the pass</button></div>`;
+}
+function today() {
+  const step = missionStep(), paused = isPaused(), mom = todayMoment(), T = classTimes(state.booking);
+  const p = pass();
+  const titles = ["Book today", "Show up at " + T.at, "Share that you came", "After class", "Share the result", "Day cleared"];
   /* GAME_DESIGN lines: one short line, no pressure, no prizes */
-  const lines = ["Tonight's board is open.", "See you at 7.", "You're here · see you at 7.", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
-  const manage = state.late
-    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at 4:00pm.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
-    : `<p class="sub" style="margin:8px 0 0">Check-in opens 6:30. Free cancel until 4:00pm.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
+  const lines = ["Tonight's board is open.", "See you at " + T.at + ".", "You're here · see you at " + T.at + ".", "Enjoy class. See you after.", "Done · Barre. Share or skip.", "Board cleared. Rest well."];
+  const manage = (state.late || state.lateCancel)
+    ? `<p class="sub" style="margin:8px 0 0">Free cancel ended at ${T.cancel}.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>`
+    : `<p class="sub" style="margin:8px 0 0">Check-in opens ${T.open}. Free cancel until ${T.cancel}.</p><div class="pair"><button class="quiet" type="button" data-act="move">Change time</button><button class="quiet" type="button" data-act="cancel">Cancel free</button></div>`;
   const buttons = [
     `<button class="btn" type="button" data-act="pick-7">Book 7:00</button>`,
     canHere() ? `<button class="btn" type="button" data-act="here">I'm here</button>` : manage,
@@ -720,9 +937,11 @@ function today() {
   const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
   const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
   const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
-  const line = hanaState() === "sleep" ? "Welcome back. Want a seat tonight?" : paused ? "Board paused. Tomorrow is a new level." : other ? "Tonight is at " + studioName(other.studio) + "." : lines[step];
+  const line = other ? "Tonight is at " + studioName(other.studio) + "." : momentLine(mom);
   return `${topbar()}
-    <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(hanaState())}</div>
+    <p class="kicker moment-k">Today · ${MOMENTS[mom].k}</p>
+    <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(mom)}</div>
+    ${momentCard(mom)}
     ${other ? `<button class="card press otherrow" type="button" data-act="open-other-class"><strong>You have class at ${studioName(other.studio)} · ${other.time}</strong><span class="what-sub">${other.className} · ${other.teacher} · open it ›</span></button>` : ""}
     <div class="dock">
       <button class="streak-btn" type="button" data-act="streak">${ICONS.flame}<span><small>STREAK</small>Day ${state.streak}</span></button>
@@ -732,10 +951,10 @@ function today() {
       <div class="k">TODAY'S BOARD</div>
       <h1>${paused ? "Board paused" : titles[step]}</h1>
       <div class="dots4">${dots}</div>
-      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at 6:55pm. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
+      ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at ${T.closePm}. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
       ${boardMsg()}
     </div>
-    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="pass"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
+    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="low"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
     <div class="thread">${thread}</div>`;
 }
 function streakScreen() {
@@ -1015,6 +1234,18 @@ const JUMPS = [
   { key: "create",   label: "Create account", note: "One form, then the code. Terms link outside the checkbox.", go: () => { state.auth = "welcome"; state.mode = "create"; state.formError = ""; } },
   { key: "code",     label: "Code", note: "Six boxes. Paste fills all. 000000 is wrong on purpose.", go: () => { state.auth = "otp"; state.otpFor = state.mode === "forgot" ? "forgot" : "login"; state.otp = ["","","","","",""]; state.otpError = ""; } },
   { key: "today",    label: "Today", note: "Class card when booked; one suggestion when not. Bell and menu in the header.", go: () => { inApp(); state.tab = "today"; } },
+  { g: "Today moments" },
+  { key: "m-greet",   label: "Morning greet", note: "Booked tonight, 9:41am. Hana waves.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; } },
+  { key: "m-book",    label: "Just booked", note: "Right after booking. Check pops, nothing spent.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.clock = "am"; state.tab = "today"; } },
+  { key: "m-nobook",  label: "No booking", note: "Nothing booked. One suggestion.", go: () => { inApp(); state.booking = null; state.studio = "geumho"; state.tab = "today"; } },
+  { key: "m-sleep",   label: "Welcome back", note: "15 days since the last visit, nothing booked. No pressure.", go: () => { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; } },
+  { key: "m-warmup",  label: "Warm-up / check-in", get note() { return clockLabel.at("pm") + "pm, in the window. I'm here takes the thumb zone."; }, go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.tab = "today"; } },
+  { key: "m-cheer",   label: "Checked in", note: "She tapped I'm here. Presence only.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.tab = "today"; } },
+  { key: "m-calm",    label: "After class", note: "The studio marked attended. Share or skip.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.sharedIn = true; state.attended = true; state.tab = "today"; } },
+  { key: "m-cleared", label: "Board cleared", note: "Shared or skipped after class. Streak grows.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.sharedIn = true; state.attended = true; state.sharedDone = true; state.streak = (INITIAL.streak || 3) + 1; state.tab = "today"; } },
+  { key: "m-paused",  label: "Missed check-in", get note() { return clockLabel.at("night") + "pm, no check-in. Board paused, streak unchanged."; }, go: () => { inApp(); ensureBooked(); state.clock = "night"; state.tab = "today"; } },
+  { key: "m-low",     label: "Low sessions", note: "2 left. From the pass pill on Today.", go: () => { inApp(); ensureBooked(); state.tab = "today"; state.view = "low"; } },
+  { g: "Screens" },
   { key: "streak",   label: "Streak", note: "The week. It grows when today's board is cleared. Not the pass.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; state.view = "streak"; } },
   { key: "friends",  label: "Friends", note: "Your code, people who used it, and who already went. Not the pass.", go: () => { inApp(); state.tab = "today"; state.view = "friends"; } },
   { key: "add-friend", label: "Add a friend", note: "Type their code. Alex is ALEX-4402. A wrong code finds nobody.", go: () => { inApp(); state.tab = "today"; state.view = "add-friend"; } },
@@ -1025,7 +1256,7 @@ const JUMPS = [
   { key: "book",     label: "Book", note: "Group or private, by day, this studio only. Time first.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
   { key: "reformer", label: "Reformer", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
   { key: "booked",   label: "Confirmed", note: "Tonight. Now 2, after class 1. The meter did not move.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.tab = "today"; } },
-  { key: "arrive",   label: "Arrival nudge", note: "6:40, location on. The phone asks; the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { key: "arrive",   label: "Arrival nudge", get note() { return clockLabel.at("pm") + ", location on. The phone asks; the tap is the check-in. Still 2 left."; }, _n: " the tap is the check-in. Still 2 left.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { key: "schedule", label: "Schedule", note: "Upcoming on top, history below the line.", go: () => { inApp(); state.tab = "schedule"; } },
   { key: "manage",   label: "Cancel or change", note: "Change is one move. Cancel is free until 4:00pm and asks first.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; render(); openMove(); } },
   { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
@@ -1056,8 +1287,8 @@ const FEATURES = [
   { f: "F17", label: "Cancel free", note: "Before 4:00pm. The bottom button asks first. Still 2 left after.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; } },
   { f: "F18", label: "Late cancel", note: "4:30pm. Free cancel ended at 4:00. The cancel button is gone; the studio can help. Still 2 left.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.arrived = false; state.tab = "today"; state.late = true; } },
   { g: "Arrival" },
-  { f: "F19", label: "I’m here", note: "6:40pm, location off. The button appears in the window only. Presence, not attendance.", go: () => { inApp(); ensureBooked(); state.location = "off"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; } },
-  { f: "F20", label: "Arrival nudge", note: "Location on. At 6:40 the phone senses the studio and asks. The tap on the notification is the check-in.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
+  { f: "F19", label: "I’m here", get note() { return clockLabel.at("pm") + "pm, location off. The button appears in the window only. Presence, not attendance."; }, _n: " appears in the window only. Presence, not attendance.", go: () => { inApp(); ensureBooked(); state.location = "off"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; } },
+  { f: "F20", label: "Arrival nudge", get note() { return "Location on. At " + clockLabel.at("pm") + " the phone senses the studio and asks. The tap on the notification is the check-in."; }, _n: " the studio and asks. The tap on the notification is the check-in.", go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { f: "F21", label: "iBeacon (v2)", note: "Spec only — this is the same notification. In v2 a Bluetooth beacon fires it instead of the geofence if 'close' turns out to mean next door.", spec: true, go: () => { inApp(); ensureBooked(); state.location = "on"; state.clock = "pm"; state.arrived = false; state.arrivedVia = null; state.tab = "today"; tick(); } },
   { g: "Schedule & pass" },
   { f: "F22", label: "Upcoming", note: "Tonight at the top of the timeline, waitlist under it.", go: () => { inApp(); ensureBooked(); state.tab = "schedule"; } },
@@ -1095,17 +1326,21 @@ function currentJump() {
   if (state.view === "alerts") return "alerts";
   if (state.view === "ask" || state.view === "ai" || state.view === "requests") return "ai";
   if (state.view === "pass") return "pass";
+  if (state.view === "low") return "m-low";
   if (state.view === "streak") return "streak";
   if (state.view === "friends") return "friends";
   if (state.view === "add-friend") return "add-friend";
   if (state.view === "share") return "share-" + (state.share || "in");
   if (state.tab === "today") {
     if (state.nudge || (state.arrived && state.arrivedVia === "nudge")) return "arrive";
-    return state.booking && state.booking.studio === state.studio ? "booked" : "today";
+    return state.view === "low" ? "m-low" : "m-" + todayMoment();
   }
   return state.tab;
 }
 function render() {
+  const onToday = state.auth === "app" && state.tab === "today" && !state.view;
+  if (onToday) { if (render.prev !== "today" && state.justBooked === "seen") state.justBooked = false; else if (state.justBooked === true) state.justBooked = "seen"; }
+  render.prev = onToday ? "today" : "other";
   if (!toast.keep) document.getElementById("toast")?.classList.remove("show");
   toast.keep = false;
   const cur = state.jump || currentJump();
@@ -1113,8 +1348,10 @@ function render() {
   document.getElementById("jump").innerHTML = state.rail === "features"
     ? FEATURES.map(x => x.g ? `<div class="group">${x.g}</div>`
         : `<button type="button" class="${x.f === state.feature ? "on" : ""} ${x.spec ? "spec" : ""}" data-jump="feature" data-f="${x.f}">${x.label}</button>`).join("")
-    : JUMPS.map(j => `<button type="button" class="${j.key === cur ? "on" : ""}" data-jump="${j.key}">${j.label}</button>`).join("");
+    : JUMPS.map(j => j.g ? `<div class="group">${j.g}</div>` : `<button type="button" class="${j.key === cur ? "on" : ""}" data-jump="${j.key}">${j.label}</button>`).join("");
   document.getElementById("clock").textContent = clockLabel();
+  document.getElementById("clkPm").textContent = "Lobby " + clockLabel.at("pm") + "pm";
+  document.getElementById("clkNight").textContent = clockLabel.at("night") + "pm";
   document.getElementById("clkAm").classList.toggle("on", state.clock === "am");
   document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
   document.getElementById("clkNight").classList.toggle("on", state.clock === "night");
@@ -1144,6 +1381,7 @@ function render() {
   else if (state.view === "spot") view.innerHTML = spot();
   else if (state.view === "wait") view.innerHTML = waitlist();
   else if (state.view === "pass") view.innerHTML = passScreen();
+  else if (state.view === "low") view.innerHTML = lowScreen();
   else if (state.view === "alerts") view.innerHTML = alerts();
   else if (state.view === "ask") view.innerHTML = ask();
   else if (state.view === "ai") view.innerHTML = assistant();
@@ -1157,7 +1395,7 @@ function render() {
   else if (state.tab === "schedule") view.innerHTML = schedule();
   else view.innerHTML = you();
   const feat = state.feature && FEATURES.find(x => x.f === state.feature);
-  const jmp = state.jump && JUMPS.find(j => j.key === state.jump);
+  const jmp = state.jump && JUMPS.find(j => j.key && j.key === state.jump);
   const n = feat ? [feat.f + " · " + feat.label, feat.note] : jmp ? [jmp.label, jmp.note] : noteFor();
   document.getElementById("note").innerHTML = `<p class="kicker">${n[0]}</p><h2>${n[0]}</h2><p>${n[1]}</p>`;
   wire();
@@ -1283,9 +1521,11 @@ document.getElementById("view").addEventListener("pointerdown", (e) => {
 function wire() {
   document.getElementById("view").onclick = (e) => {
     const h = e.target.closest("[data-hana]");
-    if (h) { if (hana.long) { hana.long = false; return; } const img = h.querySelector(".fig:not(.prevfig) .body"), back = img.getAttribute("src"); clearTimeout(h.wt); h.querySelector(".prevfig")?.remove();
-      img.src = hanaSrc("wink"); h.classList.remove("tap"); void h.offsetWidth; h.classList.add("tap");
-      h.wt = setTimeout(() => { if (img.isConnected) img.src = back; h.classList.remove("tap"); }, 1200); return; }
+    if (h) { if (hana.long) { hana.long = false; return; }
+      clearTimeout(h.wt); h.querySelector(".prevfig")?.remove(); h.classList.remove("tap", "l-twitch", "l-look", "l-hop"); void h.offsetWidth; h.classList.add("tap");
+      const img = h.querySelector(".fig .body"), back = hanaSrc(h.dataset.s), swap = HTAP_WINK[h.dataset.s];
+      if (swap) { img.src = hanaSrc("wink"); h.querySelector(".prop")?.classList.add("hide-on-tap"); }
+      h.wt = setTimeout(() => { if (swap && img.isConnected) img.src = back; h.querySelector(".prop")?.classList.remove("hide-on-tap"); h.classList.remove("tap"); }, swap ? 1200 : 750); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
     state.feature = null; state.jump = null;
     const act = btn.dataset.act;
@@ -1296,9 +1536,9 @@ function wire() {
     if (act === "verify") verify();
     if (act === "resend") toast("Code sent");
     if (act === "tab-today") { state.tab = "today"; state.view = null; render(); }
-    if (act === "tab-book") { state.tab = "book"; state.view = null; render(); }
-    if (act === "tab-schedule") { state.tab = "schedule"; state.view = null; render(); }
-    if (act === "tab-you") { state.tab = "you"; state.view = null; render(); }
+    if (act === "tab-book") { state.justBooked = false; state.tab = "book"; state.view = null; render(); }
+    if (act === "tab-schedule") { state.justBooked = false; state.tab = "schedule"; state.view = null; render(); }
+    if (act === "tab-you") { state.justBooked = false; state.tab = "you"; state.view = null; render(); }
     if (act === "day-thu") { state.day = "thu"; render(); }
     if (act === "day-sat") { state.day = "sat"; render(); }
     if (act === "book-group") { state.bookTab = "group"; render(); }
@@ -1359,6 +1599,7 @@ function wire() {
     if (act === "cancel-yes") { state.booking = null; state.arrived = false; state.arrivedVia = null; alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); toast("Cancelled · " + remainingLine()); render(); }
     if (act === "move") openMove();
     if (act === "pass") { state.view = "pass"; render(); }
+    if (act === "low") { state.tab = "today"; state.view = "low"; render(); }
     if (act === "alerts") { state.view = "alerts"; render(); }
     if (act === "ask") { state.view = "ask"; render(); }
     if (act === "ai") { state.view = "ai"; state.tab = "you"; render(); }
@@ -1423,7 +1664,7 @@ function runJump(f, key) {
   const feat = f && FEATURES.find(x => x.f === f);
   state.feature = feat ? f : null;
   state.jump = feat ? null : key;
-  if (feat) feat.go(); else JUMPS.find(j => j.key === key).go();
+  if (feat) feat.go(); else (JUMPS.find(j => j.key && j.key === key) || JUMPS.find(j => j.key === "today")).go();
 }
 document.getElementById("jump").onclick = (e) => {
   const b = e.target.closest("[data-jump]"); if (!b) return;
@@ -1438,7 +1679,7 @@ document.getElementById("railseg").onclick = (e) => {
 function setClock(c) {
   closeSheet();
   const order = { am: 0, pm: 1, night: 2 };
-  const keep = ["auth", "tab", "view", "studio", "booking", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"];
+  const keep = ["auth", "tab", "view", "studio", "booking", "lateCancel", "wait", "location", "bookTab", "day", "alerts", "requests", "chat", "friends", "incoming", "outgoing"];
   if (order[c] >= order[state.clock]) keep.push("arrived", "arrivedVia", "sharedIn", "attended", "sharedDone", "streak");  /* forward in time keeps the day's progress */
   restore(keep);
   state.clock = c; tick(); render();
@@ -1455,7 +1696,7 @@ document.getElementById("devAttended").onclick = () => {   /* dev control: the s
 function checkJumps() {
   const snap = () => JSON.stringify(state);
   const bad = [];
-  [...JUMPS.map(j => [null, j.key]), ...FEATURES.filter(x => x.f).map(x => [x.f, null])].forEach(([f, k]) => {
+  [...JUMPS.filter(j => j.key).map(j => [null, j.key]), ...FEATURES.filter(x => x.f).map(x => [x.f, null])].forEach(([f, k]) => {
     runJump(f, k); const a = snap(); runJump(f, k); const b = snap();
     if (a !== b) bad.push(f || k);
   });
@@ -1468,13 +1709,14 @@ document.getElementById("notice").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   if (b.dataset.act === "nudge-here") { arrive("nudge"); state.nudge = false; render(); }
   if (b.dataset.act === "nudge-close") { state.nudge = false; render(); }
-  if (b.dataset.act === "offer-take") { state.offer = false; state.wait = false; bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"8:00pm", teacher:"Soo Kim", className:"Barre", spot: 4, status:"confirmed" }); }
+  if (b.dataset.act === "offer-take") { state.offer = false; state.wait = false; state.lateCancel = true; bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"8:00pm", teacher:"Soo Kim", className:"Barre", spot: 4, status:"confirmed" }); }
   if (b.dataset.act === "offer-pass") { state.offer = false; alert("book", "Passed · 8:00pm", "Offer went to the next in line · still " + remainingLine()); toast("Passed · " + remainingLine()); state.wait = false; render(); }
 };
 document.getElementById("tabs").onclick = (e) => {
   const b = e.target.closest("[data-act]"); if (!b) return;
   state.feature = null; state.jump = null;
   const tab = b.dataset.act.replace("tab-", "");
+  if (tab !== state.tab) state.justBooked = false;   /* "Just booked" lasts until she leaves Today */
   state.tab = tab;
   state.view = tab === "ask" ? "ai" : null;
   if (tab === "ask" && !state.chat) state.chat = [];
