@@ -313,9 +313,9 @@
 <script>
 const TAKEN = new Set([2, 5]);
 const HISTORY = [
-  { when: "Tue 6 Oct", time: "7:00pm", className: "Barre", teacher: "Hana Lee", studio: "cheongdam", status: "attended" },
+  { when: "Tue 6 Oct", time: "7:00pm", className: "Barre", teacher: "Yuna Choi", studio: "cheongdam", status: "attended" },
   { when: "Sat 4 Oct", time: "10:00am", className: "Barre", teacher: "Soo Kim", studio: "geumho", status: "attended" },
-  { when: "Thu 2 Oct", time: "7:00pm", className: "Barre", teacher: "Hana Lee", studio: "cheongdam", status: "cancelled" }
+  { when: "Thu 2 Oct", time: "7:00pm", className: "Barre", teacher: "Yuna Choi", studio: "cheongdam", status: "cancelled" }
 ];
 const ICONS = {
   today: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
@@ -335,7 +335,7 @@ const ICONS = {
 };
 const SEED_ALERTS = () => [
   { k: "pass", t: "Pass ends in 5 days", d: "Cheongdam · 2 of 10 left · 14 Oct", when: "Today", unread: true },
-  { k: "check", t: "Attended · Barre", d: "Tue 6 Oct · 7:00pm · Hana Lee · Cheongdam", when: "Tue" },
+  { k: "check", t: "Attended · Barre", d: "Tue 6 Oct · 7:00pm · Yuna Choi · Cheongdam", when: "Tue" },
   { k: "send", t: "Geumho replied", d: "Yes — book her a drop-in at the desk. Soo Kim", when: "Mon" },
   { k: "today", t: "Booked · Barre", d: "Sat 4 Oct · 10:00am · Soo Kim · Geumho", when: "Fri" }
 ];
@@ -463,7 +463,7 @@ function today() {
     const other = elsewhere
       ? slot("open-other-class", state.booking.time, "Your class at " + studioName(state.booking.studio), state.booking.className + " · " + state.booking.teacher + " · " + state.booking.when, "Booked", "ok")
       : (state.studio === "geumho"
-        ? slot("switch-cheongdam-book", "7:00pm", "Barre", "Cheongdam · Hana Lee · 6 of 8", "Tonight", "ox")
+        ? slot("switch-cheongdam-book", "7:00pm", "Barre", "Cheongdam · Yuna Choi · 6 of 8", "Tonight", "ox")
         : "");
     return `${topbar()}<p class="kicker">Today · ${state.studio==="geumho"?"Geumho":"Cheongdam"}</p>
       <h1>${elsewhere ? "Nothing here today" : "No class today"}</h1><p class="sub">${p.left} of ${p.total} left · until ${p.until}</p>
@@ -513,17 +513,17 @@ function book() {
       + `<button class="btn ghost" type="button" data-act="switch-cheongdam-book">Switch to Cheongdam</button>`;
   } else if (state.bookTab === "private") {
     list = !thu
-      ? slot("pick-sat10", "10:00am", "Hana Lee", "50 min · open", "Open", "ok")
+      ? slot("pick-sat10", "10:00am", "Yuna Choi", "50 min · open", "Open", "ok")
         + slot("", "11:00am", "Jiwon Park", "Private", "Taken", "")
       : `<div class="card"><p class="sub" style="margin:0">No private on Thursday. Saturday is open.</p></div>`;
   } else if (thu) {
-    list = slot("pick-7", "7:00pm", "Barre", "Hana Lee · 6 of 8", "Open", "ok",
+    list = slot("pick-7", "7:00pm", "Barre", "Yuna Choi · 6 of 8", "Open", "ok",
         `<span class="tag">Free until 4:00pm</span><span class="tag">Here from 6:30</span>`)
       + slot("wait", "8:00pm", "Barre", "Soo Kim · full", "Waitlist", "warn",
         `<span class="tag">${state.wait ? "You’re 2nd" : "You’d be 2nd"}</span>`);
   } else {
     list = slot("", "9:00am", "Kids Barre", "2 of 3", "May not run", "warn")
-      + slot("pick-sat10", "10:00am", "Barre", "Hana Lee", "Open", "ok");
+      + slot("pick-sat10", "10:00am", "Barre", "Yuna Choi", "Open", "ok");
   }
   return `${topbar()}<div class="seg">
       <button type="button" class="${state.bookTab==="group"?"on":""}" data-act="book-group">Group</button>
@@ -627,12 +627,12 @@ function aiReply(q) {
   if (/left|remaining|how many|balance|sessions|expire|until/.test(s)) return { k: "balance", kicker: "From your passes", title: "Geumho 8 of 20 · Cheongdam 2 of 10",
     body: "Geumho until 12 Nov. Cheongdam until 14 Oct — 5 days.", acts: [["ai-pass", "Open pass"]] };
   const b7 = state.booking && state.booking.studio === "cheongdam" && state.booking.time === "7:00pm";
-  if (/book|reserve|tonight|7|seven|thu/.test(s) && b7) return { k: "booked", kicker: "From your Cheongdam schedule", title: "You’re booked · Thu 7:00pm · Hana Lee" + (state.booking.spot ? " · Reformer " + state.booking.spot : ""),
+  if (/book|reserve|tonight|7|seven|thu/.test(s) && b7) return { k: "booked", kicker: "From your Cheongdam schedule", title: "You’re booked · Thu 7:00pm · Yuna Choi" + (state.booking.spot ? " · Reformer " + state.booking.spot : ""),
     body: "Free cancel until 4:00pm. Still " + remainingLine() + ".", acts: [["ai-today", "Open tonight"], ["ai-move", "Change time"]] };
-  if (/book|reserve|tonight|7|seven|thu/.test(s)) return { k: "book", kicker: "From Cheongdam’s schedule", title: "Thu 8 Oct · 7:00pm · Barre · Hana Lee",
+  if (/book|reserve|tonight|7|seven|thu/.test(s)) return { k: "book", kicker: "From Cheongdam’s schedule", title: "Thu 8 Oct · 7:00pm · Barre · Yuna Choi",
     body: "6 of 8 taken. Free cancel until 4:00pm. Booking keeps you at 2 left.", acts: [["ai-book-7", "Pick a reformer and book"], ["ai-book", "Other times"]] };
   if (/sat|weekend|what.?s on|schedule|classes|tomorrow/.test(s)) return { k: "list", kicker: "From Cheongdam’s schedule", title: "Saturday 10 Oct",
-    body: "9:00am Kids Barre · may not run (2 of 3)\n10:00am Barre · Hana Lee · open\n11:00am private · Jiwon Park · taken", acts: [["ai-book-sat", "Open Saturday"]] };
+    body: "9:00am Kids Barre · may not run (2 of 3)\n10:00am Barre · Yuna Choi · open\n11:00am private · Jiwon Park · taken", acts: [["ai-book-sat", "Open Saturday"]] };
   return { k: "help", kicker: "I can do three things", title: "Book, check, or send a request", body: "Try “book me tonight at 7”, “how many left?”, or “extend my pass”. I show a card; you decide.", acts: [] };
 }
 function aiAsk(q) {
@@ -686,7 +686,7 @@ function ask() {
     <p class="tiny">The studio replies in Alerts. Your pass still ends ${p.until} until they say otherwise.</p>
     <div class="actions"><button class="btn" type="button" data-act="send-ask">Send to ${studioName(state.studio)}</button></div>`;
 }
-const BOOKING7 = { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot:3, status:"confirmed" };
+const BOOKING7 = { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Yuna Choi", className:"Barre", spot:3, status:"confirmed" };
 function ensureBooked() {
   const b = state.booking;
   if (!b || b.studio !== "cheongdam" || b.time !== "7:00pm") { state.booking = { ...BOOKING7 }; state.arrived = false; state.arrivedVia = null; }
@@ -722,7 +722,7 @@ const FEATURES = [
   { f: "F8", label: "Other studio class", note: "Looking at Geumho while tonight is at Cheongdam. One row takes you there.", go: () => { inApp(); ensureBooked(); state.studio = "geumho"; state.tab = "today"; } },
   { g: "Book" },
   { f: "F9", label: "Group by day", note: "Thursday at Cheongdam. 7:00 open, 8:00 full.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
-  { f: "F10", label: "Private by day", note: "Saturday privates. Hana Lee open, Jiwon Park taken.", go: () => { inApp(); state.tab = "book"; state.bookTab = "private"; state.day = "sat"; state.studio = "cheongdam"; } },
+  { f: "F10", label: "Private by day", note: "Saturday privates. Yuna Choi open, Jiwon Park taken.", go: () => { inApp(); state.tab = "book"; state.bookTab = "private"; state.day = "sat"; state.studio = "cheongdam"; } },
   { f: "F12", label: "Book a class", note: "Tap 7:00pm. Pick a reformer. Booked, and still 2 left.", go: () => { inApp(); state.tab = "book"; state.bookTab = "group"; state.day = "thu"; state.studio = "cheongdam"; } },
   { f: "F13", label: "Reformer pick", note: "Six pads, two taken, no names. Yours until 6:45.", go: () => { inApp(); state.tab = "book"; state.view = "spot"; state.studio = "cheongdam"; state.spotPick = null; } },
   { f: "F14", label: "Waitlist", note: "8:00 is full. Join and you’re 2nd. Nothing is held.", go: () => { inApp(); state.wait = false; state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
@@ -791,7 +791,7 @@ function render() {
     <strong>A spot opened at 8:00pm</strong><p>Barre with Soo Kim, tonight. Free cancel has ended for this class. Take it?</p>
     <div class="notice-acts"><button type="button" data-act="offer-take">Take it</button><button type="button" class="quiet" data-act="offer-pass">Pass</button></div>`;
   else if (!notice.hidden) notice.innerHTML = `<div class="notice-head"><span>Capsule Barre</span><span>now</span></div>
-    <strong>You’re at Cheongdam</strong><p>Barre at 7:00 with Hana Lee. Say you’re here?</p>
+    <strong>You’re at Cheongdam</strong><p>Barre at 7:00 with Yuna Choi. Say you’re here?</p>
     <div class="notice-acts"><button type="button" data-act="nudge-here">I’m here</button><button type="button" class="quiet" data-act="nudge-close">Not yet</button></div>`;
   const view = document.getElementById("view");
   if (state.auth === "welcome") view.innerHTML = welcome();
@@ -875,7 +875,7 @@ function sheetBox(html) {
 function openStudios() {
   const box = sheetBox(`<p class="kicker">On this phone</p><h1>Switch studio</h1>
     <button class="card press" type="button" data-st="geumho"><div class="row"><div><strong>Geumho</strong><p class="sub" style="margin:4px 0 0">8 of 20 · Soo Kim, Jiwon Park</p></div></div></button>
-    <button class="card press" type="button" data-st="cheongdam"><div class="row"><div><strong>Cheongdam</strong><p class="sub" style="margin:4px 0 0">2 of 10 · Hana Lee</p></div></div></button>
+    <button class="card press" type="button" data-st="cheongdam"><div class="row"><div><strong>Cheongdam</strong><p class="sub" style="margin:4px 0 0">2 of 10 · Yuna Choi</p></div></div></button>
     <button class="btn ghost" type="button" data-act="close">Close</button>`);
   box.querySelectorAll("[data-st]").forEach(b => b.onclick = () => { state.studio = b.dataset.st; closeSheet(); render(); });
 }
@@ -896,8 +896,8 @@ function openMenu() {
 function openMove() {
   const onSat = state.booking && state.booking.when === "Sat 10 Oct";
   const target = onSat
-    ? { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" }
-    : { studio:"cheongdam", kind:"group", when:"Sat 10 Oct", time:"10:00am", teacher:"Hana Lee", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" };
+    ? { studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Yuna Choi", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" }
+    : { studio:"cheongdam", kind:"group", when:"Sat 10 Oct", time:"10:00am", teacher:"Yuna Choi", className:"Barre", spot: state.booking?.spot || 3, status:"confirmed" };
   const box = sheetBox(`<p class="kicker">One move</p><h1>${onSat ? "Thursday 7:00" : "Saturday 10:00"}</h1>
     <p class="sub">Replaces ${onSat ? "Saturday 10:00" : "Thursday 7:00"}. Still ${remainingLine()}.</p>
     <button class="btn" type="button" id="doMove">Move</button>
@@ -952,10 +952,10 @@ function wire() {
     if (act === "open-other-class") { state.studio = state.booking.studio; state.tab = "today"; state.view = null; render(); }
     if (act === "pick-7") { state.view = "spot"; state.spotPick = null; state.tab = "book"; state.studio = "cheongdam"; render(); }
     if (act === "spot") { state.spotPick = Number(btn.dataset.n); render(); }
-    if (act === "confirm-spot") bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Hana Lee", className:"Barre", spot: state.spotPick || 3, status:"confirmed" });
+    if (act === "confirm-spot") bookClass({ studio:"cheongdam", kind:"group", when:"Thu 8 Oct", time:"7:00pm", teacher:"Yuna Choi", className:"Barre", spot: state.spotPick || 3, status:"confirmed" });
     if (act === "wait") { state.view = "wait"; state.tab = "book"; render(); }
     if (act === "stay-wait") { state.wait = true; alert("book", "Waitlist · 8:00pm", "You’re 2nd · still " + remainingLine()); state.view = null; state.tab = "schedule"; state.studio = "cheongdam"; toast("You’re 2nd"); render(); }
-    if (act === "pick-sat10") bookClass({ studio:"cheongdam", kind:"private", when:"Sat 10 Oct", time:"10:00am", teacher:"Hana Lee", className:"Barre", spot: null, status:"confirmed" });
+    if (act === "pick-sat10") bookClass({ studio:"cheongdam", kind:"private", when:"Sat 10 Oct", time:"10:00am", teacher:"Yuna Choi", className:"Barre", spot: null, status:"confirmed" });
     if (act === "pick-geumho-10") bookClass({ studio:"geumho", kind:"group", when:"Thu 8 Oct", time:"10:00am", teacher:"Soo Kim", className:"Barre", spot: 1, status:"confirmed" });
     if (act === "pick-geumho-6") bookClass({ studio:"geumho", kind:"group", when:"Thu 8 Oct", time:"6:00pm", teacher:"Jiwon Park", className:"Barre", spot: 4, status:"confirmed" });
     if (act === "here") { arrive("tap"); state.nudge = false; render(); }

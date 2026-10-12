@@ -93,8 +93,8 @@ function render() {
   const streak = state.step === "in" ? 3 : 4;
   document.getElementById("seg").style.width = (state.step === "in" ? 30 : state.step === "share" ? 60 : 100) + "%";
   const copy = {
-    in: ["Check in. Keep the streak.", `<p class="streak">🔥 ${streak} days</p><div class="card"><b>Check in · 7:00 Barre</b><span>Hana Lee · one tap</span></div>`, "CHECK IN"],
-    share: ["Day 4. Share that you came.", `<p class="streak">🔥 ${streak} days</p><div class="share"><b>I'm at Cheongdam</b>7:00 Barre · Hana Lee<br>Day 4 · still 2 left</div>`, "SHARE CHECK-IN"],
+    in: ["Check in. Keep the streak.", `<p class="streak">🔥 ${streak} days</p><div class="card"><b>Check in · 7:00 Barre</b><span>Yuna Choi · one tap</span></div>`, "CHECK IN"],
+    share: ["Day 4. Share that you came.", `<p class="streak">🔥 ${streak} days</p><div class="share"><b>I'm at Cheongdam</b>7:00 Barre · Yuna Choi<br>Day 4 · still 2 left</div>`, "SHARE CHECK-IN"],
     done: ["Class is over. Share the result.", `<p class="streak">🔥 ${streak} days</p><div class="share"><b>Done · Barre with Hana</b>Cheongdam · Thu 8 Oct<br>Day 4 · 2 left until the studio marks it</div>`, "SHARE RESULT"]
   };
   const [line, body, label] = copy[state.step];

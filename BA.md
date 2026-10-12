@@ -16,7 +16,7 @@ This document defines what the member product must do for one real evening. It d
 
 Mina Park already takes class. The studio already knows her. Today she books and changes by calling or messaging the desk. The owner types the booking into `aicc-center`. That work is correct for the ledger, but it is slow for Mina and expensive for the studio.
 
-Tonight she wants Cheongdam 7:00pm Barre with Hana Lee. Her Cheongdam pass still has **2 of 10** sessions and expires **14 Oct 2026**. Free cancel ends at **4:00pm**. Arrival check-in opens at **6:30pm**. She also holds Geumho **8 of 20** until **12 Nov 2026**. Those are two studio memberships, not one wallet.
+Tonight she wants Cheongdam 7:00pm Barre with Yuna Choi. Her Cheongdam pass still has **2 of 10** sessions and expires **14 Oct 2026**. Free cancel ends at **4:00pm**. Arrival check-in opens at **6:30pm**. She also holds Geumho **8 of 20** until **12 Nov 2026**. Those are two studio memberships, not one wallet.
 
 ### What “good” means for Mina (one evening)
 
@@ -64,7 +64,7 @@ Clock anchors used below:
 - **6:30pm** — I’m-here window opens
 - **6:45pm** — reformer/spot lock (15 minutes before class)
 - **6:55pm** — I’m-here window closes (5 minutes before class)
-- **7:00pm** — Barre with Hana Lee
+- **7:00pm** — Barre with Yuna Choi
 
 ### Step 0 — Account
 
@@ -90,7 +90,7 @@ She opens Capsule Barre Cheongdam. Pass shows **2 of 10**, expiry **14 Oct 2026*
 
 ### Step 3 — Open book / schedule for tonight
 
-Bookable list shows **7:00pm Barre · Hana Lee · 6 of 8** with free cancel until 4:00pm. **8:00pm** is full and offers waitlist.
+Bookable list shows **7:00pm Barre · Yuna Choi · 6 of 8** with free cancel until 4:00pm. **8:00pm** is full and offers waitlist.
 
 **Business rule:** spots taken and capacity are server facts. Price, payroll, and room yield are not shown. If enrolled count is under the studio minimum, member sees a clear “class may not run” warning before commit; the phone does not cancel the class.
 
@@ -272,7 +272,7 @@ Use Mina Park, Thu 8 Oct 2026. Cheongdam pass starts at **2 of 10**, expiry **14
 |---|---|---|
 | A1 | Sign in with studio-registered phone | She enters the product; unknown phone is refused; no signup form |
 | A2 | Switch Geumho → Cheongdam | Balances stay separate (8/20 vs 2/10); no client-typed studio id |
-| A3 | Book Cheongdam 7:00pm Barre · Hana Lee | Booking succeeds; remaining still **2** |
+| A3 | Book Cheongdam 7:00pm Barre · Yuna Choi | Booking succeeds; remaining still **2** |
 | A4 | Pick reformer | Taken seats blocked; other names hidden; selection visible on today card |
 | A5 | Retry same book with same idempotency key | Still one reservation |
 | A6 | Open full 8:00pm waitlist | Shows place in line (e.g. 2nd); remaining still **2** |

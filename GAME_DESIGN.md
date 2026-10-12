@@ -12,7 +12,7 @@ Opening the app starts today's level. One board. One next tap. Hana says one sho
 |---|---|---|---|---|
 | 1 Pick | No class yet | Book 7:00 | Seat is held | Still 2 |
 | 2 Arrive | Booked. Check-in opens 6:30–6:55 | I'm here | She taps, or taps the "you're close" nudge | Still 2 |
-| 3 Share here | Card: "I'm at Cheongdam · 7:00 Barre · Hana Lee" | Share / Not now | Card sent or skipped | Still 2 |
+| 3 Share here | Card: "I'm at Cheongdam · 7:00 Barre · Yuna Choi" | Share / Not now | Card sent or skipped | Still 2 |
 | 4 Clear | Only after the studio marks attended. Card: "Done · Barre with Hana" | Share / Skip | Card sent or skipped | Then 1, shown quietly, not as a prize |
 
 Reformer pick sits inside Pick, not as its own life. If the class has numbered reformers, she locks one before the seat is held. Streak goes up only when step 4 is cleared or skipped. Booking does not add a day.
