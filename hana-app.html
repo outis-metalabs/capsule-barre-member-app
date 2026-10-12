@@ -866,7 +866,18 @@ function closeSheet() {
 }
 document.addEventListener("pointerdown", (e) => { const t = e.target.closest && e.target.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; }, true);
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { const t = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-act]"); if (t && !t.closest("#sheet")) closeSheet.last = { el: t, act: t.dataset.act }; } }, true);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.getElementById("sheet")?.classList.contains("open")) { e.preventDefault(); closeSheet(); } });
+document.addEventListener("keydown", (e) => {
+  const sh = document.getElementById("sheet"); if (!sh || !sh.classList.contains("open")) return;
+  if (e.key === "Escape") { e.preventDefault(); closeSheet(); return; }
+  if (e.key !== "Tab") return;
+  const box = document.getElementById("sheetBox");
+  const f = [...box.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled && el.offsetParent !== null);
+  if (!f.length) { e.preventDefault(); box.focus(); return; }
+  const first = f[0], last = f[f.length - 1], a = document.activeElement;
+  if (!box.contains(a)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+  else if (e.shiftKey && a === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+});
 function topbar() {
   const p = pass();
   return `<div class="top">
@@ -1292,7 +1303,7 @@ const BODY_RE = new RegExp("\\b(" + BODY + ")s?\\b");
 const COMPLAINT_RE = /\b(sore|stiff|tight|aches?|clicks?|clicking|pops?|popping|locks?|locking|weak|bad)\b/;
 const WENT_RE = new RegExp("\\b(stuck|locked|locking) (my )?(" + BODY + ")s?\\b|\\b(" + BODY + ")s? (is |feels |got |gets |keeps )?(went out|gave out|giving out|stuck|locked|locking up|locked up)\\b|\\b(can.?t|cannot|couldn.?t) (put|bear) (any )?weight on\\b|\\bweight on (my|it)\\b.*\\b(hurt|pain|can.?t)");
 const HURTS_RE = new RegExp("\\b(it|that|this|" + BODY + ")s?\\s+(really |still |kinda |so |is )?hurts?\\b");
-const URGENT_RE = /\b(emergency|emergencies|ambulance|urgent|urgently|911|999|sos|call (a |an )?doctor|need a doctor|someone help|please help|help please|help!+)(?=\W|$)|^(i need help|help me|help|need help|i need some help)\W*$|\bhelp me(?! (to )?(book|with|find|choose|pick|cancel|move|change|extend|understand|out with|decide|reschedul\w*|get there|check in|sign|log))\b(?!.*\b(book|class|pass|schedule)\b)/;
+const URGENT_RE = /\b(emergency|emergencies|ambulance|911|999|sos|call (a |an )?doctor|need a doctor|someone help|please help|help please|help!+)(?=\W|$)|^(i need help|help me|help|need help|i need some help)\W*$|\bhelp me(?! (to )?(book|with|find|choose|pick|cancel|move|change|extend|understand|out with|decide|reschedul\w*|get there|check in|sign|log))\b(?!.*\b(book|class|pass|schedule)\b)/;
 function isHealth(s) {
   if (URGENT_RE.test(s)) return true;
   const t = s.replace(/\b(come|be|coming|get|go|going|welcome|i.?m|i am) back\b|\bback to\b|\bbackpack\b|\b(so|that.?s|(that|it|this|class|workout|playlist) (was|is)( so)?) sick\b|\bsick (class|playlist|workout|set)\b|\bcold brew\b|\bair.?condition\w*|\bterms (and|&) conditions\b|\b(pass|booking|cancel\w*|membership|class|weather|studio|road|refund|good|great|mint|perfect|working) conditions?\b|\bconditions? (of|for) (the |my )?(pass|booking|membership|refund|cancel\w*|use|entry)\b|\bin (good|great|bad) condition\b|\bbroken (up|into|down)\b|\bbroke (up|into|down)\b|\bperiod of\b|\bcough drops?\b|\bsick (moves|class|beat|beats)\b|\b(beat|song|music|playlist|set|routine|choreo|class) (was|is) (so )?sick\b|\bdepression era\b|\blocked out\b|\bspinning class\b|\bstuck in (traffic|a meeting|work|the office|line)\b|\b(i.?m|so|totally|im) broke\b|\bbroke (as|af|until|lol)\b|\b(phone|screen|app|card|laptop|car|locker|link|website|site|printer|machine) (is |got |was )?(broke|broken)\b|\bbroken (phone|app|link|screen|card|locker|website|machine)\b|\bsick (of|and tired)\b/g, " ");
@@ -1313,6 +1324,7 @@ function hanaReply(q) {
   if (state.aiSim === "offline") return R("My whiskers lost the signal. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
+  if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s)) return R("If you're hurt or unwell, please see a doctor or your instructor. I can help with class too.", "calm", null, b ? ["Tonight's class", "How many left?"] : ["Book tonight", "How many left?"]);
   if (isHealth(s)) {
     const acts = [["late-ask", "Ask the studio"]]; if (canFreeCancel()) acts.push(["ai-cancel", "Cancel free"]);
     return R("Ouch, I'm sorry. Please see a doctor or your instructor before class.", "calm",
