@@ -50,8 +50,15 @@ The phone never calculates remaining sessions, refunds, or attendance. One line,
 | F35 | You | Legal — terms, privacy, location use | ✔ | — | static | ✔ |
 | F36 | System | Error states — full, expired, exhausted, duplicate, deadline, offline | ✔ | R5, R10 | error codes | — |
 | F37 | System | Korean copy | v1 after English accept | — | — | — |
+| F38 | Streak | Streak screen — the week, separate from Today. Grows when the board is cleared, not when a session is spent | ✔ | — | phone-side | ✔ |
+| F39 | Friends | Friends — your code, an incoming ask, who already went | ✔ | — | phone-side | ✔ |
+| F40 | Friends | Add a friend — type their code. A wrong code finds nobody | ✔ | — | phone-side | ✔ |
+| F41 | Share | Share check-in — the phone share sheet. Studio, class, day. Not a friend in the app. No pass number | ✔ | — | phone share sheet | ✔ |
+| F42 | Share | Share result — the phone share sheet. Done card, day only. Not a friend in the app | ✔ | — | phone share sheet | ✔ |
+| F43 | Share | Share streak — the phone share sheet. The number only. Not a friend in the app | ✔ | — | phone share sheet | ✔ |
+| F44 | Share | Share code — the phone share sheet with the code. The app does not pick a friend | ✔ | — | phone share sheet | ✔ |
 
-Not building: pass purchase, ClassPass-style credits, reviews, streaks, body charts, nearby-studio shop, free chat, beacon-required check-in, instructor app. See `BA.md` §6.
+Not building: pass purchase, ClassPass-style credits, reviews, body charts, nearby-studio shop, free chat, beacon-required check-in, instructor app. See `BA.md` §6. Streak, friends, and share (F38–F44) are in the Hana prototype. A share card never shows the pass as a prize. Share is the phone sheet, not a person in the app.
 
 ---
 
@@ -167,6 +174,31 @@ Terms, Privacy, Location use. Static text.
 **S25 · Profile edit**
 Name, phone (self fields only). Phone change re-verifies with a code.
 
+### Streak, friends, share
+
+These are their own screens. They are not states of Today. The left list has one row each.
+
+**S26 · Streak**
+Back. The number. One line: it grows when today's board is cleared, not from the pass. Seven days: filled, today, ahead. Thumb: **Share my streak** → S29.
+
+**S27 · Friends**
+Back. Your code on its own line. An incoming ask (Accept / Not now, same size). People, name then what they did. Thumb: **Add a friend**. Secondary: **Share my code** → S32.
+
+**S28 · Add a friend**
+Their code. Thumb: **Send ask**. A wrong code finds nobody. Back to S27.
+
+**S29 · Share check-in**
+The card: "I'm at Cheongdam", class, teacher, day. No remaining sessions. Thumb: **Share**. That opens the phone's share sheet (Messages, KakaoTalk, Instagram, Copy). The app has no "send to a friend". Secondary: **Not now**.
+
+**S30 · Share result**
+Same frame. Card: "Done · Barre", teacher, studio, day. The pass is not on the card. **Share** opens the same phone sheet.
+
+**S31 · Share streak**
+Same frame. Card is the number and "Day streak". **Share** opens the phone sheet.
+
+**S32 · Share code**
+Same frame. Card is the code. **Share** opens the phone sheet. The app does not choose who receives it.
+
 ### Notifications (outside the app)
 
 **N1 · Arrival nudge** — "You're at Cheongdam. Barre at 7:00 with Hana Lee. Say you're here?" Actions: **I'm here** / Not yet. Only 6:30–6:55 with an active booking, once per class.
@@ -200,7 +232,10 @@ S1 Welcome ─┬─ S2 Create ── S3 Code ── S5/S6 Today
 
 Tabs: Today (S5/S6/S7) · Book (S8/S9) · Schedule (S16) · You (S18)
 
-Today ── Change time S14 · Cancel S15 · Nudge card S23 · I'm here
+Today ── Change time S14 · Cancel S15 · Nudge card S23 · I'm here · Streak S26 · Friends S27
+Streak ── Share S31
+Friends ── Add S28 · Share code S32
+Today, after check-in ── Share check-in S29 · Share result S30
 Book ── Open → S10 Reformer → booked → Today
      ── Open (private / no reformer) → S11 Confirm → Today
      ── Full → S12 Waitlist → Schedule

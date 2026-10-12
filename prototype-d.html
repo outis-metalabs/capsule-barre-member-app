@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>D · Duolingo lesson — Capsule Barre</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  :root { --green:#58cc02; --green-d:#58a700; --blue:#1cb0f6; --ink:#3c3c3c; --mute:#afafaf; --line:#e5e5e5; --bg:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:#e7f0df; display:grid; place-items:center; padding:24px; font-family:Nunito,sans-serif; color:var(--ink); }
+  .phone { width:390px; height:844px; background:#FDFBF0; border-radius:36px; box-shadow:0 18px 40px rgba(28,176,246,.25); display:flex; flex-direction:column; overflow:hidden; }
+  .bar { display:flex; gap:8px; align-items:center; padding:22px 18px 8px; }
+  .seg { height:14px; flex:1; background:#e5e5e5; border-radius:999px; overflow:hidden; }
+  .seg i { display:block; height:100%; width:0; background:var(--green); border-radius:inherit; transition:width .35s ease; }
+  .close { border:0; background:transparent; color:var(--mute); font-size:22px; font-weight:800; }
+  .stage { text-align:center; padding:8px 24px 0; }
+  .cat { width:190px; transform-origin:50% 80%; animation:idle 1.6s ease-in-out infinite; }
+  .cat.hop { animation:hop .55s ease; }
+  .eye { transform-origin:center; animation:blink 3.6s infinite; }
+  @keyframes idle { 50% { transform:translateY(-8px); } }
+  @keyframes hop { 40% { transform:translateY(-28px) scale(1.05); } 100% { transform:none; } }
+  @keyframes blink { 92%,100% { transform:scaleY(1); } 96% { transform:scaleY(.12); } }
+  .say { display:inline-block; background:#fff; border:2px solid #e5e5e5; border-radius:16px; padding:12px 16px; font-size:18px; font-weight:800; margin-top:4px; }
+  .streak { display:flex; justify-content:center; gap:8px; font-weight:800; color:#ff9600; letter-spacing:.04em; }
+  .card { margin:8px 20px 0; background:#fff; border:2px solid #e5e5e5; border-radius:16px; padding:14px 16px; font-weight:800; }
+  .card b { display:block; font-size:18px; }
+  .card span { color:#afafaf; font-size:13px; font-weight:700; }
+  .share { margin:12px 20px 0; border-radius:16px; background:#fff7e8; border:2px dashed #ff9600; padding:14px 16px; font-weight:800; line-height:1.45; }
+  .share b { display:block; font-size:18px; }
+  .choices { padding:0 20px; display:flex; flex-direction:column; gap:10px; }
+  .choice { border:2px solid #e5e5e5; background:#fff; border-radius:16px; min-height:56px; font:inherit; font-weight:800; font-size:16px; text-align:left; padding:0 16px; }
+  .choice:active, .choice.on { border-color:var(--blue); background:#ddf4ff; }
+  .foot { margin-top:auto; padding:12px 20px 22px; border-top:2px solid #e5e5e5; }
+  .go { width:100%; border:0; border-bottom:4px solid var(--green-d); background:var(--green); color:#fff; border-radius:16px; min-height:54px; font:inherit; font-weight:800; font-size:17px; letter-spacing:.04em; }
+  .go:disabled { background:#e5e5e5; border-bottom-color:#cecece; color:#afafaf; }
+  .pass { text-align:center; color:var(--mute); font-weight:800; font-size:13px; margin:8px 0 0; }
+  .note { position:fixed; left:24px; top:24px; width:260px; font-weight:800; }
+  @media (max-width:900px) { .note { position:static; width:auto; margin-bottom:12px; } body { display:block; } .phone { margin:0 auto; } }
+</style>
+</head>
+<body>
+<aside class="note"><b>D · Streak</b> One short task. Check in, share it, then share the result after class. The pass stays at 2.</aside>
+<div class="phone">
+  <div class="bar"><button class="close" type="button" aria-label="Close">✕</button><div class="seg"><i id="seg"></i></div></div>
+  <div class="stage">
+    <svg class="cat" id="cat" viewBox="0 0 200 230">
+      <ellipse cx="100" cy="214" rx="34" ry="7" fill="#2F3E46" opacity=".08"/>
+      <path d="M86 176 q-6 22 4 28 q8 2 10 -10 z" fill="#2F3E46"/>
+      <path d="M114 176 q6 22 -4 28 q-8 2 -10 -10 z" fill="#2F3E46"/>
+      <path d="M74 168 q-18 6 -16 22" fill="none" stroke="#FFE8DC" stroke-width="12" stroke-linecap="round"/>
+      <path d="M126 168 q18 6 16 22" fill="none" stroke="#FFE8DC" stroke-width="12" stroke-linecap="round"/>
+      <path d="M78 132 h44 v40 a16 16 0 0 1 -16 16 h-12 a16 16 0 0 1 -16 -16 z" fill="#2F3E46"/>
+      <path d="M92 132 h16 v10 h-16 z" fill="#F6B1A6"/>
+      <path d="M86 154 q14 10 28 0" fill="none" stroke="#E8C56A" stroke-width="2"/>
+      <circle cx="108" cy="150" r="3.2" fill="#E05A53"/>
+      <ellipse cx="100" cy="92" rx="52" ry="48" fill="#FFE8DC"/>
+      <path d="M52 86 q-6 -48 28 -36 q4 20 -4 34 z" fill="#2F3E46"/>
+      <path d="M148 86 q6 -48 -28 -36 q-4 20 4 34 z" fill="#2F3E46"/>
+      <ellipse cx="78" cy="52" rx="16" ry="12" fill="#2F3E46"/>
+      <path d="M70 46 q8 -16 18 -6 q-8 6 -18 6 z" fill="#F6B1A6"/>
+      <path d="M58 78 q42 -30 84 0 q-8 22 -42 18 q-34 4 -42 -18 z" fill="#2F3E46"/>
+      <path d="M64 96 q10 -14 22 -6" fill="none" stroke="#cfc8c4" stroke-width="2" stroke-linecap="round"/>
+      <path d="M114 90 q12 -8 22 6" fill="none" stroke="#cfc8c4" stroke-width="2" stroke-linecap="round"/>
+      <path d="M136 100 q8 -6 14 2" fill="none" stroke="#cfc8c4" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="72" cy="118" r="8" fill="#F6B1A6" opacity=".8"/>
+      <circle cx="128" cy="118" r="8" fill="#F6B1A6" opacity=".8"/>
+      <g class="eye">
+        <circle cx="84" cy="108" r="16" fill="none" stroke="#2F3E46" stroke-width="2.4"/>
+        <circle cx="116" cy="108" r="16" fill="none" stroke="#2F3E46" stroke-width="2.4"/>
+        <path d="M68 108 h-8 M132 108 h8" stroke="#2F3E46" stroke-width="2.4" stroke-linecap="round"/>
+        <ellipse cx="84" cy="110" rx="5" ry="6" fill="#2F3E46"/>
+        <ellipse cx="116" cy="110" rx="5" ry="6" fill="#2F3E46"/>
+        <circle cx="86" cy="107" r="2" fill="#fff"/>
+        <circle cx="118" cy="107" r="2" fill="#fff"/>
+      </g>
+      <path d="M96 124 l4 4 l4 -4" fill="none" stroke="#E05A53" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+        <div class="say" id="say">Check in. Keep the streak.</div>
+  </div>
+  <div id="main"></div>
+  <div class="foot">
+    <button class="go" id="go">CHECK IN</button>
+    <p class="pass">PASS · 2 LEFT · 14 OCT</p>
+  </div>
+</div>
+<script>
+
+const state = { step: "in" };
+const cat = document.getElementById("cat");
+function hop() { cat.classList.remove("hop"); void cat.offsetWidth; cat.classList.add("hop"); }
+function render() {
+  const streak = state.step === "in" ? 3 : 4;
+  document.getElementById("seg").style.width = (state.step === "in" ? 30 : state.step === "share" ? 60 : 100) + "%";
+  const copy = {
+    in: ["Check in. Keep the streak.", `<p class="streak">🔥 ${streak} days</p><div class="card"><b>Check in · 7:00 Barre</b><span>Hana Lee · one tap</span></div>`, "CHECK IN"],
+    share: ["Day 4. Share that you came.", `<p class="streak">🔥 ${streak} days</p><div class="share"><b>I'm at Cheongdam</b>7:00 Barre · Hana Lee<br>Day 4 · still 2 left</div>`, "SHARE CHECK-IN"],
+    done: ["Class is over. Share the result.", `<p class="streak">🔥 ${streak} days</p><div class="share"><b>Done · Barre with Hana</b>Cheongdam · Thu 8 Oct<br>Day 4 · 2 left until the studio marks it</div>`, "SHARE RESULT"]
+  };
+  const [line, body, label] = copy[state.step];
+  document.getElementById("say").textContent = line;
+  document.getElementById("main").innerHTML = body;
+  document.getElementById("go").textContent = label;
+}
+document.getElementById("go").onclick = () => {
+  if (state.step === "in") { state.step = "share"; hop(); }
+  else if (state.step === "share") state.step = "done";
+  else { document.getElementById("say").textContent = "Shared. Still 2 left."; return; }
+  render();
+};
+render();
+</script>
+</body>
+</html>
