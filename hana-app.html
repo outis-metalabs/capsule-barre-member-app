@@ -266,10 +266,13 @@
   .bubble.me { align-self: flex-end; max-width: 80%; background: var(--ink); color: #f3f2ee; border-radius: 16px 16px 4px 16px; padding: 10px 14px; font-size: 15px; font-weight: 500; margin: 8px 0; }
   .card.ai { border-color: #F5B5BD; }
   .card.ai.off { opacity:.5; }
-  .bubble.her.think, .hana-bubble .dots3 { display:inline-flex; gap:4px; }
-  .dots3 i { width:7px; height:7px; border-radius:50%; background:#C9B9AE; animation:dot3 1s ease-in-out infinite; }
+  .bubble.her.think, .dots3 { display:inline-flex; gap:4px; align-items:center; }
+  .bubble.her.think { min-height:36px; }
+  .dots3 i { display:block; flex:none; }
+  .dots3 i { width:7px; height:7px; border-radius:50%; background:#8E7F75; animation:dot3 1s ease-in-out infinite; }
   .dots3 i:nth-child(2){animation-delay:.15s} .dots3 i:nth-child(3){animation-delay:.3s}
-  @keyframes dot3 { 0%,100%{opacity:.35; transform:translateY(0)} 50%{opacity:1; transform:translateY(-3px)} }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; margin:-1px; }
+  @keyframes dot3 { 0%,100%{opacity:.55; transform:translateY(0)} 50%{opacity:1; transform:translateY(-3px)} }
   @media (prefers-reduced-motion:reduce){ .dots3 i{animation:none} }
   .ask-stage .hw { width:180px; height:140px; }
   .ask-k { margin:2px 0 14px; text-align:center; font-size:12px; font-weight:600; color:#6F6760; letter-spacing:0; text-transform:none; }
@@ -489,8 +492,8 @@
   /* calm: slow breathing, expanding mint ring, floating leaves */
   @keyframes hcalmT { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
   @keyframes hcalmS { 0%,100%{transform:scale(1)} 45%,55%{transform:scale(1.03)} }
-  .hw[data-s=calm] .fig { --fig: hcalmT 4s cubic-bezier(.45,0,.55,1) infinite; }
-  .hw[data-s=calm] .sq  { --sq: hcalmS 4s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=calm] .fig, .hw[data-s=thinking] .fig { --fig: hcalmT 4s cubic-bezier(.45,0,.55,1) infinite; }
+  .hw[data-s=calm] .sq, .hw[data-s=thinking] .sq  { --sq: hcalmS 4s cubic-bezier(.45,0,.55,1) infinite; }
   @keyframes hring { 0%{opacity:0; transform:scale(.55)} 20%{opacity:.8} 100%{opacity:0; transform:scale(1.25)} }
   .hw[data-s=calm] .fx .xring { animation:hring 4s ease-out infinite; } .hw[data-s=calm] .fx .xring.b { animation-delay:2s; }
   @keyframes hleaf { 0%{opacity:0; transform:translate(0,10px) rotate(0)} 20%{opacity:1} 50%{transform:translate(10px,-14px) rotate(40deg)} 80%{opacity:1} 100%{opacity:0; transform:translate(-4px,-36px) rotate(-20deg)} }
@@ -653,7 +656,7 @@ const HISTORY = [
 const ICONS = {
   today: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
   book: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-  schedule: '<svg viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>',
+  schedule: '<svg viewBox="0 0 24 24"><path d="M4 6h9M4 12h6M4 18h6"/><circle cx="17" cy="15" r="4.5"/><path d="M17 12.8V15l1.6 1"/></svg>',
   you: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1.2-3.5 3.7-5 7-5s5.8 1.5 7 5"/></svg>',
   bell: '<svg class="ico" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5"/><path d="M5 16h14"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>',
   menu: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
@@ -676,14 +679,14 @@ const ICONS = {
   copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>'
 };
 const SEED_ALERTS = () => [
-  { k: "pass", t: "Pass ends in 5 days", d: "Cheongdam · 2 of 10 left · 14 Oct", when: "Today", unread: true },
+  { k: "pass", t: "Pass ends in 6 days", d: "Cheongdam · 2 of 10 left · 14 Oct", when: "Today", unread: true },
   { k: "check", t: "Attended · Barre", d: "Tue 6 Oct · 7:00pm · Yuna Choi · Cheongdam", when: "Tue" },
-  { k: "send", t: "Geumho replied", d: "Yes — book her a drop-in at the desk. Soo Kim", when: "Mon" },
+  { k: "send", t: "Geumho replied", d: "Yes, book a drop-in at the desk. Soo Kim", when: "Mon" },
   { k: "today", t: "Booked · Barre", d: "Sat 4 Oct · 10:00am · Soo Kim · Geumho", when: "Fri" }
 ];
 const NOTIFY = () => ({ booked: true, changed: true, day: true, hours: true });
 const SEED_REQUESTS = () => [
-  { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", seen: false, reply: "Yes — book her a drop-in at the desk. Soo Kim" }
+  { type: "question", text: "Can I bring a friend to Saturday 10:00?", studio: "geumho", when: "Mon 5 Oct", status: "replied", seen: false, reply: "Yes, book a drop-in at the desk. Soo Kim" }
 ];
 const state = {
   justBooked: false, daysSinceVisit: 0, clock: "am", auth: "welcome", mode: "create", tab: "today", view: null,
@@ -707,8 +710,8 @@ function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unre
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
 function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"wink", front:"front" };
-/* thinking (Ask Hana typing) reuses the wink loop until hana.riv has its own state 12; moment numbers live in assets/hana/hana-renderer.js */
+const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"calm", front:"front" };
+/* thinking (Ask Hana typing) uses the calm art (interim, FX-04) until dedicated thinking art ships as WebP; moment numbers live in assets/hana/hana-renderer.js */
 const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
 /* Ambient props: small palette shapes in the guide's brown line. Positions are % of the stage box. */
 const HSHAPE = {
@@ -774,7 +777,8 @@ function hanaFx(st) {
 function hana(st) {
   st = (window.__hanaForce) || (HANA_ART[st] ? st : "front");
   const changed = hana.last !== st;
-  const prev = hana.last && changed ? hanaFig(hana.last, "prevfig") : "";
+  /* FX-01: thinking never crossfades: the previous pose is dropped at once so only one Hana shows */
+  const prev = hana.last && changed && st !== "thinking" ? hanaFig(hana.last, "prevfig") : "";
   hana.last = st;
   return `<div class="hw${hanaAnimOn() ? " anim" : ""}" data-s="${st}" data-hana><i class="veil"></i><div class="life">${prev}${hanaFig(st, changed ? "enter" : "")}</div>${hanaFx(st)}<i class="shadow"></i></div>`;
 }
@@ -1386,6 +1390,10 @@ const SCHED = {
   geumho:    { thu: [["10:00am","Barre","Soo Kim","open","pick-geumho-10"],["6:00pm","Barre","Jiwon Park","open","pick-geumho-6"]], sat: [] }
 };
 const schedBody = (rows) => rows.map(c => c[0] + " " + c[1] + (c[2] ? " · " + c[2] : "") + " · " + c[3]).join("\n");
+/* canonical safety wording (ask-hana-spec §3) */
+const SAFE_LINE = "Please see a doctor or your instructor before class.";
+const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
+const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collaps\w*|chest (pain|hurts?|tight\w*|pressure)|heart attack|seizures?|convulsi\w*|heavy bleeding|bleeding (a lot|heavily|badly|won.?t stop)|bleeding heavily|(can.?t|cannot|can not|trouble|hard to|difficulty|struggling to) breath(e|ing)?|short(ness)? of breath|emergency)\b/;
 function hanaReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
@@ -1395,10 +1403,16 @@ function hanaReply(q) {
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
   if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s)) return R("If you're hurt or unwell, please see a doctor or your instructor. I can help with class too.", "calm", null, b ? ["Tonight's class", "How many left?"] : ["Book tonight", "How many left?"]);
+  /* urgent symptoms: firmer line, still no number (AHS §3 urgent rule, PO 12 Oct) */
+  if (RED_FLAG_RE.test(s)) {
+    const acts = [["late-ask", "Ask the studio"]]; if (canFreeCancel()) acts.push(["ai-cancel", "Cancel free"]);
+    return R("Thanks for telling me. " + SAFE_URGENT, "calm",
+      { k: "care", kicker: "Get help now", title: "Get medical help right away", body: "Stop exercising now. Tell your instructor too." + (canFreeCancel() ? " Free cancel until " + T.cancel + "." : ""), acts });
+  }
   if (isHealth(s)) {
     const acts = [["late-ask", "Ask the studio"]]; if (canFreeCancel()) acts.push(["ai-cancel", "Cancel free"]);
-    return R("Ouch, I'm sorry. Please see a doctor or your instructor before class.", "calm",
-      { k: "care", kicker: "Take care", title: "Check with a doctor or your instructor", body: canFreeCancel() ? "Free cancel until " + T.cancel + " if you need to rest." : (b ? "The studio can help with tonight." : "The studio can help."), acts });
+    return R("Thanks for telling me. " + SAFE_LINE, "calm",
+      { k: "care", kicker: "Take care", title: "See a doctor or your instructor", body: canFreeCancel() ? "Free cancel until " + T.cancel + " if you need to rest." : (b ? "The studio can help with tonight." : "The studio can help."), acts });
   }
   /* 'can I / is it ok / safe ... with / after ...' is a body question: never an info card */
   if (/^(can i|could i|may i|should i|is it (ok|okay|safe|fine|alright|bad)|am i (allowed|ok|okay)|is (barre|reformer|pilates|class) (ok|okay|safe|fine))\b.*\b(with|after|while|during|since|if i have|if i.?m)\b/.test(s)
@@ -1516,10 +1530,19 @@ function aiAsk(q, instant) {
   q = String(q || "").trim(); if (!q) return;
   state.chat.push({ role: "me", text: q });
   if (instant) { state.chat.push({ role: "ai", ...hanaAnswer(q) }); return; }
-  state.chat.push({ role: "think" }); render(); scrollAsk();
-  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); if (/signal/.test((state.chat[state.chat.length - 1] || {}).line || "")) HanaRenderer.error(); else HanaRenderer.talk(); }, 650);
+  state.chat.push({ role: "think" }); render(); scrollAsk(); askSay("Hana is typing");
+  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); const lr = state.chat[state.chat.length - 1] || {}; askSay("Hana: " + (lr.line || "") + (lr.card ? " " + lr.card.title : "")); if (/signal/.test(lr.line || "")) HanaRenderer.error(); else HanaRenderer.talk(); }, 650);
 }
-function scrollAsk() { const sc = document.getElementById("view"); if (sc) sc.scrollTop = sc.scrollHeight; }
+/* FX-03: scroll so the latest Hana line (and the card under it) starts at the top of the view; while thinking, show the dots */
+function scrollAsk() {
+  const sc = document.getElementById("view"); if (!sc) return;
+  const hs = sc.querySelectorAll(".ask-thread .bubble.her, .ask-thread .ask-nosig"), her = hs[hs.length - 1];
+  if (!her || her.classList.contains("think")) { sc.scrollTop = sc.scrollHeight; return; }
+  const prev = her.previousElementSibling, el = prev && prev.classList.contains("ai") ? prev : her;   /* lead replies put the card first */
+  sc.scrollTop = Math.max(0, el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 12);
+}
+/* FX-05: one persistent polite live region (outside #view so re-renders don't reset it) */
+function askSay(t) { let el = document.getElementById("askLive"); if (!el) { el = document.createElement("p"); el.id = "askLive"; el.className = "sr-only"; el.setAttribute("aria-live", "polite"); document.body.appendChild(el); } el.textContent = t; }
 function aiCardHtml(c, off) {
   return `<div class="card ai${off ? " off" : ""}"><p class="kicker">${c.kicker}</p><strong>${c.title}</strong><p class="sub" style="white-space:pre-line;margin:4px 0 0">${c.body}</p>
     ${c.acts && c.acts.length ? `<div class="meta">${c.acts.map(([a, l], i) => `<button type="button" class="${i ? "chip-btn" : "btn mini"}" data-act="${a}" ${off ? "disabled" : ""}>${l}</button>`).join("")}</div>` : ""}${c.foot ? `<p class="aifoot">${c.foot}</p>` : ""}</div>`;
@@ -1530,17 +1553,18 @@ function assistant() {
   const last = replies[replies.length - 1], thinking = state.chat.some(m => m.role === "think");
   const offline = state.aiSim === "offline";
   const pose = thinking ? "thinking" : last ? last.pose : "greet";
-  const line = thinking ? `<span class="dots3"><i></i><i></i><i></i></span>` : last ? last.line : "Hi " + state.name.split(" ")[0] + "! Ask me anything about class.";
+  /* FX-03: once there is a thread, every line (latest included) lives in the thread and the stage bubble is hidden, so a line never shows twice */
+  const line = state.chat.length ? "" : "Hi " + state.name.split(" ")[0] + "! Ask me anything about class.";
   const lastIdx = state.chat.lastIndexOf(last);
   const thread = state.chat.map((m, i) => m.role === "me" ? `<div class="bubble me">${esc(m.text)}</div>`
     : m.role === "think" ? `<div class="bubble her think"><span class="dots3"><i></i><i></i><i></i></span></div>`
-    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${i === lastIdx && !thinking ? "" : last && m.line === last.line && /signal/.test(m.line) && !thinking ? `<p class="tiny ask-nosig">No signal, not answered</p>` : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
+    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${last && m.line === last.line && i !== lastIdx && /signal/.test(m.line) && !thinking ? `<p class="tiny ask-nosig">No signal, not answered</p>` : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
     : m.card ? aiCardHtml(m.card, offline) : "").join("");
   const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.allChips ? 9 : last.lead ? 3 : 2) : []);
   const waiting = state.requests.filter(r => r.status === "waiting").length, replied = state.requests.filter(r => r.status === "replied").length;
-  return `<div class="askhead"><button class="link backhit" type="button" data-act="tab-you">Back</button>
+  return `<div class="askhead"><button class="link backhit" type="button" data-act="ai-back">Back</button>
     ${inboxBtn("reqbtn")}</div>
-    <div class="hana-stage ask-stage${state.chat.length ? "" : " grow"}"><div class="hana-bubble">${line}</div>${hana(pose)}</div>
+    <div class="hana-stage ask-stage${state.chat.length ? "" : " grow"}">${line ? `<div class="hana-bubble">${line}</div>` : ""}${hana(pose)}</div>
     <p class="ask-k">Asking about ${studioName(state.studio)} · I only act when you tap</p>
     <div class="thread ask-thread">${thread}</div>
     <div class="ask-dock">${chips.length ? `<div class="chips wrap ask-chips">${chips.map(chipHtml).join("")}</div>` : ""}
@@ -1621,7 +1645,7 @@ const JUMPS = [
   { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
   { key: "alerts",   label: "Inbox", note: "One inbox: studio replies and alerts, newest first. Filters: All, Studio replies, Alerts. One dot for unseen items.", go: () => { inApp(); state.tab = "you"; state.view = "inbox"; state.inboxFilter = "all"; state.inboxNew = ["a0", "r0"]; } },
   { key: "inbox-detail", label: "Inbox · request detail", note: "A studio reply opens its request: what you asked, the reply, the status.", go: () => { inApp(); state.tab = "you"; state.view = "reqdetail"; state.reqDetail = 0; } },
-  { key: "ai",       label: "Ask Hana", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; aiAsk("Book me tonight at 7", true); } },
+  { key: "ai",       label: "Ask Hana", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; state.aiFrom = null; } },
   { key: "pass",     label: "Pass", note: "2 / 10 until 14 Oct, as the server returns it. Previous pass and visits.", go: () => { inApp(); state.tab = "you"; state.view = "pass"; } },
   { key: "you",      label: "You", note: "Pass, alerts, ask, studios, arrival, log out.", go: () => { inApp(); state.tab = "you"; } }
 ];
@@ -1718,12 +1742,15 @@ function render() {
   const tabs = document.getElementById("tabs");
   tabs.hidden = state.auth !== "app" || ["streak","friends","add-friend","share"].includes(state.view);
   if (state.auth === "app") {
-    const askOn = state.view === "ai" || state.tab === "ask";
+    /* FX-10: a cross-tab view (inbox, request detail, request form) keeps its opener's tab lit */
+    const io = state.inboxOrigin, inInbox = ["inbox", "alerts", "requests", "reqdetail"].includes(state.view);
+    const hl = inInbox && io ? (io.view === "ai" || io.view === "ask" || io.tab === "ask" ? "ask" : io.tab)
+      : (state.view === "ai" || state.view === "ask" || state.tab === "ask") ? "ask" : state.tab;
     const labels = { today: "Today", book: "Book", ask: "Ask", schedule: "Schedule", you: "You" };
     tabs.innerHTML = ["today","book","ask","schedule","you"].map(t => {
-      const on = t === "ask" ? askOn : state.tab === t && !askOn;
+      const on = t === hl;
       const icon = t === "ask" ? `<span class="fab">${ICONS.paw}</span>` : ICONS[t];
-      return `<button type="button" class="${t === "ask" ? "ask " : ""}${on ? "on" : ""}" data-act="tab-${t}">${icon}<span>${labels[t]}</span></button>`;
+      return `<button type="button" class="${t === "ask" ? "ask " : ""}${on ? "on" : ""}" data-act="tab-${t}"${on ? ' aria-current="page"' : ""}>${icon}<span>${labels[t]}</span></button>`;
     }).join("");
   }
   const notice = document.getElementById("notice");
@@ -1754,6 +1781,10 @@ function render() {
   else if (state.tab === "book") view.innerHTML = book();
   else if (state.tab === "schedule") view.innerHTML = schedule();
   else view.innerHTML = you();
+  /* FX-02: remember Ask's opener (the screen shown before Ask); inbox / request form round-trips keep the first opener */
+  const AI_SIDE = ["ai", "ask", "inbox", "alerts", "requests", "reqdetail"];
+  if (state.view === "ai" && render.snap && !AI_SIDE.includes(render.snap.view) && state.auth === "app") state.aiFrom = render.snap;
+  render.snap = state.auth === "app" ? { tab: state.tab, view: state.view } : null;
   const feat = state.feature && FEATURES.find(x => x.f === state.feature);
   const jmp = state.jump && JUMPS.find(j => j.key && j.key === state.jump);
   const n = feat ? [feat.f + " · " + feat.label, feat.note] : jmp ? [jmp.label, jmp.note] : noteFor();
@@ -1960,7 +1991,7 @@ function wire() {
     if (act === "location-ask") openLocation();
     if (act === "location-off") { state.location = "off"; toast("Location off"); render(); }
     if (act === "cancel") openCancel();
-    if (act === "cancel-yes") { state.booking = null; state.arrived = false; state.arrivedVia = null; alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); toast("Cancelled · " + remainingLine()); render(); }
+    if (act === "cancel-yes") { state.booking = null; state.arrived = false; state.arrivedVia = null; alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); render(); showToast("Cancelled · still " + remainingLine());   /* FX-13: floating toast so it is seen above the fold */ }
     if (act === "move") openMove();
     if (act === "pass") { state.view = "pass"; render(); }
     if (act === "low") { state.tab = "today"; state.view = "low"; render(); }
@@ -1973,6 +2004,7 @@ function wire() {
       if (k[0] === "r") { state.reqDetail = i; state.view = "reqdetail"; } render(); return; }
     if (act === "ask") { state.view = "ask"; render(); }
     if (act === "ai") { state.view = "ai"; state.tab = "you"; render(); }
+    if (act === "ai-back") { const o = state.aiFrom || { tab: "today", view: null }; state.aiFrom = null; state.tab = o.tab === "ask" ? "today" : o.tab; state.view = o.view; render(); return; }
     if (act === "ai-chip") { if (["Great", "Okay", "Tired", "Stressed"].includes(btn.dataset.q)) aiAsk("I feel " + btn.dataset.q.toLowerCase()); else aiAsk(btn.dataset.q); }
     if (act === "ai-next-tip") { state.tipIdx = (state.tipIdx || 0) + 1; state.chat.push({ role: "ai", line: "Here's another!", pose: "warmup", card: tipCard(state.tipIdx), chips: [] }); render(); scrollAsk(); }
     if (act === "ai-save-tip") toast("Saved on this phone");
@@ -2040,7 +2072,7 @@ function wire() {
   });
 }
 function runJump(f, key) {
-  toast.msg = null; clearTimeout(aiAsk.t); { const v = document.getElementById("view"); if (v) v.scrollTop = 0; }
+  toast.msg = null; clearTimeout(aiAsk.t); render.snap = null; state.aiFrom = null; { const v = document.getElementById("view"); if (v) v.scrollTop = 0; }
   closeSheet();
   restore();
   const feat = f && FEATURES.find(x => x.f === f);
@@ -2106,7 +2138,7 @@ document.getElementById("tabs").onclick = (e) => {
 };
 document.getElementById("view").addEventListener("cancel-yes", () => {
   state.booking = null; state.arrived = false; state.arrivedVia = null;
-  alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); toast("Cancelled · " + remainingLine()); render();
+  alert("today", "Cancelled · Barre", "In time · still " + remainingLine()); render(); showToast("Cancelled · still " + remainingLine());   /* FX-13: floating toast so it is seen above the fold */
 });
 document.getElementById("view").addEventListener("submit", (e) => {
   e.preventDefault();

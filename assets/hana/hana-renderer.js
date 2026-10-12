@@ -1,5 +1,5 @@
 /* Hana renderer: one place that decides how Hana is drawn.
-   - If assets/hana/hana.riv exists (one HEAD check, silent on failure), the Rive runtime is loaded lazily
+   - Only when HANA_RIV is true (committed switch) and assets/hana/hana.riv exists (one HEAD check), the Rive runtime is loaded lazily
      from a CDN and a canvas replaces the WebP figure inside the existing Hana stage (.hw box), driven by
      the brief's state machine HanaSM: number input `moment`, triggers tap / success / error / talk.
    - Otherwise nothing else is fetched and the WebP loops / stills keep working exactly as before.
@@ -9,6 +9,9 @@
   /* App moment (hanaState / todayMoment / Ask reply pose) -> brief moment number. The only mapping table. */
   const MOMENT = { front: 0, greet: 1, book: 2, nobook: 3, sleep: 4, warmup: 5, cheer: 6,
                    calm: 7, cleared: 8, paused: 9, low: 10, wink: 11, thinking: 12 };
+  /* Committed switch: set to true in the same commit that adds assets/hana/hana.riv.
+     While false nothing is probed or fetched (no HEAD request, no 404 in the console). ?rive=1 forces a check for testing. */
+  const HANA_RIV = false;
   const RIV = "assets/hana/hana.riv";
   const CDN = "https://cdn.jsdelivr.net/npm/@rive-app/canvas@2.44.2/rive.js";
   const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches || !!window.__hanaStill;
@@ -63,7 +66,9 @@
   }
 
   function check() {
-    if (status !== "idle" || reduced() || !window.fetch || /[?&]rive=0\b/.test(location.search)) return;
+    if (status !== "idle") return;
+    if (!(HANA_RIV || /[?&]rive=1\b/.test(location.search))) { status = "off"; return; }
+    if (reduced() || !window.fetch || /[?&]rive=0\b/.test(location.search)) return;
     status = "checking";
     fetch(RIV, { method: "HEAD", cache: "no-store" })
       .then(res => { if (res.ok) { status = "loading"; boot(); } else status = "off"; })
@@ -71,7 +76,7 @@
   }
 
   window.HanaRenderer = {
-    MOMENT, momentOf,
+    MOMENT, momentOf, HANA_RIV,
     get active() { return status === "ready" && !reduced(); },
     get status() { return status; },
     /* call after every render */

@@ -12,7 +12,10 @@ To switch to the rigged Rive Hana:
 1. Export the animator's file as **`assets/hana/hana.riv`** (exact name) and commit it to `main`.
 2. The file must follow the animator brief: artboard `Hana`, state machine `HanaSM`, inputs
    `moment` (number 0–12), `tap`, `success`, `error`, `talk` (triggers, lowercase).
-3. That's it. On page load the app does one `HEAD` request for `hana.riv`; if it is there, it lazily loads
+3. In the same commit, set `const HANA_RIV = true;` in `assets/hana/hana-renderer.js`. While it is `false`
+   (the committed default) the app never probes for the file, so there are no 404s in the console.
+   `?rive=1` forces the check for testing.
+4. That's it. On page load the app does one `HEAD` request for `hana.riv`; if it is there, it lazily loads
    `@rive-app/canvas` from jsDelivr and swaps the WebP figure for a canvas in the same Hana stage box
    (220×172, bottom-centred, below the speech bubble). If the file is missing or fails to load, nothing
    else is fetched and the WebP loops stay.
