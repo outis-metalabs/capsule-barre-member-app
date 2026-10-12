@@ -272,7 +272,7 @@
   .ask-chips { margin-top:4px; }
   .card.ai strong { display: block; font-size: 15px; }
   .card.ai .meta { margin-top: 12px; }
-  .btn.mini { width: auto; min-height: 40px; padding: 8px 14px; font-size: 12px; margin: 0; box-shadow: none; }
+  .btn.mini { width: auto; min-height: 44px; padding: 8px 14px; font-size: 12px; margin: 0; box-shadow: none; }
   .actions.ai-form { flex-direction: row; gap: 8px; align-items: center; }
   .ai-form input { flex: 1; min-height: 48px; border: 1px solid var(--line); border-radius: 999px; padding: 12px 16px; background: #fff; font-size: 15px; font-weight: 500; }
   .ai-form .btn { width: 48px; min-height: 48px; padding: 0; margin: 0; border-radius: 50%; display: grid; place-items: center; flex: none; }
@@ -552,7 +552,9 @@
     .screen { border-radius: 0; }
     .rail, .note { border-radius: 0; }
   }
-  .aifoot { margin: 10px 0 0; font-size: 11px; line-height: 1.35; color: #9a948c; }
+  .aifoot { margin: 10px 0 0; font-size: 12px; line-height: 1.4; color: #6F6760; }
+  .bubble, .card.ai .sub { overflow-wrap: anywhere; }
+  .link.backhit { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; padding: 0 8px 0 0; }
 </style>
 </head>
 <body>
@@ -1244,8 +1246,11 @@ function hanaReply(q) {
   /* tips: whole-word topic + a request word, or an exact chip */
   const CHIP_TIP = { "rib breathing": 0, "breathing tip": 0, "tiny tuck": 1, "quick stretch": 2, "cool-down": 3, "cool down": 3, "how often": 4, "next tip": -1 };
   const bare = s.replace(/[?!.…\s]+$/, ""), ti = bare in CHIP_TIP ? CHIP_TIP[bare] : (/\b(tips?|show me)\b|\bhow (do|to|should|can|often)\b|\btimes a week\b|\b(any|a|quick|good|best) (stretch|stretches|breathing)\b/.test(s) ? TIPS.findIndex(t => t.q.test(s)) : -1);
+  if (ti < 0 && /^(a |any |one |another |give me a |got a )?tips?( please| pls| plz)?\W*$|^(can i have|can you give me|give me) (a |some )?tips?\b/.test(s)) return { ...R("Pick a tiny one?", "warmup", null, TIPS.map(t => t.t)), allChips: true };
   if (ti < 0 && /\btips?\b/.test(s)) { state.fbChips = TIPS.map(t => t.t); return null; }   /* a tip ask with no known topic: fallback, never the balance */
   if (ti >= 0) { state.tipIdx = ti; return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(ti)); }
+  if (state.aiSim === "noPass" && /how many|left\?|pass|book|extend|expire/.test(s)) return R("Your " + sn + " pass ended " + p.until + ". The studio can help.", "paused",
+    { k: "info", kicker: "From your passes", title: sn + " pass ended", body: "No sessions to book with. Nothing to buy here.", acts: [["late-ask", "Ask the studio"]] });
   if (/how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
     const pc = pass("cheongdam"), pg = pass("geumho");
     return R(`You have ${pc.left} left at Cheongdam and ${pg.left} at Geumho.`, p.left <= 3 ? "low" : "greet",
@@ -1255,8 +1260,6 @@ function hanaReply(q) {
     : R("Nothing booked yet. Want to see who's teaching?", "nobook", null, ["Book tonight"]);
   if (/what did \w+ book|\w+'s (booking|class|schedule|pass)|where is (jiwoo|alex)|when is (jiwoo|alex)|(jiwoo|alex) (booked|going|coming)/.test(s)) return R("That's theirs to share. Friends shows who already went.", "wink", { k: "info", kicker: "Private", title: "Only your own bookings", body: "I never share other members' classes.", acts: [["friends", "Open Friends"]] });
   if (/\b(price|prices|cost|costs|how much|pay|buy|refund|discount|membership fee)\b/.test(s)) return studioQ("The studio handles that. Want me to send your question?");
-  if (state.aiSim === "noPass" && /how many|left\?|pass|book|extend|expire/.test(s)) return R("Your " + sn + " pass ended " + p.until + ". The studio can help.", "paused",
-    { k: "info", kicker: "From your passes", title: sn + " pass ended", body: "No sessions to book with. Nothing to buy here.", acts: [["late-ask", "Ask the studio"]] });
   /* 2 pass */
   const pending = state.requests.find(r => r.status === "waiting" && r.studio === state.studio && r.type !== "question");
   if (/\b(extend|extension|hold|freeze|pause)\b|more time|away next/.test(s)) return pending
@@ -1304,7 +1307,8 @@ function hanaReply(q) {
   /* 3 class info */
   if (/\bbring (a |my |our )?(friend|guest|kid|kids|child|partner|baby|dog|pet|son|daughter)s?\b/.test(s)) return studioQ();
   if (/\b(bring|wear|socks|grip socks)\b|towel needed/.test(s)) return R("Grip socks and water! Mats are at the studio.", "warmup", { k: "info", kicker: "From " + sn + "'s studio info", title: "What to bring", body: "Grip socks · water · comfy clothes. Mats and towels are there.", acts: [] }, ["Quick stretch", "When can I check in?"]);
-  if (/\bwhat('s| is)( a)? reformer\b|\breformer like\b|\bhow does (the )?reformer\b|\bwhat.?s barre\b|\bclass type\b|\bkind of class\b/.test(s)) return R("Reformer is a sliding bed with springs. Comfy and strong!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Reformer", body: "A sliding carriage with springs. Six pads in each class.", acts: [["ai-book", "See schedule"]] });
+  if (/\bwhat('s| is| does)( a)? barre\b|\bbarre like\b|\bhow does barre\b/.test(s)) return R("Barre is small, slow moves at a ballet bar. Tiny pulses, big shakes!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Barre", body: "Ballet-style moves at a bar, mixed with Pilates. 50 minutes, all levels. Grip socks on.", acts: [["ai-book", "See classes"]] });
+  if (/\bwhat('s| is)( a)? reformer\b|\breformer like\b|\bhow does (the )?reformer\b|\bclass type\b|\bkind of class\b/.test(s)) return R("Reformer is a sliding bed with springs. Comfy and strong!", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: "Reformer", body: "A sliding carriage with springs. Six pads in each class.", acts: [["ai-book", "See schedule"]] });
   if (/\b(where|directions?|address|map|get there)\b/.test(s)) return R(b && b.studio === state.studio ? "Here's the way. Check-in opens at " + T.open + "." : "Here's the way to " + sn + ".", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: sn + " studio", body: (state.studio === "geumho" ? "Geumho-ro 12, 2F" : "Dosan-daero 45, 3F") + " · 3 min from the station.", acts: [["ai-map", "Open map"]] });
   if (/\bcheck.?in\b|\bwhen can i\b/.test(s)) return R("Check-in opens at " + T.open + ". Tap I'm here!", "warmup", { k: "info", kicker: "From your schedule", title: "Check-in " + T.open + " – " + T.close, body: "Presence only. The studio marks attendance.", acts: [["ai-today", "Open Today"]] });
   /* 4 streak & encouragement */
@@ -1339,7 +1343,7 @@ function hanaAnswer(q) {
   state.fallbacks = (state.fallbacks || 0) + 1;
   const ask = { k: "request", kicker: "Ask the studio", title: "Send it to " + studioName(state.studio) + "?", body: "“" + q + "”", foot: "About your health? Please see a doctor or your instructor.", acts: [["ai-question", "Ask the studio"]] };
   state.askDraft = q;
-  return { line: state.fallbacks >= 2 ? "The studio will know this one. Send it?" : "Hmm, I'm not sure about that one. Try one of these?", pose: "paused", card: ask, chips: (() => { const c = state.fbChips || askChips().slice(0, 3); state.fbChips = null; return c; })(), lead: state.fallbacks >= 2 };
+  return { line: state.fallbacks >= 2 ? "The studio will know this one. Send it?" : "Hmm, I'm not sure about that one. Try one of these?", pose: "paused", card: ask, allChips: !!state.fbChips, chips: (() => { const c = state.fbChips || askChips().slice(0, 3); state.fbChips = null; return c; })(), lead: state.fallbacks >= 2 };
 }
 /* Thinking: a 3-dot bubble first (input stays usable); jumps pass instant=true so they stay repeatable. */
 function aiAsk(q, instant) {
@@ -1364,10 +1368,10 @@ function assistant() {
   const lastIdx = state.chat.lastIndexOf(last);
   const thread = state.chat.map((m, i) => m.role === "me" ? `<div class="bubble me">${esc(m.text)}</div>`
     : m.role === "think" ? `<div class="bubble her think"><span class="dots3"><i></i><i></i><i></i></span></div>`
-    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}<div class="bubble her">${m.line}</div>${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
+    : m.line ? `${m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}${i === lastIdx && !thinking ? "" : `<div class="bubble her">${m.line}</div>`}${!m.lead && m.card ? aiCardHtml(m.card, offline && i !== lastIdx) : ""}`
     : m.card ? aiCardHtml(m.card, offline) : "").join("");
-  const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.lead ? 3 : 2) : []);
-  return `<button class="link" type="button" data-act="tab-you">Back</button>
+  const chips = !state.chat.length ? askChips() : (last && !thinking ? last.chips.slice(0, last.allChips ? 9 : last.lead ? 3 : 2) : []);
+  return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
     <div class="hana-stage ask-stage"><div class="hana-bubble">${line}</div>${hana(pose)}</div>
     <p class="kicker ask-k">Ask Hana · ${studioName(state.studio)} · nothing happens until you tap</p>
     <div class="thread ask-thread">${thread}</div>
