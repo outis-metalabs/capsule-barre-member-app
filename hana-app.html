@@ -434,6 +434,10 @@
   .hw .veil { position:absolute; inset:-6px; border-radius:40%; background:radial-gradient(closest-side, rgba(201,194,188,.35), rgba(201,194,188,0)); opacity:0; pointer-events:none; }
   .hana-stage .hw, .hero .hw { cursor:pointer; }
   .sayrow .hw .fx { display:none; }
+  /* Rive canvas fills the same 220x172 stage box under the bubble; the WebP figure hides only while Rive is live */
+  .hw .hana-rive { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .hw.rive .life, .hw.rive .fx, .hw.rive .shadow { display:none; }
+  .hw.rive { animation:none !important; }
 
   /* entrance / exit */
   .hw .fig.prevfig { animation:hexit .32s cubic-bezier(.5,0,.8,.4) both !important; pointer-events:none; }
@@ -638,6 +642,7 @@
   </div>
   <aside class="note" id="note"></aside>
 </div>
+<script src="assets/hana/hana-renderer.js"></script>
 <script>
 const TAKEN = new Set([2, 5]);
 const HISTORY = [
@@ -702,7 +707,8 @@ function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unre
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
 function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", front:"front" };
+const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"wink", front:"front" };
+/* thinking (Ask Hana typing) reuses the wink loop until hana.riv has its own state 12; moment numbers live in assets/hana/hana-renderer.js */
 const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
 /* Ambient props: small palette shapes in the guide's brown line. Positions are % of the stage box. */
 const HSHAPE = {
@@ -733,6 +739,7 @@ const HFX = {
   book:   [["check","left:72%;top:6%"],["spark","left:20%;top:12%"]],
   cleared:[["shine","left:72%;top:calc(-2% + 7px)"],["star","left:14%;top:10%"],["star","left:22%;top:28%"],["star","left:8%;top:46%"]],
   wink:   [["spark","left:82%;top:30%"]],
+  thinking: [],
   front:  []
 };
 const HTAP_WINK = { greet:1, book:1, front:1, wink:1 };
@@ -853,7 +860,7 @@ function canHere() {
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
-  state.arrived = true; state.arrivedVia = via;
+  state.arrived = true; state.arrivedVia = via; HanaRenderer.success();
   alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
   toast("You’re here · still " + remainingLine());
 }
@@ -1119,7 +1126,7 @@ function closeShare(sent, via) {
   state.tab = "today";
   render();
 }
-function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
+function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; HanaRenderer.success(); state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
 function sharePayload() {
   const [k, title, sub, foot] = shareCard();
   return { k, title, sub, foot, text: title + "\n" + sub + "\n" + foot };
@@ -1510,7 +1517,7 @@ function aiAsk(q, instant) {
   state.chat.push({ role: "me", text: q });
   if (instant) { state.chat.push({ role: "ai", ...hanaAnswer(q) }); return; }
   state.chat.push({ role: "think" }); render(); scrollAsk();
-  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); }, 650);
+  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); if (/signal/.test((state.chat[state.chat.length - 1] || {}).line || "")) HanaRenderer.error(); else HanaRenderer.talk(); }, 650);
 }
 function scrollAsk() { const sc = document.getElementById("view"); if (sc) sc.scrollTop = sc.scrollHeight; }
 function aiCardHtml(c, off) {
@@ -1522,7 +1529,7 @@ function assistant() {
   const replies = state.chat.filter(m => m.role === "ai" && m.line);
   const last = replies[replies.length - 1], thinking = state.chat.some(m => m.role === "think");
   const offline = state.aiSim === "offline";
-  const pose = thinking ? "wink" : last ? last.pose : "greet";
+  const pose = thinking ? "thinking" : last ? last.pose : "greet";
   const line = thinking ? `<span class="dots3"><i></i><i></i><i></i></span>` : last ? last.line : "Hi " + state.name.split(" ")[0] + "! Ask me anything about class.";
   const lastIdx = state.chat.lastIndexOf(last);
   const thread = state.chat.map((m, i) => m.role === "me" ? `<div class="bubble me">${esc(m.text)}</div>`
@@ -1802,7 +1809,7 @@ function bookClass(spec) {
   state.justBooked = true; state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
   alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
   state.tab = "today"; state.view = null;
-  toast("Booked · still " + remainingLine()); render();
+  toast("Booked · still " + remainingLine()); render(); HanaRenderer.success();
 }
 function sheetBox(html) {
   const box = document.getElementById("sheetBox"), sh = document.getElementById("sheet");
@@ -1878,6 +1885,7 @@ function wire() {
   document.getElementById("view").onclick = (e) => {
     const h = e.target.closest("[data-hana]");
     if (h) { if (hana.long) { hana.long = false; return; }
+      if (HanaRenderer.active && h.classList.contains("rive")) { HanaRenderer.tap(); return; }
       clearTimeout(h.wt); h.querySelector(".prevfig")?.remove(); h.classList.remove("tap", "l-twitch", "l-look", "l-hop"); void h.offsetWidth; h.classList.add("tap");
       const img = h.querySelector(".fig .body"), back = hanaSrc(h.dataset.s), swap = HTAP_WINK[h.dataset.s];
       if (swap) { img.src = hanaSrc("wink"); h.querySelector(".prop")?.classList.add("hide-on-tap"); }
@@ -2136,6 +2144,7 @@ render();
 if (new URLSearchParams(location.search).has("dev")) checkJumps();
 /* ?state=sleep: member away 14+ days with nothing booked */
 if (new URLSearchParams(location.search).get("state") === "sleep") { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; state.view = null; render(); }
+{ const _render = render; render = function () { const out = _render.apply(this, arguments); try { HanaRenderer.sync(); } catch (e) {} return out; }; HanaRenderer.sync(); }
 </script>
 </body>
 </html>
