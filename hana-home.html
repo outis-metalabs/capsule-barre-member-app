@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Capsule Barre — Hana home</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{--cream:#FFF8EC;--paper:#FFFDF7;--ink:#4A3B36;--mute:#8C7B72;--line:#F0E2CF;--pink:#F6A9B4;--pink-d:#E98597;--pink-l:#FDE4E8;--mint:#A8DCC4;--mint-l:#E3F4EC;--fur:#FBF1DC;--grey:#AFA9A6;--out:#3E322E;}
+  *{box-sizing:border-box} [hidden]{display:none!important}
+  html,body{margin:0}
+  body{background:var(--cream);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-weight:700;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+  .app{max-width:430px;margin:0 auto;min-height:100vh;padding:14px 18px 110px;position:relative;overflow:hidden}
+  header{display:flex;align-items:center;justify-content:space-between;height:44px}
+  .studio{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:900}
+  .studio small{font-size:12px;color:var(--mute);font-weight:700;background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 9px}
+  .bell{width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid var(--line);display:grid;place-items:center;position:relative}
+  .bell i{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--pink-d);border:2px solid #fff}
+  .date{color:var(--mute);font-size:14px;margin:2px 0 12px}
+  .tabs2{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px;width:max-content;margin:0 0 12px}
+  .tabs2 button{padding:6px 14px;border-radius:99px;font-size:13px;color:var(--mute)}
+  .tabs2 button.on{background:var(--pink-l);color:var(--pink-d)}
+  .bubble{position:relative;background:#fff;border:2px solid var(--line);border-radius:26px;padding:16px 18px;font-size:16px;line-height:1.45;box-shadow:0 6px 0 #F3E6D3;margin:0 6px}
+  .bubble:after{content:"";position:absolute;left:50%;bottom:-13px;width:22px;height:22px;background:#fff;border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateX(-50%) rotate(45deg);border-bottom-right-radius:6px}
+  .bubble b{color:var(--pink-d)} .bubble .hi{font-size:18px;font-weight:900;display:block;margin-bottom:2px}
+  .stage{position:relative;height:280px;margin-top:8px}
+  .room{position:absolute;inset:0;border-radius:28px;overflow:hidden}
+  .room.cozy{background:linear-gradient(#FCEBD9 0 68%,#F3D9BE 68%)}
+  .hana{position:absolute;left:50%;bottom:6px;width:210px;transform:translateX(-50%);cursor:pointer}
+  .hana svg{width:100%;display:block;animation:bob 2.6s ease-in-out infinite;transform-origin:50% 100%}
+  .hana.meditate svg{animation:breathe 4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03,1.04)}}
+  .shadow{position:absolute;left:50%;bottom:4px;width:120px;height:14px;margin-left:-60px;border-radius:50%;background:rgba(120,80,60,.14);animation:sh 2.6s ease-in-out infinite}
+  @keyframes sh{50%{transform:scale(.88)}}
+  .eye-open{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+  .spark{position:absolute;color:#F5C26B;font-size:18px;animation:tw 2.2s ease-in-out infinite}
+  .spark.p{color:var(--pink)} .spark.m{color:var(--mint)}
+  @keyframes tw{0%,100%{opacity:.25;transform:scale(.7) rotate(0)}50%{opacity:1;transform:scale(1.1) rotate(20deg)}}
+  .moods{display:flex;gap:8px;justify-content:center;margin:10px 0 14px}
+  .moods button{background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:13px;min-height:40px}
+  .moods button.on{background:var(--mint-l);border-color:var(--mint);color:#2E7A5C}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:12px 10px;text-align:center}
+  .stat .ic{font-size:20px} .stat .v{font-size:26px;font-weight:900;line-height:1.1} .stat .v small{font-size:13px;color:var(--mute)} .stat .l{font-size:12px;color:var(--mute)}
+  .prio{margin-top:12px;background:#fff;border:2px solid var(--pink);border-radius:24px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+  .prio .tag{font-size:11px;background:var(--pink-l);color:var(--pink-d);border-radius:99px;padding:3px 8px;display:inline-block;margin-bottom:4px}
+  .prio .t{font-size:24px;font-weight:900} .prio .s{font-size:13px;color:var(--mute)}
+  .prio .go{margin-left:auto;background:var(--pink-d);color:#fff;border-radius:16px;padding:12px 14px;font-weight:800;min-height:44px;white-space:nowrap}
+  .prio .go.done{background:var(--mint);color:#1f5a45}
+  nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;height:84px;background:#fff;border-top:1px solid var(--line);border-radius:26px 26px 0 0;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:0 8px 10px}
+  nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--mute)}
+  nav button.on{color:var(--pink-d)} nav .ni{font-size:20px}
+  nav .paw{width:66px;height:66px;margin:-34px auto 0;border-radius:50%;background:var(--pink);border:5px solid var(--cream);box-shadow:0 6px 14px rgba(233,133,151,.45);display:grid;place-items:center}
+  .toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-80px);background:var(--ink);color:#fff;border-radius:99px;padding:10px 16px;font-size:14px;transition:.3s;z-index:9}
+  .toast.show{transform:translate(-50%,0)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="studio">Capsule Barre <small>Cheongdam ▾</small></div>
+    <button class="bell" aria-label="Alerts"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A3B36" stroke-width="2" stroke-linecap="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><i></i></button>
+  </header>
+  <p class="date">Thursday, 8 October · 9:41am</p>
+  <div class="tabs2" role="tablist">
+    <button class="on" data-scene="home">Home</button>
+    <button data-scene="cozy">Hana's room</button>
+  </div>
+
+  <div class="bubble" id="bubble"></div>
+
+  <div class="stage">
+    <div class="room cozy" id="room" hidden>
+      <svg viewBox="0 0 390 300" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+        <!-- window -->
+        <rect x="140" y="22" width="110" height="96" rx="14" fill="#DDF1F7" stroke="#E7C9A8" stroke-width="6"/>
+        <line x1="195" y1="22" x2="195" y2="118" stroke="#E7C9A8" stroke-width="5"/><line x1="140" y1="70" x2="250" y2="70" stroke="#E7C9A8" stroke-width="5"/>
+        <circle cx="225" cy="45" r="10" fill="#FFE3A3"/>
+        <path d="M128 14h40c-6 40-2 80 4 112h-44z" fill="#F7C3CC"/><path d="M262 14h-40c6 40 2 80-4 112h44z" fill="#F7C3CC"/>
+        <rect x="122" y="10" width="146" height="8" rx="4" fill="#D9A981"/>
+        <!-- calendar -->
+        <rect x="30" y="34" width="70" height="78" rx="10" fill="#fff" stroke="#EAD7C0" stroke-width="3"/>
+        <rect x="30" y="34" width="70" height="22" rx="10" fill="#F6A9B4"/><text x="65" y="50" font-size="12" text-anchor="middle" fill="#fff" font-family="Nunito" font-weight="800">OCT</text>
+        <text x="65" y="96" font-size="30" text-anchor="middle" fill="#4A3B36" font-family="Nunito" font-weight="900">8</text>
+        <!-- plant -->
+        <path d="M322 190 l8 -40 h34 l8 40z" fill="#E7B48F"/>
+        <path d="M347 150c-20-30-30-50-12-62 8 20 14 40 12 62zM347 150c14-30 32-44 40-38-6 18-22 32-40 38zM347 150c-6-26-2-52 4-64 10 14 4 44-4 64z" fill="#9CCFAE"/>
+        <!-- mat -->
+        <ellipse cx="195" cy="272" rx="150" ry="24" fill="#F4C9C0"/><ellipse cx="195" cy="272" rx="122" ry="16" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 7"/>
+        <!-- shelf -->
+        <rect x="290" y="56" width="70" height="7" rx="3" fill="#D9A981"/><circle cx="306" cy="47" r="9" fill="#A8DCC4"/><rect x="322" y="38" width="10" height="18" rx="3" fill="#F6A9B4"/><rect x="336" y="42" width="14" height="14" rx="4" fill="#FFE3A3"/>
+      </svg>
+    </div>
+    <span class="spark" style="left:16%;top:30%">✦</span>
+    <span class="spark p" style="left:80%;top:22%;animation-delay:.7s">✦</span>
+    <span class="spark m" style="left:24%;top:62%;animation-delay:1.3s;font-size:13px">✦</span>
+    <span class="spark" style="left:74%;top:60%;animation-delay:1.8s;font-size:13px">✧</span>
+    <div class="shadow"></div>
+    <div class="hana" id="hana" role="button" aria-label="Hana the cat. Tap to say hi.">
+      <svg viewBox="0 0 220 260" aria-hidden="true">
+        <g stroke="#3E322E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+          <!-- tail -->
+          <path d="M150 200c30 0 44-18 40-40" fill="none" stroke-width="13"/>
+          <path d="M150 200c30 0 44-18 40-40" fill="none" stroke="#FBF1DC" stroke-width="7"/>
+          <!-- legs (leggings) -->
+          <path d="M76 190h32l-2 46h-26z" fill="#F7B6BF"/>
+          <path d="M112 190h32l-4 46h-26z" fill="#F7B6BF"/>
+          <path d="M80 194l2 40" stroke="#A8DCC4" stroke-width="4"/><path d="M138 194l-2 40" stroke="#A8DCC4" stroke-width="4"/>
+          <ellipse cx="92" cy="240" rx="17" ry="9" fill="#FBF1DC"/><ellipse cx="128" cy="240" rx="17" ry="9" fill="#FBF1DC"/>
+          <!-- torso -->
+          <path d="M74 150c0-12 10-18 36-18s36 6 36 18l2 44H72z" fill="#FBF1DC"/>
+          <path d="M76 148c4-10 14-14 34-14s30 4 34 14v20H76z" fill="#F7B6BF"/>
+          <path d="M76 166h68" stroke="#A8DCC4" stroke-width="5"/>
+          <path d="M72 186h76v12H72z" fill="#A8DCC4"/>
+          <!-- arms -->
+          <path d="M74 146c-14 8-20 26-18 40 1 6 12 6 13 0l7-24" fill="#FBF1DC"/>
+          <path d="M146 146c14 8 20 26 18 40-1 6-12 6-13 0l-7-24" fill="#FBF1DC"/>
+          <ellipse cx="152" cy="160" rx="6" ry="9" fill="#AFA9A6" stroke="none"/>
+          <!-- ears -->
+          <path d="M44 62 50 10l42 30z" fill="#FBF1DC"/><path d="M54 52l3-30 22 17z" fill="#F6A9B4" stroke="none"/>
+          <path d="M176 62 170 10l-42 30z" fill="#AFA9A6"/><path d="M166 52l-3-30-22 17z" fill="#F6A9B4" stroke="none"/>
+          <!-- head -->
+          <path d="M110 30c50 0 78 26 78 62 0 36-34 52-78 52s-78-16-78-52c0-36 28-62 78-62z" fill="#FBF1DC"/>
+        </g>
+        <!-- grey patch clipped to head -->
+        <clipPath id="hc"><path d="M110 31c50 0 77 26 77 61 0 36-34 51-77 51s-77-15-77-51c0-35 27-61 77-61z"/></clipPath>
+        <path clip-path="url(#hc)" d="M140 20c30 0 60 20 54 56-14 6-34 0-44-12-10-14-14-32-10-44z" fill="#AFA9A6"/>
+        <path d="M110 30c50 0 78 26 78 62 0 36-34 52-78 52s-78-16-78-52c0-36 28-62 78-62z" fill="none" stroke="#3E322E" stroke-width="3"/>
+        <!-- cheeks -->
+        <ellipse cx="62" cy="108" rx="13" ry="8" fill="#F7A9B3" opacity=".75"/><ellipse cx="158" cy="108" rx="13" ry="8" fill="#F7A9B3" opacity=".75"/>
+        <!-- whiskers -->
+        <g stroke="#3E322E" stroke-width="2.2" stroke-linecap="round"><path d="M40 96l-22-4M40 104l-24 2M180 96l22-4M180 104l24 2"/></g>
+        <!-- eyes: open -->
+        <g id="eyeL" class="face-open"><g class="eye-open"><ellipse cx="80" cy="90" rx="12" ry="13" fill="#2B211E"/><circle cx="84" cy="85" r="4.5" fill="#fff"/><circle cx="76" cy="95" r="2" fill="#fff"/></g><path d="M66 78l-6-4M68 74l-4-6" stroke="#2B211E" stroke-width="2.4" stroke-linecap="round"/></g>
+        <g id="eyeR" class="face-open"><g class="eye-open"><ellipse cx="140" cy="90" rx="12" ry="13" fill="#2B211E"/><circle cx="144" cy="85" r="4.5" fill="#fff"/><circle cx="136" cy="95" r="2" fill="#fff"/></g><path d="M154 78l6-4M152 74l4-6" stroke="#2B211E" stroke-width="2.4" stroke-linecap="round"/></g>
+        <!-- wink eye (right) -->
+        <path id="winkR" d="M128 92c8-8 18-8 24 0M128 92l20 2" fill="none" stroke="#2B211E" stroke-width="3.2" stroke-linecap="round" hidden/>
+        <!-- closed eyes (meditate) -->
+        <g id="closed" fill="none" stroke="#2B211E" stroke-width="3.2" stroke-linecap="round" hidden><path d="M68 90c6 6 18 6 24 0M128 90c6 6 18 6 24 0"/><path d="M66 90l-5-2M154 90l5-2" stroke-width="2.4"/></g>
+        <!-- nose & mouth -->
+        <path d="M105 104h10l-5 5z" fill="#E98597" stroke="#3E322E" stroke-width="1.6" stroke-linejoin="round"/>
+        <path id="mouthSmall" d="M100 112c3 4 7 4 10 0c3 4 7 4 10 0" fill="none" stroke="#3E322E" stroke-width="2.6" stroke-linecap="round"/>
+        <g id="mouthOpen" hidden><path d="M99 111c2 14 20 14 22 0c-6 3-16 3-22 0z" fill="#C85A6E" stroke="#3E322E" stroke-width="2.4" stroke-linejoin="round"/><path d="M104 118c3 3 9 3 12 0" fill="#F6A9B4"/></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="moods" role="group" aria-label="Hana's mood">
+    <button data-mood="smile" class="on">😊 Smile</button>
+    <button data-mood="wink">😉 Wink</button>
+    <button data-mood="meditate">🧘 Breathe</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="ic">🎟️</div><div class="v">2<small> / 10</small></div><div class="l">Sessions left</div></div>
+    <div class="stat"><div class="ic">🔥</div><div class="v">6</div><div class="l">Day streak</div></div>
+    <div class="stat"><div class="ic">📅</div><div class="v">14<small> Oct</small></div><div class="l">Pass until</div></div>
+  </div>
+
+  <div class="prio">
+    <div>
+      <span class="tag">Today's class</span>
+      <div class="t">7:00pm</div>
+      <div class="s">Barre · Reformer 3 · Cheongdam</div>
+    </div>
+    <button class="go" id="here">I'm here</button>
+  </div>
+</div>
+
+<nav>
+  <button class="on"><span class="ni">🏠</span>Today</button>
+  <button><span class="ni">🗓️</span>Book</button>
+  <button class="paw" aria-label="Ask Hana"><svg width="34" height="34" viewBox="0 0 40 40" fill="#fff"><ellipse cx="20" cy="27" rx="10" ry="8"/><ellipse cx="9" cy="17" rx="4" ry="5"/><ellipse cx="16" cy="10" rx="4" ry="5"/><ellipse cx="24" cy="10" rx="4" ry="5"/><ellipse cx="31" cy="17" rx="4" ry="5"/></svg></button>
+  <button><span class="ni">📋</span>Schedule</button>
+  <button><span class="ni">🙂</span>You</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const lines={
+    smile:'<span class="hi">Good morning, Mina! ☀️</span>Barre at <b>7:00pm</b> tonight. Reformer 3 is yours. You can cancel free until 4:00pm.',
+    wink:'<span class="hi">Psst… 😉</span>Day <b>6</b> of your streak! Come to class tonight and it becomes 7.',
+    meditate:'<span class="hi">Breathe in… breathe out…</span>You have <b>2</b> sessions left until 14 Oct. Class doesn\'t spend one until the studio marks you in.',
+    here:'<span class="hi">Yay, you\'re here! 💕</span>See you at <b>7:00pm</b>. Still 2 left. The studio marks attendance.'
+  };
+  let mood='smile', winkTimer;
+  function face(m){
+    const open=m!=='meditate';
+    $('#eyeL').toggleAttribute('hidden',!open);
+    $('#eyeR').toggleAttribute('hidden',!(m==='smile'));
+    $('#winkR').toggleAttribute('hidden',m!=='wink');
+    $('#closed').toggleAttribute('hidden',open);
+    $('#mouthOpen').toggleAttribute('hidden',m!=='smile');
+    $('#mouthSmall').toggleAttribute('hidden',m==='smile');
+    $('#hana').classList.toggle('meditate',m==='meditate');
+  }
+  function setMood(m,line){mood=m;face(m);$('#bubble').innerHTML=lines[line||m];$$('.moods button').forEach(b=>b.classList.toggle('on',b.dataset.mood===m));}
+  $$('.moods button').forEach(b=>b.onclick=()=>setMood(b.dataset.mood));
+  $('#hana').onclick=()=>{clearTimeout(winkTimer);face('wink');winkTimer=setTimeout(()=>face(mood),700);toast('Hana says hi! 🐾');};
+  $$('.tabs2 button').forEach(b=>b.onclick=()=>{$$('.tabs2 button').forEach(x=>x.classList.toggle('on',x===b));$('#room').hidden=b.dataset.scene!=='cozy';});
+  $('#here').onclick=e=>{e.target.textContent="You're here";e.target.classList.add('done');e.target.disabled=true;setMood('smile','here');};
+  function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1300);}
+  // deep-link states for screenshots: ?mood=wink&scene=cozy&here=1
+  const q=new URLSearchParams(location.search);
+  setMood(q.get('mood')||'smile');
+  if(q.get('scene')==='cozy') $$('.tabs2 button')[1].click();
+  if(q.get('here')) $('#here').click();
+</script>
+</body>
+</html>
