@@ -1,8 +1,8 @@
 # Nari prototype: fixed safety scope (PR #10)
 
-Status: accepted by the user on 2026-10-13. The prototype (`platform-app.html`) is a **demo**. Its safety handling is keyword and concept rules in the browser, with no AI model. It guarantees the concepts and the curated test set below, and nothing more. The production app will use a server-side AI classifier (see `docs/production-safety.md`).
+Status: the user chose a fixed safety scope for the prototype on 2026-10-13 (decision relayed in chat). The prototype (`platform-app.html`) is a **demo**. Its safety handling is keyword and concept rules in the browser, with no AI model. It covers **tested phrasings** of the concepts listed below, meaning the sentences in the curated test set. It does **not** guarantee the concepts themselves: new wording of a listed concept can still be missed. The real fix is the server-side AI classifier in `docs/production-safety.md`. The production app will use a server-side AI classifier (see `docs/production-safety.md`).
 
-## What the prototype guarantees
+## Concepts with tested phrasings
 
 Every message, in the Ask and Book chats and at any length, goes through the safety check before small talk, FAQs, cancel/move or booking. Precedence: crisis > urgent > results claim > health > skin > normal.
 
@@ -30,6 +30,7 @@ All reviewer sets to date, run in both chats:
 | 6052b80 fresh (R5) | `pr10-6052b80/fresh_cases.py` | 460 |
 | 7b77a95 R6 | `pr10-7b77a95/r6_cases.py` | 460 |
 | 7b77a95 R7 | `pr10-7b77a95/r7_cases.py` | 460 |
+| f639061 R8 (in scope) | `pr10-f639061/r8_cases.py` | 378 |
 | Designer held-out sets | `pr10fix6/held5.json`, `held6.json` | 430 + 446 |
 | Crisis acceptance criteria (AC1–AC7, AC9, AC10) | `pr10fix7/ac.py` | 18 crisis threads × 4 turns, plus idiom negatives |
 | In-app selfTest (595), flows (160), false-positive sweep (760 normal), long messages, Get help bar, UI sweeps at 320 and 390px | `pr10fix6/old/`, reviewer `reg/` | — |
@@ -44,11 +45,22 @@ A legacy harness label (6d43d31 expected "urgent" for "I want to kill myself", "
 
 ## Out of scope (not guaranteed)
 
-- **Phrasing that isn't in the concept list or the curated set.** Across seven rounds the catch rate on fresh, unseen crisis wording was 55–80%. The prototype doesn't claim to catch new phrasings; the Get help bar is the backstop.
+- **Any phrasing that isn't in the curated set, even of a listed concept.** Measured on each reviewer set before it was added to the curated set:
+
+| Round (build) | Fresh crisis caught | Fresh urgent caught |
+|---|---|---|
+| R4 (597fd4a) | 15/28 | 39/56 |
+| R5 (6052b80) | 13/41 | 39/44 |
+| R6 (7b77a95) | 38/47 | 35/40 |
+| R7 (7b77a95) | 28/51 | 34/40 |
+| R8 (f639061), in-scope concepts | 30/38 | 43/50 |
+| R8 (f639061), crisis wording outside the listed concepts | 1/14 | — |
+
+  New wording isn't covered. The permanent Get help bar is the backstop, and the AI classifier is the real fix.
 - Sarcasm, idioms that aren't in the list above, code-switching inside a single word, typos that break a keyword, and other languages.
 - Context across several messages (each message is checked on its own).
 - Known accepted quirks: "my feet are killing me" with no other words starts a foot-massage booking (harmless). Some idioms said with no service word get the neutral "didn't get that" question, not a booking.
 - Crisis hotline numbers: not shown (user rule). VI and KO crisis copy still needs native-speaker review before release.
 
 ## Accepted misses
-None. Every curated set passes at this commit (see the PR comment for numbers).
+None on the curated set. That holds **only because every reviewer set was added to the curated set and tuned against it**, so those sets now work as training data and can't show how well the rules generalise. The R8 out-of-scope crisis sample (still 1/14) is kept as information only and isn't tuned against.
