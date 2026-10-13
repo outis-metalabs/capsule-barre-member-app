@@ -39,6 +39,7 @@ A legacy harness label (6d43d31 expected "urgent" for "I want to kill myself", "
 ## Crisis reply: acceptance criteria
 - AC1 to AC6, AC9 and AC10 are enforced by the app and checked by `ac.py`.
 - AC7: crisis escalations are logged in memory (`SAFETY_LOG`). Each entry has a timestamp, member, store and category (plus an overdose flag), and never the message text. No staff alert is sent (`CRISIS_STAFF_ALERT = false`), and the log isn't shown in the member app. Restricting access to authorised staff needs a server, so it's covered in `docs/production-safety.md`.
+- AC5 follow-up line (after a crisis reply, when the member doesn't ask to book): PO-approved fixed text in `CRISIS_FOLLOWUP`. VI and KO still need native-speaker review.
 - AC8 (tel: link) is dropped.
 
 ## Out of scope (not guaranteed)

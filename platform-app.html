@@ -326,6 +326,12 @@ const CRISIS_COPY = {
   vi: "Mình rất mừng vì bạn đã chia sẻ với mình. Hãy liên hệ ngay với dịch vụ cấp cứu tại địa phương hoặc một người bạn tin tưởng ở gần. Bạn không hề một mình. Mình vẫn ở đây, hãy tiếp tục trò chuyện với mình trong lúc tìm sự giúp đỡ nhé.",
   ko: "이야기해 주셔서 정말 고마워요. 지금 바로 가까운 응급 서비스나 믿을 수 있는 사람에게 연락해 주세요. 혼자가 아니에요. 저는 여기 있어요. 도움을 받는 동안 이 대화에 계속 머물러 주세요."
 };
+/* AC5 follow-up after a crisis reply: PO-approved fixed text, not generated. VI and KO: pending native-speaker review before release. */
+const CRISIS_FOLLOWUP = {
+  en: "I'm right here with you. If you can, please reach out to someone you trust or local emergency services.",
+  vi: "Mình vẫn ở đây với bạn. Nếu có thể, bạn hãy liên hệ với một người bạn tin tưởng hoặc dịch vụ cấp cứu tại địa phương nhé.", /* NEEDS NATIVE-SPEAKER REVIEW */
+  ko: "저는 여기 함께 있어요. 가능하다면 믿을 수 있는 사람이나 가까운 응급 서비스에 연락해 주세요." /* NEEDS NATIVE-SPEAKER REVIEW */
+};
 const CRISIS_STAFF_ALERT = false; /* never notify the store or staff about a crisis message */
 const PILLS = "pills?|tablets?|meds|medicines?|medication|sleeping pills|painkillers?|paracetamol|tylenol|panadol|xanax|insulin";
 const CX = {
@@ -1210,7 +1216,7 @@ function reply(c, text) {
   if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })].concat(bookNext(text)) });
   if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text).concat(bookNext(text)) });
   /* AC5: after a crisis reply Nari doesn't go back to selling. It only helps with a booking when the member asks for one. */
-  if (c.care && !sf) { const pc = parse(text); if (!(pc.store || pc.cands || pc.svc || pc.staff || pc.bookWord || intentOf(text))) return say(c, L3("I'm right here with you.", "Mình vẫn ở đây với bạn.", "저는 여기 있어요."), { care: 1 }); c.care = false; }
+  if (c.care && !sf) { const pc = parse(text); if (!(pc.store || pc.cands || pc.svc || pc.staff || pc.bookWord || intentOf(text))) return say(c, CRISIS_FOLLOWUP[L] || CRISIS_FOLLOWUP.en, { care: 1 }); c.care = false; }
   if (s.length > 200) return fallbackReply(c); /* long message: safety already ran on the full text; never ask for one line */
   /* pregnancy massage named as a service: book it, with a gentle note */
   if (!sf && pregService(text)) say(c, "Pregnancy massage at Sen Spa is from the second trimester. If you're unsure, check with your GP or midwife first.", { care: 1 });
