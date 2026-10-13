@@ -10,7 +10,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:#EDE3D8;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans KR","Apple SD Gothic Neo",sans-serif;-webkit-text-size-adjust:100%}
 #app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--cream);position:relative;padding-bottom:88px}
-.skip{position:absolute;left:-999px;top:0}.skip:focus{left:8px;top:8px;z-index:50;background:#fff;padding:8px}
+.skip{position:absolute;left:8px;top:8px;z-index:60;transform:translateY(-200%);min-height:44px;display:inline-flex;align-items:center;background:#fff;color:#3A2E31;padding:10px 16px;border-radius:12px;font-weight:700;text-decoration:underline;white-space:nowrap}.skip:focus{transform:none;outline:3px solid #B04A5E;outline-offset:2px}
 header.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 8px 16px;background:rgba(247,241,234,.97);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:8px;font-weight:700;min-width:0}
 .brand .nm{width:30px;height:30px;border-radius:10px;background:var(--rasp);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
@@ -116,7 +116,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .toast .tx{flex:1;font-size:14px;padding:6px 0}
 .toast button{min-height:44px;border:0;background:transparent;color:#FFD3DC;font-weight:750;padding:0 12px;text-decoration:underline}
 .chatbox{display:flex;gap:8px;align-items:flex-end}
-.chatbox textarea,.inp{flex:1;min-height:48px;max-height:120px;border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff;font:inherit;resize:none;color:var(--ink)}
+.chatbox textarea,.inp{flex:1;min-width:0;text-overflow:ellipsis;min-height:48px;max-height:120px;border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff;font:inherit;resize:none;color:var(--ink)}
 .chatbox textarea:focus,.inp:focus{border-color:var(--rasp);outline:none;box-shadow:0 0 0 3px #F0C9D2}
 .send{min-width:48px;min-height:48px;border-radius:50%;border:0;background:var(--rasp);color:#fff;display:grid;place-items:center}
 .thread{display:flex;flex-direction:column;gap:10px;margin:12px 0}
@@ -140,7 +140,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .tile .ic{width:40px;height:40px;border-radius:12px;background:#F2E8DE;display:grid;place-items:center;color:var(--raspd)}
 .tile.lock{background:#F6F0EA;color:var(--sub)}
 /* call screen */
-#call{position:fixed;inset:0;z-index:40;background:linear-gradient(180deg,#3A2E31,#2B2326);color:#F7F1EA;display:flex;justify-content:center}
+#call{position:fixed;inset:0;z-index:40;background-color:#2B2326;background-image:linear-gradient(180deg,#3A2E31,#2B2326);color:#F7F1EA;display:flex;justify-content:center}
 #call[hidden]{display:none}
 #call .in{width:100%;max-width:430px;display:flex;flex-direction:column;padding:16px;gap:12px;height:100%}
 #call .cav{width:120px;height:120px;border-radius:50%;overflow:hidden;margin:6px auto 0;border:3px solid #F7F1EA}
@@ -155,7 +155,9 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 #call .rb[aria-pressed=true]{background:#F7F1EA;color:var(--ink)}
 #call .rb.end{background:#C2364F}
 #call .lbl{font-size:12px;text-align:center;margin-top:4px}
-#call .demo{align-self:center}
+#call .demo{align-self:center;background:#4A3B3F;color:#FFFFFF;font-size:13px;font-weight:650;padding:4px 12px;border-radius:999px}
+#call .sm,#call .lbl{color:#F7F1EA}
+#call .caps{background-color:#352A2D}
 #call .yes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 #call .yes .btn{background:#F7F1EA;color:var(--ink);border-color:#F7F1EA}
 #call .yes .btn.sec{background:transparent;color:#F7F1EA}
@@ -241,22 +243,97 @@ const SV = {
   skinS: wre(["bi mun", "noi mun", "di ung", "phat ban", "vay nen", "noi man", "man do", "kich ung", "chay nang", "viem da", "bi ngua", "noi me day", "me day", "tan nhang", "bi nam", "da bi nam"]),
   claimD: wre(["làm trắng da", "làm trắng", "trắng da", "dưỡng trắng", "tắm trắng", "trị nám", "xóa nám", "xoá nám", "hết nám", "dứt điểm", "xóa nếp nhăn", "xoá nếp nhăn", "hết nếp nhăn", "xóa nhăn", "xoá nhăn", "nếp nhăn", "trẻ hóa", "trẻ hoá", "cam kết hiệu quả", "cam kết kết quả", "cam kết hết", "đảm bảo kết quả", "đảm bảo hết", "chữa khỏi", "giảm cân", "hết mụn", "trị thâm", "xóa thâm", "xoá thâm", "hết thâm", "xóa sẹo", "xoá sẹo", "trị sẹo"]),
   claimS: wre(["lam trang da", "lam trang", "trang da", "duong trang", "tri nam", "xoa nam", "dut diem", "xoa nep nhan", "het nep nhan", "xoa nhan", "nep nhan", "tre hoa", "cam ket hieu qua", "cam ket ket qua", "cam ket het", "dam bao ket qua", "dam bao het", "chua khoi", "giam can", "het mun", "tri tham", "xoa tham", "het tham", "xoa seo", "tri seo"]),
-  urgK: /쓰러[졌져지짐]|기절|실신|의식(이|을)? ?(없|잃)|정신(을)? ?잃|경련|발작|뇌졸중|중풍|마비가? ?(왔|와)|심장 ?마비|심근 ?경색|가슴(이)? ?(통증|아파|아프|답답|조여|조이)|흉통|숨(이|을)? ?(못|안) ?쉬|숨(이)? ?(차|막혀|막힘|가빠)|호흡(이)? ?(곤란|힘들|안 ?돼)|숨 ?쉬기 ?(힘들|어려)|피(가)? ?(많이|철철|안 ?멈|멈추지|계속 ?나)|출혈(이)? ?(심|많)|과다 ?출혈|응급|구급차|119|의사(를|좀)? ?(불러|부르)|살려 ?(주세요|줘)|위급|긴급/,
+  urgK: /쓰러[졌져지짐]|기절|실신|의식(이|을)? ?(없|잃)|정신(을)? ?잃|경련|발작|뇌졸중|중풍|마비가? ?(왔|와)|심장 ?마비|심근 ?경색|가슴(이)? ?(통증|아파|아프|답답|조여|조이)|흉통|숨(이|을)? ?(못|안) ?쉬|숨(이)? ?(차|막혀|막힘|가빠)|호흡(이)? ?(곤란|힘들|안 ?돼)|숨 ?쉬기 ?(힘들|어려)|(?<![가-힣])피(가)? ?(많이|철철|안 ?멈|멈추지|계속 ?나)|출혈(이)? ?(심|많)|과다 ?출혈|응급|구급차|119|의사(를|좀)? ?(불러|부르)|살려 ?(주세요|줘)|위급|긴급/,
   pregK: /임신|임산부|임부|출산|산후|모유 ?수유|태아/,
   hlthK: /아파|아프|아픈|통증|두통|편두통|다쳤|다친|부상|어지러|어지럼|현기증|열이|열나|고열|병원|약(을|물)? ?(먹|복용)|혈압|당뇨|천식|삐었|삐끗|접질|염좌|토했|토할|구토|메스꺼|울렁|속이 ?안 ?좋|체했|감기|몸살|독감|코로나|피곤|지쳤|기운이 ?없|심장이 ?(빨리|두근|뛰)|두근거|저려|저림|부었|부어|수술|생리통|생리 ?중|골절|부러졌|디스크|근육통|쥐가|빈혈|불면/,
   skinK: /여드름|알레르기|가려|발진|습진|트러블|두드러기|피부염|건선|아토피|홍조|따가|화끈|뾰루지|기미|뒤집어/,
   claimK: /미백|화이트닝|하얗게|주름 ?(없|제거|펴|개선|사라|지워)|주름살|기미 ?(제거|없|지워)|잡티 ?(제거|없)|여드름 ?(없|완치|제거)|흉터 ?(제거|없)|효과 ?(보장|확실)|보장|완치|확실히 ?(효과|좋아|없어)|동안 ?(되|만들)|살 ?빼|리프팅 ?효과/
 };
-/* returns the first safety class that applies, or null. Runs before small talk, cancel/move and booking, in every UI language. */
+/* ===== concept-based safety layer (EN / VI with or without tone marks / KO). Matches ideas, not fixed sentences:
+   word roots + synonyms + "A near B" co-occurrence. Urgent always ranks first. ===== */
+const fold = s => " " + norm(s).replace(/['’`]/g, "").replace(/[^\p{L}\p{N}%]+/gu, " ").replace(/\s+/g, " ").trim() + " ";
+const near = (a, b, n) => new RegExp("\\b(?:" + a + ")\\b(?:\\s+\\S+){0," + n + "}?\\s+(?:" + b + ")\\b|\\b(?:" + b + ")\\b(?:\\s+\\S+){0," + n + "}?\\s+(?:" + a + ")\\b");
+const NEG = "cant|cannot|can not|couldnt|unable to|not able to|barely|hardly|struggling|struggle|trouble|difficulty|difficult|hard to|isnt|is not|not|stopped|no longer|wont|doesnt|didnt|aint|having a hard time";
+const CU = {
+  /* EN + VI on folded text */
+  f: [
+    near(NEG, "breath|breathe|breathing|breaths|catch (?:my|his|her|their|our|a) breath|get (?:any )?air|inhale|exhale", 4),
+    /\b(gasping|gasp\w* for (air|breath)|chok(ing|ed|es)|suffocat\w*|turning blue|(lips|face) (are |is |went |turned |going )?blue|not breathing|stopped breathing|no breath\w*|cant get air|airway)\b/,
+    near("blood|bleed\\w*", "everywhere|a lot|alot|lots|so much|too much|heavy|heavily|badly|bad|wont stop|not stop\\w*|cant stop|doesnt stop|wont clot|keeps?|pouring|pours?|gushing|gushes|spurt\\w*|squirt\\w*|soak\\w*|profuse\\w*|out of control|all over", 5),
+    /\b(bleeding out|bled out|h(a)?emorrhag\w*|deep (cut|gash|wound)|severed|(cut|sliced) (his|her|my) (wrist|artery|hand open))\b/,
+    near("chay mau|mau chay|ra mau|mau ra|mat mau|tuon mau|mau tuon|phun mau|mau phun|ri mau", "khong (?:ngung|dung|ngot|het|cam|cam duoc|cam lai)|chua (?:cam|ngung|dung)|nhieu|qua nhieu|rat nhieu|lenh lang|be bet|xoi xa|ung ung|lien tuc|mai khong|khong ngung|khap noi|tum lum", 3),
+    /\b(kho tho|khong tho|khong the tho|tho khong (noi|duoc|ra|vao)|ngat tho|nghet tho|hut hoi|ngung tho|tho gap|tho doc|tho hon hen|tho dut quang|khong ra hoi|het hoi|tim tai|tim ngat)\b/,
+    /\b(xuat huyet|bang huyet|mat mau nhieu|mau me be bet)\b/,
+    /\b(unconscious|unresponsive|not responding|not responsive|non ?responsive|wont wake|cant wake|isnt waking|not waking|doesnt wake|passed out|passing out|pass out|blacked out|blacking out|knocked out|out cold|fainted|fainting|faints|keeled over|went limp|gone limp|lost consciousness|losing consciousness|collaps\w*|dropped to the (floor|ground)|fell unconscious|not moving and)\b/,
+    /\b(bat tinh|mat y thuc|mat tri giac|ngat xiu|nga quy|nga guc|guc xuong|nga lan ra|khong tinh|khong phan ung|khong tinh lai|khong tinh day|lim di|bi ngat|vua ngat|ngat roi|ngat di|dang ngat|bi xiu|xiu roi|vua xiu|lan ra bat tinh)\b/,
+    /\b(seizur\w*|convuls\w*|epilep\w* (fit|attack|episode)|(having|had|has|having a|in|into) (a |an )?(fit|fits|seizure)|fitting|shaking uncontrollabl\w*|uncontrollabl\w* shaking|jerking (uncontrollabl\w*|all over|violently)|foaming at the mouth|eyes rolled back)\b/,
+    /\b(co giat|len con (dong kinh|co giat|dong kinh)|dong kinh|giat (tay chan|nguoi|lien hoi)|sui bot mep|trom mat)\b/,
+    /\b(stroke|strokes|droop\w* (face|mouth|eye|side)|(face|mouth|smile|eye) (is |was |looks )?(droop\w*|lopsided|crooked|uneven)|slurr\w*|(cant|cannot|unable to) (speak|talk|lift|raise|move) (properly|clearly|right|her arm|his arm|one arm|her leg|his leg|one side)|one side (of )?(her |his |my |the )?(face |body )?(is |went |feels |gone )?(numb|weak|droop\w*|paraly\w*|dead)|numb on one side|sudden (numbness|weakness|confusion)|paraly(s|z)\w*)\b/,
+    /\b(dot quy|tai bien|meo mieng|meo mat|lech mieng|liet nua nguoi|te nua nguoi|yeu nua nguoi|liet mot ben|te mot ben|noi ngong|noi khong ro|noi lip|khong noi duoc)\b/,
+    near("chest|heart", "pains?|hurts?|hurting|tight\\w*|pressure|crush\\w*|squeez\\w*|heavy|heaviness|aches?|aching|stabbing|burning|clench\\w*|weight on", 3),
+    /\b(heart attack|cardiac|arrhythmi\w*|heart (stopped|is stopping)|chest (pain|pains)|angina)\b/,
+    near("nguc", "dau|tuc|that|nhoi|nang|ep|bi ep|bop|buot|ran|chat|dau nhoi", 3),
+    /\b((dau|tuc|that|nhoi|nang|ep|bop|buot) nguc|nguc (dau|tuc|that|nhoi|nang|bi ep)|dau tim|nhoi mau|ngung tim|tim ngung|len con tim|dau that|that tim)\b/,
+    /\b(anaphyla\w*|epi ?pen|throat (is |feels |keeps )?(swell\w*|closing|close|tight\w*|closing up)|swollen (throat|tongue|lips|airway)|(tongue|lips|throat|face) (is |are |keeps |started |got |looks )?(swell\w*|swollen|puff\w* up|blow\w* up)|allergic (shock|reaction (is |got )?(bad|severe|serious|spreading)))\b/,
+    near("allerg\\w*", "severe|serious|bad|really bad|swell\\w*|cant breathe|throat|tongue|lips|hives all over|all over (my|her|his) body|spreading", 5),
+    /\b(soc phan ve|phan ve|sung hong|hong (bi )?sung|sung luoi|luoi (bi )?sung|sung moi|moi (bi )?sung|nghet hong|di ung nang|di ung (nang|toan than|kho tho)|sung phu mat)\b/,
+    near("call|dial|ring|phone|get|need|goi|bam|quay", "911|999|112|115|119|000|113", 3),
+    /^ ?(911|999|112|115|119)( now| please| giup| ngay)? ?$/,
+    /\b(ambulances?|paramedics?|emergency(?! contact)( room| services| department)?|a and e|sos|cpr|defibrillat\w*|aed|life threatening|overdos\w*|poison(ed|ing) (herself|himself|myself))\b/,
+    /\b((get|call|need|needs|fetch|find) (a |the |an |my )?(doctor|dr|medic|nurse|gp)\b.*\b(now|asap|quick\w*|fast|immediately|right away|urgent\w*|please)|someone (call|get) (a |an )?(doctor|ambulance|help))\b/,
+    /\b(cap cuu|xe cuu thuong|cuu thuong|khan cap|nguy kich|nguy hiem tinh mang|goi bac si|goi (giup )?(nguoi|y ta)|bac si (gap|ngay)|cuu (toi|voi|em|minh|con|giup|nguoi|ban toi|chi|anh)|nguy cap|sap chet|tu vong)\b/
+  ],
+  /* VI with tone marks, for words that collide once tone marks are gone (ngất/ngắt, xỉu/xíu) */
+  d: [/(?<![\p{L}\p{M}])(ngất|xỉu|lịm|ngộp thở|nghẹt thở|thở dốc|thở gấp|hấp hối)(?![\p{L}\p{M}])/u],
+  /* Korean stems */
+  k: [/숨(을|이|도)? ?(못|안|잘 ?안|쉬기 ?(힘|어려)|쉴 ?수 ?없|막|가빠|헐떡|넘어가|멎|차)|숨 ?쉬기(가|도)?.{0,6}(힘들|힘드|어려|곤란|불편)|호흡(이|을)? ?(곤란|힘들|안|멈|없|이 ?안)|숨을 ?안 ?쉬|헐떡|질식|(?<![가-힣])목이 ?막혀|(?<![가-힣])피(가|를)? ?(많이|철철|계속|안 ?멈|멈추지|멈출|콸콸|쏟아|흥건|범벅|너무|엄청|줄줄)|출혈|의식(이|을)? ?(없|잃|안 ?돌아|희미|흐려)|정신(을|이)? ?(잃|못 ?차리)|깨어나지|안 ?깨어|(친구|사람|아이|애|엄마|아빠|그|그녀)(가|이)?.{0,6}반응(이|을)? ?없|기절|실신|쓰러|졸도|경련|발작|경기(를|가)? ?(일으|해|했)|거품을 ?물|뇌졸중|중풍|얼굴(이|의)? ?(한쪽|반쪽|돌아가|비뚤)|한쪽.{0,8}(마비|처지|처졌|감각|힘이 ?없|힘이 ?안|저려|안 ?움직)|마비|(?<![가-힣])말(이|을)? ?(어눌|잘 ?안 ?나|못 ?해|꼬여)|발음(이)? ?(이상|어눌|꼬)|가슴.{0,12}(통증|아파|아프|답답|조여|조이|짓눌|쥐어|뻐근|찌르|터질)|흉통|심장(이)? ?(마비|발작|멈|아파|쥐어)|심근 ?경색|아나필락시스|(?<![가-힣])목(이|구멍이|구멍)? ?(부어|붓|조여|막혀|닫혀)|(?<![가-힣])혀(가)? ?(부어|붓|부었|부풀)|입술(이)? ?(부어|붓|부었|부풀)|알레르기 ?(쇼크|반응이 ?심|가 ?심)|(?<!\d)(119|112)(?!\d)|구급차|응급|위급|긴급|살려|의사(를|좀|선생님)? ?(불러|부르|빨리)|심폐 ?소생|인공 ?호흡|죽을 ?것 ?같/]
+};
+const CH_ = {
+  healthF: [/\b(pulled|strained|tweaked|tore|torn|twisted|sprained|hurt|injured|bruised|jarred|wrenched|rolled) (a |an |my |the |his |her |our )(\w+ )?(hamstrings?|groin|calf|calves|quads?|glutes?|muscles?|ligaments?|tendons?|back|neck|shoulders?|knees?|ankles?|wrists?|hips?|elbows?|achilles|hammy|rib|ribs|thigh|thighs)\b/, /\b(pulled|strained|torn|tweaked|sprained) (hamstrings?|groin|calf|calves|quads?|glutes?|muscles?|ligaments?|tendons?|achilles|hammy|thigh)\b/, /\b(hamstring|groin|calf|achilles) (strain|pull|injury|tear|is (sore|tight|killing))\b/,
+    /\b(nose (is |keeps |feels )?(runny|running|stuffy|blocked|streaming)|runny nose|stuffy nose|blocked nose|blocked up|sore throat|scratchy throat|sneez\w*|congest\w*|sniffles|sniffly|snotty|the flu|a flu|flu|cold sore|head cold|chesty|phlegm|chills|shivery|achy|stomach bug|tummy bug|cough\w*|caught something|coming down with|feeling rough|feel rough|hungover|hangover|period pain|menstrua\w*)\b/,
+    /\b(so mui|chay nuoc mui|nghet mui|ngat mui|dau hong|viem hong|rat hong|hat hoi|bi cam|cam cum|cam lanh|cam sot|bi ho|ho khan|ho nhieu|ho co dom|bi sot|cang co|keo co dui|rach co|dau co|cang co dui|bi cum|dang om|om nhe|met moi|dau bao tu|dau da day|tieu chay|ngo doc|dau nhuc|nhuc moi|dau bung kinh|bi thuong|bi chan thuong|dau gan|sung tay|sung chan|sung len|bi sung)\b/],
+  healthD: [/(?<![\p{L}\p{M}])(ho(?! chí minh)|sổ mũi|nghẹt mũi|ngạt mũi|cảm cúm|cảm lạnh|cảm sốt|bị cảm|đang cảm|cảm nhẹ|hắt hơi|đau họng|viêm họng|rát họng|sốt(?! ruột)|cúm|căng cơ|kéo cơ|rách cơ|đau cơ|ốm|say nắng|tiêu chảy|ngộ độc)(?![\p{L}\p{M}])/u],
+  healthK: [/콧물|코막힘|코가 ?막|기침|목(이)? ?(아파|아프|따끔|칼칼|부었)|인후통|재채기|오한|으슬|몸살|근육(이)? ?(늘어|파열|땡|뭉)|햄스트링|허벅지(가|를|를 ?다)? ?(땡|당|다쳤|찢)|접질|담(이)? ?(걸|왔)|몸(이)? ?(안 ?좋|이상해|무거)|컨디션(이)? ?(안 ?좋|별로|나빠)|설사|배탈|식중독|장염|감기|독감|(?<![가-힣])열(이)? ?(나|있|난)|다쳤|다쳐|부상/],
+  skinF: [/\b(breaking out|break out|broke out|broken out|breakouts?|zits?|blemish\w*|blackheads?|whiteheads?|cystic|flare ?ups?|flaring( up)?|flushed|flushing|bumps on my|(red|dark|white) spots|spots (on|all over) my|red (face|skin|cheeks|patches|bumps|marks|blotches)|(face|skin|cheeks|chin|forehead|nose) (is |are |went |turned |got |gets |keeps |feels |looks )?(going |getting |turning |really |so |all )?(red|blotchy|inflamed|burning|stinging|bumpy|flaky|raw|sore|itchy|irritated|broken out|peeling)|stinging|burning sensation|my skin (hates|reacted|is reacting|freaked out))\b/,
+    /\b(noi mun|len mun|moc mun|mun moc|mun boc|mun viem|mun an|mat bi do|da bi do|do rat|ung do|noi do|bong troc|da (bi )?bong|da (bi )?rat|mat (bi )?rat|da sun|noi han|man ngua|di ung da|da nhay cam bi)\b/],
+  skinD: [/(?<![\p{L}\p{M}])(nổi mụn|lên mụn|mọc mụn|mặt đỏ|da đỏ|đỏ rát|ửng đỏ|nổi đỏ|đỏ ửng|bong tróc|rát mặt|châm chích|sần)(?![\p{L}\p{M}])/u],
+  skinK: [/(?<![가-힣])(얼굴|피부|볼|뺨|이마|턱|코)(이|가|에|도|에서)?(?![가-힣]).{0,10}(빨갛|빨개|붉|올라|뒤집|따끔|화끈|부었|벗겨|일어나|오돌|좁쌀|울긋)|빨갛게 ?올라|붉게 ?올라|붉은 ?(반점|기)|좁쌀|따끔|뾰루지|피부가 ?예민/],
+  claimF: [/\b(whiter|whiten\w*|fairer|lighter skin|lighten\w*|bleach\w* (my )?skin|skin (lighter|whiter|fairer|brighter|bleach\w*)|make (my |me |her )?(skin |face )?(look )?(whiter|fairer|lighter|paler|younger|flawless|perfect|poreless|spotless)|look (\d+ |ten |five |years )?(years )?younger|reverse (my )?(aging|ageing)|erase (my )?(wrinkles|scars|lines|spots|pores|pigment\w*|melasma|acne)|(remove|eliminate|clear|fix|banish) (all )?(my )?(scars?|wrinkles?|melasma|pigment\w*|dark spots?|acne scars?|fine lines|age spots|freckles|pores)|(rid of|remove|clear|gone|fix\w*|cure\w*).{0,30}(permanently|for good|forever|completely|100)|permanent(ly)? (result|results|removal|fix|cure|whitening)|100 ?% (result|results|guarantee\w*|gone|clear)|guarantee\w*|promis\w* (results?|that|me)|will it (definitely|really) work|definitely (work|remove|clear))\b/,
+    /\b(trang da|da trang|trang hon|bat tong|bat tone|nang tong|nang tone|tre ra|tre lai|vinh vien|cam ket|dam bao|hieu qua 100|het sach mun|xoa sach|lam mo seo|lam mo nam|dut diem)\b/],
+  claimD: [/(?<![\p{L}\p{M}])(trắng hơn|trắng sáng|trắng mịn|trắng bật tông|da trắng|bật tông|nâng tông|trẻ ra|trẻ lại|vĩnh viễn|hết (mụn|nám|thâm|sẹo|nhăn|tàn nhang|lỗ chân lông)|xóa (mụn|nám|thâm|sẹo|nhăn|tàn nhang)|xoá (mụn|nám|thâm|sẹo|nhăn|tàn nhang))(?![\p{L}\p{M}])/u],
+  claimK: [/뽀얗|하얘|하얗|밝아지게|톤 ?업|희게|어려 ?보이|젊어 ?보이|영구|평생|100 ?%|확실하게|장담|약속(해|할 ?수|하나요|돼요)|완전히 ?(없애|제거|지워)|싹 ?(없애|지워)/],
+  /* pregnancy in any mix of languages */
+  pregD: [/(?<![\p{L}\p{M}])bầu(?![\p{L}\p{M}])(?! ?(trời|cử|không khí|bạn|đoàn|chọn|ra|rượu|sữa))/u],
+  pregF: [/\b(i (have|am|m|got)|im|she is|shes|me|toi|minh|em|co) (\w+ )?(bau|co bau|mang thai|pregnant|preggers)\b/, /\b(pregnant|preggers|prenatal|antenatal|trimester|baby bump|with child|weeks along|months along|bun in the oven|mom to be|mum to be|dang mang thai|thai \d+ (tuan|thang)|bau \d+ (tuan|thang))\b/],
+  pregK: [/임신|임산부|임부|출산|산후|모유 ?수유|태아|아기를 ?가졌|뱃속/]
+};
+/* a pregnancy massage named as a service (no question, no self-report) is a booking, with a gentle note */
+const PSVC_F = /\b(pregnancy|prenatal|antenatal|maternity) massage\b|\bmassage (cho )?(ba )?bau\b|\bmassage thai (ky|ki)\b/;
+const PSVC_K = /(임산부|임부|산전) ?마사지/;
+const PSVC_Q = /\?|\b(ok|okay|safe|can i|could i|should i|is it|allowed|fine|duoc khong|co duoc|duoc ko|duoc k|co nen|nen khong|i am|im|i m|i have|co bau|dang (co )?bau|mang thai|\d+ (weeks?|months?|tuan|thang))\b|돼요|되나요|될까|괜찮|가능|해도|받아도|중인데|했는데/;
+function pregService(text) { const f = fold(text), d = vnL(text); return (PSVC_F.test(f) || PSVC_K.test(d)) && !PSVC_Q.test(f) && !PSVC_Q.test(d); }
+const SVC_STRIP = [/\bnan mun\b/g, /\bnặn mụn\b/gu];
+function urgentConcept(text) {
+  const f = fold(text), d = vnL(text);
+  return CU.f.some(r => r.test(f.replace(/\b(blood (pressure|sugar|thinners?|tests?|type|orange)|heat ?stroke|back ?stroke|breast ?stroke|stroke of (luck|genius)|brush ?strokes?|keystrokes?|emergency contact|emergency number on file)\b/g, " "))) || CU.d.some(r => r.test(d)) || CU.k.some(r => r.test(d));
+}
+/* returns the first safety class that applies, or null. Runs before small talk, cancel/move and booking, in every UI language.
+   Order: urgent (fixed lists + concepts) > bare "help" > pregnancy > results claims > skin > health > claims. */
 function safety(text) {
-  const raw = String(text).toLowerCase().trim(), d = vnL(text).trim(), s = norm(text).trim();
-  const hit = (D, Sx, K) => (D && D.test(d)) || (Sx && Sx.test(s)) || (K && K.test(d));
-  if (RED_FLAG_RE.test(raw) || RED_FLAG_RE.test(s) || hit(SV.urgD, SV.urgS, SV.urgK) || /^(cứu|cuu)\W*$/u.test(d)) return "urgent";
-  if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s) || /^(도와주세요|도와줘)\W*$/.test(d)) return "help";
-  if (hit(SV.pregD, SV.pregS, SV.pregK)) return "health";
-  if (hit(SV.claimD, SV.claimS, SV.claimK)) return "claim";
-  if (SKIN_RE.test(s) || hit(SV.skinD, SV.skinS, SV.skinK)) return "skin";
-  if (isHealth(raw) || isHealth(s) || hit(SV.hlthD, SV.hlthS, SV.hlthK)) return "health";
+  const raw = String(text).toLowerCase().trim(), d0 = vnL(text).trim(), s0 = norm(text).trim();
+  const hit = (D, Sx, K, d, s) => (D && D.test(d)) || (Sx && Sx.test(s)) || (K && K.test(d));
+  if (RED_FLAG_RE.test(raw) || RED_FLAG_RE.test(s0) || hit(SV.urgD, SV.urgS, SV.urgK, d0, s0) || /^(cứu|cuu)\W*$/u.test(d0) || urgentConcept(text)) return "urgent";
+  if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s0) || /^(도와주세요|도와줘)\W*$/.test(d0)) return "help";
+  /* a service named as a booking ("pregnancy massage", "nặn mụn và chăm sóc da") is not a disclosure: take the service name out first */
+  let t = text; if (pregService(t)) t = t.replace(/(pregnancy|prenatal|antenatal|maternity) massage|massage (cho )?(bà |ba )?(bầu|bau)|massage thai (kỳ|kỳ|ky|ki)|(임산부|임부|산전) ?마사지/giu, " massage ");
+  for (const r of SVC_STRIP) t = t.replace(r, " ");
+  t = t.replace(/nặn mụn|nan mun/giu, " ");
+  const r2 = String(t).toLowerCase().trim(), d = vnL(t).trim(), s = norm(t).trim(), f = fold(t), tone = /[\u0300-\u036f\u0111]/.test(d.normalize("NFD"));
+  const any = (L1, x) => (L1 || []).some(r => r.test(x));
+  if (hit(SV.pregD, SV.pregS, SV.pregK, d, s) || any(CH_.pregD, d) || any(CH_.pregF, f) || any(CH_.pregK, d)) return "health";
+  if (hit(SV.claimD, SV.claimS, SV.claimK, d, s) || any(CH_.claimF, f) || any(CH_.claimD, d) || any(CH_.claimK, d)) return "claim";
+  if (SKIN_RE.test(s) || hit(SV.skinD, SV.skinS, SV.skinK, d, s) || any(CH_.skinF, f) || any(CH_.skinD, d) || any(CH_.skinK, d)) return "skin";
+  if (isHealth(r2) || isHealth(s) || hit(SV.hlthD, SV.hlthS, SV.hlthK, d, s) || any(CH_.healthF, f) || (tone && any(CH_.healthD, d)) || any(CH_.healthK, d)) return "health";
   if (CLAIM_RE.test(s)) return "claim";
   return null;
 }
@@ -270,7 +347,7 @@ const STR = {
     confirm: "Book", payBook: "Pay deposit & book (demo)", move: "Move booking", cancel: "Cancel booking", keep: "Keep booking", undo: "Undo", reschedule: "Reschedule", manage: "Manage", checkin: "Check in", join: "Join", joined: "Joined",
     policies: "Policies, up front", freeCancel: "Free cancel until", deposit: "Deposit", noShow: "No-show", lateCancel: "Late cancel", none: "None", total: "Total", services: "Book here", passes: "My passes & credit here", inbox: "Inbox", send: "Send",
     whatBook: "What would you like to book?", bookHint: "Type it like a message, or tap below.", askNari: "Ask Nari", callNari: "Call Nari", typeHere: "Type a message", level: "Level", streak: "{n}-week streak", coins: "coins",
-    wardrobe: "Nari's wardrobe", shop: "Nari shop", wallet: "Wallet", language: "Language", search: "Search places, e.g. nail, yoga", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
+    wardrobe: "Nari's wardrobe", shop: "Nari shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
     gm: "Good morning, Mina", ga: "Good afternoon, Mina", ge: "Good evening, Mina", gn: "Still up, Mina?", booked: "Booked", moved: "Moved", cancelled: "Cancelled", back: "Back", close: "Close", with: "with",
     payAt: "Pay at the store", storeOnly: "Only at {s}", journey: "Journey", quest: "Cross-store quest", restDay: "Rest day? That counts too", mAttend: "Show up for your next visit", mNew: "Try a new place", mStretch: "Stretch for 2 minutes", mRest: "Rest day: 1-minute stretch + water",
     demo: "Demo", hang: "Hang up", mute: "Mute", unmute: "Unmute", xp: "XP", nothingUp: "Nothing booked yet.", newPlace: "Join", cats: "Categories", nearby: "Places near Thảo Điền", sample: "sample",
@@ -279,7 +356,7 @@ const STR = {
     confirm: "Đặt lịch", payBook: "Đặt cọc & đặt lịch (demo)", move: "Đổi lịch", cancel: "Hủy lịch", keep: "Giữ lịch", undo: "Hoàn tác", reschedule: "Đổi giờ", manage: "Quản lý", checkin: "Check-in", join: "Tham gia", joined: "Đã tham gia",
     policies: "Chính sách, nói trước", freeCancel: "Hủy miễn phí trước", deposit: "Đặt cọc", noShow: "Không đến", lateCancel: "Hủy muộn", none: "Không", total: "Tổng", services: "Đặt tại đây", passes: "Gói & tín dụng của tôi ở đây", inbox: "Hộp thư", send: "Gửi",
     whatBook: "Bạn muốn đặt gì?", bookHint: "Gõ như nhắn tin, hoặc chạm bên dưới.", askNari: "Hỏi Nari", callNari: "Gọi Nari", typeHere: "Nhập tin nhắn", level: "Cấp", streak: "Chuỗi {n} tuần", coins: "xu",
-    wardrobe: "Tủ đồ của Nari", shop: "Cửa hàng Nari", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm nơi, ví dụ: nail, yoga", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
+    wardrobe: "Tủ đồ của Nari", shop: "Cửa hàng Nari", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
     gm: "Chào buổi sáng, Mina", ga: "Chào buổi chiều, Mina", ge: "Chào buổi tối, Mina", gn: "Vẫn còn thức à, Mina?", booked: "Đã đặt", moved: "Đã đổi", cancelled: "Đã hủy", back: "Quay lại", close: "Đóng", with: "với",
     payAt: "Thanh toán tại cửa hàng", storeOnly: "Chỉ dùng tại {s}", journey: "Hành trình", quest: "Nhiệm vụ nhiều nơi", restDay: "Ngày nghỉ? Cũng được tính", mAttend: "Đến buổi hẹn tiếp theo", mNew: "Thử một nơi mới", mStretch: "Giãn cơ 2 phút", mRest: "Ngày nghỉ: giãn cơ 1 phút + uống nước",
     demo: "Demo", hang: "Gác máy", mute: "Tắt tiếng", unmute: "Bật tiếng", xp: "XP", nothingUp: "Chưa có lịch nào.", newPlace: "Tham gia", cats: "Danh mục", nearby: "Gần Thảo Điền", sample: "mẫu",
@@ -288,7 +365,7 @@ const STR = {
     confirm: "예약하기", payBook: "예약금 결제 후 예약 (데모)", move: "예약 변경", cancel: "예약 취소", keep: "유지하기", undo: "되돌리기", reschedule: "시간 변경", manage: "관리", checkin: "체크인", join: "가입", joined: "가입됨",
     policies: "정책 미리 보기", freeCancel: "무료 취소 기한", deposit: "예약금", noShow: "노쇼", lateCancel: "늦은 취소", none: "없음", total: "합계", services: "여기서 예약", passes: "이 매장의 이용권·크레딧", inbox: "받은 메시지", send: "보내기",
     whatBook: "무엇을 예약할까요?", bookHint: "메시지처럼 입력하거나 아래를 누르세요.", askNari: "나리에게 묻기", callNari: "나리에게 전화", typeHere: "메시지 입력", level: "레벨", streak: "{n}주 연속", coins: "코인",
-    wardrobe: "나리 옷장", shop: "나리 상점", wallet: "지갑", language: "언어", search: "매장 검색 (예: 네일, 요가)", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
+    wardrobe: "나리 옷장", shop: "나리 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
     gm: "좋은 아침이에요, 미나", ga: "좋은 오후예요, 미나", ge: "좋은 저녁이에요, 미나", gn: "아직 안 자요, 미나?", booked: "예약됨", moved: "변경됨", cancelled: "취소됨", back: "뒤로", close: "닫기", with: "담당",
     payAt: "매장에서 결제", storeOnly: "{s}에서만 사용", journey: "여정", quest: "여러 매장 퀘스트", restDay: "쉬는 날도 인정돼요", mAttend: "다음 예약에 참석하기", mNew: "새로운 곳 가보기", mStretch: "2분 스트레칭", mRest: "쉬는 날: 1분 스트레칭 + 물",
     demo: "데모", hang: "통화 종료", mute: "음소거", unmute: "음소거 해제", xp: "XP", nothingUp: "아직 예약이 없어요.", newPlace: "가입", cats: "카테고리", nearby: "타오디엔 주변", sample: "샘플",
@@ -343,14 +420,16 @@ const S = {
     svcs: [{ id: "hydra", n: "Hydrating facial", len: 60, price: 650000, kw: /\bhydrat\w*/, desc: "A moisture-focused facial for skin that feels dry or tight." },
            { id: "gentle", n: "Gentle facial", len: 45, price: 520000, kw: /\b(gentle|sensitive) facial\b/, desc: "A simple facial with light, fragrance-free products." },
            { id: "consult", n: "Skin consultation", len: 20, price: 0, kw: /\b(consult\w*|tu van)\b/, desc: "Talk with a therapist before choosing a treatment." },
-           { id: "fsm", n: "Face & shoulder massage", len: 30, price: 300000, kw: /\bface (and|&) shoulder\b/, desc: "A short relaxing massage." }],
+           { id: "fsm", n: "Face & shoulder massage", len: 30, price: 300000, kw: /\bface (and|&) shoulder\b/, desc: "A short relaxing massage." },
+           { id: "extract", n: "Extraction facial", len: 60, price: 450000, kw: /\b(extractions?|extraction facial|nan mun)\b/, desc: "Cleansing facial with gentle extractions." }],
     kw: /\b(facial|facials|skin ?care|skin|glow|cham soc da|massage)\b/, names: /\bglow( lab)?\b/, kb: {} },
   spa: { name: "Sen Spa", area: "Quận 1 (District 1)", cat: "massage", kind: "appt", color: "#7A5C36", logo: "SS", joined: true, visits: 1, unread: 0,
     policy: { free: 6, late: "50% of the price", dep: 0, noshow: "Full price", arrive: "Your time ends on schedule" },
     staff: [{ id: "hoa", n: "Hoa" }, { id: "phuong", n: "Phương" }], rooms: [{ id: "lotus", n: "Lotus room" }, { id: "bamboo", n: "Bamboo room" }], hours: [600, 1320], step: 60,
     svcs: [{ id: "aroma60", n: "Aroma massage 60 min", len: 60, price: 450000, desc: "Full-body relaxing massage." },
            { id: "aroma90", n: "Aroma massage 90 min", len: 90, price: 620000, desc: "Longer version, more time on back and shoulders." },
-           { id: "foot", n: "Foot massage 45 min", len: 45, price: 280000, kw: /\b(foot|feet)\b/, desc: "Foot and lower-leg massage." }],
+           { id: "foot", n: "Foot massage 45 min", len: 45, price: 280000, kw: /\b(foot|feet)\b/, desc: "Foot and lower-leg massage." },
+           { id: "preg", n: "Pregnancy massage 60 min", len: 60, price: 500000, kw: /\b(pregnancy|prenatal|antenatal|maternity|bau) massage\b|\bmassage (cho )?(ba )?bau\b/, desc: "Side-lying massage with extra pillows, from the second trimester." }],
     kw: /\b(spa|massage|mat xa|xoa bop)\b/, names: /\bsen spa\b/, kb: { m: "From Sen Spa's info: the 60-minute is a full-body relax; the 90-minute adds more time on back and shoulders. Both use the same oil." } },
   pickle: { name: "Sunrise Pickleball Club", area: "Thảo Điền, Thủ Đức", cat: "sport", kind: "rental", color: "#2D6680", logo: "SP", joined: true, visits: 2, unread: 0,
     policy: { free: 12, late: "Half the court fee", dep: 0, noshow: "Full court fee", arrive: "Your block ends on time" },
@@ -501,6 +580,7 @@ const TRD = {
   "10-class pass": ["Gói 10 buổi", "10회 이용권"], "5-massage package (Aroma 60)": ["Gói 5 lần massage (Aroma 60)", "마사지 5회 패키지 (아로마 60)"], "Store credit": ["Tín dụng cửa hàng", "매장 크레딧"], "Valid until 30 Nov": ["Hạn đến 30/11", "11월 30일까지"], "Valid until 31 Dec": ["Hạn đến 31/12", "12월 31일까지"], "No expiry": ["Không hết hạn", "만료 없음"],
   /* Nari's fixed lines */
   "Hi Mina, I'm Nari. I can book at any of your places, move a booking, or answer simple questions about them.": ["Chào Mina, mình là Nari. Mình có thể đặt lịch ở mọi nơi của bạn, đổi lịch, hoặc trả lời câu hỏi đơn giản.", "안녕하세요 미나, 저는 나리예요. 모든 매장의 예약과 변경, 간단한 질문을 도와드려요."],
+  "Pregnancy massage at Sen Spa is from the second trimester. If you're unsure, check with your GP or midwife first.": ["Massage bầu ở Sen Spa dành cho mẹ từ tam cá nguyệt thứ hai. Nếu chưa chắc, hãy hỏi nữ hộ sinh hoặc nơi bạn khám thai trước nhé.", "센 스파 임산부 마사지는 임신 중기부터 받을 수 있어요. 확실하지 않으면 다니는 산부인과에 먼저 확인해 주세요."],
   "Say it in one line for me?": ["Bạn nói gọn trong một dòng nhé?", "한 줄로 말해 줄래요?"],
   "If you're hurt or unwell, please see a doctor or the store's staff. I can help with bookings too.": ["Nếu bạn bị đau hoặc không khỏe, hãy gặp bác sĩ hoặc nhân viên cửa hàng. Mình cũng có thể giúp đặt lịch.", "다쳤거나 몸이 안 좋다면 의사나 매장 직원을 만나 주세요. 예약도 도와드릴게요."],
   "Thanks for telling me. Please stop exercising now and get medical help right away.": ["Cảm ơn bạn đã cho mình biết. Hãy dừng tập ngay và tìm trợ giúp y tế ngay lập tức.", "말해 줘서 고마워요. 지금 바로 운동을 멈추고 즉시 의료 도움을 받으세요."],
@@ -542,7 +622,7 @@ const TRD = {
   "Thanks, we got your message and will reply soon. (Demo auto-reply)": ["Cảm ơn, chúng tôi đã nhận tin và sẽ trả lời sớm. (Tự động trả lời demo)", "메시지 잘 받았어요. 곧 답장 드릴게요. (데모 자동 답장)"]
 };
 const NAMES = { "Women's cut": ["Cắt tóc nữ", "여성 커트"], "Wash & blow-dry": ["Gội & sấy", "샴푸 & 드라이"], "Colour": ["Nhuộm tóc", "염색"], "Hydrating facial": ["Chăm sóc da cấp ẩm", "수분 페이셜"], "Gentle facial": ["Chăm sóc da dịu nhẹ", "순한 페이셜"], "Skin consultation": ["Tư vấn da", "피부 상담"],
-  "Face & shoulder massage": ["Massage mặt & vai", "얼굴·어깨 마사지"], "Aroma massage 60 min": ["Massage tinh dầu 60 phút", "아로마 마사지 60분"], "Aroma massage 90 min": ["Massage tinh dầu 90 phút", "아로마 마사지 90분"], "Foot massage 45 min": ["Massage chân 45 phút", "발 마사지 45분"],
+  "Face & shoulder massage": ["Massage mặt & vai", "얼굴·어깨 마사지"], "Pregnancy massage 60 min": ["Massage bầu 60 phút", "임산부 마사지 60분"], "Extraction facial": ["Nặn mụn & chăm sóc da", "압출 페이셜"], "Side-lying massage with extra pillows, from the second trimester.": ["Massage nằm nghiêng với gối đỡ, từ tam cá nguyệt thứ hai.", "쿠션을 받치고 옆으로 누워 받는 마사지, 임신 4개월부터."], "Cleansing facial with gentle extractions.": ["Làm sạch da và nặn mụn nhẹ nhàng.", "부드러운 압출이 포함된 클렌징 페이셜."], "Aroma massage 60 min": ["Massage tinh dầu 60 phút", "아로마 마사지 60분"], "Aroma massage 90 min": ["Massage tinh dầu 90 phút", "아로마 마사지 90분"], "Foot massage 45 min": ["Massage chân 45 phút", "발 마사지 45분"],
   "Court rental": ["Thuê sân", "코트 대여"], "Stretch": ["Giãn cơ", "스트레칭"], "Gel nails": ["Sơn gel", "젤 네일"], "Classic manicure": ["Làm móng cơ bản", "기본 매니큐어"], "Flow yoga": ["Yoga Flow", "플로우 요가"], "Barre": ["Barre", "바레"], "Reformer": ["Reformer", "리포머"],
   "Lotus room": ["Phòng Sen", "로터스 룸"], "Bamboo room": ["Phòng Tre", "뱀부 룸"], "Court 1": ["Sân 1", "1번 코트"], "Court 2": ["Sân 2", "2번 코트"], "Court 3": ["Sân 3", "3번 코트"], "Court 4": ["Sân 4", "4번 코트"],
   "Quận 1 (District 1)": ["Quận 1", "1군 (District 1)"], "Quận 3 (District 3)": ["Quận 3", "3군 (District 3)"], "Barre with Yuna": ["Barre với Yuna", "유나 바레"], "Women's cut with Linh": ["Cắt tóc nữ với Linh", "린 여성 커트"], "Aroma 90 min": ["Aroma 90 phút", "아로마 90분"], "Court · 4 players": ["Sân · 4 người", "코트 · 4명"] };
@@ -641,6 +721,7 @@ function vNotif() {
   const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Nari"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>
     <div class="row wrap" style="gap:6px;margin-top:4px"><span class="tag">${esc(NTYPES.find(x => x[0] === n.type)[1][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span>${r.held ? `<span class="tag warn">${L3("Quiet hours: delivered 08:00", "Giờ yên tĩnh: gửi lúc 08:00", "방해 금지: 08:00에 전달")}</span>` : ""}${r.urgentNow ? `<span class="tag ok">${L3("Time-sensitive: sent right away", "Cần kịp lúc: gửi ngay", "시간 제한 알림: 바로 전달")}</span>` : ""}${n.friend && !r.why ? `<button class="btn ghost" data-act="cheer">${L3("Send a cheer", "Gửi cổ vũ", "응원 보내기")}</button>` : ""}</div></div></div>`; };
   return `<h1>${L3("Notifications", "Thông báo", "알림")}</h1><div class="row"><p class="sub grow" style="margin:0">${L3("Lock-screen previews, in Nari's voice.", "Xem trước trên màn hình khóa, bằng giọng Nari.", "잠금 화면 미리보기, 나리의 말투로.")}</p><button class="btn sec" data-act="nset">${L3("Settings", "Cài đặt", "설정")}</button></div>
+  ${INBOX.some(m => !m.s) ? `<h2>${L3("Messages", "Tin nhắn", "메시지")}</h2><div class="stack">${INBOX.filter(m => !m.s).map(m => { m.unread = false; return `<div class="card row top"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><div class="grow"><div class="row sm"><b class="grow">Nari</b><span class="sub">${esc(m.when)}</span></div><div class="sm">${esc(m.text)}</div></div></div>`; }).join("")}</div>` : ""}
   <h2>${L3("Delivered", "Đã gửi", "전달됨")} <span class="sub sm">${sent.length}</span></h2><div class="stack">${sent.map(card).join("")}</div>
   <h2>${L3("Held back by your rules", "Bị giữ lại theo quy tắc", "규칙에 따라 보류됨")} <span class="sub sm">${held.length}</span></h2><div class="stack">${held.map(r => `<div class="card sm row"><span class="grow">${r.n.s ? esc(S[r.n.s].name) : "Nari"} · ${esc(fDay(r.n.day))}<br><span class="sub">${esc(r.n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></span><span class="tag">${esc(WHY[r.why][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></div>`).join("")}</div>`;
 }
@@ -792,7 +873,7 @@ function parse(raw) {
   else if (gen.length > 1) p.cands = gen;
   if (/\baroma\b/.test(s) && !p.store && S.spa.joined) { p.store = "spa"; delete p.cands; }
   /* Korean phrasing (no word boundaries in Hangul) */
-  const KO = [["salon", "cut", /커트|컷|머리 ?자르|헤어컷/], ["salon", "colour", /염색/], ["skin", null, /페이셜|피부 ?관리/], ["skin", "consult", /피부 ?상담|상담/], ["pickle", "court", /피클볼|코트/], ["capsule", "barre", /바레/], ["capsule", "reformer", /리포머/], ["spa", "foot", /발 ?마사지/]];
+  const KO = [["spa", "preg", /(임산부|임부|산전) ?마사지/], ["skin", "extract", /압출/], ["salon", "cut", /커트|컷|머리 ?자르|헤어컷/], ["salon", "colour", /염색/], ["skin", null, /페이셜|피부 ?관리/], ["skin", "consult", /피부 ?상담|상담/], ["pickle", "court", /피클볼|코트/], ["capsule", "barre", /바레/], ["capsule", "reformer", /리포머/], ["spa", "foot", /발 ?마사지/]];
   if (!p.svc && !p.cands) { const k = KO.find(x => x[2].test(s) && S[x[0]].joined && (!p.store || p.store === x[0])); if (k) { p.store = k[0]; if (k[1]) p.svc = k[1]; } else if (!p.store && /마사지/.test(s)) p.cands = ["skin", "spa"].filter(x => S[x].joined); }
   if ((m = s.match(/(\d{1,2}) ?명/))) { p.party = +m[1]; s = s.replace(m[0], " "); }
   if ((m = s.match(/(\d(?:\.5)?) ?시간/))) { p.len = Math.round(+m[1] * 60); s = s.replace(m[0], " "); } else if ((m = s.match(/(\d{2,3}) ?분/))) { p.len = +m[1]; s = s.replace(m[0], " "); }
@@ -822,7 +903,7 @@ function parse(raw) {
   if (/\b(tonight|toi nay)\b/.test(s)) { if (p.d == null) p.d = 0; p.period = "evening"; }
   const nw = /\b(next week|tuan sau|tuan toi)\b/.test(s);
   if ((m = s.match(/\b(next |this )?(sunday|sun|monday|mon|tuesday|tues|tue|wednesday|weds|wed|thursday|thurs|thur|thu|friday|fri|saturday|sat)\b/))) {
-    let off = nextOrToday(WDN[m[2]]); if (nw) off = nextOff(1) + ((WDN[m[2]] + 6) % 7); p.d = off;
+    let off = nextOrToday(WDN[m[2]]); if (m[1] === "next " && off === 0) off = 7; if (nw) off = nextOff(1) + ((WDN[m[2]] + 6) % 7); p.d = off;
   } else if (nw && p.d == null) p.nextWeek = true;
   if (p.d == null && /\b(weekend|cuoi tuan)\b/.test(s)) p.weekend = true;
   /* periods */
@@ -869,6 +950,8 @@ function reply(c, text) {
   if (sf === "claim") return say(c, "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you.", { card: skinCard(), chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })] });
   if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text) });
+  /* pregnancy massage named as a service: book it, with a gentle note */
+  if (!sf && pregService(text)) say(c, "Pregnancy massage at Sen Spa is from the second trimester. If you're unsure, check with your GP or midwife first.", { care: 1 });
   /* 2. small talk and simple consultations (store info only, always with a source) */
   if ((/^(hi|hello|hey|xin chao|chao)\b/.test(s) || /^안녕/.test(s)) && s.length < 16) return say(c, "Hi Mina! What would you like to book?", { chips: exampleChips() });
   if (/^(thanks|thank you|cam on)\b/.test(s) || /^(감사|고마워)/.test(s)) return say(c, "Anytime!");
@@ -942,6 +1025,9 @@ function findBk(text, mode) {
   const p = parse(text); let list = upcoming();
   if (p.store) list = list.filter(b => b.store === p.store); else if (p.cands) list = list.filter(b => p.cands.includes(b.store));
   if (p.svc) { const l2 = list.filter(b => b.svc === p.svc); if (l2.length) list = l2; }
+  else { /* a service family word ("massage", "facial") must match the booking's own service, not just a store that also offers it */
+    const s = norm(text), fam = /\b(massage|mat xa|xoa bop)\b|마사지/.test(s) ? /massage/i : /\b(facials?|cham soc da)\b|페이셜/.test(s) ? /facial|consult/i : null;
+    if (fam) list = list.filter(b => fam.test(svcOf(b.store, b.svc).n)); }
   if (p.staff) { const l2 = list.filter(b => b.rids.includes(p.staff)); if (l2.length) list = l2; }
   if (mode === "cancel" && p.d != null) { const l2 = list.filter(b => b.d === p.d); if (l2.length) list = l2; }
   return { list, p };
@@ -1148,7 +1234,7 @@ function chatUI(cid, placeholder) {
   <form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>`;
 }
 function vBook() {
-  return `<div class="row top"><div class="grow"><h1>${t("whatBook")}</h1><p class="sub">${t("bookHint")}</p></div><button class="btn sec" data-act="call" aria-label="${t("callNari")}">${ic("phone", "s")}</button></div>` + chatUI("book", L3("e.g. haircut with Linh Saturday afternoon", "vd: cắt tóc với Linh chiều thứ bảy", "예: 토요일 오후 린 커트")) +
+  return `<div class="row top"><div class="grow"><h1>${t("whatBook")}</h1><p class="sub">${t("bookHint")}</p></div><button class="btn sec" data-act="call" aria-label="${t("callNari")}">${ic("phone", "s")}</button></div>` + chatUI("book", L3("e.g. haircut Saturday 2pm", "vd: cắt tóc thứ bảy", "예: 토요일 커트")) +
     (CH.book.msgs.length ? "" : `<div class="chips" style="margin-top:10px">${exampleChips().map(c => `<button class="chip" data-act="ex" data-v="${esc(c.val.say)}">“${esc(c.label)}”</button>`).join("")}</div>`) +
     `<h2>${t("bookAgain")} <span class="sub sm">${tr("3 taps")}</span></h2>${againChips()}` +
     `<h2>${t("myPlaces")}</h2><div class="stack">${joinedIds().map(sid => `<button class="svc" data-act="store" data-v="${sid}">${logo(sid)}<span class="grow"><b>${esc(S[sid].name)}</b><br><span class="sub sm">${({ class: tr("Classes"), appt: tr("Appointments"), rental: tr("Court rental") })[S[sid].kind]} · ${esc(N(S[sid].area))}</span></span>${ic("chev")}</button>`).join("")}</div>`;
@@ -1191,7 +1277,7 @@ function vStore(sid) {
     h += `<h2>${t("passes")}</h2><div class="card stack">${w.length ? w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("") : `<p class="sub sm">${tr("No passes here. You pay per visit.")}</p>`}${mine.filter(b => b.dep).map(b => `<p class="sm">${tr("Deposit held")}: <b>${vnd(b.dep)}</b> · ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}</div>`;
     h += `<h2>${t("upNext")}</h2><div class="card" role="list">${mine.length ? mine.map(upRow).join("") : `<p class="sub sm">${t("nothingUp")}</p>`}</div>`;
     h += `<h2>${t("inbox")}</h2><div class="card stack">${msgs.length ? msgs.map(m => `<div class="sm"><span class="sub">${esc(tr(m.when))}</span> · ${esc(trS(m.text))}</div>`).join("") : `<p class="sub sm">${t("inboxEmpty")}</p>`}
-      <form class="chatbox" data-form="store" data-s="${sid}"><label class="vh" for="sm-${sid}">${esc(t("msgStore", { s: s.name }))}</label><textarea id="sm-${sid}" rows="1" placeholder="${esc(t("msgStore", { s: s.name }))}"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form></div>`;
+      <form class="chatbox" data-form="store" data-s="${sid}"><label class="vh" for="sm-${sid}">${esc(t("msgStore", { s: s.name }))}</label><textarea id="sm-${sid}" rows="1" placeholder="${esc(L3("Message", "Nhắn tin", "메시지"))}"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form></div>`;
   }
   return h;
 }
@@ -1452,9 +1538,11 @@ function callYes(y) {
 }
 function endCall() {
   if (!CALL) return; CALL.ended = true; clearTimeout(CALL.timer); clearInterval(CALL.tick); clearInterval(waveT); try { speechSynthesis.cancel(); } catch (e) {}
-  const b = CALL.booking, ho = CALL.handoff; CALL = null; $("#call").hidden = true; $("#call").innerHTML = ""; render();
+  const b = CALL.booking, ho = CALL.handoff ? { store: CALL.pick && CALL.pick.store } : null; CALL = null; $("#call").hidden = true; $("#call").innerHTML = ""; render();
   if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus();
-  if (ho) { INBOX.unshift({ s: "salon", text: L3("Nari passed your call to us. We'll call you back soon. (Demo)", "Nari đã chuyển cuộc gọi của bạn cho chúng tôi. Chúng tôi sẽ gọi lại sớm. (Demo)", "나리가 통화를 전달했어요. 곧 다시 전화드릴게요. (데모)"), when: L3("Now", "Vừa xong", "방금"), unread: true }); }
+  if (ho) { const hs = ho.store || null; /* name the store that was chosen; generic when none was */
+    INBOX.unshift({ s: hs, text: hs ? L3(`Nari passed your call to ${S[hs].name}. They'll call you back soon. (Demo)`, `Nari đã chuyển cuộc gọi của bạn cho ${S[hs].name}. Cửa hàng sẽ sớm gọi lại. (Demo)`, `나리가 통화를 ${S[hs].name}에 전달했어요. 곧 다시 전화드릴게요. (데모)`)
+      : L3("Nari passed your call to a person. Someone will call you back soon to help you choose a place. Nothing is booked. (Demo)", "Nari đã chuyển cuộc gọi của bạn cho nhân viên. Sẽ có người sớm gọi lại để giúp bạn chọn nơi. Chưa đặt gì cả. (Demo)", "나리가 통화를 직원에게 전달했어요. 곧 전화드려서 매장 선택을 도와드릴게요. 예약은 하지 않았어요. (데모)"), when: L3("Now", "Vừa xong", "방금"), unread: true }); }
   toast(b ? L3(`Call ended · Booked: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `Cuộc gọi kết thúc · Đã đặt: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `통화 종료 · 예약됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}`)
     : ho ? L3("Call ended · passed to a person, nothing booked", "Cuộc gọi kết thúc · đã chuyển cho nhân viên, chưa đặt gì", "통화 종료 · 직원에게 연결됨, 예약 없음") : "Call ended · nothing booked", b ? () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); } : null);
 }
@@ -1539,7 +1627,7 @@ document.addEventListener("keydown", e => {
 document.addEventListener("input", e => { if (e.target.id === "dq") { ST.q = e.target.value; const r = $("#dres"); if (r) { const tmp = document.createElement("div"); tmp.innerHTML = vDiscover(); r.innerHTML = tmp.querySelector("#dres").innerHTML; } } });
 
 /* multilingual safety regression suite (EN/VI/KO): run __plat.selfTest() in the console; every example chip is checked too */
-const SAFETY_CASES = [["en", "my knee hurts", "h"], ["en", "I feel dizzy", "h"], ["en", "I am pregnant, can I get a massage?", "h"], ["en", "chest pain", "u"], ["en", "I fainted", "u"], ["en", "my friend collapsed", "u"], ["en", "I can't breathe", "u"], ["en", "call an ambulance", "u"], ["en", "having a seizure", "u"], ["en", "bleeding heavily", "u"], ["en", "emergency", "u"], ["en", "help", "p"], ["en", "I have acne, which facial?", "s"], ["en", "I have eczema", "s"], ["en", "will the facial remove wrinkles?", "c"], ["en", "skin whitening treatment", "c"], ["en", "is the hair dye safe if I have allergies?", "h"], ["en", "can massage cure my back pain?", "h"], ["en", "I have high blood pressure, is massage ok?", "h"], ["en", "my head hurts after pickleball", "h"], ["en", "I twisted my ankle at the court", "h"], ["en", "I feel sick", "h"], ["en", "I had surgery last week", "h"], ["en", "short of breath", "u"], ["en", "haircut with Linh Saturday afternoon", "-"], ["en", "pickleball court for 4 tomorrow 7pm", "-"], ["en", "facial next week", "-"], ["en", "massage tomorrow", "-"], ["en", "the usual", "-"], ["en", "Which facial suits dry skin?", "-"], ["en", "What should I bring to pickleball?", "-"], ["en", "cancel my haircut", "-"], ["en", "move my facial to Sunday", "-"], ["en", "help me book a class", "-"], ["vi", "tôi bị đau đầu", "h"], ["vi", "toi bi dau dau", "h"], ["vi", "tôi có bầu, massage được không?", "h"], ["vi", "toi co bau, massage duoc khong", "h"], ["vi", "tôi mang thai", "h"], ["vi", "bầu bí 5 tháng đi spa được không", "h"], ["vi", "đau ngực", "u"], ["vi", "dau nguc", "u"], ["vi", "khó thở", "u"], ["vi", "kho tho qua", "u"], ["vi", "tôi bị ngất", "u"], ["vi", "toi bi ngat", "u"], ["vi", "bạn tôi bị ngã quỵ", "u"], ["vi", "ban toi bi nga quy", "u"], ["vi", "co giật", "u"], ["vi", "bạn tôi đang co giat", "u"], ["vi", "chảy máu nhiều", "u"], ["vi", "chay mau nhieu", "u"], ["vi", "cấp cứu", "u"], ["vi", "gọi bác sĩ", "u"], ["vi", "goi bac si giup toi", "u"], ["vi", "gọi xe cấp cứu", "u"], ["vi", "đột quỵ", "u"], ["vi", "dot quy", "u"], ["vi", "cứu tôi", "u"], ["vi", "cuu toi voi", "u"], ["vi", "cứu", "u"], ["vi", "bất tỉnh rồi", "u"], ["vi", "hụt hơi quá", "u"], ["vi", "tôi bị mụn, nên làm facial nào?", "s"], ["vi", "da tôi bị dị ứng", "s"], ["vi", "da bi kich ung", "s"], ["vi", "làm trắng da", "c"], ["vi", "lam trang da", "c"], ["vi", "trị nám", "c"], ["vi", "xóa nếp nhăn", "c"], ["vi", "xoá nếp nhăn", "c"], ["vi", "xoa nep nhan", "c"], ["vi", "tôi bị huyết áp cao", "h"], ["vi", "toi bi huyet ap cao", "h"], ["vi", "tôi bị trật mắt cá chân", "h"], ["vi", "bong gan chan", "h"], ["vi", "tôi bị sốt", "h"], ["vi", "tim đập nhanh", "h"], ["vi", "tim dap nhanh", "h"], ["vi", "buồn nôn", "h"], ["vi", "mệt quá", "h"], ["vi", "met qua", "h"], ["vi", "massage dầu 90 phút", "-"], ["vi", "massage dau 90 phut", "-"], ["vi", "chăm sóc da tuần sau", "-"], ["vi", "cham soc da tuan sau", "-"], ["vi", "da tôi khô, nên chăm sóc gì?", "-"], ["vi", "cắt tóc với Linh chiều thứ bảy", "-"], ["vi", "sân pickleball cho 4 người tối mai 7h", "-"], ["vi", "da khô nên chọn liệu trình nào?", "-"], ["vi", "cắt tóc thứ bảy chiều", "-"], ["vi", "dầu gội thảo dược", "-"], ["vi", "hủy lịch cắt tóc", "-"], ["vi", "dời lịch chăm sóc da sang chủ nhật", "-"], ["vi", "nhuộm tóc thuốc nhuộm hữu cơ", "-"], ["vi", "đặt hẹn sốt ruột quá", "-"], ["vi", "dat lich hen toi mai", "-"], ["ko", "무릎이 아파요", "h"], ["ko", "머리가 아파요", "h"], ["ko", "두통이 있어요", "h"], ["ko", "임신 중인데 마사지 받아도 돼요?", "h"], ["ko", "가슴 통증", "u"], ["ko", "숨을 못 쉬겠어요", "u"], ["ko", "숨이 차요", "u"], ["ko", "기절했어요", "u"], ["ko", "친구가 쓰러졌어요", "u"], ["ko", "경련", "u"], ["ko", "경련이 났어요", "u"], ["ko", "피가 많이 나요", "u"], ["ko", "응급", "u"], ["ko", "구급차 불러주세요", "u"], ["ko", "119", "u"], ["ko", "의사를 불러주세요", "u"], ["ko", "살려주세요", "u"], ["ko", "도와주세요", "p"], ["ko", "발작이 왔어요", "u"], ["ko", "뇌졸중 같아요", "u"], ["ko", "여드름이 있어요", "s"], ["ko", "알레르기가 있어요", "s"], ["ko", "미백 관리", "c"], ["ko", "주름 없애주세요", "c"], ["ko", "기미 제거 돼요?", "c"], ["ko", "혈압이 높아요", "h"], ["ko", "발목을 삐었어요", "h"], ["ko", "열이 나요", "h"], ["ko", "토했어요", "h"], ["ko", "어지러워요", "h"], ["ko", "너무 피곤해요", "h"], ["ko", "임산부도 요가 되나요", "h"], ["ko", "피부가 건조한데 어떤 관리가 좋아요?", "-"], ["ko", "토요일 오후 린 커트", "-"], ["ko", "내일 저녁 7시 피클볼 코트 4명", "-"], ["ko", "다음 주 페이셜", "-"], ["ko", "건조한 피부에 맞는 페이셜?", "-"], ["ko", "토요일 오후 커트", "-"], ["ko", "커트 취소해줘", "-"], ["ko", "페이셜 일요일로 옮겨줘", "-"]];
+const SAFETY_CASES = [["en", "my knee hurts", "h"], ["en", "I feel dizzy", "h"], ["en", "I am pregnant, can I get a massage?", "h"], ["en", "chest pain", "u"], ["en", "I fainted", "u"], ["en", "my friend collapsed", "u"], ["en", "I can't breathe", "u"], ["en", "call an ambulance", "u"], ["en", "having a seizure", "u"], ["en", "bleeding heavily", "u"], ["en", "emergency", "u"], ["en", "help", "p"], ["en", "I have acne, which facial?", "s"], ["en", "I have eczema", "s"], ["en", "will the facial remove wrinkles?", "c"], ["en", "skin whitening treatment", "c"], ["en", "is the hair dye safe if I have allergies?", "h"], ["en", "can massage cure my back pain?", "h"], ["en", "I have high blood pressure, is massage ok?", "h"], ["en", "my head hurts after pickleball", "h"], ["en", "I twisted my ankle at the court", "h"], ["en", "I feel sick", "h"], ["en", "I had surgery last week", "h"], ["en", "short of breath", "u"], ["en", "haircut with Linh Saturday afternoon", "-"], ["en", "pickleball court for 4 tomorrow 7pm", "-"], ["en", "facial next week", "-"], ["en", "massage tomorrow", "-"], ["en", "the usual", "-"], ["en", "Which facial suits dry skin?", "-"], ["en", "What should I bring to pickleball?", "-"], ["en", "cancel my haircut", "-"], ["en", "move my facial to Sunday", "-"], ["en", "help me book a class", "-"], ["vi", "tôi bị đau đầu", "h"], ["vi", "toi bi dau dau", "h"], ["vi", "tôi có bầu, massage được không?", "h"], ["vi", "toi co bau, massage duoc khong", "h"], ["vi", "tôi mang thai", "h"], ["vi", "bầu bí 5 tháng đi spa được không", "h"], ["vi", "đau ngực", "u"], ["vi", "dau nguc", "u"], ["vi", "khó thở", "u"], ["vi", "kho tho qua", "u"], ["vi", "tôi bị ngất", "u"], ["vi", "toi bi ngat", "u"], ["vi", "bạn tôi bị ngã quỵ", "u"], ["vi", "ban toi bi nga quy", "u"], ["vi", "co giật", "u"], ["vi", "bạn tôi đang co giat", "u"], ["vi", "chảy máu nhiều", "u"], ["vi", "chay mau nhieu", "u"], ["vi", "cấp cứu", "u"], ["vi", "gọi bác sĩ", "u"], ["vi", "goi bac si giup toi", "u"], ["vi", "gọi xe cấp cứu", "u"], ["vi", "đột quỵ", "u"], ["vi", "dot quy", "u"], ["vi", "cứu tôi", "u"], ["vi", "cuu toi voi", "u"], ["vi", "cứu", "u"], ["vi", "bất tỉnh rồi", "u"], ["vi", "hụt hơi quá", "u"], ["vi", "tôi bị mụn, nên làm facial nào?", "s"], ["vi", "da tôi bị dị ứng", "s"], ["vi", "da bi kich ung", "s"], ["vi", "làm trắng da", "c"], ["vi", "lam trang da", "c"], ["vi", "trị nám", "c"], ["vi", "xóa nếp nhăn", "c"], ["vi", "xoá nếp nhăn", "c"], ["vi", "xoa nep nhan", "c"], ["vi", "tôi bị huyết áp cao", "h"], ["vi", "toi bi huyet ap cao", "h"], ["vi", "tôi bị trật mắt cá chân", "h"], ["vi", "bong gan chan", "h"], ["vi", "tôi bị sốt", "h"], ["vi", "tim đập nhanh", "h"], ["vi", "tim dap nhanh", "h"], ["vi", "buồn nôn", "h"], ["vi", "mệt quá", "h"], ["vi", "met qua", "h"], ["vi", "massage dầu 90 phút", "-"], ["vi", "massage dau 90 phut", "-"], ["vi", "chăm sóc da tuần sau", "-"], ["vi", "cham soc da tuan sau", "-"], ["vi", "da tôi khô, nên chăm sóc gì?", "-"], ["vi", "cắt tóc với Linh chiều thứ bảy", "-"], ["vi", "sân pickleball cho 4 người tối mai 7h", "-"], ["vi", "da khô nên chọn liệu trình nào?", "-"], ["vi", "cắt tóc thứ bảy chiều", "-"], ["vi", "dầu gội thảo dược", "-"], ["vi", "hủy lịch cắt tóc", "-"], ["vi", "dời lịch chăm sóc da sang chủ nhật", "-"], ["vi", "nhuộm tóc thuốc nhuộm hữu cơ", "-"], ["vi", "đặt hẹn sốt ruột quá", "-"], ["vi", "dat lich hen toi mai", "-"], ["ko", "무릎이 아파요", "h"], ["ko", "머리가 아파요", "h"], ["ko", "두통이 있어요", "h"], ["ko", "임신 중인데 마사지 받아도 돼요?", "h"], ["ko", "가슴 통증", "u"], ["ko", "숨을 못 쉬겠어요", "u"], ["ko", "숨이 차요", "u"], ["ko", "기절했어요", "u"], ["ko", "친구가 쓰러졌어요", "u"], ["ko", "경련", "u"], ["ko", "경련이 났어요", "u"], ["ko", "피가 많이 나요", "u"], ["ko", "응급", "u"], ["ko", "구급차 불러주세요", "u"], ["ko", "119", "u"], ["ko", "의사를 불러주세요", "u"], ["ko", "살려주세요", "u"], ["ko", "도와주세요", "p"], ["ko", "발작이 왔어요", "u"], ["ko", "뇌졸중 같아요", "u"], ["ko", "여드름이 있어요", "s"], ["ko", "알레르기가 있어요", "s"], ["ko", "미백 관리", "c"], ["ko", "주름 없애주세요", "c"], ["ko", "기미 제거 돼요?", "c"], ["ko", "혈압이 높아요", "h"], ["ko", "발목을 삐었어요", "h"], ["ko", "열이 나요", "h"], ["ko", "토했어요", "h"], ["ko", "어지러워요", "h"], ["ko", "너무 피곤해요", "h"], ["ko", "임산부도 요가 되나요", "h"], ["ko", "피부가 건조한데 어떤 관리가 좋아요?", "-"], ["ko", "토요일 오후 린 커트", "-"], ["ko", "내일 저녁 7시 피클볼 코트 4명", "-"], ["ko", "다음 주 페이셜", "-"], ["ko", "건조한 피부에 맞는 페이셜?", "-"], ["ko", "토요일 오후 커트", "-"], ["ko", "커트 취소해줘", "-"], ["ko", "페이셜 일요일로 옮겨줘", "-"], ["en", "my chest feels really tight and I can't catch my breath", "u"], ["en", "he is having a fit", "u"], ["en", "I think it's a stroke, her face is drooping", "u"], ["en", "there is blood everywhere, it won't stop", "u"], ["en", "I can barely breathe", "u"], ["en", "my friend is unconscious", "u"], ["en", "please call 911", "u"], ["en", "anaphylaxis, my throat is swelling", "u"], ["vi", "máu chảy không ngừng", "u"], ["vi", "mau chay khong cam duoc", "u"], ["vi", "gọi 115 giúp tôi", "u"], ["en", "I pulled a hamstring", "h"], ["vi", "bị cảm, có nên đi massage", "h"], ["vi", "tôi bị sổ mũi và ho", "h"], ["en", "I have bầu, massage ok?", "h"], ["en", "can you make my skin whiter", "c"], ["en", "I keep breaking out on my chin", "s"], ["ko", "얼굴이 빨갛게 올라왔어요", "s"], ["vi", "nặn mụn và chăm sóc da", "-"], ["en", "pregnancy massage", "-"], ["vi", "massage bầu", "-"], ["ko", "임산부 마사지 예약", "-"], ["ko", "커피 많이 마셔도 돼요?", "-"], ["en", "any spots left for barre tomorrow?", "-"], ["vi", "đặt sân ở Hồ Chí Minh", "-"], ["vi", "nhuộm màu nâu nhiều lớp", "-"], ["en", "breathwork class this weekend", "-"]];
 function selfTest() {
   const M = { u: "urgent", h: "health", s: "skin", c: "claim", p: "help", "-": null }, fail = [], L0 = L; let n = 0;
   for (const [lang, q, e] of SAFETY_CASES) { n++; const got = safety(q); if (got !== M[e]) fail.push([lang, q, M[e], got]); }
