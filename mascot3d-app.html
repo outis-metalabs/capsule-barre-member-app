@@ -742,6 +742,14 @@ function m3Play(h, clip) {
   const pr = v.play(); if (pr && pr.catch) pr.catch(done);
   return true;
 }
+function m3Carry(v) {
+  const h = view.querySelector(".hana-stage .hw, .hero .hw") || view.querySelector(".hw");
+  const sq = h && h.querySelector(".sq"); if (!sq) return;
+  sq.appendChild(v); const pr = v.play(); if (pr && pr.catch) pr.catch(() => {});
+  if (h.dataset.s === "thinking" && !h.dataset.react) { h.dataset.playing = "thinking"; return; }   /* still typing: keep looping */
+  requestAnimationFrame(() => requestAnimationFrame(() => v.classList.remove("on")));
+  setTimeout(() => v.remove(), 200);
+}
 new MutationObserver(() => {
   document.querySelectorAll(".hw[data-react]").forEach(h => { const c = h.dataset.react; h.removeAttribute("data-react"); m3Play(h, c); });
 }).observe(document.getElementById("view") || document.body, { childList:true, subtree:true });
@@ -1832,6 +1840,8 @@ function _render() {
     <strong>You’re at Cheongdam</strong><p>Barre at 7:00 with Yuna Choi. Say you’re here?</p>
     <div class="notice-acts"><button type="button" data-act="nudge-here">I’m here</button><button type="button" class="quiet" data-act="nudge-close">Not yet</button></div>`;
   const view = document.getElementById("view");
+  /* thinking -> answer: carry the playing thinking clip across the re-render and fade it out (.14s) instead of a hard cut */
+  const thV = hanaAnimOn() ? view.querySelector('.hw[data-playing="thinking"] video.m3.react.on') : null;
   if (state.auth === "welcome") view.innerHTML = welcome();
   else if (state.auth === "otp") view.innerHTML = otp();
   else if (state.auth === "newpass") view.innerHTML = newPass();
@@ -1851,6 +1861,7 @@ function _render() {
   else if (state.tab === "book") view.innerHTML = book();
   else if (state.tab === "schedule") view.innerHTML = schedule();
   else view.innerHTML = you();
+  if (thV) m3Carry(thV);
   /* FX-02: remember Ask's opener (the screen shown before Ask); inbox / request form round-trips keep the first opener */
   const AI_SIDE = ["ai", "ask", "inbox", "alerts", "requests", "reqdetail"];
   const snapIsInbox = render.snap && ["inbox", "alerts", "requests", "reqdetail"].includes(render.snap.view);
