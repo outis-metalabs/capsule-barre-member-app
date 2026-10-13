@@ -14,7 +14,7 @@ html,body{margin:0;background:#EDE3D8;color:var(--ink);font:16px/1.45 system-ui,
 header.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px 8px 16px;background:rgba(247,241,234,.97);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:8px;font-weight:700;min-width:0}
 .brand .nm{width:30px;height:30px;border-radius:10px;background:var(--rasp);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
-.brand span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand span.t{white-space:normal;overflow-wrap:anywhere;line-height:1.2}
 .tr{display:flex;gap:4px;flex:none}
 .icb{min-width:44px;min-height:44px;border-radius:999px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:4px;position:relative;color:var(--ink);font-weight:600;font-size:13px}
 .icb:hover{background:#EFE4DA}
@@ -44,7 +44,7 @@ a{color:var(--rasp)}
 .link{background:none;border:0;color:var(--rasp);font-weight:650;min-height:44px;padding:0 4px;text-decoration:underline;text-underline-offset:3px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .scroll{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;margin:0 -16px;padding-left:16px;padding-right:16px}
-.chip{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);display:inline-flex;align-items:center;gap:6px;font-size:14px;text-align:left}
+.chip{min-height:44px;min-width:44px;justify-content:center;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);display:inline-flex;align-items:center;gap:6px;font-size:14px;text-align:left}
 .chip:hover{border-color:var(--rasp)}
 .scroll .chip{flex:none;white-space:nowrap}
 .chip[aria-pressed=true]{border:1.5px solid var(--rasp);background:var(--tint);color:#74283A;font-weight:650}
@@ -59,6 +59,7 @@ a{color:var(--rasp)}
 .ico.s{width:18px;height:18px}
 nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:6}
 nav.tabs button{flex:1;min-width:0;min-height:62px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--sub)}
+nav.tabs button span{white-space:nowrap;max-width:100%}
 nav.tabs button[aria-current=page]{color:var(--rasp);font-weight:750}
 nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 /* hero scene card: posters have backgrounds, so they live inside a rounded frame */
@@ -155,7 +156,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 #call .rb.end{background:#C2364F}
 #call .lbl{font-size:12px;text-align:center;margin-top:4px}
 #call .demo{align-self:center}
-#call .yes{display:flex;gap:10px;justify-content:center}
+#call .yes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 #call .yes .btn{background:#F7F1EA;color:var(--ink);border-color:#F7F1EA}
 #call .yes .btn.sec{background:transparent;color:#F7F1EA}
 .dcard{padding:10px}.dcard.sel{border-color:var(--rasp);box-shadow:0 0 0 2px #F0C9D2}.dhit{display:flex;gap:10px;width:100%;text-align:left;background:none;border:0;padding:0;min-height:44px}.dtx{min-width:0;flex:1;line-height:1.5}
@@ -164,11 +165,11 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .journey{width:100%;height:auto;display:block}
 .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}}
-@media (max-width:350px){main{padding:10px 12px 24px}.scroll{margin:0 -12px;padding-left:12px;padding-right:12px}.scene .pic{width:38%}h1{font-size:20px}nav.tabs button{font-size:11px}}
+@media (max-width:350px){main{padding:10px 12px 24px}.scroll{margin:0 -12px;padding-left:12px;padding-right:12px}.scene .pic{width:38%}h1{font-size:20px}nav.tabs button{font-size:11px;letter-spacing:-.2px;padding:0 1px}.brand span.t{font-size:15px}.tr .icb{min-width:44px;padding:0 4px}h2{flex-wrap:wrap}.chip{padding:8px 11px}}
 </style>
 </head>
 <body>
-<a class="skip" href="#view">Skip to content</a>
+<a class="skip" href="#view" id="skipl">Skip to content</a>
 <div id="app">
   <header class="top" id="top"></header>
   <main id="view" tabindex="-1"></main>
@@ -223,6 +224,42 @@ const vnd = n => VND.format(n);
 const SAFE_LINE = "Please see a doctor or the store's staff before your visit.";
 const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
 const SKIN_RE = /\b(acne|eczema|rash\w*|itch\w*|psoria\w*|rosacea|breakouts?|pimples?|sunburn\w*|hives|peeling|dermatitis|melasma|allergic reaction|reaction to|redness|irritat\w*)\b/;
+/* ===== VI / KO safety (P0). Rule: match diacritic-sensitively first (lowercased NFC text, Unicode word edges);
+   tone-stripped matching is used only for whole phrases that can't collide with an everyday word
+   (so "chăm sóc" never reads as "chàm", and "dầu" never reads as "đau"). Every diacritic-list entry carries a tone mark,
+   so plain no-tone text can only ever hit the phrase lists. Korean has no diacritics; it is matched on stems. ===== */
+const vnL = s => String(s).toLowerCase().normalize("NFC").replace(/\s+/g, " ");
+const wre = list => new RegExp("(?<![\\p{L}\\p{M}\\p{N}])(?:" + list.map(x => x.normalize("NFC")).join("|") + ")(?![\\p{L}\\p{M}\\p{N}])", "u");
+const SV = {
+  urgD: wre(["ngã quỵ", "ngã gục", "gục xuống", "ngất", "ngất xỉu", "xỉu", "bất tỉnh", "mất ý thức", "co giật", "lên cơn co giật", "động kinh", "đột quỵ", "tai biến", "đau ngực", "tức ngực", "đau thắt ngực", "khó thở", "không thở được", "không thở nổi", "thở không nổi", "ngạt thở", "hụt hơi", "chảy máu nhiều", "chảy nhiều máu", "ra máu nhiều", "mất nhiều máu", "máu không cầm được", "gọi bác sĩ", "cần bác sĩ", "gọi giúp bác sĩ", "gọi cấp cứu", "cứu tôi", "cứu với", "cứu em", "cứu mình", "cứu con", "cứu giúp", "cấp cứu", "khẩn cấp", "xe cứu thương", "đau tim", "nhồi máu", "trụy tim", "lên cơn đau tim"]),
+  urgS: wre(["nga quy", "nga guc", "guc xuong", "ngat xiu", "bi ngat(?! (ket|dien|mang|song|cuoc|loi))", "bat tinh", "mat y thuc", "co giat", "dong kinh", "dot quy", "tai bien", "dau nguc", "tuc nguc", "dau that nguc", "kho tho", "khong tho duoc", "khong tho noi", "tho khong noi", "ngat tho", "hut hoi", "chay mau nhieu", "chay nhieu mau", "ra mau nhieu", "mat nhieu mau", "goi bac si", "can bac si", "goi cap cuu", "cuu toi", "cuu voi", "cuu em", "cuu minh", "cuu giup", "cap cuu", "khan cap", "xe cuu thuong", "nhoi mau co tim"]),
+  pregD: wre(["có bầu", "mang thai", "bầu bí", "có thai", "đang bầu", "bà bầu", "mang bầu", "thai kỳ", "thai kì", "sau sinh(?! nhật)", "mới sinh(?! nhật)", "cho con bú", "đang cho bú"]),
+  pregS: wre(["co bau", "mang thai", "bau bi", "co thai", "dang bau", "ba bau", "mang bau", "thai ky", "thai ki", "sau sinh(?! nhat)", "moi sinh(?! nhat)", "cho con bu"]),
+  hlthD: wre(["đau", "nhức", "bị thương", "chấn thương", "ốm", "bệnh", "chóng mặt", "choáng", "buồn nôn", "nôn", "ói", "sốt(?! ruột)", "cảm cúm", "cúm", "cảm lạnh", "huyết áp", "trật(?! tự)", "bong gân", "sái chân", "trẹo", "tim đập nhanh", "đánh trống ngực", "mệt", "kiệt sức", "uể oải", "phẫu thuật", "mổ", "tiểu đường", "hen suyễn", "suyễn", "gãy(?! móng)", "sưng", "tê", "chuột rút", "kinh nguyệt", "uống thuốc", "thuốc(?! nhuộm| uốn| duỗi)", "viêm", "thoát vị", "đĩa đệm", "thiếu máu", "hạ đường huyết", "mất ngủ", "căng cơ", "dây chằng", "ho nhiều", "bị ho"]),
+  hlthS: wre(["bi dau", "dau dau", "dau lung", "dau bung", "dau dau goi", "dau chan", "dau vai", "dau hong", "dau rang", "dau qua", "rat dau", "bi thuong", "chan thuong", "bi om", "om roi", "bi benh", "chong mat", "buon non", "bi non", "bi sot", "sot cao", "cam cum", "bi cum", "cam lanh", "huyet ap", "bong gan", "trat mat ca", "trat khop", "trat chan", "sai chan", "treo chan", "tim dap nhanh", "danh trong nguc", "met qua", "bi met", "met moi", "kiet suc", "phau thuat", "moi mo", "tieu duong", "hen suyen", "bi gay", "bi sung", "sung len", "bi te", "chuot rut", "kinh nguyet", "uong thuoc", "bi viem", "thoat vi", "dia dem", "thieu mau", "mat ngu", "cang co", "day chang", "bi ho"]),
+  skinD: wre(["mụn", "dị ứng", "ngứa", "phát ban", "chàm", "vẩy nến", "vảy nến", "nổi mẩn", "mẩn đỏ", "mẩn ngứa", "kích ứng", "cháy nắng", "viêm da", "nám", "tàn nhang", "rát da", "mề đay", "nổi mề đay"]),
+  skinS: wre(["bi mun", "noi mun", "di ung", "phat ban", "vay nen", "noi man", "man do", "kich ung", "chay nang", "viem da", "bi ngua", "noi me day", "me day", "tan nhang", "bi nam", "da bi nam"]),
+  claimD: wre(["làm trắng da", "làm trắng", "trắng da", "dưỡng trắng", "tắm trắng", "trị nám", "xóa nám", "xoá nám", "hết nám", "dứt điểm", "xóa nếp nhăn", "xoá nếp nhăn", "hết nếp nhăn", "xóa nhăn", "xoá nhăn", "nếp nhăn", "trẻ hóa", "trẻ hoá", "cam kết hiệu quả", "cam kết kết quả", "cam kết hết", "đảm bảo kết quả", "đảm bảo hết", "chữa khỏi", "giảm cân", "hết mụn", "trị thâm", "xóa thâm", "xoá thâm", "hết thâm", "xóa sẹo", "xoá sẹo", "trị sẹo"]),
+  claimS: wre(["lam trang da", "lam trang", "trang da", "duong trang", "tri nam", "xoa nam", "dut diem", "xoa nep nhan", "het nep nhan", "xoa nhan", "nep nhan", "tre hoa", "cam ket hieu qua", "cam ket ket qua", "cam ket het", "dam bao ket qua", "dam bao het", "chua khoi", "giam can", "het mun", "tri tham", "xoa tham", "het tham", "xoa seo", "tri seo"]),
+  urgK: /쓰러[졌져지짐]|기절|실신|의식(이|을)? ?(없|잃)|정신(을)? ?잃|경련|발작|뇌졸중|중풍|마비가? ?(왔|와)|심장 ?마비|심근 ?경색|가슴(이)? ?(통증|아파|아프|답답|조여|조이)|흉통|숨(이|을)? ?(못|안) ?쉬|숨(이)? ?(차|막혀|막힘|가빠)|호흡(이)? ?(곤란|힘들|안 ?돼)|숨 ?쉬기 ?(힘들|어려)|피(가)? ?(많이|철철|안 ?멈|멈추지|계속 ?나)|출혈(이)? ?(심|많)|과다 ?출혈|응급|구급차|119|의사(를|좀)? ?(불러|부르)|살려 ?(주세요|줘)|위급|긴급/,
+  pregK: /임신|임산부|임부|출산|산후|모유 ?수유|태아/,
+  hlthK: /아파|아프|아픈|통증|두통|편두통|다쳤|다친|부상|어지러|어지럼|현기증|열이|열나|고열|병원|약(을|물)? ?(먹|복용)|혈압|당뇨|천식|삐었|삐끗|접질|염좌|토했|토할|구토|메스꺼|울렁|속이 ?안 ?좋|체했|감기|몸살|독감|코로나|피곤|지쳤|기운이 ?없|심장이 ?(빨리|두근|뛰)|두근거|저려|저림|부었|부어|수술|생리통|생리 ?중|골절|부러졌|디스크|근육통|쥐가|빈혈|불면/,
+  skinK: /여드름|알레르기|가려|발진|습진|트러블|두드러기|피부염|건선|아토피|홍조|따가|화끈|뾰루지|기미|뒤집어/,
+  claimK: /미백|화이트닝|하얗게|주름 ?(없|제거|펴|개선|사라|지워)|주름살|기미 ?(제거|없|지워)|잡티 ?(제거|없)|여드름 ?(없|완치|제거)|흉터 ?(제거|없)|효과 ?(보장|확실)|보장|완치|확실히 ?(효과|좋아|없어)|동안 ?(되|만들)|살 ?빼|리프팅 ?효과/
+};
+/* returns the first safety class that applies, or null. Runs before small talk, cancel/move and booking, in every UI language. */
+function safety(text) {
+  const raw = String(text).toLowerCase().trim(), d = vnL(text).trim(), s = norm(text).trim();
+  const hit = (D, Sx, K) => (D && D.test(d)) || (Sx && Sx.test(s)) || (K && K.test(d));
+  if (RED_FLAG_RE.test(raw) || RED_FLAG_RE.test(s) || hit(SV.urgD, SV.urgS, SV.urgK) || /^(cứu|cuu)\W*$/u.test(d)) return "urgent";
+  if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s) || /^(도와주세요|도와줘)\W*$/.test(d)) return "help";
+  if (hit(SV.pregD, SV.pregS, SV.pregK)) return "health";
+  if (hit(SV.claimD, SV.claimS, SV.claimK)) return "claim";
+  if (SKIN_RE.test(s) || hit(SV.skinD, SV.skinS, SV.skinK)) return "skin";
+  if (isHealth(raw) || isHealth(s) || hit(SV.hlthD, SV.hlthS, SV.hlthK)) return "health";
+  if (CLAIM_RE.test(s)) return "claim";
+  return null;
+}
 const CLAIM_RE = /\b(whiten\w*|lighten(ing)? (my )?skin|remove (my )?wrinkles|get rid of (my )?(wrinkles|acne|scars|spots)|anti.?ag(e|ing) results|guarantee\w*|permanent(ly)? results?|cure\w*)\b/;
 
 /* ===== i18n (main UI strings) ===== */
@@ -350,6 +387,7 @@ const fWhen = (d, m) => fDay(d) + " · " + fTime(m);
 const deadline = (sid, d, m) => { const a = d * 1440 + m - S[sid].policy.free * 60; const dd = Math.floor(a / 1440); return { d: dd, m: a - dd * 1440, abs: a }; };
 const freeNow = (sid, d, m) => nowMin() < deadline(sid, d, m).abs;
 const fDeadline = (sid, d, m) => { const x = deadline(sid, d, m); return fWhen(x.d, x.m); };
+const fCancel = (sid, d, m) => freeNow(sid, d, m) ? t("freeCancel") + " " + fDeadline(sid, d, m) : tr("Free cancel ended");
 
 /* ===== member state (one account across stores) ===== */
 const ST = { tab: "home", store: null, xp: 640, coins: 120, steps: 9, weeks: 3, week: [1, 0, 1, 0, 0, 0, 0], miss: { attend: false, newplace: false, stretch: false, rest: false },
@@ -372,6 +410,8 @@ const INBOX = [
   { s: "skin", text: "Your deposit of " + vnd(100000) + " is held for your facial. It comes off the total.", when: "Sat", unread: true },
   { s: "pickle", text: "Courts 1–2 get new nets this weekend. Play continues as normal.", when: "Fri", unread: false }
 ];
+/* a store imported its customer list and matched Mina's phone number: nothing is linked until she accepts */
+const IMPORT = { sid: "barber", visits: 2, state: "pending" };
 const upcoming = () => B.filter(b => b.status === "confirmed").sort((a, b) => (a.d * 1440 + a.m) - (b.d * 1440 + b.m));
 const lastBooking = () => B.slice().reverse().find(b => b.status !== "cancelled");
 
@@ -388,7 +428,7 @@ function slotsFor(sid, vid, d, o = {}) {
   const minM = d === 0 ? nowMin() + 30 : 0;
   if (s.kind === "class") {
     for (const [cid, m, tid, cap] of s.sched) {
-      if (cid !== vid || m < minM) continue;
+      if (cid !== vid || m < minM || (o.staff && o.staff !== "any" && tid !== o.staff)) continue;
       const mine = B.some(b => b.id !== o.ignore && b.status === "confirmed" && b.store === sid && b.d === d && b.m === m);
       const left = Math.max(0, cap - 2 - hsh(sid + cid + d + m) % cap - (mine ? 1 : 0));
       out.push({ d, m, len: svc.len, rids: [tid], price: svc.price, left, mine });
@@ -491,6 +531,14 @@ const TRD = {
   "Sponsored by area (Thảo Điền). Not based on your bookings or health.": ["Tài trợ theo khu vực (Thảo Điền). Không dựa trên lịch đặt hay sức khỏe của bạn.", "지역(타오디엔) 기준 광고예요. 예약이나 건강 정보와 무관해요."],
   "Demo: added to Nari's wardrobe. No real money used.": ["Demo: đã thêm vào tủ đồ Nari. Không dùng tiền thật.", "데모: 나리 옷장에 추가했어요. 실제 돈은 쓰지 않았어요."], "Not enough coins yet. Missions earn coins. (Coin packs are a placeholder, no real purchase.)": ["Chưa đủ xu. Làm nhiệm vụ để nhận xu. (Gói xu chỉ là chỗ giữ, không mua thật.)", "코인이 부족해요. 미션으로 모을 수 있어요. (코인 팩은 자리 표시용, 실제 구매 없음)"],
   "Calls the store's phone (demo).": ["Gọi điện cho cửa hàng (demo).", "매장에 전화 (데모)."], "Opens the store's Zalo chat (demo).": ["Mở chat Zalo của cửa hàng (demo).", "매장 Zalo 채팅 열기 (데모)."], "Opens directions (demo).": ["Mở chỉ đường (demo).", "길찾기 열기 (데모)."],
+  "Teacher": ["Giáo viên", "강사"], "Free cancel ended": ["Hết hạn hủy miễn phí", "무료 취소 기간 종료"], "spots open": ["chỗ trống", "자리 있음"],
+  [vnd(100000) + " added to your next visit"]: [vnd(100000) + " cộng vào lần đến sau", "다음 방문 시 " + vnd(100000) + " 추가"],
+  "Reminder: grip socks are needed on the reformer. The desk has spares.": ["Nhắc nhở: cần vớ chống trượt khi tập reformer. Quầy có sẵn.", "알림: 리포머 수업에는 논슬립 양말이 필요해요. 데스크에 여분이 있어요."],
+  "Linh is back from holiday on Thursday.": ["Linh nghỉ lễ xong, thứ năm đi làm lại.", "린 디자이너가 목요일에 휴가에서 돌아와요."],
+  ["Your deposit of " + vnd(100000) + " is held for your facial. It comes off the total."]: ["Tiền cọc " + vnd(100000) + " đã được giữ cho buổi chăm sóc da. Số này trừ vào tổng.", "페이셜 예약금 " + vnd(100000) + "을 보관 중이에요. 합계에서 차감돼요."],
+  "Courts 1–2 get new nets this weekend. Play continues as normal.": ["Cuối tuần này sân 1–2 thay lưới mới. Vẫn chơi bình thường.", "이번 주말 1–2번 코트 네트를 교체해요. 이용은 평소처럼 가능해요."],
+  "Mon": ["T2", "월"], "Sun": ["CN", "일"], "Sat": ["T7", "토"], "Fri": ["T6", "금"], "Now": ["Vừa xong", "방금"],
+  "Booking restored": ["Đã khôi phục lịch", "예약을 복원했어요"],
   "Thanks, we got your message and will reply soon. (Demo auto-reply)": ["Cảm ơn, chúng tôi đã nhận tin và sẽ trả lời sớm. (Tự động trả lời demo)", "메시지 잘 받았어요. 곧 답장 드릴게요. (데모 자동 답장)"]
 };
 const NAMES = { "Women's cut": ["Cắt tóc nữ", "여성 커트"], "Wash & blow-dry": ["Gội & sấy", "샴푸 & 드라이"], "Colour": ["Nhuộm tóc", "염색"], "Hydrating facial": ["Chăm sóc da cấp ẩm", "수분 페이셜"], "Gentle facial": ["Chăm sóc da dịu nhẹ", "순한 페이셜"], "Skin consultation": ["Tư vấn da", "피부 상담"],
@@ -543,13 +591,15 @@ function setLang(k) { L = k; try { localStorage.setItem("nari.lang", k); } catch
 const NTYPES = [["reminder", ["Booking reminders", "Nhắc lịch hẹn", "예약 알림"], true], ["waitlist", ["Waitlist spots", "Có chỗ trống từ danh sách chờ", "대기 자리"], false], ["pass", ["Pass ending soon", "Gói sắp hết hạn", "이용권 만료 예정"], false],
   ["mission", ["Missions & streaks", "Nhiệm vụ & chuỗi", "미션 & 연속 기록"], false], ["friend", ["Friends", "Bạn bè", "친구"], false], ["nudge", ["Smart suggestions", "Gợi ý thông minh", "스마트 추천"], false], ["winback", ["“It's been a while”", "“Lâu rồi không gặp”", "“오랜만이에요”"], false], ["event", ["Birthdays & Tết", "Sinh nhật & Tết", "생일 & 설"], false]];
 const MARKETING = ["nudge", "winback", "event"];
-const NSET = { types: { reminder: true, waitlist: true, pass: true, mission: true, friend: false, nudge: true, winback: true, event: true }, muted: {}, friendOptIn: false, maiShares: true };
-try { const sv = JSON.parse(localStorage.getItem("nari.notif") || "null"); if (sv) Object.assign(NSET, sv); } catch (e) {}
-const saveN = () => { try { localStorage.setItem("nari.notif", JSON.stringify(NSET)); } catch (e) {} };
+/* marketing (suggestions, win-backs, events) is OFF until the member opts in; store-sent marketing also needs that store's opt-in */
+const NSET = { types: { reminder: true, waitlist: true, pass: true, mission: true, friend: false, nudge: false, winback: false, event: false }, muted: {}, optin: {}, friendOptIn: false, maiShares: true };
+try { const sv = JSON.parse(localStorage.getItem("nari.notif2") || "null"); if (sv) Object.assign(NSET, sv); } catch (e) {}
+const saveN = () => { try { localStorage.setItem("nari.notif2", JSON.stringify(NSET)); } catch (e) {} };
+const TIME_SENSITIVE = ["waitlist"];
 /* demo feed: day 0 = today, at = minutes; texts EN / VI / KO */
 const NFEED = [
   { type: "reminder", s: "capsule", day: 0, at: 1080, tx: ["Barre with Yuna is tomorrow at 07:00. Grip socks, water, and you. See you there!", "Barre với Yuna vào 07:00 ngày mai. Vớ chống trượt, nước, và bạn. Hẹn gặp nhé!", "내일 07:00 유나 바레예요. 논슬립 양말, 물, 그리고 당신. 거기서 만나요!"] },
-  { type: "nudge", s: "capsule", day: 0, at: 660, tx: ["Want to go to barre today? 18:00 has 3 spots left.", "Hôm nay đi barre không? 18:00 còn 3 chỗ.", "오늘 바레 갈래요? 18:00에 3자리 남았어요."] },
+  { type: "nudge", s: "capsule", day: 0, at: 660, tx: ["Fancy barre today? There's room at 18:00 if you feel like it.", "Hôm nay đi barre không? 18:00 vẫn có chỗ nếu bạn muốn.", "오늘 바레 어때요? 마음 내키면 18:00에 자리가 있어요."] },
   { type: "nudge", s: "spa", day: 0, at: 720, weather: true, tx: ["Rainy afternoon in District 1. A warm foot massage at Sen Spa sounds nice. 15:00 is open.", "Chiều Quận 1 mưa rồi. Massage chân ấm áp ở Sen Spa nghe thật dễ chịu. 15:00 còn trống.", "1군에 비 오는 오후예요. Sen Spa 따뜻한 발 마사지 어때요? 15:00 비어 있어요."] },
   { type: "mission", s: null, day: 0, at: 1140, tx: ["Two missions left today. A 2-minute stretch counts, and so does rest.", "Hôm nay còn 2 nhiệm vụ. Giãn cơ 2 phút cũng tính, nghỉ ngơi cũng vậy.", "오늘 미션 2개 남았어요. 2분 스트레칭도, 쉬는 것도 인정돼요."] },
   { type: "friend", s: "capsule", day: 0, at: 1200, friend: true, tx: ["Mai just hit a 7-day streak at Capsule Barre. Send a cheer?", "Mai vừa đạt chuỗi 7 ngày ở Capsule Barre. Gửi lời cổ vũ nhé?", "마이가 Capsule Barre에서 7일 연속을 달성했어요. 응원 보낼까요?"] },
@@ -564,9 +614,10 @@ const NFEED = [
   { type: "mission", s: null, day: 2, at: 2 * 60, tx: ["3-week streak! Rest days count too.", "Chuỗi 3 tuần! Ngày nghỉ cũng được tính.", "3주 연속! 쉬는 날도 인정돼요."] }
 ];
 function deliver() {
-  /* rules: reminders always on; others muted by type and by store; friends need both sides opted in; quiet hours 21:00-08:00 (held to 08:00);
-     marketing (nudge, win-back, event) max 1 a day and 3 a week across stores; win-backs stop after 2 ignored */
-  const out = [], perDay = {}; let week = 0, wins = 0;
+  /* rules: reminders always on; others muted by type and by store; friends need both sides opted in; quiet hours 21:00-08:00 (held to 08:00),
+     except time-sensitive transactional ones (a waitlist offer that expires) which go out right away;
+     marketing (nudge, win-back, event) is opt-in per store, max 2 a week per store, plus a global cap of 1 a day and 3 a week; win-backs stop after 2 ignored */
+  const out = [], perDay = {}, perStore = {}; let week = 0, wins = 0;
   for (const n of NFEED.slice().sort((a, b) => a.day * 1440 + a.at - (b.day * 1440 + b.at))) {
     const r = { n, why: null, at: n.at };
     if (n.type !== "reminder") {
@@ -574,19 +625,21 @@ function deliver() {
       else if (n.s && NSET.muted[n.s]) r.why = "store";
       else if (n.friend && !(NSET.friendOptIn && NSET.maiShares)) r.why = "friend";
       else if (n.type === "winback" && ++wins > 2) r.why = "winback";
-      else if (MARKETING.includes(n.type)) { if ((perDay[n.day] || 0) >= 1) r.why = "day"; else if (week >= 3) r.why = "week"; else { perDay[n.day] = 1; week++; } }
+      else if (MARKETING.includes(n.type) && n.s && !NSET.optin[n.s]) r.why = "optin";
+      else if (MARKETING.includes(n.type)) { if ((perDay[n.day] || 0) >= 1) r.why = "day"; else if (n.s && (perStore[n.s] || 0) >= 2) r.why = "storeweek"; else if (week >= 3) r.why = "week"; else { perDay[n.day] = 1; week++; if (n.s) perStore[n.s] = (perStore[n.s] || 0) + 1; } }
     }
-    if (!r.why && (n.at < 480 || n.at >= 1260)) { r.held = true; r.at = 480; }
+    if (!r.why && (n.at < 480 || n.at >= 1260)) { if (TIME_SENSITIVE.includes(n.type)) r.urgentNow = true; else { r.held = true; r.at = 480; } }
     out.push(r);
   }
   return out;
 }
-const WHY = { type: ["Muted type", "Đã tắt loại này", "꺼 둔 유형"], store: ["Store muted", "Đã tắt cửa hàng", "매장 알림 끔"], friend: ["Friends are opt-in on both sides", "Bạn bè cần cả hai bên đồng ý", "친구 알림은 양쪽 모두 동의해야 해요"], winback: ["Win-backs stop after 2 ignored", "Ngừng sau 2 lần bị bỏ qua", "2번 무시되면 중단"], day: ["Daily cap: 1 suggestion a day", "Giới hạn: 1 gợi ý mỗi ngày", "하루 추천 1개 제한"], week: ["Weekly cap: 3 a week", "Giới hạn: 3 mỗi tuần", "주 3개 제한"] };
+const WHY = { type: ["Muted type", "Đã tắt loại này", "꺼 둔 유형"], store: ["Store muted", "Đã tắt cửa hàng", "매장 알림 끔"], friend: ["Friends are opt-in on both sides", "Bạn bè cần cả hai bên đồng ý", "친구 알림은 양쪽 모두 동의해야 해요"], winback: ["Win-backs stop after 2 ignored", "Ngừng sau 2 lần bị bỏ qua", "2번 무시되면 중단"], day: ["Daily cap: 1 suggestion a day", "Giới hạn: 1 gợi ý mỗi ngày", "하루 추천 1개 제한"], week: ["Weekly cap: 3 a week across places", "Giới hạn chung: 3 mỗi tuần", "전체 주 3개 제한"],
+  storeweek: ["Store cap: 2 a week per place", "Giới hạn: 2 mỗi tuần cho mỗi nơi", "매장당 주 2개 제한"], optin: ["Off until you opt in for this place", "Tắt cho đến khi bạn đồng ý nhận từ nơi này", "이 매장 수신에 동의하기 전까지 꺼짐"] };
 const L3 = (en, vi, ko) => L === "vi" ? vi : L === "ko" ? ko : en;
 function vNotif() {
   const list = deliver(), sent = list.filter(r => !r.why), held = list.filter(r => r.why);
   const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Nari"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>
-    <div class="row wrap" style="gap:6px;margin-top:4px"><span class="tag">${esc(NTYPES.find(x => x[0] === n.type)[1][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span>${r.held ? `<span class="tag warn">${L3("Quiet hours: delivered 08:00", "Giờ yên tĩnh: gửi lúc 08:00", "방해 금지: 08:00에 전달")}</span>` : ""}${n.friend && !r.why ? `<button class="btn ghost" data-act="cheer">${L3("Send a cheer", "Gửi cổ vũ", "응원 보내기")}</button>` : ""}</div></div></div>`; };
+    <div class="row wrap" style="gap:6px;margin-top:4px"><span class="tag">${esc(NTYPES.find(x => x[0] === n.type)[1][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span>${r.held ? `<span class="tag warn">${L3("Quiet hours: delivered 08:00", "Giờ yên tĩnh: gửi lúc 08:00", "방해 금지: 08:00에 전달")}</span>` : ""}${r.urgentNow ? `<span class="tag ok">${L3("Time-sensitive: sent right away", "Cần kịp lúc: gửi ngay", "시간 제한 알림: 바로 전달")}</span>` : ""}${n.friend && !r.why ? `<button class="btn ghost" data-act="cheer">${L3("Send a cheer", "Gửi cổ vũ", "응원 보내기")}</button>` : ""}</div></div></div>`; };
   return `<h1>${L3("Notifications", "Thông báo", "알림")}</h1><div class="row"><p class="sub grow" style="margin:0">${L3("Lock-screen previews, in Nari's voice.", "Xem trước trên màn hình khóa, bằng giọng Nari.", "잠금 화면 미리보기, 나리의 말투로.")}</p><button class="btn sec" data-act="nset">${L3("Settings", "Cài đặt", "설정")}</button></div>
   <h2>${L3("Delivered", "Đã gửi", "전달됨")} <span class="sub sm">${sent.length}</span></h2><div class="stack">${sent.map(card).join("")}</div>
   <h2>${L3("Held back by your rules", "Bị giữ lại theo quy tắc", "규칙에 따라 보류됨")} <span class="sub sm">${held.length}</span></h2><div class="stack">${held.map(r => `<div class="card sm row"><span class="grow">${r.n.s ? esc(S[r.n.s].name) : "Nari"} · ${esc(fDay(r.n.day))}<br><span class="sub">${esc(r.n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></span><span class="tag">${esc(WHY[r.why][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></div>`).join("")}</div>`;
@@ -595,9 +648,10 @@ function vNSet() {
   const li = L === "vi" ? 1 : L === "ko" ? 2 : 0;
   const sw = (act, v, on, label, dis) => `<label class="row" style="min-height:48px;border-top:1px solid var(--line)"><span class="grow sm">${label}</span><input type="checkbox" role="switch" data-act="${act}" data-v="${v}" ${on ? "checked" : ""} ${dis ? "disabled" : ""} style="width:24px;height:24px;accent-color:#B04A5E"></label>`;
   return `<h1>${L3("Notification settings", "Cài đặt thông báo", "알림 설정")}</h1>
-  <div class="card"><dl class="pol"><dt>${L3("Quiet hours", "Giờ yên tĩnh", "방해 금지")}</dt><dd>21:00–08:00</dd><dt>${L3("Suggestions", "Gợi ý", "추천")}</dt><dd>${L3("Max 1 a day and 3 a week, across all places", "Tối đa 1 mỗi ngày và 3 mỗi tuần, cho mọi nơi", "모든 매장 합쳐 하루 1개, 주 3개까지")}</dd><dt>${L3("Win-backs", "Lời mời quay lại", "재방문 알림")}</dt><dd>${L3("Stop after 2 ignored", "Dừng sau 2 lần bị bỏ qua", "2번 무시되면 중단")}</dd><dt>${L3("Tone", "Giọng điệu", "말투")}</dt><dd>${L3("Warm, never guilt", "Ấm áp, không trách móc", "따뜻하게, 죄책감 없이")}</dd></dl></div>
+  <div class="card"><dl class="pol"><dt>${L3("Quiet hours", "Giờ yên tĩnh", "방해 금지")}</dt><dd>21:00–08:00</dd><dt>${L3("Offers & suggestions", "Ưu đãi & gợi ý", "혜택·추천")}</dt><dd>${L3("Off until you opt in, place by place. Then max 2 a week per place, and 1 a day / 3 a week across all places", "Tắt cho đến khi bạn đồng ý, từng nơi một. Sau đó tối đa 2 mỗi tuần mỗi nơi, và 1 mỗi ngày / 3 mỗi tuần cho mọi nơi", "매장별로 동의하기 전까지 꺼짐. 동의 후 매장당 주 2개, 전체 하루 1개·주 3개까지")}</dd><dt>${L3("Time-sensitive", "Cần kịp lúc", "시간 제한")}</dt><dd>${L3("Waitlist offers skip quiet hours, because they expire", "Chỗ trống từ danh sách chờ không chờ giờ yên tĩnh, vì sẽ hết hạn", "대기 자리 알림은 만료되므로 방해 금지 시간에도 보내요")}</dd><dt>${L3("Win-backs", "Lời mời quay lại", "재방문 알림")}</dt><dd>${L3("Stop after 2 ignored", "Dừng sau 2 lần bị bỏ qua", "2번 무시되면 중단")}</dd><dt>${L3("Tone", "Giọng điệu", "말투")}</dt><dd>${L3("Warm, never guilt", "Ấm áp, không trách móc", "따뜻하게, 죄책감 없이")}</dd></dl></div>
   <h2>${L3("By type", "Theo loại", "유형별")}</h2><div class="card">${NTYPES.map(([k, l, lock]) => sw("ntype", k, lock || NSET.types[k], esc(l[li]) + (lock ? ` <span class="sub">(${L3("always on", "luôn bật", "항상 켜짐")})</span>` : ""), lock)).join("")}</div>
   <h2>${L3("Friends", "Bạn bè", "친구")}</h2><div class="card">${sw("nfriend", "me", NSET.friendOptIn, L3("Share my streaks with friends and see theirs", "Chia sẻ chuỗi của tôi và xem chuỗi của bạn bè", "내 연속 기록을 친구와 공유하고 친구 것도 보기"))}<p class="sub sm" style="margin:6px 0 0">${L3("Opt-in on both sides: Mai has opted in too. Nothing is shared until you do.", "Cả hai bên đồng ý: Mai đã đồng ý. Không chia sẻ gì cho đến khi bạn bật.", "양쪽 모두 동의해야 해요: 마이는 동의했어요. 켜기 전엔 아무것도 공유되지 않아요.")}</p></div>
+  <h2>${L3("Offers by place", "Ưu đãi theo nơi", "매장별 혜택")} <span class="sub sm">${L3("opt-in", "tự chọn", "선택")}</span></h2><div class="card">${joinedIds().map(sid => sw("noptin", sid, !!NSET.optin[sid], esc(S[sid].name) + ` <span class="sub">(${L3("offers & suggestions", "ưu đãi & gợi ý", "혜택·추천")})</span>`)).join("")}</div>
   <h2>${L3("By place", "Theo nơi", "매장별")}</h2><div class="card">${joinedIds().map(sid => sw("nstore", sid, !NSET.muted[sid], esc(S[sid].name) + ` <span class="sub">(${L3("reminders still come", "vẫn nhận nhắc lịch", "예약 알림은 계속 와요")})</span>`)).join("")}</div>
   <div style="margin-top:14px"><button class="btn sec full" data-act="nfeed">${L3("See notifications", "Xem thông báo", "알림 보기")}</button></div>`;
 }
@@ -621,14 +675,14 @@ function toast(msg, undo) {
 function draftRows(x) {
   const s = S[x.store], v = svcOf(x.store, x.svc), pass = x.usePass ? (WALLET[x.store] || []).find(p => p.id === x.usePass) : null;
   const who = x.rids.map(r => resName(x.store, r)).join(" + ");
-  let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${x.len} ${L3("min","phút","분")} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${x.paddles} paddles` : "");
-  const priceTxt = pass ? `0 ₫ <span class="sub sm">· 1 from your ${esc(pass.t)} (${pass.left} left), ${esc(t("storeOnly", { s: s.name }))}</span>`
-    : (v.from ? "from " + vnd(x.price) + ` <span class="sub sm">(${esc(v.why)})</span>` : vnd(x.price));
+  let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${x.len} ${L3("min","phút","분")} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
+  const priceTxt = pass ? `0 ₫ <span class="sub sm">· ${esc(L3(`1 from your ${pass.t} (${pass.left} left)`, `1 buổi từ ${tr(pass.t)} (còn ${pass.left})`, `${tr(pass.t)}에서 1회 차감 (${pass.left}회 남음)`))}, ${esc(t("storeOnly", { s: s.name }))}</span>`
+    : (v.from ? L3("from ", "từ ", "") + vnd(x.price) + L3("", "", "부터") + ` <span class="sub sm">(${esc(L3(v.why, "tùy độ dài tóc; thợ sẽ xác nhận", "머리 길이에 따라 달라요. 디자이너가 확인해요"))})</span>` : vnd(x.price));
   const free = freeNow(x.store, x.d, x.m);
   return `<dl class="conf">
     <dt>${tr("Service")}</dt><dd>${what}</dd>
     <dt>${tr("When")}</dt><dd>${fWhen(x.d, x.m)}–${fTime(x.m + x.len)} <span class="sub sm">${tr("(store time)")}</span></dd>
-    <dt>${s.kind === "rental" ? "Court" : "With"}</dt><dd>${esc(who)}</dd>
+    <dt>${s.kind === "rental" ? tr("Court") : tr("With")}</dt><dd>${esc(who)}</dd>
     <dt>${t("total")}</dt><dd class="tot">${priceTxt}</dd>
     <dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + tr(" now, taken off the total") : t("none") + " · " + t("payAt")}</dd>
     <dt>${t("freeCancel")}</dt><dd>${free ? fDeadline(x.store, x.d, x.m) : `<span class='tag warn'>${tr("Past the free window")}</span>`}</dd>
@@ -645,8 +699,8 @@ function openConfirm(x) {
   const lbl = mv ? t("move") : (s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm"));
   const lateMove = mv && !freeNow(mv.store, mv.d, mv.m);
   openSheet(sheetHd(mv ? t("reschedule") : t("confirmTitle")) + storeBar(x.store) +
-    (mv ? `<p class="sub" style="margin-top:10px">From <b>${fWhen(mv.d, mv.m)}</b> to <b>${fWhen(x.d, x.m)}</b>. Same price${mv.dep ? ", deposit carried over" : ""}. One move, never cancel and rebook.</p>` : "") +
-    (x.joinOnBook && !S[x.store].joined ? `<p class="sub sm" style="margin-top:8px">${L3(`Booking also adds ${esc(S[x.store].name)} to My places and shares your name and phone with them.`, `Đặt lịch sẽ thêm ${esc(S[x.store].name)} vào Nơi của tôi và chia sẻ tên, số điện thoại với họ.`, `예약하면 ${esc(S[x.store].name)}이(가) 내 매장에 추가되고 이름과 전화번호가 공유돼요.`)}</p>` : "") + draftRows(x) + (lateMove ? `<p class="tag warn">Moving now costs ${esc(tr(s.policy.late))} under ${esc(s.name)}'s policy.</p>` : "") +
+    (mv ? `<p class="sub" style="margin-top:10px">${L3(`From <b>${fWhen(mv.d, mv.m)}</b> to <b>${fWhen(x.d, x.m)}</b>. Same price${mv.dep ? ", deposit carried over" : ""}. One move, never cancel and rebook.`, `Từ <b>${fWhen(mv.d, mv.m)}</b> sang <b>${fWhen(x.d, x.m)}</b>. Giữ nguyên giá${mv.dep ? ", chuyển tiền cọc theo" : ""}. Chỉ dời lịch, không hủy rồi đặt lại.`, `<b>${fWhen(mv.d, mv.m)}</b> → <b>${fWhen(x.d, x.m)}</b>. 가격은 같아요${mv.dep ? ", 예약금도 그대로 옮겨져요" : ""}. 취소 후 재예약이 아니라 한 번에 변경돼요.`)}</p>` : "") +
+    (x.joinOnBook && !S[x.store].joined ? `<p class="sub sm" style="margin-top:8px">${L3(`Booking also adds ${esc(S[x.store].name)} to My places and shares your name and phone with them.`, `Đặt lịch sẽ thêm ${esc(S[x.store].name)} vào Nơi của tôi và chia sẻ tên, số điện thoại với họ.`, `예약하면 ${esc(S[x.store].name)}이(가) 내 매장에 추가되고 이름과 전화번호가 공유돼요.`)}</p>` : "") + draftRows(x) + (lateMove ? `<p class="tag warn">${esc(L3(`Moving now costs ${tr(s.policy.late)} under ${s.name}'s policy.`, `Dời lịch lúc này mất ${tr(s.policy.late)} theo chính sách của ${s.name}.`, `지금 옮기면 ${s.name} 정책에 따라 ${tr(s.policy.late)}이(가) 적용돼요.`))}</p>` : "") +
     `<p class="sub sm">${t("nothingBooked")}</p><div class="stack"><button class="btn full" data-act="dobook">${esc(lbl)}</button><button class="btn ghost full" data-act="close">${mv ? t("keep") : t("back")}</button></div>`, t("confirmTitle"));
 }
 function doBook(x, quiet) {
@@ -668,8 +722,9 @@ function doBook(x, quiet) {
 function cancelB(b) { if (b.status !== "confirmed") return; b.status = "cancelled"; if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left++; } }
 let succUndo = null;
 function success(b, undo) {
-  const media = RM ? `<img src="${A}cheer.webp" alt="Nari cheering">` : `<video src="${A}cheer.webm" poster="${A}cheer.webp" autoplay muted playsinline aria-label="Nari cheering"></video>`;
-  openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">Nari</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">Deposit ${vnd(b.dep)} held (demo, nothing charged).</p>` : ""}<p class="sub sm">${tr("XP comes when you show up, not for booking.")}</p></div></div>` +
+  const cheerAlt = L3("Nari cheering", "Nari reo mừng", "응원하는 나리");
+  const media = RM ? `<img src="${A}cheer.webp" alt="${cheerAlt}">` : `<video src="${A}cheer.webm" poster="${A}cheer.webp" autoplay muted playsinline aria-label="${cheerAlt}"></video>`;
+  openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">${L3("Nari", "Nari", "나리")}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${tr("XP comes when you show up, not for booking.")}</p></div></div>` +
     `<div class="stack"><button class="btn full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
   succUndo = undo;
 }
@@ -686,15 +741,16 @@ function chipSet(key, label, vals, cur) { return `<div class="chips" role="group
 function renderBook(fresh) {
   const sid = BS.store, s = S[sid], v = svcOf(sid, BS.svc);
   let h = sheetHd(BS.move ? t("reschedule") : N(v.n)) + storeBar(sid);
-  h += `<p class="sub sm" style="margin:8px 0 0">${esc(tr(v.desc || ""))}${s.kind !== "rental" ? " · " + v.len + " min · " + priceLabel(v) : ""}</p>`;
-  h += `<div class="opt">${tr("Day")}</div><div class="scroll" role="group" aria-label="Day">` + [0, 1, 2, 3, 4, 5, 6].map(d => `<button class="chip" aria-pressed="${d === BS.d}" data-act="bs" data-k="d" data-v="${d}">${esc(fDay(d))}</button>`).join("") + `</div>`;
-  if (s.kind === "appt" && s.staff.length) h += `<div class="opt">${sid === "spa" ? "Therapist" : "Staff"}</div>` + chipSet("staff", "Staff", [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, x.n])), BS.staff);
-  if (s.rooms) h += `<div class="opt">${tr("Room")}</div>` + chipSet("room", "Room", [["any", tr("Any room")]].concat(s.rooms.map(x => [x.id, x.n])), BS.room);
+  h += `<p class="sub sm" style="margin:8px 0 0">${esc(tr(v.desc || ""))}${s.kind !== "rental" ? " · " + v.len + " " + L3("min", "phút", "분") + " · " + priceLabel(v) : ""}</p>`;
+  h += `<div class="opt">${tr("Day")}</div><div class="scroll" role="group" aria-label="${tr("Day")}">` + [0, 1, 2, 3, 4, 5, 6].map(d => `<button class="chip" aria-pressed="${d === BS.d}" data-act="bs" data-k="d" data-v="${d}">${esc(fDay(d))}</button>`).join("") + `</div>`;
+  if (s.kind === "appt" && s.staff.length) h += `<div class="opt">${sid === "spa" ? tr("Therapist") : tr("Staff")}</div>` + chipSet("staff", sid === "spa" ? tr("Therapist") : tr("Staff"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, x.n])), BS.staff);
+  if (s.kind === "class" && (s.staff || []).length > 1) h += `<div class="opt">${tr("Teacher")}</div>` + chipSet("staff", tr("Teacher"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, x.n])), BS.staff);
+  if (s.rooms) h += `<div class="opt">${tr("Room")}</div>` + chipSet("room", tr("Room"), [["any", tr("Any room")]].concat(s.rooms.map(x => [x.id, x.n])), BS.room);
   if (s.kind === "rental") {
-    h += `<div class="opt">${tr("Court")}</div>` + chipSet("court", "Court", [["any", tr("Any court")]].concat(s.courts.map(x => [x.id, x.n])), BS.court);
-    h += `<div class="opt">${tr("Time block")}</div>` + chipSet("len", "Time block", [[60, tr("60 min")], [90, tr("90 min")], [120, tr("2 hours")]], BS.len);
-    h += `<div class="opt">${tr("Players")}</div>` + chipSet("party", "Players", [[2, "2"], [3, "3"], [4, "4"]], BS.party);
-    h += `<div class="opt">Paddle rental · ${vnd(30000)} each</div>` + chipSet("paddles", "Paddles", [[0, tr("None")], [2, tr("2 paddles")], [4, tr("4 paddles")]], BS.paddles);
+    h += `<div class="opt">${tr("Court")}</div>` + chipSet("court", tr("Court"), [["any", tr("Any court")]].concat(s.courts.map(x => [x.id, x.n])), BS.court);
+    h += `<div class="opt">${tr("Time block")}</div>` + chipSet("len", tr("Time block"), [[60, tr("60 min")], [90, tr("90 min")], [120, tr("2 hours")]], BS.len);
+    h += `<div class="opt">${tr("Players")}</div>` + chipSet("party", tr("Players"), [[2, "2"], [3, "3"], [4, "4"]], BS.party);
+    h += `<div class="opt">${L3(`Paddle rental · ${vnd(30000)} each`, `Thuê vợt · ${vnd(30000)} mỗi cây`, `패들 대여 · 개당 ${vnd(30000)}`)}</div>` + chipSet("paddles", L3("Paddles", "Vợt", "패들"), [[0, tr("None")], [2, tr("2 paddles")], [4, tr("4 paddles")]], BS.paddles);
   }
   const list = slotsFor(sid, BS.svc, BS.d, bsOpts());
   const pass = s.kind !== "rental" && !BS.move && passFor(sid, BS.svc);
@@ -702,8 +758,8 @@ function renderBook(fresh) {
   if (!list.length) h += `<p class="sub">${tr("Nothing open")} ${esc(fDay(BS.d))}. ${tr("Try another day above.")}</p>`;
   for (const z of list) {
     const full = s.kind === "class" && z.left <= 0; const who = z.rids.map(r => resName(sid, r)).join(" + ");
-    h += `<div role="listitem"><button class="slot" data-act="slot" data-m="${z.m}" ${full ? "disabled" : ""} aria-label="${fTime(z.m)}, ${esc(who)}, ${full ? "full" : (pass ? "uses 1 from your pass" : vnd(z.price))}">
-      <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span>${s.kind === "class" ? ` · <span class="sub sm">${full ? tr("Full") : z.left + " " + tr("spots left")}</span>` : ""}<br><span class="sub sm">${t("freeCancel")} ${fDeadline(sid, BS.d, z.m)}</span></span>
+    h += `<div role="listitem"><button class="slot" data-act="slot" data-m="${z.m}" ${full ? "disabled" : ""} aria-label="${fTime(z.m)}, ${esc(who)}, ${full ? tr("Full") : (pass ? L3("uses 1 from your pass", "dùng 1 buổi từ gói", "이용권 1회 사용") : vnd(z.price))}">
+      <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span>${s.kind === "class" ? ` · <span class="sub sm">${full ? tr("Full") : z.left + " " + tr("spots open")}</span>` : ""}<br><span class="sub sm">${fCancel(sid, BS.d, z.m)}</span></span>
       <span style="font-weight:750">${full ? "" : (pass ? tr("Pass") : vnd(z.price))}</span></button></div>`;
   }
   h += `</div>`;
@@ -716,11 +772,13 @@ const NUM = { one: 1, a: 1, an: 1, mot: 1, two: 2, hai: 2, three: 3, ba: 3, four
 const WDN = { sun: 0, sunday: 0, mon: 1, monday: 1, tue: 2, tues: 2, tuesday: 2, wed: 3, weds: 3, wednesday: 3, thu: 4, thur: 4, thurs: 4, thursday: 4, fri: 5, friday: 5, sat: 6, saturday: 6 };
 const VIW = { "chu nhat": 0, "thu hai": 1, "thu 2": 1, "thu ba": 2, "thu 3": 2, "thu tu": 3, "thu 4": 3, "thu nam": 4, "thu 5": 4, "thu sau": 5, "thu 6": 5, "thu bay": 6, "thu 7": 6 };
 const nextOrToday = w => (w - wd(0) + 7) % 7;
+/* Korean spellings of staff names (Hangul has no word boundaries, so only distinctive spellings) */
+const KOAL = { linh: ["린 ", "린님", "린 님", "린 선생님", "린한테", "린이랑", "린에게", "린으로", "린 디자이너"], khoi: ["코이"], ngan: ["응안", "응언"], vy: ["비 선생님", "비쌤", "비 님"], hoa: ["호아"], phuong: ["프엉", "푸엉"], yuna: ["유나"], jiwoo: ["지우 ", "지우님", "지우 선생님", "지우 쌤"], kim: ["킴"], ngoc: ["응옥"], tram: ["짬 ", "쩜"], tuan: ["뚜안", "투안"], lanh: ["란 님", "란님", "란 선생님"] };
 function parse(raw) {
   let s = " " + norm(raw).replace(/[,!?]/g, " ").replace(/\s+/g, " ") + " "; const p = {}; let m;
   const cut = re => { s = s.replace(re, " "); };
   if (/\b(usual|same as last time|nhu moi lan|nhu cu)\b/.test(s)) { const l = lastBooking(); if (l) { p.store = l.store; p.svc = l.svc; if (S[l.store].kind === "appt") p.staff = l.rids[0]; p.usual = true; } }
-  for (const sid of joinedIds()) for (const st of S[sid].staff || []) if (new RegExp("\\b" + norm(st.n) + "\\b").test(s)) { p.staff = st.id; p.store = sid; }
+  for (const sid of joinedIds()) for (const st of S[sid].staff || []) if (new RegExp("\\b" + norm(st.n) + "\\b").test(s) || (KOAL[st.id] || []).some(a => s.includes(a))) { p.staff = st.id; p.store = sid; }
   /* services and stores */
   const hits = [], gen = [];
   for (const sid of joinedIds()) { for (const v of S[sid].svcs) if (v.kw && v.kw.test(s)) hits.push([sid, v.id]); if (S[sid].kw && S[sid].kw.test(s)) gen.push(sid); }
@@ -735,7 +793,7 @@ function parse(raw) {
   if (/\baroma\b/.test(s) && !p.store && S.spa.joined) { p.store = "spa"; delete p.cands; }
   /* Korean phrasing (no word boundaries in Hangul) */
   const KO = [["salon", "cut", /커트|컷|머리 ?자르|헤어컷/], ["salon", "colour", /염색/], ["skin", null, /페이셜|피부 ?관리/], ["skin", "consult", /피부 ?상담|상담/], ["pickle", "court", /피클볼|코트/], ["capsule", "barre", /바레/], ["capsule", "reformer", /리포머/], ["spa", "foot", /발 ?마사지/]];
-  if (!p.store && !p.cands) { const k = KO.find(x => x[2].test(s) && S[x[0]].joined); if (k) { p.store = k[0]; if (k[1]) p.svc = k[1]; } else if (/마사지/.test(s)) p.cands = ["skin", "spa"].filter(x => S[x].joined); }
+  if (!p.svc && !p.cands) { const k = KO.find(x => x[2].test(s) && S[x[0]].joined && (!p.store || p.store === x[0])); if (k) { p.store = k[0]; if (k[1]) p.svc = k[1]; } else if (!p.store && /마사지/.test(s)) p.cands = ["skin", "spa"].filter(x => S[x].joined); }
   if ((m = s.match(/(\d{1,2}) ?명/))) { p.party = +m[1]; s = s.replace(m[0], " "); }
   if ((m = s.match(/(\d(?:\.5)?) ?시간/))) { p.len = Math.round(+m[1] * 60); s = s.replace(m[0], " "); } else if ((m = s.match(/(\d{2,3}) ?분/))) { p.len = +m[1]; s = s.replace(m[0], " "); }
   if (/모레/.test(s)) p.d = 2; else if (/내일/.test(s)) p.d = 1; else if (/오늘/.test(s)) p.d = 0;
@@ -768,7 +826,9 @@ function parse(raw) {
   } else if (nw && p.d == null) p.nextWeek = true;
   if (p.d == null && /\b(weekend|cuoi tuan)\b/.test(s)) p.weekend = true;
   /* periods */
-  if (/\b(morning|sang)\b/.test(s)) p.period = "morning";
+  /* "sáng" = morning, but "sang" = "to" ("dời sang chủ nhật"): toned text decides; no-tone "sang" is morning unless a day follows */
+  const d0 = vnL(raw), toned = /[à-ỹđ]/.test(d0);
+  if (/\bmorning\b/.test(s) || /sáng/.test(d0) || (!toned && /\bsang\b/.test(s) && !/\bsang (thu|chu nhat|ngay|tuan|hom|mai|cn|t[2-7])\b/.test(s))) p.period = "morning";
   else if (/\b(afternoon|chieu)\b/.test(s)) p.period = "afternoon";
   else if (/\b(evening|buoi toi|after work|toi mai|mai toi|chieu toi)\b|\d\s*(h|gio)?\s*toi\b/.test(s)) p.period = "evening";
   else if (/\b(noon|lunch|trua)\b/.test(s)) p.period = "noon";
@@ -790,7 +850,7 @@ const say = (c, text, ex) => { c.msgs.push(Object.assign({ who: "n", text }, ex 
 const chip = (label, val) => ({ label, val });
 function chatSend(cid, text) {
   const c = CH[cid]; text = (text || "").trim(); if (!text) return;
-  c.msgs.push({ who: "me", text });
+  c.msgs.push({ who: "me", text }); CHX.draftOpen = !!(c.draft && c.ask && c.ask !== "confirm");
   try { reply(c, text); } catch (e) { console.warn(e); say(c, "Sorry, I got mixed up. Try again?"); }
   renderView(); const inp = $("#in-" + cid); if (inp) inp.focus(); scrollThread(cid);
 }
@@ -801,30 +861,44 @@ function skinCard() { return { kicker: "Glow Lab's descriptions", title: "Facial
 function reply(c, text) {
   const raw = text.toLowerCase().trim(), s = norm(text).trim();
   if (s.length > 200) return say(c, "Say it in one line for me?");
-  /* 1. safety first: urgent, skin, health (rules carried over from Ask Hana §3) */
-  if ((/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help|cuu|cuu voi)\W*$/.test(s) || /^(도와주세요|살려주세요)\W*$/.test(s))) { c.draft = null; c.ask = null; return say(c, "If you're hurt or unwell, please see a doctor or the store's staff. I can help with bookings too.", { care: 1 }); }
-  if (RED_FLAG_RE.test(raw) || RED_FLAG_RE.test(s) || /\b(ngat|bat tinh|dau nguc|kho tho|cap cuu|chay mau nhieu)\b/.test(s) || /기절|가슴 ?통증|숨(이|을)? ?(못|안) ?쉬|응급|구급차|피가 ?많이/.test(s)) { c.draft = null; c.ask = null; return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } }); }
-  if (SKIN_RE.test(s) || /\b(mun|di ung|ngua|phat ban|cham)\b/.test(s) || /여드름|알레르기|가려|발진|습진|트러블/.test(s)) { c.draft = null; c.ask = null; return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })] }); }
-  if (isHealth(raw) || isHealth(s) || /\b(dau|bi thuong|mang thai|co thai|om|benh|chong mat|buon non|sot)\b/.test(s) || /아파|아프|통증|다쳤|부상|임신|어지러|열이|병원|약을/.test(s)) { c.draft = null; c.ask = null; return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text) }); }
-  if (CLAIM_RE.test(s)) return say(c, "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you.", { card: skinCard(), chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
+  /* 1. safety first, every language: urgent > help > pregnancy/health > claims > skin > health (see safety()) */
+  const sf = safety(text);
+  if (sf) { c.draft = null; c.ask = null; c.queue = null; c.pend = null; }
+  if (sf === "urgent") return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } });
+  if (sf === "help") return say(c, "If you're hurt or unwell, please see a doctor or the store's staff. I can help with bookings too.", { care: 1 });
+  if (sf === "claim") return say(c, "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you.", { card: skinCard(), chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
+  if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })] });
+  if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text) });
   /* 2. small talk and simple consultations (store info only, always with a source) */
   if ((/^(hi|hello|hey|xin chao|chao)\b/.test(s) || /^안녕/.test(s)) && s.length < 16) return say(c, "Hi Mina! What would you like to book?", { chips: exampleChips() });
   if (/^(thanks|thank you|cam on)\b/.test(s) || /^(감사|고마워)/.test(s)) return say(c, "Anytime!");
   if (/\b(cancel that|never mind|nevermind|forget it)\b/.test(s)) { c.draft = null; c.ask = null; return say(c, "Okay, nothing booked."); }
-  if (/\bdry\b.*\bskin\b|\bskin\b.*\bdry\b|\bda kho\b|건조|\b(which|what) facial\b|\bfacial\b.*\b(best|suits?|good for|for me)\b/.test(s)) return say(c, "Here's how Glow Lab describes its facials. For skin concerns, please check with a dermatologist or our therapist.", { card: skinCard(), chips: [chip("Book Hydrating facial", { set: { store: "skin", svc: "hydra" }, fresh: true }), chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
+  if (/\bdry\b.*\bskin\b|\bskin\b.*\bdry\b|\bda (toi )?(bi |hoi |rat )?kho\b|건조|\b(which|what) facial\b|\bfacial\b.*\b(best|suits?|good for|for me)\b/.test(s)) return say(c, "Here's how Glow Lab describes its facials. For skin concerns, please check with a dermatologist or our therapist.", { card: skinCard(), chips: [chip("Book Hydrating facial", { set: { store: "skin", svc: "hydra" }, fresh: true }), chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (/\b(bring|wear|mang)\b.*\b(pickle\w*|court|san)\b|\b(pickle\w*|court)\b.*\b(bring|wear)\b/.test(s) || /피클볼.*(준비물|챙길|가져)/.test(s)) return say(c, S.pickle.kb.bring, { src: "From Sunrise Pickleball Club's info", chips: [chip("Book a court", { set: { store: "pickle", svc: "court" }, fresh: true })] });
   if (/\b(bring|wear)\b.*\b(barre|class|reformer)\b|\b(barre|reformer)\b.*\b(bring|wear)\b|\bgrip socks\b/.test(s) || /바레.*(준비물|챙길|입)/.test(s)) return say(c, S.capsule.kb.bring, { src: "From Capsule Barre's info" });
   if (/\b(which|what) massage\b|\b60 or 90\b|\b90 or 60\b|\bdifference\b.*\bmassage\b/.test(s)) return say(c, S.spa.kb.m, { src: "From Sen Spa's price list", chips: [chip("Book Aroma 60", { set: { store: "spa", svc: "aroma60" }, fresh: true }), chip("Book Aroma 90", { set: { store: "spa", svc: "aroma90" }, fresh: true })] });
   if (/\b(how much|price|prices|cost|bao nhieu|gia)\b/.test(s) || /얼마|가격/.test(s)) {
     const p0 = parse(text), sid = p0.store || (p0.cands && p0.cands[0]);
-    if (!sid) return say(c, "Which place's prices?", { chips: joinedIds().map(id => chip(S[id].name, { say: "prices at " + S[id].name })) });
+    if (!sid) return say(c, "Which place's prices?", { chips: joinedIds().map(id => chip(S[id].name, { say: L3("prices at ", "giá ở ", "가격 ") + S[id].name })) });
     return say(c, S[sid].svcs.map(v => v.n + ": " + priceLabel(v)).join("\n"), { src: "From " + S[sid].name + "'s price list" });
   }
-  if (/\b(parking|park|gui xe)\b/.test(s)) { const sid = parse(text).store;
+  if (/\b(parking|park|gui xe)\b/.test(s) || /주차/.test(s)) { const sid = parse(text).store;
     if (sid && S[sid].kb.parking) return say(c, S[sid].kb.parking, { src: "From " + S[sid].name + "'s info" });
-    return say(c, sid ? `${S[sid].name}'s info doesn't say. Want me to ask them?` : "Which place? I'll check their info.", { chips: sid ? [chip(t("msgStore", { s: S[sid].name }), { act: "askstore", store: sid, q: text })] : joinedIds().map(id => chip(S[id].name, { say: "parking at " + S[id].name })) }); }
-  /* 3. booking dialogue: one clarifying question at a time */
-  const p = parse(text);
+    return say(c, sid ? `${S[sid].name}'s info doesn't say. Want me to ask them?` : "Which place? I'll check their info.", { chips: sid ? [chip(t("msgStore", { s: S[sid].name }), { act: "askstore", store: sid, q: text })] : joinedIds().map(id => chip(S[id].name, { say: L3("parking at ", "gửi xe ở ", "주차 ") + S[id].name })) }); }
+  /* 3. cancel and move, in all 3 languages, always with a confirmation step */
+  const it = intentOf(text);
+  if (it === "dropdraft") { c.draft = null; c.ask = null; return say(c, "Okay, nothing booked."); }
+  if (it) return manageIntent(c, it, text);
+  /* 4. booking dialogue: one clarifying question at a time; two requests in one line → book the first, offer the next */
+  let p = parse(text), multiNote = "";
+  const mp = multiSplit(text);
+  if (mp) {
+    const p1 = parse(mp[0]);
+    for (const k of DATEK) if (p1[k] == null && p[k] != null) p1[k] = p[k];
+    c.carry = {}; for (const k of DATEK) if (p[k] != null) c.carry[k] = p[k];
+    c.queue = mp.slice(1); p = p1; c.draft = null; c.ask = null;
+    multiNote = L3(`One at a time: “${mp[0]}” first, then I'll offer “${mp[1]}”.`, `Từng việc một: “${mp[0]}” trước, sau đó mình gợi ý “${mp[1]}”.`, `하나씩 할게요: 먼저 “${mp[0]}”, 그다음 “${mp[1]}”을(를) 도와드릴게요.`);
+  } else if (c.useCarry && c.carry) { for (const k of DATEK) if (p[k] == null && c.carry[k] != null) p[k] = c.carry[k]; c.useCarry = false; c.carry = null; }
   if (c.ask === "confirm" && /^(yes|yep|ok|okay|sure|book it|dung roi|vang|duoc)\b|^(네|예|좋아요)/.test(raw)) return say(c, "Tap “Book” on the card when you're ready. I never book without your tap.");
   const signal = !!(p.store || p.cands || p.svc || p.staff || p.usual || p.bookWord);
   const answering = c.draft && c.ask && c.ask !== "confirm" && (p.d != null || p.m != null || p.party || p.len || p.period || p.paddles != null || p.nextWeek || p.weekend);
@@ -836,6 +910,79 @@ function reply(c, text) {
     return say(c, "I can book at any of your places, or answer simple questions. Try one of these:", { chips: exampleChips() });
   }
   c.fails = 0; merge(c.draft, p); advance(c);
+  if (multiNote) { const last = c.msgs[c.msgs.length - 1]; last.note = multiNote + (last.note ? " " + last.note : ""); }
+}
+const DATEK = ["d", "period", "m", "nextWeek", "weekend"];
+/* "haircut and a massage", "cắt tóc và massage", "커트하고 마사지": only when both halves name different things */
+function multiSplit(text) {
+  const parts = String(text).split(/\s+(?:and then|and also|and|then|plus|also|và|rồi|va|roi|với cả|cùng với)\s+|\s*(?:그리고|하고|이랑|랑)\s+|(?<=[가-힣])(?:하고|이랑)\s+/i).map(x => x.trim()).filter(Boolean);
+  if (parts.length < 2) return null;
+  const sig = q => { const p = parse(q); return p.store || (p.cands && p.cands.join("|")) || null; };
+  const a = sig(parts[0]), b = sig(parts[1]);
+  if (!a || !b) return null;
+  const pa = parse(parts[0]), pb = parse(parts[1]);
+  if (a === b && !(pa.svc && pb.svc && pa.svc !== pb.svc)) return null;
+  return parts.slice(0, 2);
+}
+/* ----- cancel / move from chat ----- */
+function intentOf(text) {
+  const d = vnL(text), s = norm(text);
+  const bare = /^(cancel|cancel it|huy|hủy|huỷ|취소|취소해|취소해줘|취소해 주세요)\W*$/u.test(d) || /^(cancel|huy)\W*$/.test(s);
+  const pol = /\b(polic\w*|rules?|fee|fees|window|chinh sach|phi huy|quy dinh)\b/.test(s) || /정책|수수료|규정/.test(d);
+  if (bare && CHX.draftOpen) return "dropdraft";
+  if (!pol && (/\b(cancel|call off)\b/.test(s) || /(?<![\p{L}])(hủy|huỷ)(?![\p{L}])/u.test(d) || /\bhuy (lich|hen|dat|buoi|dich vu|cai|giup|booking|giờ|gio)\b/.test(s) || /취소/.test(d))) return "cancel";
+  if (/\b(move|reschedule|resched\w*|postpone|push back|shift)\b/.test(s) || /\bchange\b.*\b(time|day|date|booking|appointment|class|facial|haircut|cut|massage|court)\b/.test(s)
+    || /(?<![\p{L}])(dời|đổi lịch|đổi giờ|đổi ngày|đổi sang|chuyển lịch|chuyển sang|lùi lịch|hoãn)(?![\p{L}])/u.test(d) || /\b(doi lich|doi gio|doi ngay|doi sang|chuyen lich|chuyen sang|lui lich|hoan lich|doi hen)\b/.test(s)
+    || /옮겨|옮기|변경|바꿔|바꾸|미뤄|미루|연기해|당겨/.test(d)) return "move";
+  return null;
+}
+const CHX = { draftOpen: false };
+const bkLabel = b => `${N(svcOf(b.store, b.svc).n)} · ${S[b.store].name}, ${fWhen(b.d, b.m)}`;
+function findBk(text, mode) {
+  const p = parse(text); let list = upcoming();
+  if (p.store) list = list.filter(b => b.store === p.store); else if (p.cands) list = list.filter(b => p.cands.includes(b.store));
+  if (p.svc) { const l2 = list.filter(b => b.svc === p.svc); if (l2.length) list = l2; }
+  if (p.staff) { const l2 = list.filter(b => b.rids.includes(p.staff)); if (l2.length) list = l2; }
+  if (mode === "cancel" && p.d != null) { const l2 = list.filter(b => b.d === p.d); if (l2.length) list = l2; }
+  return { list, p };
+}
+function manageIntent(c, mode, text) {
+  c.draft = null; c.ask = null;
+  const { list, p } = findBk(text, mode);
+  if (!upcoming().length) return say(c, L3("You have no upcoming bookings to change.", "Bạn chưa có lịch nào sắp tới để thay đổi.", "변경할 다가오는 예약이 없어요."));
+  if (!list.length) return say(c, L3("I couldn't find an upcoming booking like that. Which one did you mean?", "Mình không thấy lịch nào như vậy. Bạn muốn chọn lịch nào?", "그런 예약을 찾지 못했어요. 어떤 예약인가요?"), { chips: upcoming().slice(0, 5).map(b => chip(bkLabel(b), { act: "pickbk", mode, id: b.id })) });
+  if (mode === "move" && p.period === "morning" && /\b(doi|chuyen|lui)\b.*\bsang\b/.test(norm(text)) && !/\bbuoi sang\b|sáng/.test(vnL(text))) delete p.period; /* "dời sang" = move to */
+  c.pend = { mode, d: p.d, m: p.m, period: p.period };
+  if (list.length > 1) return say(c, mode === "cancel" ? L3("Which booking should I cancel?", "Bạn muốn hủy lịch nào?", "어떤 예약을 취소할까요?") : L3("Which booking should I move?", "Bạn muốn dời lịch nào?", "어떤 예약을 옮길까요?"), { chips: list.slice(0, 5).map(b => chip(bkLabel(b), { act: "pickbk", mode, id: b.id })) });
+  return mode === "cancel" ? askCancel(c, list[0]) : askMove(c, list[0]);
+}
+function askCancel(c, b) {
+  const s = S[b.store], free = freeNow(b.store, b.d, b.m), v = N(svcOf(b.store, b.svc).n);
+  const pol = free ? L3("It's free to cancel now.", "Hủy bây giờ được miễn phí.", "지금은 무료로 취소돼요.") : L3(`The free window has passed, so the late-cancel rule applies: ${tr(s.policy.late)}.`, `Đã qua hạn hủy miễn phí, nên áp dụng phí hủy muộn: ${tr(s.policy.late)}.`, `무료 취소 기간이 지나서 늦은 취소 규정이 적용돼요: ${tr(s.policy.late)}.`);
+  c.ask = "cancelbk";
+  return say(c, L3(`Cancel ${v} at ${s.name}, ${fWhen(b.d, b.m)}? ${pol} Nothing changes until you tap.`, `Hủy ${v} ở ${s.name}, ${fWhen(b.d, b.m)}? ${pol} Chưa có gì thay đổi cho đến khi bạn chạm.`, `${s.name} ${v}, ${fWhen(b.d, b.m)} 예약을 취소할까요? ${pol} 누르기 전에는 바뀌지 않아요.`),
+    { bk: b.id, chips: [chip(L3("Yes, cancel it", "Có, hủy lịch", "네, 취소할게요"), { act: "cancelbk", id: b.id }), chip(L3("Keep it", "Giữ lịch", "유지할게요"), { act: "keepbk" })] });
+}
+function moveOpts(b) { const s = S[b.store]; return { staff: s.kind === "appt" ? b.rids[0] : "any", room: s.rooms ? b.rids[1] : "any", court: "any", len: b.len, paddles: b.paddles || 0, ignore: b.id }; }
+function moveDays(b) { const out = []; for (let d = 0; d < 10 && out.length < 4; d++) if (d !== b.d && slotsFor(b.store, b.svc, d, moveOpts(b)).some(z => z.left !== 0)) out.push(d); return out; }
+function askMove(c, b, d0, m0, per) {
+  const pend = c.pend || {}; const d = d0 != null ? d0 : pend.d, m = m0 != null ? m0 : pend.m, period = per || pend.period; c.pend = null;
+  const s = S[b.store], v = N(svcOf(b.store, b.svc).n), who = s.kind === "appt" ? " · " + resName(b.store, b.rids[0]) : "";
+  if (d == null) return say(c, L3(`Move ${v} at ${s.name} (now ${fWhen(b.d, b.m)}) to which day?`, `Dời ${v} ở ${s.name} (đang là ${fWhen(b.d, b.m)}) sang ngày nào?`, `${s.name} ${v}(현재 ${fWhen(b.d, b.m)})을(를) 어느 날로 옮길까요?`), { bk: b.id, chips: moveDays(b).map(x => chip(fDay(x), { act: "moveday", id: b.id, d: x })) });
+  const list = slotsFor(b.store, b.svc, d, moveOpts(b)).filter(z => z.left !== 0 && !(z.d === b.d && z.m === b.m));
+  if (!list.length) return say(c, L3(`Nothing open ${fDay(d)}${who} at ${s.name}. Another day?`, `${s.name} không còn chỗ ${fDay(d)}${who}. Ngày khác nhé?`, `${s.name} ${fDay(d)}${who}에는 빈 시간이 없어요. 다른 날은요?`), { chips: moveDays(b).map(x => chip(fDay(x), { act: "moveday", id: b.id, d: x })) });
+  const hit = m != null && list.find(z => z.m === m);
+  if (hit) return moveConfirm(c, b, hit);
+  let pick = period ? list.filter(z => z.m >= PER[period][0] && z.m < PER[period][1]) : list; if (!pick.length) pick = list;
+  if (m != null) pick = pick.slice().sort((a, q) => Math.abs(a.m - m) - Math.abs(q.m - m)).slice(0, 4).sort((a, q) => a.m - q.m);
+  else if (pick.length > 4) pick = [...new Set([0, 1, 2, 3].map(i => pick[Math.floor(i * (pick.length - 1) / 3)]))];
+  return say(c, L3(`Open times ${fDay(d)}${who} at ${s.name}:`, `Giờ trống ${fDay(d)}${who} ở ${s.name}:`, `${s.name} ${fDay(d)}${who} 가능한 시간:`), { chips: pick.map(z => chip(fTime(z.m), { act: "movepick", id: b.id, d, m: z.m })).concat([chip(L3("Another day", "Ngày khác", "다른 날"), { act: "moveday", id: b.id, d: null })]) });
+}
+function moveConfirm(c, b, z) {
+  c.ask = "confirm";
+  const dr = Object.assign({}, z, { store: b.store, svc: b.svc, party: b.party || 0, paddles: b.paddles || 0, move: b.id, source: b.source });
+  const late = !freeNow(b.store, b.d, b.m) ? " " + L3(`Moving now costs ${tr(S[b.store].policy.late)} under the store's policy.`, `Dời lịch lúc này mất ${tr(S[b.store].policy.late)} theo chính sách cửa hàng.`, `지금 옮기면 매장 정책에 따라 ${tr(S[b.store].policy.late)}이(가) 적용돼요.`) : "";
+  return say(c, L3(`From ${fWhen(b.d, b.m)} to ${fWhen(z.d, z.m)}. Same booking, nothing changes until you tap Move booking.`, `Từ ${fWhen(b.d, b.m)} sang ${fWhen(z.d, z.m)}. Vẫn là lịch cũ, chưa có gì thay đổi cho đến khi bạn chạm Đổi lịch.`, `${fWhen(b.d, b.m)} → ${fWhen(z.d, z.m)}. 같은 예약이에요. 예약 변경을 누르기 전에는 바뀌지 않아요.`) + late, { confirm: dr });
 }
 function merge(x, p) {
   for (const k of ["store", "cands", "svc", "staff", "d", "period", "m", "party", "len", "paddles", "nextWeek", "weekend", "assumed", "usual"]) if (p[k] !== undefined) x[k] = p[k];
@@ -892,9 +1039,14 @@ function advance(c) {
 }
 function chatChip(cid, mi, ci) {
   const c = CH[cid], ch = c.msgs[mi] && c.msgs[mi].chips && c.msgs[mi].chips[ci]; if (!ch) return; const v = ch.val;
-  if (v.say) return chatSend(cid, v.say);
+  if (v.say) { if (v.next) c.useCarry = true; return chatSend(cid, v.say); }
   c.msgs.push({ who: "me", text: ch.label });
   if (v.act === "askstore") { sendToStore(v.store, v.q || "Question from chat"); say(c, `Sent to ${S[v.store].name}. Replies land in your inbox.`); }
+  else if (v.act === "pickbk") { const b = B.find(z => z.id === v.id && z.status === "confirmed"); if (!b) say(c, "That one's already cancelled."); else if (v.mode === "cancel") askCancel(c, b); else askMove(c, b); }
+  else if (v.act === "cancelbk") { const b = B.find(z => z.id === v.id); if (!b || b.status !== "confirmed") say(c, "That one's already cancelled."); else { const free = freeNow(b.store, b.d, b.m); cancelB(b); c.ask = null; say(c, L3(`Cancelled: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `Đã hủy: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `취소됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}.`) + " " + (free ? L3("Nothing charged.", "Không tính phí.", "청구된 건 없어요.") + (b.usePass ? " " + tr(" The class goes back on your pass.").trim() : "") : L3(`Late cancel: ${tr(S[b.store].policy.late)}.`, `Hủy muộn: ${tr(S[b.store].policy.late)}.`, `늦은 취소: ${tr(S[b.store].policy.late)}.`)), { chips: [chip(t("undo"), { act: "uncancel", id: b.id })] }); } }
+  else if (v.act === "uncancel") { const b = B.find(z => z.id === v.id); if (b && b.status === "cancelled") { b.status = "confirmed"; if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; } say(c, "Booking restored"); } }
+  else if (v.act === "keepbk") { c.ask = null; say(c, L3("Okay, I kept it. Nothing changed.", "Vâng, mình giữ nguyên lịch. Không có gì thay đổi.", "네, 그대로 둘게요. 바뀐 건 없어요.")); }
+  else if (v.act === "moveday" || v.act === "movepick") { const b = B.find(z => z.id === v.id && z.status === "confirmed"); if (!b) say(c, "That one's already cancelled."); else if (v.act === "moveday") { if (v.d == null) { c.pend = null; askMove(c, b); } else askMove(c, b, v.d); } else { const z = slotsFor(b.store, b.svc, v.d, moveOpts(b)).find(q => q.m === v.m); if (z) moveConfirm(c, b, z); else askMove(c, b, v.d); } }
   else if (v.act === "undo") { const b = B.find(z => z.id === v.id); if (b && b.status === "confirmed") { cancelB(b); say(c, "Undone. Nothing charged."); } else say(c, "That one's already cancelled."); }
   else {
     if (v.fresh || !c.draft) c.draft = {};
@@ -908,8 +1060,11 @@ function chatBook(cid, mi) {
   const x = msg.confirm, s = S[x.store];
   const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : { staff: x.rids[0], room: x.rids[1] };
   if (!slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0)) { msg.done = "gone"; say(c, "That slot just went. Here's what's open."); c.draft = { store: x.store, svc: x.svc, d: x.d, party: x.party, len: x.len }; advance(c); render(); return; }
+  if (x.move) { const b = doBook(Object.assign({}, x), true); msg.done = true; c.draft = null; c.ask = null;
+    say(c, L3(`Moved: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name} is now ${fWhen(b.d, b.m)}.`, `Đã dời: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name} sang ${fWhen(b.d, b.m)}.`, `변경됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, 이제 ${fWhen(b.d, b.m)}이에요.`)); render(); scrollThread(cid); return; }
   const b = doBook(Object.assign({}, x), true); msg.done = true; c.draft = null; c.ask = null;
-  say(c, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in Up next.`, { chips: [chip(t("undo"), { act: "undo", id: b.id })] });
+  const nx = c.queue && c.queue.length ? c.queue.shift() : null;
+  say(c, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in Up next.`, { chips: [chip(t("undo"), { act: "undo", id: b.id })].concat(nx ? [chip(L3("Next: ", "Tiếp theo: ", "다음: ") + nx, { say: nx, next: true })] : []) });
   render(); scrollThread(cid); toast(`${t("booked")} · ${S[b.store].name}`, () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); });
 }
 function sendToStore(sid, text) {
@@ -923,7 +1078,7 @@ function header() {
   const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
   return `<div class="brand">${ST.store || ST.page ? `<button class="icb" data-act="back" aria-label="${t("back")}">${ic("back")}</button>` : `<span class="nm" aria-hidden="true">N</span>`}<span class="t">${esc(title)}</span></div>
   <div class="tr"><button class="icb" data-act="lang" aria-label="${t("language")}: ${L.toUpperCase()}">${ic("globe", "s")}${L.toUpperCase()}</button>
-  <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + unread + " unread" : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
+  <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + L3(unread + " unread", unread + " chưa đọc", "읽지 않음 " + unread) : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
 }
 function tabs() {
   return [["home", "home"], ["discover", "compass"], ["book", "cal"], ["ask", "chat"], ["you", "user"]].map(([k, i]) => `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}>${ic(i)}<span>${t(k)}</span></button>`).join("");
@@ -931,9 +1086,9 @@ function tabs() {
 function heroScene() {
   const h = new Date().getHours(), nx = upcoming()[0];
   const nxt = nx ? L3(`Next: ${N(svcOf(nx.store, nx.svc).n)} at ${S[nx.store].name}, ${fWhen(nx.d, nx.m)}.`, `Tiếp theo: ${N(svcOf(nx.store, nx.svc).n)} ở ${S[nx.store].name}, ${fWhen(nx.d, nx.m)}.`, `다음: ${S[nx.store].name} ${N(svcOf(nx.store, nx.svc).n)}, ${fWhen(nx.d, nx.m)}.`) : L3("Nothing booked. Want to try somewhere new?", "Chưa có lịch. Thử một nơi mới nhé?", "예약이 없어요. 새로운 곳 가 볼래요?");
-  const [img, g, line, alt] = h < 11 ? ["greet", "gm", L3("Coffee first. ", "Cà phê trước đã. ", "커피 먼저요. ") + nxt, "Nari waving good morning"]
-    : h < 17 ? ["warmup", "ga", L3("A 2-minute stretch counts as a mission. ", "Giãn cơ 2 phút cũng là một nhiệm vụ. ", "2분 스트레칭도 미션이에요. ") + nxt, "Nari warming up"]
-    : h < 22 ? ["calm", "ge", nxt, "Nari relaxing"] : ["sleep", "gn", L3("Rest is training too. ", "Nghỉ ngơi cũng là tập luyện. ", "쉬는 것도 훈련이에요. ") + nxt, "Nari yawning"];
+  const [img, g, line, alt] = h < 11 ? ["greet", "gm", L3("Coffee first. ", "Cà phê trước đã. ", "커피 먼저요. ") + nxt, L3("Nari waving good morning", "Nari vẫy tay chào buổi sáng", "아침 인사로 손 흔드는 나리")]
+    : h < 17 ? ["warmup", "ga", L3("A 2-minute stretch counts as a mission. ", "Giãn cơ 2 phút cũng là một nhiệm vụ. ", "2분 스트레칭도 미션이에요. ") + nxt, L3("Nari warming up", "Nari đang khởi động", "몸을 푸는 나리")]
+    : h < 22 ? ["calm", "ge", nxt, L3("Nari relaxing", "Nari đang thư giãn", "쉬고 있는 나리")] : ["sleep", "gn", L3("Rest is training too. ", "Nghỉ ngơi cũng là tập luyện. ", "쉬는 것도 훈련이에요. ") + nxt, L3("Nari yawning", "Nari đang ngáp", "하품하는 나리")];
   return `<section class="card scene" aria-label="Nari"><div class="pic"><img src="${A}${img}.webp" alt="${alt}" width="200" height="283"><svg class="bow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#E98597" opacity=".8"/></svg></div>
   <div class="txt"><div class="who">Nari</div><h1 style="margin:0;font-size:20px">${t(g)}</h1><p class="sub sm">${esc(line)}</p><div><button class="btn sec" data-act="tab" data-v="book">${t("book")}</button></div></div></section>`;
 }
@@ -941,14 +1096,14 @@ function upRow(b) {
   const s = S[b.store], v = svcOf(b.store, b.svc);
   const res = b.rids.map(r => resName(b.store, r)).join(" + ") + (b.party ? " · " + trS(b.party + " players") : "");
   const st = b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
-  return `<div class="up" role="listitem">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}${b.source !== "app" ? ` <span class="tag">${b.source === "voice" ? "by call" : "by chat"}</span>` : ""}</div>
+  return `<div class="up" role="listitem">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}${b.source !== "app" ? ` <span class="tag">${tr(b.source === "voice" ? "by call" : "by chat")}</span>` : ""}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} · ${esc(res)}</div>
   <div class="acts">${b.d <= 1 ? `<button class="btn sec" data-act="checkin" data-id="${b.id}" aria-label="${t("checkin")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("checkin")}</button>` : ""}<button class="btn ghost" data-act="managebk" data-id="${b.id}" aria-label="${t("manage")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("manage")}</button></div></div></div>`;
 }
 function placeCard(sid) {
   const s = S[sid], w = WALLET[sid] || [], nx = upcoming().find(b => b.store === sid);
   const sub = w.length ? (w[0].credit ? vnd(w[0].credit) + " " + tr("credit") : w[0].left + " " + tr("left") + " · " + tr(w[0].t).split(" (")[0]) : nx ? tr("Next") + " " + fDay(nx.d) : s.visits ? s.visits + " " + tr("visits") : tr("New");
-  return `<button class="place" data-act="store" data-v="${sid}" aria-label="${esc(s.name)}, ${esc(sub)}${unreadAt(sid) ? ", new message" : ""}">${unreadAt(sid) ? '<span class="dot" aria-hidden="true"></span>' : ""}${logo(sid)}<span class="n">${esc(s.name)}</span><span class="sub sm">${esc(sub)}</span></button>`;
+  return `<button class="place" data-act="store" data-v="${sid}" aria-label="${esc(s.name)}, ${esc(sub)}${unreadAt(sid) ? ", " + L3("new message", "tin nhắn mới", "새 메시지") : ""}">${unreadAt(sid) ? '<span class="dot" aria-hidden="true"></span>' : ""}${logo(sid)}<span class="n">${esc(s.name)}</span><span class="sub sm">${esc(sub)}</span></button>`;
 }
 function missionsCard() {
   const M = [["attend", t("mAttend"), 50, "counts when the store marks you attended"], ["newplace", t("mNew"), 80, "any verified place, when you attend"], ["stretch", t("mStretch"), 20, "at home is fine"]];
@@ -961,11 +1116,18 @@ function missionsCard() {
 }
 const AGAIN = [["capsule", "barre", { staff: "yuna" }, "Barre with Yuna"], ["salon", "cut", { staff: "linh" }, "Women's cut with Linh"], ["skin", "hydra", {}, "Hydrating facial"], ["spa", "aroma90", {}, "Aroma 90 min"], ["pickle", "court", { party: 4 }, "Court · 4 players"]];
 function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
+function importCard() {
+  if (IMPORT.state !== "pending") return ""; const s = S[IMPORT.sid];
+  return `<section class="card" style="margin-top:16px" aria-label="${esc(L3("Store invitation", "Lời mời từ cửa hàng", "매장 초대"))}"><div class="row top">${logo(IMPORT.sid)}<div class="grow"><b>${esc(L3(`${s.name} added you as a customer`, `${s.name} đã thêm bạn làm khách hàng`, `${s.name}에서 고객으로 등록했어요`))}</b>
+  <p class="sub sm" style="margin:4px 0 0">${esc(L3(`They matched your phone number from their own records (${IMPORT.visits} past visits). Nothing is linked and no offers are sent until you accept.`, `Họ khớp số điện thoại của bạn từ sổ khách riêng (${IMPORT.visits} lần đã đến). Chưa liên kết gì và không gửi ưu đãi cho đến khi bạn đồng ý.`, `매장 자체 기록에서 전화번호가 일치했어요(지난 방문 ${IMPORT.visits}회). 수락하기 전에는 연결되지 않고 혜택 알림도 오지 않아요.`))}</p></div></div>
+  <div class="row wrap" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1 1 100%" data-act="impok">${L3("Accept and link", "Đồng ý liên kết", "수락하고 연결")}</button><button class="btn ghost" style="flex:1 1 40%" data-act="impno">${L3("Not me", "Không phải tôi", "제가 아니에요")}</button><button class="btn ghost" style="flex:1 1 40%" data-act="implater">${L3("Later", "Để sau", "나중에")}</button></div></section>`;
+}
 function vHome() {
   const up = upcoming();
   return heroScene() +
     `<h2>${t("upNext")} <span class="sub sm">${up.length} · ${tr("all places")}</span></h2><div class="card" role="list">${up.length ? up.slice(0, 5).map(upRow).join("") : `<p class="sub">${t("nothingUp")}</p>`}</div>` +
-    `<h2>${t("myPlaces")} <span class="sub sm">${joinedIds().length}</span></h2><div class="scroll" role="group" aria-label="${t("myPlaces")}">${joinedIds().map(placeCard).join("")}<button class="place add" data-act="joinsheet">+ ${t("join")}<span class="sub sm" style="font-weight:400">QR · link · search</span></button></div>` +
+    importCard() +
+    `<h2>${t("myPlaces")} <span class="sub sm">${joinedIds().length}</span></h2><div class="scroll" role="group" aria-label="${t("myPlaces")}">${joinedIds().map(placeCard).join("")}<button class="place add" data-act="joinsheet">+ ${t("join")}<span class="sub sm" style="font-weight:400">${L3("QR · link · search", "QR · liên kết · tìm", "QR · 링크 · 검색")}</span></button></div>` +
     `<h2>${t("missions")}</h2>${missionsCard()}` +
     `<h2>${t("bookAgain")} <span class="sub sm">${tr("3 taps")}</span></h2>${againChips()}`;
 }
@@ -976,12 +1138,13 @@ function chatUI(cid, placeholder) {
     let body = (m.note ? esc(m.note.split(/(?<=\.) /).map(trS).join(" ")) + " " : "") + esc(trS(m.text)).replace(/\n/g, "<br>");
     if (m.card) body += `<div class="mcard${m.care ? " care" : ""}"><div class="sub sm"><b>${esc(trS(m.card.kicker))}</b></div><b>${esc(trS(m.card.title))}</b><div class="sm">${esc(L === "en" ? m.card.body : m.card.body.split("\n").map(l => { const q = l.match(/^(.+?) \((.+?)\): (.+)$/); return q ? N(q[1]) + " (" + q[2] + "): " + tr(q[3]) : trS(l); }).join("\n")).replace(/\n/g, "<br>")}</div>${m.card.src ? `<div class="src">${esc(trS(m.card.src))}</div>` : ""}</div>`;
     if (m.src) body += `<div class="src">${esc(L === "en" ? m.src : m.src.replace(/^From (.+?)'s (info|price list)$/, (q, a, b) => L === "vi" ? "Theo " + (b === "info" ? "thông tin" : "bảng giá") + " của " + a : a + " " + (b === "info" ? "정보" : "가격표") + " 기준"))}</div>`;
-    if (m.confirm) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>` : m.done ? `<span class="tag warn">No longer open</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>`}</div>`; }
+    if (m.confirm) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>`}</div>`; }
+    if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}</div>`; }
     const av = `<span class="av" aria-hidden="true"><img src="${A}${m.care ? "calm" : "greet"}.webp" alt=""></span>`;
     const chips = m.chips && i === c.msgs.length - 1 ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
     return `<div class="nrow">${av}<div class="msg n"><span class="vh">Nari: </span>${body}</div></div>${chips}`;
   }).join("");
-  return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="Conversation">${th}</div>
+  return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
   <form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>`;
 }
 function vBook() {
@@ -1011,23 +1174,23 @@ function vDiscover() {
 function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
-  let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">Open now · ${t("noAds")}</div></div></div>
-  <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn ghost grow" data-act="fake" data-v="Calls the store's phone (demo).">${ic("phone", "s")} Call</button><button class="btn ghost grow" data-act="fake" data-v="Opens the store's Zalo chat (demo).">${ic("chat", "s")} Zalo</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} Map</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
-  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${tr("Free up to")} ${s.policy.free}${tr("h before · after that:")} ${esc(tr(s.policy.late))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " to book, taken off the total" : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
+  let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")} · ${t("noAds")}</div></div></div>
+  <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn ghost grow" data-act="fake" data-v="Calls the store's phone (demo).">${ic("phone", "s")} ${L3("Call", "Gọi", "전화")}</button><button class="btn ghost grow" data-act="fake" data-v="Opens the store's Zalo chat (demo).">${ic("chat", "s")} Zalo</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
+  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${tr("Free up to")} ${s.policy.free}${tr("h before · after that:")} ${esc(tr(s.policy.late))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
   if (s.kind === "class") {
     for (const [cid, m, tid] of s.sched) {
       let d = 0, z = slotsFor(sid, cid, 0).find(q => q.m === m); if (!z) { d = 1; z = slotsFor(sid, cid, 1).find(q => q.m === m); } if (!z) continue;
       const v = svcOf(sid, cid), full = z.left <= 0;
-      h += `<button class="svc" data-act="classpick" data-s="${sid}" data-v="${cid}" data-d="${d}" data-m="${m}" ${full || !s.joined ? "disabled" : ""}><span style="font-weight:750;min-width:52px">${fTime(m)}</span><span class="grow"><b>${esc(N(v.n))}</b> · ${esc(resName(sid, tid))}<br><span class="sub sm">${fDay(d)} · ${v.len} min · ${full ? tr("Full") : z.left + " " + tr("spots left")} · ${t("freeCancel")} ${fDeadline(sid, d, m)}</span></span><span class="pr">${passFor(sid, cid) ? tr("Pass") : vnd(v.price)}</span></button>`;
+      h += `<button class="svc" data-act="classpick" data-s="${sid}" data-v="${cid}" data-d="${d}" data-m="${m}" ${full || !s.joined ? "disabled" : ""}><span style="font-weight:750;min-width:52px">${fTime(m)}</span><span class="grow"><b>${esc(N(v.n))}</b> · ${esc(resName(sid, tid))}<br><span class="sub sm">${fDay(d)} · ${v.len} min · ${full ? tr("Full") : z.left + " " + tr("spots open")} · ${fCancel(sid, d, m)}</span></span><span class="pr">${passFor(sid, cid) ? tr("Pass") : vnd(v.price)}</span></button>`;
     }
     h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${s.svcs[0].id}" ${s.joined ? "" : "disabled"}><span class="grow"><b>${tr("Other days")}</b><br><span class="sub sm">${tr("Full timetable")}</span></span>${ic("chev")}</button>`;
   } else for (const v of s.svcs) h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${v.id}" ${s.joined ? "" : "disabled"}><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${esc(tr(v.desc))}${s.kind !== "rental" ? " · " + v.len + " " + L3("min","phút","분") : ""}</span></span><span class="pr">${esc(priceLabel(v))}</span></button>`;
   h += `</div>`;
   if (s.joined) {
-    h += `<h2>${t("passes")}</h2><div class="card stack">${w.length ? w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " left"}</b></div>`).join("") : `<p class="sub sm">${tr("No passes here. You pay per visit.")}</p>`}${mine.filter(b => b.dep).map(b => `<p class="sm">Deposit held: <b>${vnd(b.dep)}</b> for ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}</div>`;
+    h += `<h2>${t("passes")}</h2><div class="card stack">${w.length ? w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("") : `<p class="sub sm">${tr("No passes here. You pay per visit.")}</p>`}${mine.filter(b => b.dep).map(b => `<p class="sm">${tr("Deposit held")}: <b>${vnd(b.dep)}</b> · ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}</div>`;
     h += `<h2>${t("upNext")}</h2><div class="card" role="list">${mine.length ? mine.map(upRow).join("") : `<p class="sub sm">${t("nothingUp")}</p>`}</div>`;
-    h += `<h2>${t("inbox")}</h2><div class="card stack">${msgs.length ? msgs.map(m => `<div class="sm"><span class="sub">${esc(m.when)}</span> · ${esc(trS(m.text))}</div>`).join("") : `<p class="sub sm">${t("inboxEmpty")}</p>`}
+    h += `<h2>${t("inbox")}</h2><div class="card stack">${msgs.length ? msgs.map(m => `<div class="sm"><span class="sub">${esc(tr(m.when))}</span> · ${esc(trS(m.text))}</div>`).join("") : `<p class="sub sm">${t("inboxEmpty")}</p>`}
       <form class="chatbox" data-form="store" data-s="${sid}"><label class="vh" for="sm-${sid}">${esc(t("msgStore", { s: s.name }))}</label><textarea id="sm-${sid}" rows="1" placeholder="${esc(t("msgStore", { s: s.name }))}"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form></div>`;
   }
   return h;
@@ -1038,29 +1201,29 @@ function journeySVG() {
   const path = "M" + pts.map(p => p.map(n => n.toFixed(1)).join(" ")).join(" L");
   const dots = pts.map(([x, y], i) => { const n = i + 1, done = n <= ST.steps, cur = n === ST.steps + 1, ms = n % 5 === 0;
     return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${ms ? 11 : 8}" fill="${done ? "#B04A5E" : "#FFFDF9"}" stroke="${cur || done ? "#B04A5E" : "#B9A89D"}" stroke-width="${cur ? 3 : 1.6}"/>${ms ? `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${done ? "#fff" : "#6B5E62"}">${n}</text>` : ""}`; }).join("");
-  return `<svg class="journey" viewBox="0 0 ${W} ${H}" role="img" aria-label="Journey: step ${ST.steps} of ${N}. Step 10 unlocks the spring park scene."><path d="${path}" fill="none" stroke="#E3D7CC" stroke-width="6" stroke-linecap="round"/>${dots}</svg>`;
+  return `<svg class="journey" viewBox="0 0 ${W} ${H}" role="img" aria-label="${L3(`Journey: step ${ST.steps} of ${N}. Step 10 unlocks the spring park scene.`, `Hành trình: bước ${ST.steps}/${N}. Bước 10 mở cảnh công viên mùa xuân.`, `여정: ${N}단계 중 ${ST.steps}단계. 10단계에서 봄 공원 장면이 열려요.`)}"><path d="${path}" fill="none" stroke="#E3D7CC" stroke-width="6" stroke-linecap="round"/>${dots}</svg>`;
 }
 function vYou() {
   const x = ST.xp % 200;
-  let h = `<div class="card row"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">Mina</h1><div class="sub sm">${tr("One account")} · ${joinedIds().length} ${tr("places")}</div></div><div style="text-align:right"><b>${ST.coins}</b> <span class="sub sm">${t("coins")}</span></div></div>`;
-  h += `<h2>${t("level")} ${lvl()}</h2><div class="card"><div class="sm">${x} / 200 ${t("xp")} to ${t("level")} ${lvl() + 1}</div><div class="bar" role="progressbar" aria-label="XP" aria-valuemin="0" aria-valuemax="200" aria-valuenow="${x}"><i style="width:${x / 2}%"></i></div>
+  let h = `<div class="card row"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm">${tr("One account")} · ${joinedIds().length} ${tr("places")}</div></div><div style="text-align:right"><b>${ST.coins}</b> <span class="sub sm">${t("coins")}</span></div></div>`;
+  h += `<h2>${t("level")} ${lvl()}</h2><div class="card"><div class="sm">${x} / 200 ${t("xp")} ${L3("to", "để lên", "→")} ${t("level")} ${lvl() + 1}</div><div class="bar" role="progressbar" aria-label="XP" aria-valuemin="0" aria-valuemax="200" aria-valuenow="${x}"><i style="width:${x / 2}%"></i></div>
     <div class="row" style="margin-top:12px"><b class="grow">${t("streak", { n: ST.weeks })}</b><span class="sub sm">${tr("Best: 6 weeks")}</span></div>
-    <div class="week" role="img" aria-label="This week: ${ST.week.filter(Boolean).length} active days">${["M", "T", "W", "T", "F", "S", "S"].map((d, i) => `<span><b class="${ST.week[i] === 1 ? "on" : ST.week[i] === 2 ? "rest" : ""}"></b>${d}</span>`).join("")}</div><p class="sub sm" style="margin:6px 0 0">${tr("Any attended visit, or a rest-day mission, keeps the week. A missed week never takes progress away.")}</p></div>`;
+    <div class="week" role="img" aria-label="${L3(`This week: ${ST.week.filter(Boolean).length} active days`, `Tuần này: ${ST.week.filter(Boolean).length} ngày hoạt động`, `이번 주: 활동 ${ST.week.filter(Boolean).length}일`)}">${(L === "vi" ? ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] : L === "ko" ? ["월", "화", "수", "목", "금", "토", "일"] : ["M", "T", "W", "T", "F", "S", "S"]).map((d, i) => `<span><b class="${ST.week[i] === 1 ? "on" : ST.week[i] === 2 ? "rest" : ""}"></b>${d}</span>`).join("")}</div><p class="sub sm" style="margin:6px 0 0">${tr("Any attended visit, or a rest-day mission, keeps the week. A missed week never takes progress away.")}</p></div>`;
   h += `<h2>${t("quest")}</h2><div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div>`;
   h += `<h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`;
   const WD = [["wrap", tr("Studio wrap top"), tr("Owned"), "shirt"], ["cape", tr("Salon cape"), tr("Level 5"), "shirt"], ["cap", tr("Court cap"), tr("Quest reward"), "star"], ["aodai", tr("Tết áo dài"), tr("Tết event"), "leaf"]];
   h += `<h2>${t("wardrobe")} <span class="tag">${tr("Coming soon")}</span></h2><div class="tiles">${WD.map(([id, n, how, i]) => { const own = ST.owned.includes(id); return `<div class="tile${own ? "" : " lock"}"><span class="ic">${ic(own ? i : "lock")}</span><b class="sm">${esc(tr(n))}</b><span class="sub sm">${own ? tr("Owned") : esc(tr(how))}</span></div>`; }).join("")}</div>`;
   const SH = [["scr", tr("Raspberry scrunchie"), 40], ["lan", tr("Mid-Autumn lantern"), 120], ["room", tr("Cozy room theme"), 200]];
-  h += `<h2>${t("shop")} <span class="demo">${t("demo")}</span></h2><div class="card stack"><p class="sub sm" style="margin:0">${tr("Cosmetic only. Coins can't pay for services, and XP can't be bought.")}</p>${SH.map(([id, n, c]) => `<div class="row"><span class="tile" style="min-height:0;padding:10px;border:0;background:#F2E8DE">${ic("bag", "s")}</span><span class="grow"><b class="sm">${esc(tr(n))}</b><br><span class="sub sm">${c} ${t("coins")}</span></span>${ST.owned.includes(id) ? `<span class="tag ok">Owned</span>` : `<button class="btn ghost" data-act="buy" data-v="${id}" data-c="${c}" aria-label="Get ${esc(n)} for ${c} coins">${tr("Get")}</button>`}</div>`).join("")}</div>`;
+  h += `<h2>${t("shop")} <span class="demo">${t("demo")}</span></h2><div class="card stack"><p class="sub sm" style="margin:0">${tr("Cosmetic only. Coins can't pay for services, and XP can't be bought.")}</p>${SH.map(([id, n, c]) => `<div class="row"><span class="tile" style="min-height:0;padding:10px;border:0;background:#F2E8DE">${ic("bag", "s")}</span><span class="grow"><b class="sm">${esc(tr(n))}</b><br><span class="sub sm">${c} ${t("coins")}</span></span>${ST.owned.includes(id) ? `<span class="tag ok">${tr("Owned")}</span>` : `<button class="btn ghost" data-act="buy" data-v="${id}" data-c="${c}" aria-label="${esc(L3(`Get ${n} for ${c} coins`, `Lấy ${n} với ${c} xu`, `${c}코인으로 ${n} 받기`))}">${tr("Get")}</button>`}</div>`).join("")}</div>`;
   h += `<h2>${t("wallet")}</h2><div class="card stack">${joinedIds().map(sid => (WALLET[sid] || []).map(p => `<div class="row">${logo(sid)}<span class="grow"><b class="sm">${esc(tr(p.t))}</b><br><span class="sub sm">${esc(t("storeOnly", { s: S[sid].name }))} · ${esc(tr(p.exp))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("")).join("")}
     ${upcoming().filter(b => b.dep).map(b => `<div class="row">${logo(b.store)}<span class="grow"><b class="sm">${tr("Deposit held")}</b><br><span class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</span></span><b>${vnd(b.dep)}</b></div>`).join("")}
     <div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#6B5E62" aria-hidden="true">N</span><span class="grow"><b class="sm">${tr("Nari coins (platform)")}</b><br><span class="sub sm">${tr("Cosmetics only · separate from store money")}</span></span><b>${ST.coins}</b></div></div>`;
-  h += `<h2 id="inboxH">${t("inbox")}</h2><div class="card stack">${INBOX.slice(0, 6).map(m => `<button class="svc" data-act="store" data-v="${m.s}">${logo(m.s)}<span class="grow sm"><b>${esc(S[m.s].name)}</b> · <span class="sub">${esc(m.when)}</span><br>${esc(trS(m.text))}</span>${m.unread ? `<span class="tag">${tr("New")}</span>` : ""}</button>`).join("")}</div>`;
+  h += `<h2 id="inboxH">${t("inbox")}</h2><div class="card stack">${INBOX.slice(0, 6).map(m => `<button class="svc" data-act="store" data-v="${m.s}">${logo(m.s)}<span class="grow sm"><b>${esc(S[m.s].name)}</b> · <span class="sub">${esc(tr(m.when))}</span><br>${esc(trS(m.text))}</span>${m.unread ? `<span class="tag">${tr("New")}</span>` : ""}</button>`).join("")}</div>`;
   h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p><h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div>`;
   return h;
 }
 function renderView() { $("#view").innerHTML = ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, book: vBook, ask: vAsk, you: vYou }[ST.tab])(); }
-function render() { document.documentElement.lang = L; $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -1094,6 +1257,8 @@ const DTYPES = [["all", "All", "Tất cả", "전체", "compass"], ["fitness", "
   ["massage", "Massage/Spa", "Massage/Spa", "마사지/스파", "leaf"], ["sport", "Pickleball/Courts", "Pickleball/Sân", "피클볼/코트", "star"], ["nails", "Nails", "Làm móng", "네일", "star"], ["yoga", "Yoga", "Yoga", "요가", "spark"], ["more", "More", "Thêm", "더보기", "chev"]];
 IP.spark = '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>';
 IP.info = '<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>'; IP.map = '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'; IP.list = '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>';
+const DSYN = { fitness: "barre pilates gym fitness tập thể dục lớp tập 운동 피트니스 바레 필라테스", hair: "hair haircut cut trim salon barber cắt tóc tóc gội salon 헤어 커트 미용실 바버", skin: "facial skin skincare chăm sóc da da mặt 피부 페이셜 스킨케어",
+  massage: "massage spa mát xa xoa bóp thư giãn 마사지 스파", sport: "pickleball court courts sân thể thao 피클볼 코트", nails: "nail nails manicure làm móng móng 네일", yoga: "yoga 요가" };
 const DF = { type: "all", dist: 99, open: false, price: 0, rate: 0, map: false, pin: null };
 const typeLabel = sid => { const r = DTYPES.find(x => x[0] === DISC[sid].type); return r ? r[L === "vi" ? 2 : L === "ko" ? 3 : 1] : ""; };
 function nextFree(sid) {
@@ -1107,7 +1272,7 @@ function discList() {
     const f = DISC[sid]; if (!f) return false;
     if (DF.type !== "all" && DF.type !== "more" && f.type !== DF.type) return false;
     if (f.km > DF.dist || (DF.open && !f.open) || (DF.price && f.p > DF.price) || (DF.rate && f.rate < DF.rate)) return false;
-    if (q && !norm([S[sid].name, S[sid].area, typeLabel(sid), DTYPES.find(x => x[0] === f.type)[1], ...S[sid].svcs.map(v => v.n + " " + N(v.n))].join(" ")).includes(q)) return false;
+    if (q && !norm([S[sid].name, S[sid].area, ...DTYPES.find(x => x[0] === f.type).slice(1, 4), DSYN[f.type] || "", ...S[sid].svcs.map(v => [v.n].concat(NAMES[v.n] || []).join(" "))].join(" ")).replace(/\s+/g, " ").includes(q.replace(/\s+/g, " ").trim())) return false;
     return true;
   }).sort((a, b) => DISC[a].km - DISC[b].km);
 }
@@ -1129,7 +1294,7 @@ function dcard(sid) {
 IP.clock = '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>';
 function mapSVG(list) {
   const pins = list.map(sid => { const f = DISC[sid], x = f.x * 3.4, y = f.y * 2.2, sel = DF.pin === sid;
-    return `<g class="pin" data-act="pin" data-v="${sid}" tabindex="0" role="button" aria-label="${esc(S[sid].name)}, ${f.km} km${f.ad ? ", " + L3("Ad", "Quảng cáo", "광고") : ""}"><circle cx="${x}" cy="${y}" r="${sel ? 15 : 12}" fill="${S[sid].color}" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">${S[sid].logo}</text></g>`; }).join("");
+    return `<g class="pin" data-act="pin" data-v="${sid}" tabindex="0" role="button" aria-label="${esc(S[sid].name)}, ${String(f.km).replace(".", L === "en" ? "." : ",")} km${f.ad ? ", " + L3("Ad", "Quảng cáo", "광고") : ""}"><circle cx="${x}" cy="${y}" r="27" fill="rgba(0,0,0,0)" pointer-events="all"/><circle cx="${x}" cy="${y}" r="${sel ? 15 : 12}" fill="${S[sid].color}" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">${S[sid].logo}</text></g>`; }).join("");
   return `<svg class="dmap" viewBox="0 0 340 220" role="group" aria-label="${L3("Map (sample, not to scale)", "Bản đồ (mẫu, không theo tỉ lệ)", "지도 (샘플, 축척 아님)")}">
   <rect width="340" height="220" rx="16" fill="#EFE8DC"/><path d="M0 150 C80 120 140 170 220 130 S320 90 340 100" stroke="#BCD6DE" stroke-width="18" fill="none"/>
   <path d="M30 0 L120 220 M0 60 L340 90 M200 0 L260 220 M0 190 L340 170" stroke="#FFFDF9" stroke-width="7" fill="none"/>
@@ -1139,7 +1304,7 @@ function mapSVG(list) {
 function vDiscover() {
   const list = discList(), li = L === "vi" ? 2 : L === "ko" ? 3 : 1;
   const chipB = (act, v, cur, label) => `<button class="chip" data-act="${act}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${label}</button>`;
-  let h = `<div class="row"><h1 class="grow">${t("discover")}</h1><div class="chips" role="group" aria-label="${L3("View", "Chế độ xem", "보기")}">${chipB("dview", "list", DF.map ? "map" : "list", ic("list", "s") + " " + L3("List", "Danh sách", "목록"))}${chipB("dview", "map", DF.map ? "map" : "list", ic("map", "s") + " " + L3("Map", "Bản đồ", "지도"))}</div></div>
+  let h = `<div class="row wrap"><h1 style="white-space:nowrap;flex:1 0 auto">${t("discover")}</h1><div class="chips" role="group" aria-label="${L3("View", "Chế độ xem", "보기")}">${chipB("dview", "list", DF.map ? "map" : "list", ic("list", "s") + " " + L3("List", "Danh sách", "목록"))}${chipB("dview", "map", DF.map ? "map" : "list", ic("map", "s") + " " + L3("Map", "Bản đồ", "지도"))}</div></div>
   <label class="vh" for="dq">${t("search")}</label><input id="dq" class="inp" style="width:100%" type="search" placeholder="${t("search")}" value="${esc(ST.q || "")}">
   <div class="row" style="margin-top:10px"><button class="btn sec grow" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec grow" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button></div>
   <div class="scroll" style="margin-top:12px" role="group" aria-label="${L3("Store type", "Loại cửa hàng", "매장 유형")}">${DTYPES.map(r => chipB("dtype", r[0], DF.type, esc(r[li]))).join("")}</div>
@@ -1168,8 +1333,8 @@ document.addEventListener("click", e => { const el = e.target.closest("[data-act
 document.addEventListener("keydown", e => { const el = e.target.closest && e.target.closest('[data-act="pin"]'); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); discAct("pin", el.dataset); } });
 document.addEventListener("input", e => { if (e.target.id === "dq" && DF.map) { const tmp = document.createElement("div"); tmp.innerHTML = vDiscover(); const sv = $(".dmap"); if (sv) sv.outerHTML = tmp.querySelector(".dmap").outerHTML; } });
 /* ===== flows: join, check-in, missions, stretch ===== */
-function joinSheet() { openSheet(sheetHd(tr("Join a place")) + `<p class="sub">${tr("Each place keeps its own passes and rules. Your account, Nari and your journey come with you.")}</p><div class="stack"><button class="btn full" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec full" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button><button class="btn ghost full" data-act="gosearch">${ic("search", "s")} ${tr("Search places")}</button></div>`, "Join a place"); }
-function qrSheet() { openSheet(sheetHd(t("scan")) + `<div class="vf" role="img" aria-label="Camera viewfinder, simulated">${tr("Point at the QR on the counter")}</div><p class="demo">${t("demo")}${tr(": no camera is used")}</p><button class="btn full" data-act="qrscan" style="margin-top:10px">${tr("Simulate scan · Lá Nail Bar")}</button>`, t("scan")); }
+function joinSheet() { openSheet(sheetHd(tr("Join a place")) + `<p class="sub">${tr("Each place keeps its own passes and rules. Your account, Nari and your journey come with you.")}</p><div class="stack"><button class="btn full" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec full" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button><button class="btn ghost full" data-act="gosearch">${ic("search", "s")} ${tr("Search places")}</button></div>`, tr("Join a place")); }
+function qrSheet() { openSheet(sheetHd(t("scan")) + `<div class="vf" role="img" aria-label="${L3("Camera viewfinder, simulated", "Khung camera, mô phỏng", "카메라 화면, 시뮬레이션")}">${tr("Point at the QR on the counter")}</div><p class="demo">${t("demo")}${tr(": no camera is used")}</p><button class="btn full" data-act="qrscan" style="margin-top:10px">${tr("Simulate scan · Lá Nail Bar")}</button>`, t("scan")); }
 function linkSheet() { openSheet(sheetHd(t("link")) + `<label for="lk" class="sub sm">${tr("Invite link from SMS or Zalo")}</label><input id="lk" class="inp" style="width:100%;margin:6px 0 12px" value="https://nari.example/j/bloom-yoga"><button class="btn full" data-act="linkopen">${tr("Open link")}</button>`, t("link")); }
 function joinConsent(sid) {
   const s = S[sid];
@@ -1186,7 +1351,7 @@ function checkin(b) {
     else on = hsh("q" + b.id + "_" + i + "_" + j) % 2 === 0;
     if (on) cells += `<rect x="${j}" y="${i}" width="1" height="1"/>`;
   }
-  openSheet(sheetHd(t("checkin")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b> · ${fWhen(b.d, b.m)}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="Check-in code, sample" shape-rendering="crispEdges"><g fill="#2B2326">${cells}</g></svg><p class="sub sm" style="text-align:center">${tr("Show this at the desk. It works offline.")}</p>
+  openSheet(sheetHd(t("checkin")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b> · ${fWhen(b.d, b.m)}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="${L3("Check-in code, sample", "Mã check-in, mẫu", "체크인 코드, 샘플")}" shape-rendering="crispEdges"><g fill="#2B2326">${cells}</g></svg><p class="sub sm" style="text-align:center">${tr("Show this at the desk. It works offline.")}</p>
   <button class="btn full" data-act="attend" data-id="${b.id}">${tr("Demo: the store marks you attended")}</button>`, t("checkin"));
 }
 function attend(b) {
@@ -1200,7 +1365,7 @@ function attend(b) {
 let stretchT = null;
 function stretchSheet() {
   let left = 120;
-  openSheet(sheetHd(t("mStretch")) + `<div class="card scene"><div class="pic"><img src="${A}warmup.webp" alt="Nari stretching"></div><div class="txt"><div class="who">Nari</div><p>${tr("Slow breaths. Roll your shoulders, reach up, fold gently.")}</p><p id="stl" style="font-size:28px;font-weight:800;margin:0">2:00</p></div></div>
+  openSheet(sheetHd(t("mStretch")) + `<div class="card scene"><div class="pic"><img src="${A}warmup.webp" alt="${L3("Nari stretching", "Nari đang giãn cơ", "스트레칭하는 나리")}"></div><div class="txt"><div class="who">Nari</div><p>${tr("Slow breaths. Roll your shoulders, reach up, fold gently.")}</p><p id="stl" style="font-size:28px;font-weight:800;margin:0">2:00</p></div></div>
   <p class="sub sm" style="margin-top:8px">${tr("Stop if anything hurts.")}</p><div class="stack"><button class="btn full" data-act="stretchdone">${tr("Finish (demo: skip the timer)")}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("mStretch"));
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000);
 }
@@ -1214,40 +1379,55 @@ function manage(b) {
 }
 function cancelAsk(b) {
   const s = S[b.store], free = freeNow(b.store, b.d, b.m);
-  openSheet(sheetHd(t("cancel")) + storeBar(b.store) + `<p style="margin-top:10px">${t("cancel")}: <b>${esc(N(svcOf(b.store, b.svc).n))}</b>, ${fWhen(b.d, b.m)}?</p><p>${free ? `<span class="tag ok">${tr("Free")}</span> You're inside the free window.${b.usePass ? " The class goes back on your pass." : ""}${b.dep ? " " + L3(`Your ${vnd(b.dep)} deposit is returned.`, `Tiền cọc ${vnd(b.dep)} được hoàn lại.`, `예약금 ${vnd(b.dep)}은 돌려드려요.`) : ""}` : `<span class="tag warn">${tr("Late cancel")}</span> ${esc(tr(s.policy.late))}`}</p>
+  openSheet(sheetHd(t("cancel")) + storeBar(b.store) + `<p style="margin-top:10px">${t("cancel")}: <b>${esc(N(svcOf(b.store, b.svc).n))}</b>, ${fWhen(b.d, b.m)}?</p><p>${free ? `<span class="tag ok">${tr("Free")}</span> ${tr("You're inside the free window.")}${b.usePass ? tr(" The class goes back on your pass.") : ""}${b.dep ? " " + L3(`Your ${vnd(b.dep)} deposit is returned.`, `Tiền cọc ${vnd(b.dep)} được hoàn lại.`, `예약금 ${vnd(b.dep)}은 돌려드려요.`) : ""}` : `<span class="tag warn">${tr("Late cancel")}</span> ${esc(tr(s.policy.late))}`}</p>
   <div class="stack"><button class="btn ghost full" data-act="close">${t("keep")}</button><button class="btn full" data-act="cancelok" data-id="${b.id}">${t("cancel")}${free ? "" : " · " + esc(tr(s.policy.late))}</button></div>`, t("cancel"));
 }
 
 /* ===== Call Nari: simulated in-app call (Dot-style), scripted, demo only ===== */
 let CALL = null, waveT = null;
+function callBuild(kind) {
+  const P = { court: { store: "pickle", svc: "court", d: 1, want: 1140, o: { len: 60, paddles: 0 }, party: 4 },
+    hair: { store: "salon", svc: "cut", d: nextOrToday(6) || 7, want: 840, o: { staff: "linh" } },
+    spa: { store: "spa", svc: "aroma60", d: 1, want: 1140, o: {} } }[kind];
+  const sl = slotsFor(P.store, P.svc, P.d, P.o), z = sl.slice().sort((a, b) => Math.abs(a.m - P.want) - Math.abs(b.m - P.want))[0];
+  const s = S[P.store], v = svcOf(P.store, P.svc);
+  if (!z) return { z: null, lines: [["n", L3("Sorry, that's fully booked. Nothing is booked.", "Xin lỗi, đã kín lịch. Chưa đặt gì cả.", "죄송해요, 예약이 다 찼어요. 예약하지 않았어요.")]] };
+  const who = z.rids.map(r => resName(P.store, r)).join(" + "), tm = fTime(z.m), day = fDay(P.d), pr = vnd(z.price), dl = freeNow(P.store, P.d, z.m) ? fDeadline(P.store, P.d, z.m) : null, len = z.len;
+  const ask = { court: L3("A pickleball court for 4, tomorrow at 7pm.", "Cho mình đặt sân pickleball cho 4 người, tối mai 7 giờ.", "내일 저녁 7시에 피클볼 코트 4명이요."),
+    hair: L3("A women's cut with Linh on Saturday afternoon.", "Cắt tóc nữ với Linh chiều thứ bảy.", "토요일 오후에 린 디자이너 여성 커트요."),
+    spa: L3("A 60-minute aroma massage tomorrow evening.", "Massage tinh dầu 60 phút tối mai.", "내일 저녁 아로마 마사지 60분이요.") }[kind];
+  const fc = dl ? L3(`Free cancellation until ${dl}.`, `Hủy miễn phí trước ${dl}.`, `${dl}까지 무료 취소예요.`) : L3("Free cancellation has ended for this time.", "Giờ này đã hết hạn hủy miễn phí.", "이 시간은 무료 취소 기간이 지났어요.");
+  const read = L3(`${s.name} has ${N(v.n)} with ${who} on ${day} at ${tm}, ${len} minutes${P.party ? ", for 4 players" : ""}. The total is ${pr}, paid at the store. ${fc} Shall I book it?`,
+    `${s.name} còn ${N(v.n)} với ${who} ${day} lúc ${tm}, ${len} phút${P.party ? ", 4 người" : ""}. Giá ${pr}, trả tại cửa hàng. ${fc} Bạn xác nhận đặt nhé?`,
+    `${s.name} ${N(v.n)}, ${who}, ${day} ${tm}, ${len}분${P.party ? ", 4명" : ""}이에요. 합계 ${pr}, 매장에서 결제해요. ${fc} 예약할까요?`);
+  const done = L3(`Done. ${N(v.n)} at ${s.name} is booked, and it's in your Up next list.`, `Đã đặt xong ${N(v.n)} ở ${s.name}. Lịch đã có trong mục Sắp tới.`, `완료! ${s.name} ${N(v.n)} 예약됐고, 다가오는 예약에 있어요.`);
+  return { z, P, lines: [["me", ask], ["n", read], ["wait"], ["n", done]] };
+}
 function openCall() {
-  const vi = L === "vi", sl = slotsFor("pickle", "court", 1, { len: 60, paddles: 0 });
-  const z = sl.find(q => q.m === 1140) || sl.slice().sort((a, b) => Math.abs(a.m - 1140) - Math.abs(b.m - 1140))[0];
-  const court = z ? resName("pickle", z.rids[0]) : "Court 1", tm = z ? fTime(z.m) : "19:00", pr = z ? z.price : 280000, dl = z ? fDeadline("pickle", 1, z.m) : "";
-  const ko = L === "ko";
-  const script = ko ? [
-    ["n", "안녕하세요 미나, 예약 도우미 나리예요. 데모 통화라서 녹음되지 않고 실제 전화선도 쓰지 않아요. 무엇을 예약할까요?"],
-    ["me", "내일 저녁 7시에 피클볼 코트 4명이요."],
-    ["n", `Sunrise Pickleball Club ${N(court)}, 내일 ${tm}, 60분, 4명이에요. 합계 ${vnd(pr)}, 클럽에서 결제해요. ${dl}까지 무료 취소예요. 예약할까요?`],
-    ["wait"], ["n", `완료! ${N(court)} 예약됐고, 다가오는 예약에 있어요.`]] : vi ? [
-    ["n", "Xin chào, đây là Nari, trợ lý đặt lịch ảo. Đây là cuộc gọi demo, không ghi âm. Bạn muốn đặt gì ạ?"],
-    ["me", "Cho mình đặt sân pickleball cho 4 người, tối mai 7 giờ."],
-    ["n", `Sunrise còn ${court} ngày mai lúc ${tm}, 60 phút, 4 người, giá ${vnd(pr)}, trả tại sân. Hủy miễn phí trước ${dl}. Bạn xác nhận đặt nhé?`],
-    ["wait"], ["n", `Đã đặt xong ${court}. Lịch đã có trong mục Sắp tới.`]]
-  : [["n", "Hi Mina, this is Nari, your booking assistant. This is a demo call: nothing is recorded and no real phone line is used. What would you like to book?"],
-    ["me", "A pickleball court for 4, tomorrow at 7pm."],
-    ["n", `Sunrise Pickleball Club has ${court} tomorrow at ${tm}, 60 minutes, for 4 players. The total is ${vnd(pr)}, paid at the club. Free cancellation until ${dl}. Shall I book it?`],
-    ["wait"], ["n", `Done. ${court} is booked, and it's in your Up next list.`]];
-  CALL = { i: 0, muted: false, script, z, vi, ko, t0: Date.now(), timer: null, tick: null, ended: false };
+  const vi = L === "vi", ko = L === "ko";
+  const script = [["n", L3("Hi Mina, this is Nari, your booking assistant. This is a demo call: nothing is recorded and no real phone line is used. What would you like to book?", "Xin chào, đây là Nari, trợ lý đặt lịch ảo. Đây là cuộc gọi demo, không ghi âm và không dùng đường dây thật. Bạn muốn đặt gì ạ?", "안녕하세요 미나, 예약 도우미 나리예요. 데모 통화라서 녹음되지 않고 실제 전화선도 쓰지 않아요. 무엇을 예약할까요?")], ["choose"]];
+  CALL = { i: 0, muted: false, script, z: null, vi, ko, t0: Date.now(), timer: null, tick: null, ended: false, miss: 0 };
   lastFocus = document.activeElement;
-  const el = $("#call"); el.hidden = false;
-  el.innerHTML = `<div class="in"><span class="demo">${L3("Demo call · not a real phone call", "Cuộc gọi demo · không phải cuộc gọi thật", "데모 통화 · 실제 전화가 아니에요")}</span><div class="cav"><img src="${A}greet.webp" alt="Nari"></div><div style="text-align:center"><b style="font-size:20px">Nari</b><div class="sm" id="cst">${tr("Connecting…")}</div></div>
+  const el = $("#call"); el.hidden = false; el.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화"));
+  el.innerHTML = `<div class="in"><span class="demo">${L3("Demo call · not a real phone call", "Cuộc gọi demo · không phải cuộc gọi thật", "데모 통화 · 실제 전화가 아니에요")}</span><div class="cav"><img src="${A}greet.webp" alt="${L3("Nari", "Nari", "나리")}"></div><div style="text-align:center"><b style="font-size:20px">${L3("Nari", "Nari", "나리")}</b><div class="sm" id="cst">${tr("Connecting…")}</div></div>
     <div class="wave" id="wave" aria-hidden="true">${"<i></i>".repeat(24)}</div>
-    <div class="caps" id="caps" role="log" aria-live="polite" aria-label="Live captions"></div><div class="yes" id="yes"></div>
+    <div class="caps" id="caps" role="log" aria-live="polite" aria-label="${L3("Live captions", "Phụ đề trực tiếp", "실시간 자막")}"></div><div class="yes" id="yes"></div>
     <div class="ctl"><div><button class="rb" id="mute" data-act="mute" aria-pressed="false" aria-label="${t("mute")}">${ic("mic")}</button><div class="lbl" id="mutel">${t("mute")}</div></div><div><button class="rb end" data-act="hang" aria-label="${t("hang")}">${ic("end")}</button><div class="lbl">${t("hang")}</div></div></div></div>`;
   $("#mute").focus();
   CALL.tick = setInterval(() => { const s = Math.floor((Date.now() - CALL.t0) / 1000), st = $("#cst"); if (st) st.textContent = tr("Connected") + " · " + Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
   CALL.timer = setTimeout(callStep, 500);
+}
+function callChoose(kind) {
+  if (!CALL) return; $("#yes").innerHTML = "";
+  if (kind === "unclear") {
+    CALL.miss++;
+    const said = CALL.miss === 1 ? L3("Uh… the thing, you know, for later?", "Ừm… cái đó, bạn biết mà, để sau?", "음… 그거요, 이따가…?") : L3("Hmm… the usual… place?", "Ừm… chỗ quen… ấy?", "음… 늘 가던… 데?");
+    const reply = CALL.miss === 1 ? L3("Sorry, I didn't catch that. Could you say it another way, like “a haircut on Saturday”?", "Xin lỗi, mình chưa nghe rõ. Bạn nói cách khác được không, ví dụ “cắt tóc thứ bảy”?", "죄송해요, 잘 못 알아들었어요. “토요일 커트”처럼 다시 말해 줄래요?")
+      : L3("I'm still not getting it, sorry. I'll pass this to a person: the store will call you back. Nothing is booked.", "Xin lỗi, mình vẫn chưa hiểu. Mình sẽ chuyển cho nhân viên: cửa hàng sẽ gọi lại cho bạn. Chưa đặt gì cả.", "죄송해요, 아직 이해하지 못했어요. 직원에게 연결할게요. 매장에서 다시 전화드려요. 예약은 하지 않았어요.");
+    CALL.script.splice(CALL.i + 1, 0, ["me", said], ["n", reply]);
+    if (CALL.miss === 1) CALL.script.splice(CALL.i + 3, 0, ["choose"]); else CALL.handoff = true;
+  } else { const r = callBuild(kind); CALL.z = r.z; CALL.pick = r.P; CALL.script.splice(CALL.i + 1, 0, ...r.lines); }
+  CALL.i++; CALL.timer = setTimeout(callStep, 300);
 }
 function wave(on) { const w = $("#wave"); if (!w) return; [...w.children].forEach((b, i) => { b.style.height = on ? (RM ? 18 : 8 + (hsh("w" + i + Date.now()) % 30)) + "px" : "8px"; }); }
 function speak(text, lang, done) {
@@ -1261,19 +1441,22 @@ function callStep() {
   if (!CALL || CALL.ended) return; const st = CALL.script[CALL.i]; if (!st) return;
   if (st[0] === "n") { cap("n", st[1]); speak(st[1], CALL.ko ? "ko-KR" : CALL.vi ? "vi-VN" : "en-US", () => { if (!CALL || CALL.ended) return; CALL.i++; if (CALL.script[CALL.i]) CALL.timer = setTimeout(callStep, 350); else CALL.timer = setTimeout(() => endCall(), 1400); }); }
   else if (st[0] === "me") { cap("me", st[1]); CALL.i++; CALL.timer = setTimeout(callStep, 1200); }
+  else if (st[0] === "choose") { $("#yes").innerHTML = [["court", L3("Say: pickleball court", "Nói: sân pickleball", "말하기: 피클볼 코트")], ["hair", L3("Say: haircut with Linh", "Nói: cắt tóc với Linh", "말하기: 린 커트")], ["spa", L3("Say: aroma massage", "Nói: massage tinh dầu", "말하기: 아로마 마사지")], ["unclear", L3("Say something unclear", "Nói không rõ", "알아듣기 어렵게 말하기")]].map(([k, l], i) => `<button class="btn${i ? " sec" : ""}" data-act="callpick" data-v="${k}">${l}</button>`).join(""); $("#yes button").focus(); }
   else if (st[0] === "wait") { $("#yes").innerHTML = `<button class="btn" data-act="callyes">${L3("Say “Yes”", "Nói “Đúng rồi”", "“네” 라고 말하기")}</button><button class="btn sec" data-act="callno">${L3("Say “No”", "Nói “Không”", "“아니요” 라고 말하기")}</button>`; $("#yes button").focus(); }
 }
 function callYes(y) {
   $("#yes").innerHTML = ""; cap("me", y ? L3("Yes.", "Đúng rồi.", "네.") : L3("No.", "Không.", "아니요."));
   if (!y) { const l = L3("Okay, nothing is booked.", "Vâng, chưa đặt gì cả.", "네, 아무것도 예약하지 않았어요."); CALL.i = 99; cap("n", l); speak(l, CALL.ko ? "ko-KR" : CALL.vi ? "vi-VN" : "en-US", () => { CALL && (CALL.timer = setTimeout(endCall, 900)); }); return; }
-  const z = CALL.z; if (z) CALL.booking = doBook({ store: "pickle", svc: "court", d: 1, m: z.m, len: 60, rids: z.rids, price: z.price, party: 4, paddles: 0, source: "voice" }, true);
+  const z = CALL.z, P = CALL.pick; if (z && P) CALL.booking = doBook({ store: P.store, svc: P.svc, d: P.d, m: z.m, len: z.len, rids: z.rids, price: z.price, party: P.party || 0, paddles: 0, source: "voice" }, true);
   CALL.i++; CALL.timer = setTimeout(callStep, 400);
 }
 function endCall() {
   if (!CALL) return; CALL.ended = true; clearTimeout(CALL.timer); clearInterval(CALL.tick); clearInterval(waveT); try { speechSynthesis.cancel(); } catch (e) {}
-  const b = CALL.booking; CALL = null; $("#call").hidden = true; $("#call").innerHTML = ""; render();
+  const b = CALL.booking, ho = CALL.handoff; CALL = null; $("#call").hidden = true; $("#call").innerHTML = ""; render();
   if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus();
-  toast(b ? `Call ended · ${t("booked")}: ${resName("pickle", b.rids[0])}, ${fWhen(b.d, b.m)}` : "Call ended · nothing booked", b ? () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); } : null);
+  if (ho) { INBOX.unshift({ s: "salon", text: L3("Nari passed your call to us. We'll call you back soon. (Demo)", "Nari đã chuyển cuộc gọi của bạn cho chúng tôi. Chúng tôi sẽ gọi lại sớm. (Demo)", "나리가 통화를 전달했어요. 곧 다시 전화드릴게요. (데모)"), when: L3("Now", "Vừa xong", "방금"), unread: true }); }
+  toast(b ? L3(`Call ended · Booked: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `Cuộc gọi kết thúc · Đã đặt: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `통화 종료 · 예약됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}`)
+    : ho ? L3("Call ended · passed to a person, nothing booked", "Cuộc gọi kết thúc · đã chuyển cho nhân viên, chưa đặt gì", "통화 종료 · 직원에게 연결됨, 예약 없음") : "Call ended · nothing booked", b ? () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); } : null);
 }
 
 /* ===== events ===== */
@@ -1292,6 +1475,7 @@ document.addEventListener("click", e => {
     case "nset": ST.fromFeed = ST.page === "notif"; ST.page = "nset"; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "ntype": NSET.types[d.v] = el.checked; saveN(); render(); { const f = $(`[data-act="ntype"][data-v="${d.v}"]`); if (f) f.focus(); } break;
     case "nstore": NSET.muted[d.v] = !el.checked; saveN(); render(); { const f = $(`[data-act="nstore"][data-v="${d.v}"]`); if (f) f.focus(); } break;
+    case "noptin": NSET.optin[d.v] = el.checked; saveN(); render(); { const f = $(`[data-act="noptin"][data-v="${d.v}"]`); if (f) f.focus(); } break;
     case "nfriend": NSET.friendOptIn = el.checked; NSET.types.friend = el.checked; saveN(); render(); { const f = $(`[data-act="nfriend"]`); if (f) f.focus(); } break;
     case "cheer": toast(L3("Cheer sent to Mai!", "Đã gửi cổ vũ cho Mai!", "마이에게 응원을 보냈어요!")); break;
     case "again": { const [sid, vid, o] = AGAIN[+d.i]; openBook(sid, vid, Object.assign({}, o)); break; }
@@ -1313,13 +1497,16 @@ document.addEventListener("click", e => {
     case "stretchdone": finishStretch(); break;
     case "rest": ST.miss.rest = true; ST.xp += 20; ST.week[(wd(0) + 6) % 7] = ST.week[(wd(0) + 6) % 7] || 2; render(); toast("Rest day logged · +20 XP · your week still counts"); break;
     case "joinsheet": joinSheet(); break;
+    case "impok": { const s = S[IMPORT.sid]; IMPORT.state = "accepted"; s.joined = true; s.visits = IMPORT.visits; INBOX.unshift({ s: IMPORT.sid, text: `Welcome to ${s.name}! (sample store)`, when: L3("Now", "Vừa xong", "방금"), unread: false }); render(); toast(L3(`${s.name} is linked. Your ${IMPORT.visits} past visits are in your history; offers stay off.`, `Đã liên kết ${s.name}. ${IMPORT.visits} lần đến trước đã vào lịch sử; ưu đãi vẫn tắt.`, `${s.name} 연결됨. 지난 방문 ${IMPORT.visits}회가 기록에 들어갔고, 혜택 알림은 꺼져 있어요.`)); break; }
+    case "impno": IMPORT.state = "declined"; render(); toast(L3(`Thanks. We told ${S[IMPORT.sid].name} it isn't you; nothing is linked.`, `Cảm ơn. Đã báo ${S[IMPORT.sid].name} đây không phải bạn; không liên kết gì.`, `알려 줘서 고마워요. ${S[IMPORT.sid].name}에 본인이 아니라고 전했고, 연결하지 않았어요.`)); break;
+    case "implater": IMPORT.state = "later"; render(); toast(L3("Okay, I'll ask again later. Nothing is linked.", "Vâng, mình sẽ hỏi lại sau. Chưa liên kết gì.", "네, 나중에 다시 물어볼게요. 연결하지 않았어요.")); break;
     case "qr": qrSheet(); break;
     case "qrscan": closeSheet(); ST.store = "nails"; render(); joinConsent("nails"); break;
     case "linkjoin": linkSheet(); break;
     case "linkopen": { const v = norm(($("#lk") || {}).value || ""); const sid = /nail/.test(v) ? "nails" : /yoga|bloom/.test(v) ? "yoga" : ORDER0.find(id => v.includes(id)) || "yoga"; closeSheet(); ST.store = sid; render(); if (!S[sid].joined) joinConsent(sid); break; }
     case "gosearch": closeSheet(); ST.tab = "discover"; ST.store = null; render(); $("#dq").focus(); break;
     case "join": joinConsent(d.v); break;
-    case "joinok": doJoin(d.v); break;
+    case "joinok": { const oi = $("#optin"); if (oi && oi.checked) { NSET.optin[d.v] = true; saveN(); } doJoin(d.v); break; }
     case "cat": ST.cat = d.v; renderView(); { const el2 = $(`[data-act="cat"][data-v="${d.v}"]`); if (el2) el2.focus(); } break;
     case "whyad": toast("Sponsored by area (Thảo Điền). Not based on your bookings or health."); break;
     case "fake": toast(d.v); break;
@@ -1329,6 +1516,7 @@ document.addEventListener("click", e => {
     case "hang": endCall(); break;
     case "callyes": callYes(true); break;
     case "callno": callYes(false); break;
+    case "callpick": callChoose(d.v); break;
     case "cchip": chatChip(d.c, +d.i, +d.j); break;
     case "chatbook": chatBook(d.c, +d.i); break;
     case "ex": chatSend("book", d.v); break;
@@ -1350,9 +1538,17 @@ document.addEventListener("keydown", e => {
 });
 document.addEventListener("input", e => { if (e.target.id === "dq") { ST.q = e.target.value; const r = $("#dres"); if (r) { const tmp = document.createElement("div"); tmp.innerHTML = vDiscover(); r.innerHTML = tmp.querySelector("#dres").innerHTML; } } });
 
+/* multilingual safety regression suite (EN/VI/KO): run __plat.selfTest() in the console; every example chip is checked too */
+const SAFETY_CASES = [["en", "my knee hurts", "h"], ["en", "I feel dizzy", "h"], ["en", "I am pregnant, can I get a massage?", "h"], ["en", "chest pain", "u"], ["en", "I fainted", "u"], ["en", "my friend collapsed", "u"], ["en", "I can't breathe", "u"], ["en", "call an ambulance", "u"], ["en", "having a seizure", "u"], ["en", "bleeding heavily", "u"], ["en", "emergency", "u"], ["en", "help", "p"], ["en", "I have acne, which facial?", "s"], ["en", "I have eczema", "s"], ["en", "will the facial remove wrinkles?", "c"], ["en", "skin whitening treatment", "c"], ["en", "is the hair dye safe if I have allergies?", "h"], ["en", "can massage cure my back pain?", "h"], ["en", "I have high blood pressure, is massage ok?", "h"], ["en", "my head hurts after pickleball", "h"], ["en", "I twisted my ankle at the court", "h"], ["en", "I feel sick", "h"], ["en", "I had surgery last week", "h"], ["en", "short of breath", "u"], ["en", "haircut with Linh Saturday afternoon", "-"], ["en", "pickleball court for 4 tomorrow 7pm", "-"], ["en", "facial next week", "-"], ["en", "massage tomorrow", "-"], ["en", "the usual", "-"], ["en", "Which facial suits dry skin?", "-"], ["en", "What should I bring to pickleball?", "-"], ["en", "cancel my haircut", "-"], ["en", "move my facial to Sunday", "-"], ["en", "help me book a class", "-"], ["vi", "tôi bị đau đầu", "h"], ["vi", "toi bi dau dau", "h"], ["vi", "tôi có bầu, massage được không?", "h"], ["vi", "toi co bau, massage duoc khong", "h"], ["vi", "tôi mang thai", "h"], ["vi", "bầu bí 5 tháng đi spa được không", "h"], ["vi", "đau ngực", "u"], ["vi", "dau nguc", "u"], ["vi", "khó thở", "u"], ["vi", "kho tho qua", "u"], ["vi", "tôi bị ngất", "u"], ["vi", "toi bi ngat", "u"], ["vi", "bạn tôi bị ngã quỵ", "u"], ["vi", "ban toi bi nga quy", "u"], ["vi", "co giật", "u"], ["vi", "bạn tôi đang co giat", "u"], ["vi", "chảy máu nhiều", "u"], ["vi", "chay mau nhieu", "u"], ["vi", "cấp cứu", "u"], ["vi", "gọi bác sĩ", "u"], ["vi", "goi bac si giup toi", "u"], ["vi", "gọi xe cấp cứu", "u"], ["vi", "đột quỵ", "u"], ["vi", "dot quy", "u"], ["vi", "cứu tôi", "u"], ["vi", "cuu toi voi", "u"], ["vi", "cứu", "u"], ["vi", "bất tỉnh rồi", "u"], ["vi", "hụt hơi quá", "u"], ["vi", "tôi bị mụn, nên làm facial nào?", "s"], ["vi", "da tôi bị dị ứng", "s"], ["vi", "da bi kich ung", "s"], ["vi", "làm trắng da", "c"], ["vi", "lam trang da", "c"], ["vi", "trị nám", "c"], ["vi", "xóa nếp nhăn", "c"], ["vi", "xoá nếp nhăn", "c"], ["vi", "xoa nep nhan", "c"], ["vi", "tôi bị huyết áp cao", "h"], ["vi", "toi bi huyet ap cao", "h"], ["vi", "tôi bị trật mắt cá chân", "h"], ["vi", "bong gan chan", "h"], ["vi", "tôi bị sốt", "h"], ["vi", "tim đập nhanh", "h"], ["vi", "tim dap nhanh", "h"], ["vi", "buồn nôn", "h"], ["vi", "mệt quá", "h"], ["vi", "met qua", "h"], ["vi", "massage dầu 90 phút", "-"], ["vi", "massage dau 90 phut", "-"], ["vi", "chăm sóc da tuần sau", "-"], ["vi", "cham soc da tuan sau", "-"], ["vi", "da tôi khô, nên chăm sóc gì?", "-"], ["vi", "cắt tóc với Linh chiều thứ bảy", "-"], ["vi", "sân pickleball cho 4 người tối mai 7h", "-"], ["vi", "da khô nên chọn liệu trình nào?", "-"], ["vi", "cắt tóc thứ bảy chiều", "-"], ["vi", "dầu gội thảo dược", "-"], ["vi", "hủy lịch cắt tóc", "-"], ["vi", "dời lịch chăm sóc da sang chủ nhật", "-"], ["vi", "nhuộm tóc thuốc nhuộm hữu cơ", "-"], ["vi", "đặt hẹn sốt ruột quá", "-"], ["vi", "dat lich hen toi mai", "-"], ["ko", "무릎이 아파요", "h"], ["ko", "머리가 아파요", "h"], ["ko", "두통이 있어요", "h"], ["ko", "임신 중인데 마사지 받아도 돼요?", "h"], ["ko", "가슴 통증", "u"], ["ko", "숨을 못 쉬겠어요", "u"], ["ko", "숨이 차요", "u"], ["ko", "기절했어요", "u"], ["ko", "친구가 쓰러졌어요", "u"], ["ko", "경련", "u"], ["ko", "경련이 났어요", "u"], ["ko", "피가 많이 나요", "u"], ["ko", "응급", "u"], ["ko", "구급차 불러주세요", "u"], ["ko", "119", "u"], ["ko", "의사를 불러주세요", "u"], ["ko", "살려주세요", "u"], ["ko", "도와주세요", "p"], ["ko", "발작이 왔어요", "u"], ["ko", "뇌졸중 같아요", "u"], ["ko", "여드름이 있어요", "s"], ["ko", "알레르기가 있어요", "s"], ["ko", "미백 관리", "c"], ["ko", "주름 없애주세요", "c"], ["ko", "기미 제거 돼요?", "c"], ["ko", "혈압이 높아요", "h"], ["ko", "발목을 삐었어요", "h"], ["ko", "열이 나요", "h"], ["ko", "토했어요", "h"], ["ko", "어지러워요", "h"], ["ko", "너무 피곤해요", "h"], ["ko", "임산부도 요가 되나요", "h"], ["ko", "피부가 건조한데 어떤 관리가 좋아요?", "-"], ["ko", "토요일 오후 린 커트", "-"], ["ko", "내일 저녁 7시 피클볼 코트 4명", "-"], ["ko", "다음 주 페이셜", "-"], ["ko", "건조한 피부에 맞는 페이셜?", "-"], ["ko", "토요일 오후 커트", "-"], ["ko", "커트 취소해줘", "-"], ["ko", "페이셜 일요일로 옮겨줘", "-"]];
+function selfTest() {
+  const M = { u: "urgent", h: "health", s: "skin", c: "claim", p: "help", "-": null }, fail = [], L0 = L; let n = 0;
+  for (const [lang, q, e] of SAFETY_CASES) { n++; const got = safety(q); if (got !== M[e]) fail.push([lang, q, M[e], got]); }
+  for (const lang of ["en", "vi", "ko"]) { L = lang; for (const c of exampleChips()) { n++; if (safety(c.val.say) !== null) fail.push([lang, "chip: " + c.val.say, null, safety(c.val.say)]); } }
+  L = L0; return { total: n, passed: n - fail.length, fail };
+}
 seed(); render();
 /* test hooks for headless QA only */
-window.__plat = { S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply };
+window.__plat = { S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest };
 </script>
 </body>
 </html>
