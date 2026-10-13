@@ -1,6 +1,6 @@
 # Nari prototype: fixed safety scope (PR #10)
 
-Status: the user chose a fixed safety scope for the prototype on 2026-10-13 (decision relayed in chat). The prototype (`platform-app.html`) is a **demo**. Its safety handling is keyword and concept rules in the browser, with no AI model. It covers **tested phrasings** of the concepts listed below, meaning the sentences in the curated test set. It does **not** guarantee the concepts themselves: new wording of a listed concept can still be missed. The real fix is the server-side AI classifier in `docs/production-safety.md`. The production app will use a server-side AI classifier (see `docs/production-safety.md`).
+Status: the user chose a fixed safety scope for the prototype on 2026-10-13 (decision relayed in chat). The prototype (`platform-app.html`) is a **demo**. Its safety handling is keyword and concept rules in the browser, with no AI model. It covers **tested phrasings** of the concepts listed below, meaning the sentences in the curated test set. It does **not** guarantee the concepts themselves: new wording of a listed concept can still be missed. The real fix is the server-side AI classifier in `docs/production-safety.md`.
 
 ## Concepts with tested phrasings
 
@@ -51,7 +51,7 @@ A legacy harness label (6d43d31 expected "urgent" for "I want to kill myself", "
 |---|---|---|
 | R4 (597fd4a) | 15/28 | 39/56 |
 | R5 (6052b80) | 13/41 | 39/44 |
-| R6 (7b77a95) | 38/47 | 35/40 |
+| R6 (fresh, on 6052b80) | 23/47 | 32/40 |
 | R7 (7b77a95) | 28/51 | 34/40 |
 | R8 (f639061), in-scope concepts | 30/38 | 43/50 |
 | R8 (f639061), crisis wording outside the listed concepts | 1/14 | — |
