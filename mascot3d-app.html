@@ -282,9 +282,9 @@
   .reqbtn .ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   .reqbtn:focus-visible { outline:2px solid #B04A5E; outline-offset:2px; }
   .reqbtn .dot, .reqdot { position:absolute; top:10px; right:9px; width:8px; height:8px; border-radius:50%; background:#E8798A; box-shadow:0 0 0 2px #FFF7EA; }
-  .pawsend svg { width:29px; height:29px; display:block; stroke:none; }
-  .ai-form .btn.pawsend { background:#B04A5E; box-shadow:0 3px 0 #9E3F52; }
-  .ai-form .btn.pawsend:disabled { background:#D9D3CC; box-shadow:none; opacity:1; }
+  .sendbtn svg { width:24px; height:24px; display:block; stroke:none; }
+  .ai-form .btn.sendbtn { background:#B04A5E; box-shadow:0 3px 0 #9E3F52; }
+  .ai-form .btn.sendbtn:disabled { background:#D9D3CC; box-shadow:none; opacity:1; }
   .ask-dock { margin-top:auto; padding-top:8px; }
   .ask-stage.grow { flex:1 1 auto; justify-content:center; min-height:0; }
   .ask-stage.grow .hw { width:170px; height:241px; }
@@ -298,13 +298,13 @@
     .askhead { margin:0; }
     .ask-dock .ask-chips .chip-btn { min-height:44px; padding:6px 10px; }
   }
-  .pawsend svg g, .pawsend svg ellipse { fill:#fff !important; stroke:none !important; }
-  .pawsend { transition: transform .18s cubic-bezier(.3,1.6,.5,1), opacity .2s; }
-  .pawsend:active:not(:disabled) { transform: scale(.86, .8); }
-  .pawsend:disabled { cursor:default; }
-  .pawsend.squish svg { animation: pawsquish .38s ease; }
-  @keyframes pawsquish { 35% { transform: scale(1.15,.8) translateY(2px); } 70% { transform: scale(.94,1.08); } }
-  @media (prefers-reduced-motion: reduce) { .pawsend, .pawsend svg { transition:none !important; animation:none !important; } .pawsend:active:not(:disabled) { transform:none; } }
+  .sendbtn svg path { stroke:#fff !important; fill:none !important; }
+  .sendbtn { transition: transform .18s cubic-bezier(.3,1.6,.5,1), opacity .2s; }
+  .sendbtn:active:not(:disabled) { transform: scale(.86, .8); }
+  .sendbtn:disabled { cursor:default; }
+  .sendbtn.squish svg { animation: sendsquish .38s ease; }
+  @keyframes sendsquish { 35% { transform: scale(1.15,.8) translateY(2px); } 70% { transform: scale(.94,1.08); } }
+  @media (prefers-reduced-motion: reduce) { .sendbtn, .sendbtn svg { transition:none !important; animation:none !important; } .sendbtn:active:not(:disabled) { transform:none; } }
   .ask-thread { margin-bottom:10px; }
   .ask-chips { margin-top:4px; }
   .card.ai strong { display: block; font-size: 15px; }
@@ -437,10 +437,6 @@
   .hw .veil { position:absolute; inset:-6px; border-radius:40%; background:radial-gradient(closest-side, rgba(201,194,188,.35), rgba(201,194,188,0)); opacity:0; pointer-events:none; }
   .hana-stage .hw, .hero .hw { cursor:pointer; }
   .sayrow .hw .fx { display:none; }
-  /* Rive canvas fills the same 220x172 stage box under the bubble; the WebP figure hides only while Rive is live */
-  .hw .hana-rive { position:absolute; inset:0; width:100%; height:100%; display:block; }
-  .hw.rive .life, .hw.rive .fx, .hw.rive .shadow { display:none; }
-  .hw.rive { animation:none !important; }
 
   /* entrance / exit */
   .hw .fig.prevfig { animation:hexit .32s cubic-bezier(.5,0,.8,.4) both !important; pointer-events:none; }
@@ -455,7 +451,7 @@
   @keyframes hbobT { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
   @keyframes hbreath { 0%,100%{transform:scale(1,1)} 50%{transform:scale(1.015,.985)} }
 
-  /* greet: wave bob, rocks toward the waving paw, hearts pop */
+  /* greet: wave bob, rocks toward the waving hand, hearts pop */
   @keyframes hgreetT { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(-6px) rotate(2.5deg)} 50%{transform:translateY(0) rotate(0)} 70%{transform:translateY(-3px) rotate(1.5deg)} }
   @keyframes hgreetS { 0%,100%{transform:scale(1)} 48%{transform:scale(1.04,.95)} 56%{transform:scale(.98,1.02)} }
   .hw[data-s=greet] .fig { --fig: hgreetT 2.6s cubic-bezier(.45,0,.55,1) infinite; }
@@ -623,7 +619,7 @@
   .hw, .hw .fig, .hw .sq, .hw .life { animation:none !important; transform:none !important; }
   .hw .shadow, .hw .veil { display:none; }
   .sayrow .hw .m3 { border-radius:50%; }
-  .hw .fx .xring { display:none; }   /* kitten-sized halo crossed her face */
+  .hw .fx .xring { display:none; }   /* the halo crossed her face */
   .hana-stage.ask-stage:not(.grow) .hw { width:110px; height:156px; }
 </style>
 </head>
@@ -655,7 +651,6 @@
   </div>
   <aside class="note" id="note"></aside>
 </div>
-<script src="assets/hana/hana-renderer.js"></script>
 <script>
 const TAKEN = new Set([2, 5]);
 const HISTORY = [
@@ -672,7 +667,7 @@ const ICONS = {
   menu: '<svg class="ico" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
   pass: '<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
   inbox: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 13l2.2-7.1A1.5 1.5 0 0 1 7.6 5h8.8a1.5 1.5 0 0 1 1.4.9L20 13"/><path d="M4 13v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5h-4.5l-1.2 2h-4.6l-1.2-2z"/></svg>',
-  sendPaw: '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><ellipse cx="12" cy="15.6" rx="4.6" ry="3.9"/><ellipse cx="6.4" cy="10.4" rx="1.9" ry="2.3" transform="rotate(-18 6.4 10.4)"/><ellipse cx="9.9" cy="7" rx="1.9" ry="2.4" transform="rotate(-6 9.9 7)"/><ellipse cx="14.1" cy="7" rx="1.9" ry="2.4" transform="rotate(6 14.1 7)"/><ellipse cx="17.6" cy="10.4" rx="1.9" ry="2.3" transform="rotate(18 17.6 10.4)"/></g></svg>',
+  sendArrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M6.5 11.2 12 5.7l5.5 5.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   ask: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 19h.01"/><path d="M9 9a3 3 0 1 1 4.2 2.8c-.8.4-1.2.9-1.2 1.7V14"/></svg>',
   studio: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>',
   spark: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>',
@@ -680,7 +675,7 @@ const ICONS = {
   send: '<svg class="ico" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-7z"/></svg>',
   pin: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
   out: '<svg class="ico" viewBox="0 0 24 24"><path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2"/><path d="M4 12h12M13 9l3 3-3 3"/></svg>',
-  paw: '<svg viewBox="0 0 24 24"><path d="M12 13.5c-3 0-5 2.6-5 4.5 0 1.4 1.2 2 2.4 2 1.1 0 1.6-.6 2.6-.6s1.5.6 2.6.6c1.2 0 2.4-.6 2.4-2 0-1.9-2-4.5-5-4.5z"/><ellipse cx="5.5" cy="10.5" rx="1.8" ry="2.3"/><ellipse cx="9.3" cy="6.3" rx="1.8" ry="2.4"/><ellipse cx="14.7" cy="6.3" rx="1.8" ry="2.4"/><ellipse cx="18.5" cy="10.5" rx="1.8" ry="2.3"/></svg>',
+  coach: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5C4 7.9 7.4 5 11.5 5S19 7.9 19 11.5 15.6 18 11.5 18c-1 0-2-.2-2.9-.5L5 19l1-3.2c-1.3-1.2-2-2.7-2-4.3z"/><path d="M19.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" fill="currentColor" stroke-width="1"/></svg>',
   flame: '<svg viewBox="0 0 24 24"><path d="M12 21c-3.9 0-6.5-2.6-6.5-6 0-3.2 2.3-5 3.4-7.6.3 1.6 1.2 2.8 2.3 3.3C11.4 7.6 12.8 5 15.5 3c-.4 3 .8 4.9 2 6.6 1 1.4 1.5 2.9 1.5 4.6 0 3.9-3 6.8-7 6.8z"/></svg>',
   people: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.8-3 2.9-4.6 5.5-4.6s4.7 1.6 5.5 4.6"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.5 14.5c2.4 0 4.2 1.4 5 4"/></svg>',
   chat: '<svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/></svg>',
@@ -724,10 +719,10 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&l
 const NAME = "Coach";
 const M3 = "assets/mascot3d/";
 /* Every moment loops idle; these moments open with one reaction clip, then settle into idle. */
-const M3_ENTER = { book:"giggle", cheer:"giggle", cleared:"giggle", wink:"shy", nobook:"surprised" };
+const M3_ENTER = { sleep:"sleep", warmup:"warmup", book:"giggle", cheer:"giggle", cleared:"giggle", wink:"shy", nobook:"surprised" };
 const M3_TAP = ["giggle", "shy"];   /* member-facing tap reactions; 'angry' is never used */
 function m3Video(clip, cls, loop) {
-  return `<video class="m3 ${cls}" data-clip="${clip}" muted playsinline ${loop ? "loop autoplay" : ""} preload="auto" poster="${M3}${clip}.webp" aria-hidden="true" disablepictureinpicture><source src="${M3}${clip}.webm" type="video/webm"><source src="${M3}${clip}.mp4" type="video/mp4"></video>`;
+  return `<video class="m3 ${cls}" data-clip="${clip}" muted playsinline ${loop ? "loop autoplay" : ""} preload="${loop ? "auto" : "metadata"}" poster="${M3}${clip}.webp" aria-hidden="true" disablepictureinpicture><source src="${M3}${clip}.webm" type="video/webm"><source src="${M3}${clip}.mp4" type="video/mp4"></video>`;
 }
 function m3Play(h, clip) {
   if (!h || !hanaAnimOn() || h.dataset.playing) return false;
@@ -745,7 +740,7 @@ new MutationObserver(() => {
   document.querySelectorAll(".hw[data-react]").forEach(h => { const c = h.dataset.react; h.removeAttribute("data-react"); m3Play(h, c); });
 }).observe(document.getElementById("view") || document.body, { childList:true, subtree:true });
 const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"calm", front:"front" };
-/* thinking (Ask Hana typing) uses the calm art (interim, FX-04) until dedicated thinking art ships as WebP; moment numbers live in assets/hana/hana-renderer.js */
+/* thinking (Ask Hana typing) uses the calm art (interim, FX-04) until dedicated thinking art ships as WebP */
 const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
 /* Ambient props: small palette shapes in the guide's brown line. Positions are % of the stage box. */
 const HSHAPE = {
@@ -803,10 +798,6 @@ function hanaFig(st, cls) {
   if (cls === "prevfig") return "";
   const alt = esc(NAME);
   return `<div class="fig"><div class="sq">${hanaAnimOn() ? m3Video("idle", "idle body", true) : `<img class="m3 body" src="${M3}idle.webp" alt="${alt}" draggable="false">`}</div></div>`;
-}
-function hanaFigKitten(st, cls) {
-  const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
-  return `<div class="fig ${cls}"><div class="sq"><img class="body${art === "cheer" && hanaAnimOn() && HANA_LOOP.has(art) ? " tall" : ""}" data-art="${art}" src="${hanaFile(art)}" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" data-art="${prop}" src="${hanaFile(prop)}" alt="">` : ""}</div></div>`;
 }
 function hanaFx(st) {
   const items = (HFX[st] || []).map(([k, pos]) => `<i class="x${k}" style="${pos}">${HSHAPE[k.split(" ")[0]]}</i>`).join("");
@@ -904,7 +895,7 @@ function canHere() {
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
-  state.arrived = true; state.arrivedVia = via; HanaRenderer.success();
+  state.arrived = true; state.arrivedVia = via;
   alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
   toast("You’re here · still " + remainingLine());
 }
@@ -1170,7 +1161,7 @@ function closeShare(sent, via) {
   state.tab = "today";
   render();
 }
-function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; HanaRenderer.success(); state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
+function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
 function sharePayload() {
   const [k, title, sub, foot] = shareCard();
   return { k, title, sub, foot, text: title + "\n" + sub + "\n" + foot };
@@ -1439,7 +1430,7 @@ function hanaReply(q) {
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
   const studioQ = (line) => { state.askDraft = q; return R(line || "Good question for the studio. Want me to send it?", "greet",
     { k: "request", kicker: "Question for " + sn, title: "Send your words to " + sn + "?", body: "“" + q + "”\nReplies land in your inbox, up top.", acts: [["ai-question", "Send to " + sn]] }); };
-  if (state.aiSim === "offline") return R("My whiskers lost the signal. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
+  if (state.aiSim === "offline") return R("I lost the connection for a moment. Try again soon?", "paused", null, [["ai-retry", "Retry"]]);
   if (s.length > 140 || !/[a-z]/.test(s)) return R("Say it in one line for me?", "paused", null, askChips().slice(0, 3));
   /* guardrails: health (gentle, no exercise), privacy, payments */
   if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s)) return R("If you're hurt or unwell, please see a doctor or your instructor. I can help with class too.", "calm", null, b ? ["Tonight's class", "How many left?"] : ["Book tonight", "How many left?"]);
@@ -1467,7 +1458,7 @@ function hanaReply(q) {
   const bare = s.replace(/[?!.…\s]+$/, ""), ti = bare in CHIP_TIP ? CHIP_TIP[bare] : (/\b(tips?|show me)\b|\bhow (do|to|should|can|often)\b|\btimes a week\b|\b(any|a|quick|good|best) (stretch|stretches|breathing)\b/.test(s) ? TIPS.findIndex(t => t.q.test(s)) : -1);
   if (ti < 0 && /^(a |any |one |another |give me a |got a )?tips?( please| pls| plz)?\W*$|^(can i have|can you give me|give me|tell me|show me|got|i want|i.?d like) (a |some |any |one |another )?tips?\b/.test(s)) return { ...R("Pick a tiny one?", "warmup", null, TIPS.map(t => t.t)), allChips: true };
   if (ti < 0 && /\btips?\b/.test(s)) { state.fbChips = TIPS.map(t => t.t); return null; }   /* a tip ask with no known topic: fallback, never the balance */
-  if (ti >= 0) { state.tipIdx = ti; return R(ti === 0 ? "Breathe into your ribs. Like a sleepy cat!" : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(ti)); }
+  if (ti >= 0) { state.tipIdx = ti; return R(ti === 0 ? "Breathe into your ribs, nice and slow." : "Here's a tiny one.", ti === 0 || ti === 3 ? "calm" : "warmup", tipCard(ti)); }
   if (state.aiSim === "noPass" && /how many|left\?|pass|book|extend|expire/.test(s)) return R("Your " + sn + " pass ended " + p.until + ". The studio can help.", "paused",
     { k: "info", kicker: "From your passes", title: sn + " pass ended", body: "No sessions to book with. Nothing to buy here.", acts: [["late-ask", "Ask the studio"]] });
   if (/\bhelp (me )?with (my )?pass\b/.test(s) || /how many|how much .*left|\bleft\?|\bleft\b.*(pass|session)|sessions? left|remaining|balance|expire|pass end|when does my pass/.test(s) && !/left my/.test(s)) {
@@ -1532,7 +1523,7 @@ function hanaReply(q) {
   if (/\b(where|directions?|address|map|get there)\b/.test(s)) return R(b && b.studio === state.studio ? "Here's the way. Check-in opens at " + T.open + "." : "Here's the way to " + sn + ".", "greet", { k: "info", kicker: "From " + sn + "'s studio info", title: sn + " studio", body: (state.studio === "geumho" ? "Geumho-ro 12, 2F" : "Dosan-daero 45, 3F") + " · 3 min from the station.", acts: [["ai-map", "Open map"]] });
   if (/\bcheck.?in\b|\bwhen can i\b/.test(s)) return R("Check-in opens at " + T.open + ". Tap I'm here!", "warmup", { k: "info", kicker: "From your schedule", title: "Check-in " + T.open + " – " + T.close, body: "Presence only. The studio marks attendance.", acts: [["ai-today", "Open Today"]] });
   /* 4 streak & encouragement */
-  if (/\bstreak\b|\bin a row\b/.test(s)) return R(state.streak + " days in a row. Your paws are proud!", state.attended && state.sharedDone ? "cleared" : "cheer", { k: "streak", kicker: "From your check-ins", title: state.streak + " day streak", body: "Mon ✓ · Tue ✓ · Wed ✓ · Thu ·", acts: [["streak", "See streak"]] }, ["Book next"]);
+  if (/\bstreak\b|\bin a row\b/.test(s)) return R(state.streak + " days in a row. I'm proud of you!", state.attended && state.sharedDone ? "cleared" : "cheer", { k: "streak", kicker: "From your check-ins", title: state.streak + " day streak", body: "Mon ✓ · Tue ✓ · Wed ✓ · Thu ·", acts: [["streak", "See streak"]] }, ["Book next"]);
   if (/\b(did i do well|how did i do|good job)\b/.test(s)) return state.attended ? R("You showed up. That's the best part!", "cheer") : R("Every class counts. You're doing great.", "calm");
   /* 7 mood (device only) */
   if (/^i feel( like)?\W*$/.test(s)) return R("How are you feeling?", "greet", null, ["Great", "Okay", "Tired", "Stressed"]);
@@ -1546,11 +1537,10 @@ function hanaReply(q) {
   /* 5 studio questions */
   if (/\b(parking|towels?|lost|left my|kids|private|late fee|refund|teacher|instructor|showers?|toilets?|lockers?|water bottles?)\b/.test(s)) return studioQ();
   /* 6 small talk (two exchanges, then a useful chip) */
-  if (/^(hi|hey|hello|hiya)\b|\bhow are you\b|\b(fish|tuna|cute|love you|thanks?|thank you)\b/.test(s)) {
+  if (/^(hi|hey|hello|hiya)\b|\bhow are you\b|\b(cute|love you|thanks?|thank you)\b/.test(s)) {
     state.smallTalk = (state.smallTalk || 0) + 1;
     const useful = state.smallTalk >= 2 ? [askChips()[0]] : [];
-    if (/how are you/.test(s)) return R("Purr-fectly sleepy. You?", "greet", null, useful.length ? useful : ["I feel…"]);
-    if (/fish|tuna/.test(s)) return R("Tuna is my favourite. Barre is second!", "wink", null, useful);
+    if (/how are you/.test(s)) return R("Doing great, thanks. How about you?", "greet", null, useful.length ? useful : ["I feel…"]);
     if (/cute|love/.test(s)) return R("Aww, you too!", "wink", null, useful);
     if (/thank/.test(s)) return R("Anytime!", "wink", null, useful);
     return R("Hi " + state.name.split(" ")[0] + "! Ready to stretch?", "greet", null, useful.length ? useful : [askChips()[0]]);
@@ -1559,7 +1549,7 @@ function hanaReply(q) {
 }
 function hanaAnswer(q) {
   let r = hanaReply(q);
-  if (r) { state.fallbacks = 0; if (!/^(hi|hey|hello|hiya)\b|\bhow are you\b|\b(fish|tuna|cute|love you|thanks?|thank you)\b/.test(q.toLowerCase())) state.smallTalk = 0; return r; }
+  if (r) { state.fallbacks = 0; if (!/^(hi|hey|hello|hiya)\b|\bhow are you\b|\b(cute|love you|thanks?|thank you)\b/.test(q.toLowerCase())) state.smallTalk = 0; return r; }
   state.fallbacks = (state.fallbacks || 0) + 1;
   const ask = { k: "request", kicker: "Ask the studio", title: "Send it to " + studioName(state.studio) + "?", body: "“" + q + "”", foot: "About your health? Please see a doctor or your instructor.", acts: [["ai-question", "Ask the studio"]] };
   state.askDraft = q;
@@ -1571,7 +1561,7 @@ function aiAsk(q, instant) {
   state.chat.push({ role: "me", text: q });
   if (instant) { state.chat.push({ role: "ai", ...hanaAnswer(q) }); return; }
   state.chat.push({ role: "think" }); render(); scrollAsk(); askSay(NAME + " is typing");
-  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); const lr = state.chat[state.chat.length - 1] || {}; askSay(NAME + ": " + (lr.line || "") + (lr.card ? " " + lr.card.title : "")); if (/signal/.test(lr.line || "")) HanaRenderer.error(); else HanaRenderer.talk(); }, 650);
+  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); const lr = state.chat[state.chat.length - 1] || {}; askSay(NAME + ": " + (lr.line || "") + (lr.card ? " " + lr.card.title : "")); }, 650);
 }
 /* FX-03: scroll so the latest Hana line (and the card under it) starts at the top of the view; while thinking, show the dots */
 function scrollAsk() {
@@ -1608,7 +1598,7 @@ function assistant() {
     <p class="ask-k">Asking about ${studioName(state.studio)} · I only act when you tap</p>
     <div class="thread ask-thread">${thread}</div>
     <div class="ask-dock">${chips.length ? `<div class="chips wrap ask-chips">${chips.map(chipHtml).join("")}</div>` : ""}
-    <form id="aiForm" class="actions ai-form"><input id="aiText" placeholder="Try: book me tonight at 7" autocomplete="off" maxlength="200" /><button class="btn pawsend" type="submit" aria-label="Send" disabled>${ICONS.sendPaw}</button></form></div>`;
+    <form id="aiForm" class="actions ai-form"><input id="aiText" placeholder="Try: book me tonight at 7" autocomplete="off" maxlength="200" /><button class="btn sendbtn" type="submit" aria-label="Send" disabled>${ICONS.sendArrow}</button></form></div>`;
 }
 function requestList() {
   if (!state.requests.length) return "";
@@ -1662,7 +1652,7 @@ const JUMPS = [
   { key: "m-low",     label: "Low sessions", note: "2 left. From the pass pill on Today.", go: () => { inApp(); ensureBooked(); state.tab = "today"; state.view = "low"; } },
   { g: "Ask me" },
   ...[["ask-empty", "Empty thread", null, null], ["ask-book", "Booking", "Book me tonight at 7", null], ["ask-pass", "Pass", "How many left?", null], ["ask-info", "Class info", "What should I bring?", null],
-      ["ask-streak", "Streak", "What's my streak?", null], ["ask-studio", "Studio question", "I left my towel", null], ["ask-talk", "Small talk", "Do you like fish?", null], ["ask-mood", "Mood", "I'm tired", null],
+      ["ask-streak", "Streak", "What's my streak?", null], ["ask-studio", "Studio question", "I left my towel", null], ["ask-talk", "Small talk", "How are you?", null], ["ask-mood", "Mood", "I'm tired", null],
       ["ask-tip", "Tips", "How do I breathe in Pilates?", null], ["ask-care", "Pain guardrail", "My knee hurts", null], ["ask-fallback", "Not sure", "What's the meaning of life?", null],
       ["ask-offline", "Offline", "How many left?", "offline"], ["ask-seat", "Seat taken", "Book me tonight at 7", "seatTaken"], ["ask-sendfail", "Send failed", "Can I extend?", "sendFail"],
       ["ask-nopass", "Pass ended", "How many left?", "noPass"], ["ask-noclass", "No matching class", "Any barre at 10 tomorrow morning?", null], ["ask-long", "Too long", "x".repeat(150), null]]
@@ -1823,7 +1813,7 @@ function _render() {
     const labels = { today: "Today", book: "Book", ask: "Ask", schedule: "Schedule", you: "You" };
     tabs.innerHTML = ["today","book","ask","schedule","you"].map(t => {
       const on = t === hl;
-      const icon = t === "ask" ? `<span class="fab">${ICONS.paw}</span>` : ICONS[t];
+      const icon = t === "ask" ? `<span class="fab">${ICONS.coach}</span>` : ICONS[t];
       return `<button type="button" class="${t === "ask" ? "ask " : ""}${on ? "on" : ""}" data-act="tab-${t}"${on ? ' aria-current="page"' : ""}>${icon}<span>${labels[t]}</span></button>`;
     }).join("");
   }
@@ -1918,7 +1908,7 @@ function bookClass(spec) {
   state.justBooked = true; state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
   alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
   state.tab = "today"; state.view = null;
-  toast("Booked · still " + remainingLine()); render(); HanaRenderer.success();
+  toast("Booked · still " + remainingLine()); render();
 }
 function sheetBox(html) {
   const box = document.getElementById("sheetBox"), sh = document.getElementById("sheet");
@@ -1994,7 +1984,6 @@ function wire() {
   document.getElementById("view").onclick = (e) => {
     const h = e.target.closest("[data-hana]");
     if (h) { if (hana.long) { hana.long = false; return; }
-      if (HanaRenderer.active && h.classList.contains("rive")) { HanaRenderer.tap(); return; }
       if (h.dataset.playing) return;
       { const last = h.dataset.lastTap || window.__m3last, pool = M3_TAP.filter(c => c !== last), c = pool[Math.floor(Math.random() * pool.length)];
         window.__m3last = c; m3Play(h, c); return; }
@@ -2118,7 +2107,7 @@ function wire() {
       state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Open inbox"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent · replies land up top"); render(); }
     if (act === "logout") { resetSession(); state.auth = "welcome"; state.mode = "login"; state.view = null; state.password = ""; render(); }
   };
-  const aiT = document.getElementById("aiText"), aiB = document.querySelector(".pawsend");
+  const aiT = document.getElementById("aiText"), aiB = document.querySelector(".sendbtn");
   if (aiT && aiB) { aiT.addEventListener("input", () => { aiB.disabled = !aiT.value.trim(); }); aiB.addEventListener("pointerdown", () => { if (aiB.disabled) return; aiB.classList.remove("squish"); void aiB.offsetWidth; aiB.classList.add("squish"); }); }
   document.querySelectorAll("[data-otp]").forEach(inp => {
     inp.addEventListener("input", (ev) => {
@@ -2257,7 +2246,6 @@ render();
 if (new URLSearchParams(location.search).has("dev")) checkJumps();
 /* ?state=sleep: member away 14+ days with nothing booked */
 if (new URLSearchParams(location.search).get("state") === "sleep") { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; state.view = null; render(); }
-{ const _render = render; render = function () { const out = _render.apply(this, arguments); try { HanaRenderer.sync(); } catch (e) {} return out; }; HanaRenderer.sync(); }
 </script>
 </body>
 </html>
