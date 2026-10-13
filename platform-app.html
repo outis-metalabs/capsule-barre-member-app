@@ -228,7 +228,7 @@ const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&a
 const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").normalize("NFC");
 const VND = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 });
 const vnd = n => VND.format(n);
-const SAFE_LINE = "Please see a doctor or the store's staff before your visit.";
+const SAFE_LINE = "Please see a doctor or your instructor before your visit.";
 const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
 const SKIN_RE = /\b(acne|eczema|rash\w*|itch\w*|psoria\w*|rosacea|breakouts?|pimples?|sunburn\w*|hives|peeling|dermatitis|melasma|allergic reaction|reaction to|redness|irritat\w*)\b/;
 /* ===== VI / KO safety (P0). Rule: match diacritic-sensitively first (lowercased NFC text, Unicode word edges);
@@ -373,7 +373,7 @@ const CH2 = {
   claimK: [/\d+ ?(킬로|키로|kg)|살(이)? ?(빠|빼)|뱃살|체중 ?감량|다이어트 ?(효과|보장)|지방 ?(분해|감소|빼)|영원히|평생|영구|셀룰라이트/]
 };
 /* services named as bookings, not disclosures: taken out before the skin/claim checks */
-const SVC_STRIP2 = [/\b(acne )?extractions?( facial)?\b/gi, /(lấy nhân mụn|lay nhan mun)/giu, /(여드름 ?)?압출( ?관리)?/gu];
+const SVC_STRIP2 = [/\bacne facial\b/gi, /(facial|chăm sóc da|cham soc da) (trị|tri) mụn|(facial|cham soc da) tri mun/giu, /여드름 ?(페이셜|관리)/gu, /\b(acne )?extractions?( facial)?\b/gi, /(lấy nhân mụn|lay nhan mun)/giu, /(여드름 ?)?압출( ?관리)?/gu];
 const SVC_STRIP = [/\bnan mun\b/g, /\bnặn mụn\b/gu];
 function urgentConcept(text) {
   const f = fold(text), d = vnL(text);
@@ -421,8 +421,8 @@ const C3 = {
 /* a sore/stiff/tight/achy part named WITH a massage or stretch service is a booking (no injury, illness, pregnancy or medication words) */
 const MILD_SVC = /\b(massage|deep tissue|barre class|stretch\w*|facial|xoa bop|mat xa|gian co|keo gian|cham soc da)\b|마사지|스트레칭|딥티슈|페이셜/;
 const MILD_W = /\b(sore|stiff|tight|tired|achy|aches?|ache|aching|knots?|tense|dry skin|da kho|moi|nhuc|cang|cung)\b|뻣뻣|뻐근|아파서|아픈|결려|피곤|뭉쳐|당겨|건조/;
-const MILD_BAD = /\b(injur\w*|sprain\w*|strain\w*|broke\w*|fractur\w*|swell\w*|swollen|surgery|pregn\w*|preggo|meds?|medic\w*|pills?|fever|ill|sick|numb\w*|tingl\w*|sharp|shooting|cant|cannot|after (a |the )?fall|fell|hit|accident|disc|sciatic\w*|hernia\w*|cancer|chemo|is it (ok|safe)|ok to|safe|should i|can i|can she|can he|duoc khong|duoc ko|co nen|chan thuong|bong gan|sung|bau|thuoc)\b|\?|다쳤|부었|임신|약|수술|괜찮|돼요\?|되나요/;
-function mildBooking(text) { const f = fold(text), d = vnL(text); return (MILD_SVC.test(f) || MILD_SVC.test(d)) && (MILD_W.test(f) || MILD_W.test(d)) && !MILD_BAD.test(f) && !MILD_BAD.test(d); }
+const MILD_BAD = /\b(cold sores?|canker sores?|sore throat|injur\w*|sprain\w*|strain\w*|broke\w*|fractur\w*|swell\w*|swollen|surgery|pregn\w*|preggo|meds?|medic\w*|pills?|fever|ill|sick|numb\w*|tingl\w*|sharp|shooting|cant|cannot|after (a |the )?fall|fell|hit|accident|disc|sciatic\w*|hernia\w*|cancer|chemo|is it (ok|safe)|ok to|safe|should i|can i|can she|can he|duoc khong|duoc ko|co nen|chan thuong|bong gan|sung|bau|thuoc)\b|\?|다쳤|부었|임신|약|수술|괜찮|돼요\?|되나요/;
+function mildBooking(text) { const q0 = String(text).replace(/\b(can|could|may) i (book|get|have|reserve|do|grab)\b/gi, " book ").replace(/\?+\s*$/, ""), f = fold(q0), d = vnL(q0); return (MILD_SVC.test(f) || MILD_SVC.test(d)) && (MILD_W.test(f) || MILD_W.test(d)) && !MILD_BAD.test(f) && !MILD_BAD.test(d); }
 function safety5(text) {
   const f = fold(text), d = vnL(text), any = (L1, x) => (L1 || []).some(r => r.test(x));
   if (any(CX3.f, f) || any(CX3.k, d)) return "crisis";
@@ -438,13 +438,55 @@ function safety5b(text) {
   if (any(S3.f, f) || any(S3.k, d) || any(S3.d, d)) return "skin";
   return null;
 }
+
+/* ===== round 6: risk-word check-in, extra urgent concepts, body-condition claims (EN / VI with or without tone marks / KO).
+   A risk word that is not part of a clear service phrase ("haircut", "cut and colour", "jump rope", "dead skin", "pores disappear")
+   overrides booking, claim and the fallback: Nari answers with the crisis copy and asks whether the member is okay. ===== */
+const RISK_STRIP_F = [
+  /\b(hair ?cut\w*|cut (and|&|n) (colou?r|blow ?dry|style|dry|wash)|(wash|colou?r|trim|blow ?dry) (and|&|n) cut|cut (my |her |his )?(hair|bangs|fringe|ends|layers)|(quick|short|long|men.?s|kids?|bob|pixie|layered|buzz|fade) cut|cut (with|by|at|for|on|tomorrow|today|tonight|this|next|saturday|sunday|monday|tuesday|wednesday|thursday|friday) ?|book (a |my )?cut|(a|my|the) cut\b(?! (my|on|in|her|him|them|into|myself|deep))|cut$)/g,
+  /\b(jump (rope|squats?|training|class(es)?|lunges?|start)|calorie ?burn\w*|fat ?burn\w*|burn (fat|calories)|razor burn|dying (for|to) |dying of (heat|laughter|boredom|hunger|thirst|cuteness)|(is|are|its|it s|was|thats|that s) killing me|killing (my|me) (back|feet|legs|shoulders|neck)|burning (rash|sensation|skin|feeling|eyes)|(rash|skin|face|eyes?) (is |are |feels? )?burning|sun ?burn\w*|dead (skin|ends|sea)|existing (booking|appointment|member\w*|pass\w*|class\w*|reservation|customer|account|card)|take (a )?note|(side|quick|small) note|^note\W|\bnote ?:|(pores?|wrinkles?|lines|spots|acne|pimples?|scars?|dark (circles|spots)|pigment\w*|freckles|cellulite|fat|redness|blackheads?) (\w+ ){0,3}disappear\w*|disappear\w* (my |the |all )?(pores?|wrinkles?|spots|acne|scars?|dark circles|cellulite)|(class|session|booking|treatment|massage|facial) end\w*|end (time|of (the )?(class|session|day|week|month))|on the weekend)\b/g ];
+const RISK_EN = /\b(die|dies|died|dying|death|deaths|dead|disappear\w*|notes?|goodbye|good ?bye|farewell|bridge|ledge|cliff|rooftop|edge of|tracks|jump\w*|burn\w*|cut|cuts|cutting|slit|razor|blades?|rope|noose|hang (my|him|her)sel\w*|shoot (my|him|her)sel\w*|gun|existing|exist|end it|ending it|end (it all|everything|things|my life)|stockpil\w*|(saving|saved|collecting|hoarding|stashing) (up )?(my |all |the )?(pills?|tablets?|meds|sleeping pills|painkillers?)|(pills?|tablets?|meds) (saved|stockpiled|hoarded|ready)|overdos\w*|lethal|kill\w*|suicid\w*|unaliv\w*|self ?harm\w*|never (been )?born|better off (without|if i)|last day on earth|not going home|give away (all )?my|gave away (all )?my|point of (being alive|living|life)|alive anymore|out of (this )?life|scratch\w* (\w+ ){0,4}(on purpose|till they bleed|until they bleed)|driving (into|off)|in front of a (train|car|bus|truck)|how many (\w+ )?(pills?|tablets?|meds) (would|does|will) (it )?take|how much (\w+ ){0,2}(is|would be) (lethal|fatal|deadly|enough to))\b/;
+const RISK_VI_F = /\b(chet|bien mat|tuyet menh|thiet song|rach|ket thuc|y nghia|vinh biet|tu biet|di thu|thu tu biet|san thuong|nhay (cau|lau|xuong|song|tu)|tren cau|cay cau|ton tai|thuoc ngu|tich thuoc|tu tu|tu sat|tu van|tu lam (dau|hai)|song de lam gi|song lam gi|khong ai can (minh|toi|em)|doa tu)\b/;
+const RISK_VI_STRIP = /\b((mun|nam|tham|seo|nep nhan|vet tham|lo chan long|quang tham|mo thua)( \w+){0,3} bien mat|(lop|buoi|gio|class|lieu trinh)( \w+){0,3} ket thuc|ket thuc (luc|may gio|vao luc|khi nao)|may gio ket thuc|da chet|te bao chet)\b/g;
+const RISK_KO = /죽(?!전|순)|유서|옥상|긋|그었|그을|수면제|사라지|사라질|작별|마지막 ?인사|뛰어내|존재하고 ?싶지|지졌|번개탄|태어나지 ?말|끝낼|끝내고 ?싶|그만 ?살|없으면 ?(다|더)|자살|자해|한강 ?다리|다리 ?위/;
+const RISK_KO_STRIP = /(주름|여드름|기미|잡티|흉터|모공|셀룰라이트|다크서클|각질|뾰루지|트러블)(이|가|은|는|도)? ?(\S+ ){0,2}사라지|각질|죽은 ?세포|피곤해 ?죽겠|배고파 ?죽겠/g;
+function riskWord(text) {
+  text = String(text).replace(/^\s*(note|nb|fyi|p\.?s\.?)\s*[:\-]\s*/i, "");
+  let f = fold(text); for (const r of RISK_STRIP_F) f = f.replace(r, " ");
+  if (/\b(skin|peel\w*|rash|face|facial|eyes?|scalp|sting\w*|itch\w*|red(ness)?|product|serum|cream|mask|wax\w*)\b/.test(f) && !/\b(lighter|cigarette|on purpose|my ?self|match(es)?|iron)\b/.test(f)) f = f.replace(/\bburn\w*/g, " ");
+  if (RISK_EN.test(f)) return true;
+  const fv = fold(text).replace(RISK_VI_STRIP, " ");
+  if (RISK_VI_F.test(fv)) return true;
+  const k = vnL(text).replace(RISK_KO_STRIP, " ");
+  return RISK_KO.test(k);
+}
+/* passive wishes not to be alive or to not wake up, and "no reason to stay alive" inside a longer message */
+const CX6 = { f: [/\b((dont|do not|cant|can not|cannot) see myself (making it|being (here|around|alive)|surviving)|not (going to |gonna )?be (here|around) (much longer|for long|next week|tomorrow)|(no|any) (reason|point) (\w+ ){0,2}(to |in )?(stay(ing)?|be(ing)?|keep(ing)?) (alive|here|going)|(never|not|dont want to|wish i (would|wouldnt|didnt)) wake up( again| tomorrow)?|wish i (could )?(just )?(sleep forever|not wake up|wasnt here|wasnt alive|didnt exist)|ngu (mot giac )?(mai mai|khong bao gio (tinh )?day)|khong (bao gio )?muon (tinh )?day nua|khong muon thuc day|song (that |qua |rat )?(met|kho khan|vo nghia|nang ne) (qua|lam|nua)( roi)?)\b/],
+  k: [/살아(있는|가는|있다는) ?(게|것이|것도) ?(너무 |정말 |진짜 )?(힘들|지쳐|싫|괴로)|눈 ?(을 )?(안|못) ?(떴으면|뜨면 ?좋겠|뜨고 ?싶)|(깨어나지|깨지) ?(않았으면|말았으면)|영원히 ?잠들/] };
+function crisis6(text) { const f = fold(text), d = vnL(text); return CX6.f.some(r => r.test(f)) || CX6.k.some(r => r.test(d)); }
+/* labour / waters breaking, a child swallowing a battery, electrocution */
+const URG6 = {
+  f: [/\b(waters? (just |has |have )?(broke|broken|breaking|burst)|water broke|(she is|shes|im|i am|wife is|wifes|in|gone into|going into|went into|started) (in )?(active )?labou?r|labou?r (has )?(started|pains?)|contractions? (\w+ ){0,4}(apart|started|starting|coming|every)|baby (is )?(coming|crowning)|giving birth (now|here)|(swallow\w*|ate|eaten|has eaten|put) (\w+ ){0,3}(button |coin |lithium |watch |remote |hearing aid )?batter(y|ies)|electrocut\w*|(got|had|getting) (a |an )?(electric )?shock(ed)? from|(on the (floor|ground)|collapsed) (\w+ ){0,3}clutching (his|her|their|my) chest|clutching (his|her|their|my) chest (\w+ ){0,8}(cant|can not|cannot|unable to) (talk|speak|breathe)|electric(al)? shock|shock(ed)? (\w+ ){0,3}(socket|outlet|plug|wire|heater|dryer)|vo oi|chuyen da|(nuot|an) (phai |mat )?(\w+ ){0,2}pin|dien giat|giat dien)\b/],
+  k: [/양수(가|이)? ?(터|새)|진통(이|이요)? ?(시작|와|와요|와서|심해|간격)|아기가 ?(나올|나와)|(건전지|배터리|수은 ?전지|단추 ?전지)(를|을)? ?(\S+ )?(삼켰|삼켜|먹었)|감전/]
+};
+function urgent6(text) { const f = fold(text), d = vnL(text); return URG6.f.some(r => r.test(f)) || URG6.k.some(r => r.test(d)); }
+/* "fix/cure/correct my scoliosis", "chữa khỏi vẹo cột sống", "척추측만증 고칠/완치": a results claim about a body condition */
+const BODY_CLAIM = { f: [/\b(fix\w*|cure\w*|heal\w*|correct\w*|straighten\w*|reverse\w*|get rid of|permanently (fix|cure))\b.*\b(scolio\w*|posture|kyphos\w*|lordos\w*|herniat\w*|slipped disc|disc|sciatica|arthritis|back pain|hunchback|flat feet)\b|\b(scolio\w*|posture|kyphos\w*|sciatica)\b.*\b(fix\w*|cure\w*|go away|for good|forever|permanent\w*)\b|\b(chua khoi|chua dut|het han|khoi han)\b.*\b(veo|cong veo|cot song|thoat vi|dau lung)\b|\b(veo|cong veo) cot song\b.*\b(chua khoi|khoi han|het han)\b/],
+  k: [/(척추 ?측만|측만증|거북목|디스크|허리 ?통증).*(고칠|고쳐|고치|완치|낫|없어지|교정되)/] };
+function bodyClaim(text) { const f = fold(text), d = vnL(text); return BODY_CLAIM.f.some(r => r.test(f)) || BODY_CLAIM.k.some(r => r.test(d)); }
 /* returns the first safety class that applies, or null. Runs before small talk, cancel/move and booking, in every UI language.
    Order: urgent (fixed lists + concepts) > bare "help" > pregnancy > results claims > skin > health > claims. */
 function safety(text) {
   const raw = String(text).toLowerCase().trim(), d0 = vnL(text).trim(), s0 = norm(text).trim();
   const hit = (D, Sx, K, d, s) => (D && D.test(d)) || (Sx && Sx.test(s)) || (K && K.test(d));
-  if (crisisConcept(text)) return "crisis";
+  if (crisisConcept(text) || crisis6(text)) return "crisis";
   const s5 = safety5(text); if (s5) return s5;
+  if (urgent6(text)) return "urgent";
+  if (bodyClaim(text)) return "claim";
+  { const f6 = fold(text), d6 = vnL(text);
+    if (/\bpromise\b.*\b(remove\w*|results?|wrinkles?|lose|clear|whiter|younger|perfect)\b|\b(remove\w*|erase\w*) all (my |the )?(wrinkles|lines|spots|acne|scars)\b/.test(f6)) return "claim";
+    if (/\b(pneumonia|bronchitis|tonsillitis|sinus infection|strep throat|viem phoi|viem phe quan)\b/.test(f6) || /폐렴|기관지염/.test(d6)) return "health";
+    if (/따갑|화끈거|따끔/.test(d6) && !/마사지|페이셜/.test(d6.replace(/(후에?|하고|받고)/, ""))) return "skin"; }
   if (urgent2(text) || RED_FLAG_RE.test(raw) || RED_FLAG_RE.test(s0) || hit(SV.urgD, SV.urgS, SV.urgK, d0, s0) || /^(cứu|cuu)\W*$/u.test(d0) || urgentConcept(text)) return "urgent";
   if (/^(help|help!+|help me|i need help|need help|i need some help|please help|help please|someone help)\W*$/.test(s0) || /^(도와주세요|도와줘)\W*$/.test(d0)) return "help";
   { const s5b = safety5b(text); if (s5b === "mild") return null; if (s5b) return s5b; }
@@ -539,7 +581,7 @@ const S = {
     policy: { free: 3, late: vnd(50000), dep: 0, noshow: vnd(100000) + " added to your next visit", arrive: "15 min grace, then we may shorten the service" },
     staff: [{ id: "linh", n: "Linh" }, { id: "khoi", n: "Khôi" }], hours: [540, 1200], step: 30,
     svcs: [{ id: "cut", n: "Women's cut", len: 45, price: 350000, kw: /\b(hair ?cut|haircut|cut|trim|cat toc)\b/, desc: "Wash, cut and simple styling." },
-           { id: "blow", n: "Wash & blow-dry", len: 30, price: 180000, kw: /\b(blow.?dry|blowout|wash|goi dau|say toc)\b/, desc: "Wash and blow-dry." },
+           { id: "blow", n: "Wash & blow-dry", len: 30, price: 180000, kw: /\b(blow.?dry|blowout|wash|goi dau|say toc)\b|드라이/, desc: "Wash and blow-dry." },
            { id: "colour", n: "Colour", len: 120, price: 1200000, from: true, why: "depends on hair length; your stylist confirms", kw: /\b(colou?r|dye|nhuom)\b/, desc: "Single-process colour. Patch-test questions go to your stylist." }],
     kw: /\b(hair|salon|toc)\b/, names: /\bmay hair\b/, kb: { parking: "Motorbike parking in the alley next door." } },
   skin: { name: "Glow Lab Skincare", area: "Quận 3 (District 3)", cat: "skin", kind: "appt", color: "#3D7366", logo: "GL", joined: true, visits: 0, unread: 1,
@@ -558,7 +600,7 @@ const S = {
            { id: "aroma90", n: "Aroma massage 90 min", len: 90, price: 620000, desc: "Longer version, more time on back and shoulders." },
            { id: "foot", n: "Foot massage 45 min", len: 45, price: 280000, kw: /\b(foot|feet)\b/, desc: "Foot and lower-leg massage." },
            { id: "preg", n: "Pregnancy massage 60 min", len: 60, price: 500000, kw: /\b(pregnancy|prenatal|antenatal|maternity|bau) massage\b|\bmassage (cho )?(ba )?bau\b/, desc: "Side-lying massage with extra pillows, from the second trimester." }],
-    kw: /\b(spa|massage|mat xa|xoa bop|head spa|goi dau|bam huyet|an huyet|acupressure|body scrub|scrub|tay te bao chet)\b|헤드 ?스파|마사지|지압|스크럽/, names: /\bsen spa\b/, kb: { m: "From Sen Spa's info: the 60-minute is a full-body relax; the 90-minute adds more time on back and shoulders. Both use the same oil." } },
+    kw: /\b(spa|massage|deep tissue|mat xa|xoa bop|head spa|goi dau|bam huyet|an huyet|acupressure|body scrub|scrub|tay te bao chet)\b|헤드 ?스파|마사지|지압|스크럽/, names: /\bsen spa\b/, kb: { m: "From Sen Spa's info: the 60-minute is a full-body relax; the 90-minute adds more time on back and shoulders. Both use the same oil." } },
   pickle: { name: "Sunrise Pickleball Club", area: "Thảo Điền, Thủ Đức", cat: "sport", kind: "rental", color: "#2D6680", logo: "SP", joined: true, visits: 2, unread: 0,
     policy: { free: 12, late: "Half the court fee", dep: 0, noshow: "Full court fee", arrive: "Your block ends on time" },
     staff: [], courts: [{ id: "c1", n: "Court 1" }, { id: "c2", n: "Court 2" }, { id: "c3", n: "Court 3" }, { id: "c4", n: "Court 4" }], hours: [360, 1320], step: 60,
@@ -709,11 +751,10 @@ const TRD = {
   /* Nari's fixed lines */
   "Hi Mina, I'm Nari. I can book at any of your places, move a booking, or answer simple questions about them.": ["Chào Mina, mình là Nari. Mình có thể đặt lịch ở mọi nơi của bạn, đổi lịch, hoặc trả lời câu hỏi đơn giản.", "안녕하세요 미나, 저는 나리예요. 모든 매장의 예약과 변경, 간단한 질문을 도와드려요."],
   "Pregnancy massage at Sen Spa is from the second trimester. If you're unsure, check with your GP or midwife first.": ["Massage bầu ở Sen Spa dành cho mẹ từ tam cá nguyệt thứ hai. Nếu chưa chắc, hãy hỏi nữ hộ sinh hoặc nơi bạn khám thai trước nhé.", "센 스파 임산부 마사지는 임신 중기부터 받을 수 있어요. 확실하지 않으면 다니는 산부인과에 먼저 확인해 주세요."],
-  "Say it in one line for me?": ["Bạn nói gọn trong một dòng nhé?", "한 줄로 말해 줄래요?"],
-  "If you're hurt or unwell, please see a doctor or the store's staff. I can help with bookings too.": ["Nếu bạn bị đau hoặc không khỏe, hãy gặp bác sĩ hoặc nhân viên cửa hàng. Mình cũng có thể giúp đặt lịch.", "다쳤거나 몸이 안 좋다면 의사나 매장 직원을 만나 주세요. 예약도 도와드릴게요."],
+  "If you're hurt or unwell, please see a doctor or your instructor. I can help with bookings too.": ["Nếu bạn bị đau hoặc không khỏe, hãy gặp bác sĩ hoặc huấn luyện viên của bạn. Mình cũng có thể giúp đặt lịch.", "다쳤거나 몸이 안 좋다면 의사나 담당 강사와 상의해 주세요. 예약도 도와드릴게요."],
   "Thanks for telling me. Please stop exercising now and get medical help right away.": ["Cảm ơn bạn đã cho mình biết. Hãy dừng tập ngay và tìm trợ giúp y tế ngay lập tức.", "말해 줘서 고마워요. 지금 바로 운동을 멈추고 즉시 의료 도움을 받으세요."],
   "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.": ["Cảm ơn bạn đã chia sẻ. Với vấn đề về da, hãy hỏi bác sĩ da liễu hoặc chuyên viên của chúng tôi.", "말해 줘서 고마워요. 피부 고민은 피부과 전문의나 테라피스트와 상담해 주세요."],
-  "Thanks for telling me. Please see a doctor or the store's staff before your visit.": ["Cảm ơn bạn đã cho mình biết. Hãy gặp bác sĩ hoặc nhân viên cửa hàng trước buổi hẹn.", "말해 줘서 고마워요. 방문 전에 의사나 매장 직원과 상의해 주세요."],
+  "Thanks for telling me. Please see a doctor or your instructor before your visit.": ["Cảm ơn bạn đã cho mình biết. Hãy gặp bác sĩ hoặc huấn luyện viên của bạn trước buổi hẹn.", "말해 줘서 고마워요. 방문 전에 의사나 담당 강사와 상의해 주세요."],
   "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you.": ["Mình không hứa hẹn kết quả. Đây là cách Glow Lab mô tả các liệu trình; chuyên viên có thể trao đổi thêm với bạn.", "결과는 약속할 수 없어요. Glow Lab의 페이셜 설명이에요. 자세한 건 테라피스트와 이야기해 보세요."],
   "Hi Mina! What would you like to book?": ["Chào Mina! Bạn muốn đặt gì?", "안녕 미나! 무엇을 예약할까요?"], "Anytime!": ["Không có gì!", "언제든지요!"], "Okay, nothing booked.": ["Vâng, chưa đặt gì cả.", "네, 아무것도 예약하지 않았어요."],
   "Here's how Glow Lab describes its facials. For skin concerns, please check with a dermatologist or our therapist.": ["Đây là cách Glow Lab mô tả các liệu trình. Với vấn đề về da, hãy hỏi bác sĩ da liễu hoặc chuyên viên.", "Glow Lab의 페이셜 설명이에요. 피부 고민은 피부과 전문의나 테라피스트와 상담해 주세요."],
@@ -1081,6 +1122,14 @@ function urgentReply(c) { return say(c, "Thanks for telling me. " + SAFE_URGENT,
 function sosOpen(cid) { const c = CH[cid]; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   say(c, L3("I'm here. Which is closest?", "Mình ở đây. Điều nào đúng nhất?", "제가 여기 있어요. 어느 쪽인가요?"), { care: 1, nosos: 1, chips: [chip(L3("Someone is hurt or unwell", "Có người bị thương hoặc không khỏe", "누군가 다쳤거나 아파요"), { act: "sosu" }), chip(L3("I'm not okay", "Mình không ổn", "제가 괜찮지 않아요"), { act: "sosx" })] });
   render(); scrollThread(cid); }
+function fallbackReply(c) {
+  return say(c, L3("Sorry, I didn't quite get that. What would you like to do?", "Xin lỗi, mình chưa hiểu lắm. Bạn muốn làm gì?", "잘 이해하지 못했어요. 무엇을 도와드릴까요?"), { fb: 1, chips: [chip(L3("Book something", "Đặt lịch", "예약하기"), { act: "fbbook" }), chip(L3("Ask about the studio", "Hỏi về cửa hàng", "매장에 대해 묻기"), { act: "fbask" }), chip(L3("Someone is hurt / I need help", "Có người bị thương / Tôi cần giúp", "누가 다쳤어요 / 도움이 필요해요"), { act: "sos" })] });
+}
+function riskCheckIn(c, text) {
+  c.draft = null; c.ask = null; c.queue = null; c.pend = null;
+  return say(c, (CRISIS_COPY[L] || CRISIS_COPY.en) + " " + L3("Are you okay right now?", "Lúc này bạn có ổn không?", "지금 괜찮으세요?"), { care: 1, nosos: 1, checkin: 1,
+    chips: [chip(L3("I'm not okay", "Mình không ổn", "괜찮지 않아요"), { act: "riskx", q: text }), chip(L3("I'm fine, I meant something else", "Mình ổn, ý mình là chuyện khác", "괜찮아요, 다른 뜻이었어요"), { act: "riskok", q: text })] });
+}
 function reply(c, text) {
   const raw = text.toLowerCase().trim(), s = norm(text).trim();
   /* 1. safety first (the whole message, any length), before the length check and every other gate, every language: urgent > help > pregnancy/health > claims > skin > health (see safety()) */
@@ -1088,13 +1137,17 @@ function reply(c, text) {
   if (sf) { c.draft = null; c.ask = null; c.queue = null; c.pend = null; }
   if (sf === "crisis") return crisisReply(c, text);
   if (sf === "urgent") return urgentReply(c);
+  /* a risk word outside a clear service phrase overrides claim, skin, booking and the fallback: gentle check-in with the crisis copy */
+  const skipRisk = c.skipRisk; c.skipRisk = false;
+  if (!skipRisk && sf !== "help" && riskWord(text)) return riskCheckIn(c, text);
+  if (sf === "claim" && bodyClaim(text)) return say(c, L3("I can't promise results, and a class or treatment can't fix or cure a health condition. For a health condition, please check with a medical professional or your instructor first.", "Mình không thể hứa trước kết quả, và lớp tập hay liệu trình không chữa khỏi được bệnh lý. Với vấn đề sức khỏe, hãy hỏi ý kiến chuyên gia y tế hoặc huấn luyện viên của bạn trước nhé.", "결과를 약속드릴 수 없고, 수업이나 관리로 질환을 고치거나 완치할 수는 없어요. 건강 문제라면 먼저 전문 의료진이나 담당 강사와 상의해 주세요."), { care: 1 });
   if (sf === "crisis") return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 });
   if (sf === "urgent") return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } });
-  if (sf === "help") return say(c, "If you're hurt or unwell, please see a doctor or the store's staff. I can help with bookings too.", { care: 1 });
+  if (sf === "help") return say(c, "If you're hurt or unwell, please see a doctor or your instructor. I can help with bookings too.", { care: 1 });
   if (sf === "claim") return say(c, "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you." + (CURE_RE.test(fold(text)) || CURE_RE.test(vnL(text)) ? " " + L3("For a health condition, please check with a medical professional first.", "Với vấn đề sức khỏe, hãy hỏi ý kiến chuyên gia y tế trước nhé.", "건강 문제라면 먼저 전문 의료진과 상의해 주세요.") : ""), { card: skinCard(), chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })].concat(bookNext(text)) });
   if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text).concat(bookNext(text)) });
-  if (s.length > 200) return say(c, "Say it in one line for me?");
+  if (s.length > 200) return fallbackReply(c); /* long message: safety already ran on the full text; never ask for one line */
   /* pregnancy massage named as a service: book it, with a gentle note */
   if (!sf && pregService(text)) say(c, "Pregnancy massage at Sen Spa is from the second trimester. If you're unsure, check with your GP or midwife first.", { care: 1 });
   /* 2. small talk and simple consultations (store info only, always with a source) */
@@ -1108,7 +1161,9 @@ function reply(c, text) {
   if (/\b(take|accept|pay (by|with)|use) (a |my )?(card|credit card|visa|momo|cash|apple pay)\b|\bcard payment\b|\b(quet the|thanh toan (bang )?the|tra bang the|chuyen khoan|tien mat)\b/.test(s) || /카드 ?(결제|돼|되나|가능)|현금/.test(s)) return say(c, L3("Each place takes payment at the store. In this demo, deposits are paid in the app; card, cash and transfer at the counter vary by place, so ask them to be sure.", "Mỗi nơi thanh toán tại cửa hàng. Trong demo này, tiền cọc trả trong ứng dụng; thẻ, tiền mặt hay chuyển khoản tại quầy tùy từng nơi, bạn có thể hỏi họ cho chắc.", "결제는 매장에서 해요. 이 데모에서 예약금은 앱에서 내고, 카드·현금·이체 가능 여부는 매장마다 달라서 직접 물어보는 게 좋아요."), { chips: askStoreChips(text) });
   if (/\b(where is|where are|address|location|how do i get|directions?|dia chi|o dau)\b/.test(s) || /어디|주소|위치|가는 ?길/.test(s)) { const p0 = parse(text), ids = p0.store ? [p0.store] : joinedIds();
     return say(c, ids.map(id => S[id].name + ": " + S[id].area).join("\n"), { src: L3("From each place's profile", "Theo hồ sơ của từng nơi", "각 매장 정보 기준") }); }
-  if (/^(thanks|thank you|cam on)\b/.test(s) || /^(감사|고마워)/.test(s)) return say(c, "Anytime!");
+  if (/^(thanks|thank you|thx|ty|cheers|cam on|xin cam on|cam on nhieu)\b/.test(s) || /^(감사|고마워)/.test(s)) return say(c, "Anytime!");
+  if (/\b(showers?|lockers?|towels?|changing rooms?|tu do|cho tam|phong tam|phong thay do|khan tam)\b/.test(s) || /샤워|사물함|탈의실|수건/.test(s)) return say(c, L3("Each place lists its facilities in its profile. Want me to ask them?", "Tiện ích của từng nơi có trong hồ sơ của họ. Bạn muốn mình hỏi họ không?", "편의시설은 각 매장 정보에 있어요. 매장에 물어볼까요?"), { chips: joinedIds().map(id => chip(t("msgStore", { s: S[id].name }), { act: "askstore", store: id, q: text })) });
+  if (/\b(cancel\w* polic\w*|polic\w* (on|for) cancel\w*|chinh sach huy|quy dinh huy|phi huy)\b/.test(s) || /취소 ?(규정|정책|수수료)/.test(s)) return say(c, joinedIds().filter(id => S[id].policy).map(id => S[id].name + ": " + L3(`free to cancel up to ${S[id].policy.free}h before`, `hủy miễn phí trước ${S[id].policy.free} giờ`, `${S[id].policy.free}시간 전까지 무료 취소`)).join("\n"), { src: L3("From each place's policy", "Theo chính sách của từng nơi", "각 매장 정책 기준") });
   if (/\b(cancel that|never mind|nevermind|forget it)\b/.test(s)) { c.draft = null; c.ask = null; return say(c, "Okay, nothing booked."); }
   if (!(parse(text).d != null || parse(text).m != null) && /\bdry\b.*\bskin\b|\bskin\b.*\bdry\b|\bda (toi )?(bi |hoi |rat )?kho\b|건조|\b(which|what) facial\b|\bfacial\b.*\b(best|suits?|good for|for me)\b/.test(s)) return say(c, "Here's how Glow Lab describes its facials. For skin concerns, please check with a dermatologist or our therapist.", { card: skinCard(), chips: [chip("Book Hydrating facial", { set: { store: "skin", svc: "hydra" }, fresh: true }), chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (/\b(bring|wear|mang)\b.*\b(pickle\w*|court|san)\b|\b(pickle\w*|court)\b.*\b(bring|wear)\b/.test(s) || /피클볼.*(준비물|챙길|가져)/.test(s)) return say(c, S.pickle.kb.bring, { src: "From Sunrise Pickleball Club's info", chips: [chip("Book a court", { set: { store: "pickle", svc: "court" }, fresh: true })] });
@@ -1146,7 +1201,7 @@ function reply(c, text) {
     const KW2 = { nails: /\b(nails?|manicure|mani\w*|pedicure|gel|lam mong|son gel|mong tay|mong chan)\b|네일|매니큐어|페디큐어/, yoga: /\b(yoga)\b|요가/ };
     const ns = ORDER0.find(id => !S[id].joined && ((KW2[id] && (KW2[id].test(s) || KW2[id].test(vnL(text)))) || (S[id].names && S[id].names.test(s))));
     if (ns) return say(c, L3(`You haven't joined ${S[ns].name} yet. Find it in Discover to book there.`, `Bạn chưa tham gia ${S[ns].name}. Tìm trong Khám phá để đặt lịch nhé.`, `아직 ${S[ns].name}에 가입하지 않으셨어요. 탐색에서 찾아 예약할 수 있어요.`));
-    return say(c, L3("Sorry, I didn't quite get that. What would you like to do?", "Xin lỗi, mình chưa hiểu lắm. Bạn muốn làm gì?", "잘 이해하지 못했어요. 무엇을 도와드릴까요?"), { fb: 1, chips: [chip(L3("Book something", "Đặt lịch", "예약하기"), { act: "fbbook" }), chip(L3("Ask about the studio", "Hỏi về cửa hàng", "매장에 대해 묻기"), { act: "fbask" }), chip(L3("Someone is hurt / I need help", "Có người bị thương / Tôi cần giúp", "누가 다쳤어요 / 도움이 필요해요"), { act: "sos" })] });
+    return fallbackReply(c);
   }
   c.fails = 0; merge(c.draft, p); advance(c);
   if (multiNote) { const last = c.msgs[c.msgs.length - 1]; last.note = multiNote + (last.note ? " " + last.note : ""); }
@@ -1285,6 +1340,8 @@ function chatChip(cid, mi, ci) {
   if (v.act === "sos") { c.msgs.push({ who: "me", text: ch.label }); return sosOpen(cid); }
   c.msgs.push({ who: "me", text: ch.label });
   if (v.act === "sosu" || v.act === "sosx") { c.draft = null; c.ask = null; if (v.act === "sosu") urgentReply(c); else crisisReply(c, ""); render(); scrollThread(cid); return; }
+  if (v.act === "riskx") { c.draft = null; c.ask = null; crisisReply(c, v.q || ""); render(); scrollThread(cid); return; }
+  if (v.act === "riskok") { c.skipRisk = true; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
   if (v.act === "fbbook") { c.fails = 0; say(c, t("whatBook"), { chips: exampleChips() }); render(); scrollThread(cid); return; }
   if (v.act === "fbask") { say(c, L3("Ask me about opening hours, prices, parking, what to bring, or your passes.", "Bạn có thể hỏi giờ mở cửa, giá, chỗ gửi xe, cần mang gì, hoặc gói của bạn.", "영업시간, 가격, 주차, 준비물, 이용권에 대해 물어보세요."), { chips: [chip(L3("Opening hours", "Giờ mở cửa", "영업시간"), { say: L3("what time do you open", "mấy giờ mở cửa", "몇 시에 열어요?") }), chip(L3("Prices", "Giá", "가격"), { say: L3("prices", "giá bao nhiêu", "가격") }), chip(L3("My passes", "Gói của tôi", "내 이용권"), { say: L3("my pass balance", "gói của tôi còn mấy buổi", "이용권 몇 회 남았어?") })] }); render(); scrollThread(cid); return; }
   if (v.act === "booknext") { c.skipSafety = true; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
@@ -1389,7 +1446,7 @@ function chatUI(cid, placeholder) {
     if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}</div>`; }
     const av = `<span class="av" aria-hidden="true"><img src="${A}${m.care ? "calm" : "greet"}.webp" alt=""></span>`;
     const chips = m.chips && i === c.msgs.length - 1 ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
-    const sos = i > 0 && !m.nosos ? `<button type="button" class="sosmini" data-act="sos" data-c="${cid}">${esc(SOS_NOTE())} <u>${esc(SOS_BTN())}</u></button>` : "";
+    const sos = ""; /* the safety note shows once per screen, in the bar above the input */
     return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Nari: </span>${body}${sos}</div></div>${chips}`;
   }).join("");
   return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
@@ -1800,6 +1857,18 @@ function selfTest() {
 }
 seed(); render();
 /* test hooks for headless QA only */
+/* dev check: every "Get help now" jump opens the same two-way choice, and opening it twice gives the same result */
+function checkJumps() {
+  const bad = [], snap = JSON.stringify(CH);
+  for (const cid of ["ask", "book"]) for (let k = 0; k < 2; k++) {
+    const n = CH[cid].msgs.length; sosOpen(cid); const m = CH[cid].msgs[CH[cid].msgs.length - 1];
+    if (CH[cid].msgs.length !== n + 1 || !m.chips || m.chips.length !== 2 || m.chips[0].val.act !== "sosu" || m.chips[1].val.act !== "sosx") bad.push(cid + "#" + k);
+  }
+  const o = JSON.parse(snap); for (const cid in o) CH[cid].msgs = o[cid].msgs; render();
+  if (bad.length) console.error("jump not repeatable:", bad.join(", "));
+  return { ok: !bad.length, bad };
+}
+window.checkJumps = checkJumps;
 window.__plat = { S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest };
 </script>
 </body>
