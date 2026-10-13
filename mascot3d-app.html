@@ -612,7 +612,7 @@
   .check input:checked { background: #B04A5E url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat padding-box; box-shadow: none; }
   .check input:focus-visible { outline: 2px solid #B04A5E; outline-offset: -9px; }
   /* 3D mascot variant: video figure. Kitten squash/bob CSS is switched off (it distorts a human figure); the clip carries the motion. */
-  .hw .m3 { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:50% 100%; pointer-events:none; -webkit-user-drag:none; user-select:none;
+  .hw .m3 { position:absolute; inset:0; translate:none; max-width:none; max-height:none; width:100%; height:100%; object-fit:contain; object-position:50% 100%; pointer-events:none; -webkit-user-drag:none; user-select:none;
     -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 72%, transparent 100%), linear-gradient(#000 80%, transparent);
     -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 62% 70% at 50% 42%, #000 72%, transparent 100%), linear-gradient(#000 80%, transparent); mask-composite: intersect; }
   .hw .m3.react { opacity:0; transition:opacity .14s; } .hw .m3.react.on { opacity:1; }
@@ -718,11 +718,16 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&l
 /* PLACEHOLDER: the 3D mascot has no name yet. Ask the user, then change this one constant. */
 const NAME = "Coach";
 const M3 = "assets/mascot3d/";
-/* Every moment loops idle; these moments open with one reaction clip, then settle into idle. */
-const M3_ENTER = { sleep:"sleep", warmup:"warmup", book:"giggle", cheer:"giggle", cleared:"giggle", wink:"shy", nobook:"surprised" };
+/* Every moment loops idle; these moments open with one reaction clip (crossfaded in from and out to idle), then settle into idle.
+   thinking loops for as long as Ask is typing. */
+const M3_ENTER = { greet:"greet", sleep:"sleep", warmup:"warmup", book:"giggle", cheer:"cheer", calm:"calm", cleared:"cleared", paused:"paused", low:"low", wink:"shy", nobook:"surprised", thinking:"thinking" };
+/* Clip name -> file base in assets/mascot3d/. To swap a regenerated clip (e.g. low), drop in low-v2.{webm,mp4,webp} and change only this line. */
+const M3_FILE = { low:"low" };
+const M3_LOOP = { thinking:1 };
 const M3_TAP = ["giggle", "shy"];   /* member-facing tap reactions; 'angry' is never used */
 function m3Video(clip, cls, loop) {
-  return `<video class="m3 ${cls}" data-clip="${clip}" muted playsinline ${loop ? "loop autoplay" : ""} preload="${loop ? "auto" : "metadata"}" poster="${M3}${clip}.webp" aria-hidden="true" disablepictureinpicture><source src="${M3}${clip}.webm" type="video/webm"><source src="${M3}${clip}.mp4" type="video/mp4"></video>`;
+  const f = M3_FILE[clip] || clip;
+  return `<video class="m3 ${cls}" data-clip="${clip}" muted playsinline ${loop ? "loop autoplay" : ""} preload="${loop ? "auto" : "metadata"}" poster="${M3}${f}.webp" aria-hidden="true" disablepictureinpicture><source src="${M3}${f}.webm" type="video/webm"><source src="${M3}${f}.mp4" type="video/mp4"></video>`;
 }
 function m3Play(h, clip) {
   if (!h || !hanaAnimOn() || h.dataset.playing) return false;
@@ -730,6 +735,7 @@ function m3Play(h, clip) {
   h.dataset.playing = clip;
   idle.insertAdjacentHTML("afterend", m3Video(clip, "react", false));
   const v = h.querySelector("video.m3.react");
+  if (M3_LOOP[clip]) v.loop = true;   /* removed with the stage on the next render, when the answer arrives */
   const done = () => { v.classList.remove("on"); setTimeout(() => v.remove(), 160); delete h.dataset.playing; };
   v.addEventListener("ended", done, { once:true }); v.addEventListener("error", done, { once:true });
   v.addEventListener("playing", () => v.classList.add("on"), { once:true });
@@ -760,7 +766,7 @@ const HSHAPE = {
   star: '<svg width="14" height="14" viewBox="0 0 18 18"><path d="M9 1l2.3 5.3L17 7l-4.3 3.8L14 17l-5-3-5 3 1.3-6.2L1 7l5.7-.7z" fill="#F5C26B" stroke="#3B2E29" stroke-width="1.3" stroke-linejoin="round"/></svg>'
 };
 const HFX = {
-  greet:  [["heart","left:72%;top:22%"],["heart","left:80%;top:34%"],["heart","left:66%;top:12%"],["note","left:14%;top:24%"]],
+  greet:  [["heart","left:84%;top:16%"],["heart","left:86%;top:34%"],["heart","left:80%;top:4%"],["note","left:14%;top:24%"]],
   warmup: [["drop","left:28%;top:16%"],["lines","left:8%;top:40%"],["lines r","left:84%;top:36%"]],
   cheer:  [["spark","left:16%;top:8%"],["spark","left:78%;top:6%"],["sparkm","left:10%;top:36%"],["sparkm","left:86%;top:32%"]],
   calm:   [["ring","left:calc(50% - 100px);top:calc(50% - 85px)"],["ring b","left:calc(50% - 100px);top:calc(50% - 85px)"],["leaf","left:16%;top:56%"],["leaf b","left:78%;top:50%"]],
@@ -797,7 +803,7 @@ function hanaSrc(st) { return hanaFile(HANA_ART[st] || "front"); }
 function hanaFig(st, cls) {
   if (cls === "prevfig") return "";
   const alt = esc(NAME);
-  return `<div class="fig"><div class="sq">${hanaAnimOn() ? m3Video("idle", "idle body", true) : `<img class="m3 body" src="${M3}idle.webp" alt="${alt}" draggable="false">`}</div></div>`;
+  return `<div class="fig"><div class="sq">${hanaAnimOn() ? m3Video("idle", "idle body", true) : `<img class="m3 body" src="${M3}${M3_FILE[M3_ENTER[st]] || M3_ENTER[st] || "idle"}.webp" alt="${alt}" draggable="false">`}</div></div>`;
 }
 function hanaFx(st) {
   const items = (HFX[st] || []).map(([k, pos]) => `<i class="x${k}" style="${pos}">${HSHAPE[k.split(" ")[0]]}</i>`).join("");
