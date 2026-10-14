@@ -14,8 +14,8 @@ with sync_playwright() as p:
     hd = J("()=>{const h=document.querySelector('header.top'),cs=getComputedStyle(h);return {bg:cs.backgroundColor,z:+cs.zIndex,bf:cs.backdropFilter}}")
     ok(f'{L} header opaque and above confetti', hd['bg'].startswith('rgb(') and hd['z'] > 12 and hd['bf'] in ('none', ''), hd)
     J("()=>{window.scrollTo(0,600);celebrate();toast('+10')}"); pg.wait_for_timeout(250)
-    w = J("()=>{const t=document.getElementById('toast').getBoundingClientRect(),n=document.getElementById('tabs').getBoundingClientRect(),c=document.querySelector('.confetti');return {bottom:t.bottom,navTop:n.top,h:t.height,pops:document.querySelectorAll('.cheerpop').length,cz:c?+getComputedStyle(c).zIndex:0,hz:+getComputedStyle(document.querySelector('header.top')).zIndex}}")
-    ok(f'{L} win = small toast just above the tab bar, no floating Nari', w['pops'] == 0 and w['bottom'] <= w['navTop'] and w['navTop'] - w['bottom'] < 30 and w['h'] <= 80 and w['cz'] < w['hz'], w)
+    w = J("()=>{const t=document.getElementById('winpill').getBoundingClientRect(),h=document.querySelector('header.top').getBoundingClientRect(),c=document.querySelector('.confetti');return {top:t.top,bottom:t.bottom,hb:h.bottom,h:t.height,pops:document.querySelectorAll('.cheerpop').length,cz:c?+getComputedStyle(c).zIndex:0,hz:+getComputedStyle(document.querySelector('header.top')).zIndex}}")
+    ok(f'{L} win = small pill in the header free space (cutout-fixes P3), no floating Nari', w['pops'] == 0 and w['bottom'] <= w['hb'] and w['h'] <= 44 and w['cz'] < w['hz'], w)
     # the header hides confetti: topmost element at a header point is the header
     ok(f'{L} confetti never shows through the header', J("()=>{const e=document.elementFromPoint(200,20);return !!(e&&e.closest('header.top'))}"))
     pg.wait_for_timeout(3700); J("()=>window.scrollTo(0,0)")
@@ -45,7 +45,7 @@ with sync_playwright() as p:
     ok(f'{L} store: Call keeps the full store name for screen readers', 'Capsule Barre' in (sp['call'] or ''), sp['call'])
     # no wrapped button text across main screens
     bad = {}
-    for nm, js in [('home', "setTab('home')"), ('discover', "setTab('discover')"), ('nari', "setTab('nari')"), ('you', "setTab('you')"), ('store', "ST.tab='discover';ST.store='capsule'"), ('store-salon', "ST.tab='discover';ST.store='salon'"), ('bookings', "__plat.openBookings('up')"), ('past', "__plat.openBookings('past')")]:
+    for nm, js in [('home', "setTab('home')"), ('discover', "setTab('discover')"), ('nari', "setTab('nari')"), ('you', "setTab('you')"), ('you-wallet', "setTab('you');ST.page='wallet'"), ('you-vouchers', "setTab('you');ST.page='vouchers';ST.vseg='more'"), ('you-settings', "setTab('you');ST.page='settings'"), ('store', "ST.tab='discover';ST.store='capsule'"), ('store-salon', "ST.tab='discover';ST.store='salon'"), ('bookings', "__plat.openBookings('up')"), ('past', "__plat.openBookings('past')")]:
       for w in (320, 390):
         pg.set_viewport_size({'width': w, 'height': 844}); J(f"()=>{{ST.page=null;ST.store=null;{js};render()}}"); pg.wait_for_timeout(40); x = J(WRAP)
         if x: bad[f'{nm}@{w}'] = x

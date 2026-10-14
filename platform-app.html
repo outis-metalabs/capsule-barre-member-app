@@ -100,6 +100,11 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .week b.rest{background:repeating-linear-gradient(45deg,#D6EADF,#D6EADF 4px,#EEF6F1 4px,#EEF6F1 8px)}
 .pol{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:14px;margin:0}
 .pol dt{color:var(--sub)}.pol dd{margin:0;font-weight:600}
+.ytiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.ytile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:104px;padding:14px 12px;border:0;border-radius:20px;background:var(--card);box-shadow:0 4px 16px rgba(176,74,94,.07);font:inherit;color:inherit;text-align:left}
+.ytile .ico{color:#B04A5E;width:26px;height:26px}.ytile b{font-size:15px;line-height:1.2}
+.pgh{margin:4px 0 8px;font-size:22px}.seg{margin-bottom:10px}
+.pv-c{display:block;padding:4px 0}.pv-c+.pv-c{border-top:1px solid var(--line);padding-top:12px}.pv-c .vtx{width:100%}.pv-c .vuse{margin-top:10px}.pv-c .vcan{display:block;margin:6px auto 0;min-height:44px;font-size:14px;padding:6px 14px}
 .svc{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);width:100%;text-align:left;min-height:56px}
 .svc:hover{border-color:var(--rasp)}
 .svc .pr{font-weight:700;white-space:nowrap}
@@ -224,6 +229,11 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .btn.sact{flex-direction:column;gap:2px;min-height:60px;padding:8px 4px;border-radius:16px;font-size:13px;white-space:nowrap;box-shadow:none;border-color:#F0D3D9;background:#fff;color:var(--ink)}
 .btn.sact svg{color:var(--rasp)}
 .btn,.chip{white-space:nowrap}
+#winpill{position:fixed;z-index:16;height:40px;display:flex;align-items:center;gap:4px;padding:0 12px 0 4px;border-radius:999px;background:#fff;border:1.5px solid #F3C9D2;color:var(--raspd);font-size:14px;white-space:nowrap;overflow:hidden;pointer-events:none;box-shadow:0 4px 14px rgba(176,74,94,.18)}
+#winpill[hidden]{display:none}#winpill.go{animation:wpin .35s cubic-bezier(.3,1.5,.5,1)}
+#winpill .wcut{display:block;width:30px;height:40px;flex:none}#winpill .wcut .cut{width:30px;height:40px;object-fit:contain;object-position:50% 100%}
+#winpill .wcut:empty{display:none}
+@keyframes wpin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 body:has(#view.nari-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} /* on the Nari tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
@@ -297,25 +307,34 @@ const A = "assets/mascot3d/";
 /* real alpha Nari cut-outs (assets/nari-cut): VP9-alpha WebM with the WebP still as poster + fallback.
    Safari / iOS (any iOS browser is WebKit) has no VP9 alpha, so they get the still; so does prefers-reduced-motion. Videos load lazily when on screen. */
 const CUT = "assets/nari-cut/";
-const CUT_SZ = { wave: [270, 480], cheer: [400, 400], jump: [346, 480], thinking: [240, 240], voucher: [270, 480], ribbon: [500, 400], shy: [74, 360], idle: [222, 360], surprised: [307, 360] };
+const CUT_SZ = { wave: [270, 480], cheer: [400, 400], jump: [346, 480], thinking: [240, 240], voucher: [270, 480], ribbon: [500, 400], idle: [222, 360], surprised: [307, 360] };
 const CUT_ANIM = { wave: 1, cheer: 1, jump: 1, thinking: 1, voucher: 1, ribbon: 1 };
 const noAlphaVideo = () => { const u = navigator.userAgent || ""; return /iP(hone|ad|od)/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1) || (/Safari\//.test(u) && !/(Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS|Android)\//.test(u)); };
 const reducedMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 const cutMode = () => (reducedMotion() || noAlphaVideo() || !document.createElement("video").canPlayType('video/webm; codecs="vp9"')) ? "still" : "video";
 function cut(name, o) {
-  o = o || {}; const [w, h] = CUT_SZ[name], cls = "cut cut-" + name + (o.cls ? " " + o.cls : ""), al = o.alt ? `role="img" aria-label="${esc(o.alt)}"` : 'aria-hidden="true"', still = CUT + name + ".webp";
+  o = o || {}; if (!CUT_SZ[name]) name = "idle"; const [w, h] = CUT_SZ[name], cls = "cut cut-" + name + (o.cls ? " " + o.cls : ""), al = o.alt ? `role="img" aria-label="${esc(o.alt)}"` : 'aria-hidden="true"', still = CUT + name + ".webp";
   const img = `<img class="${cls}" src="${still}" alt="${o.alt ? esc(o.alt) : ""}" width="${w}" height="${h}" loading="${o.eager ? "eager" : "lazy"}" decoding="async"${o.alt ? "" : ' aria-hidden="true"'}>`;
   if (!CUT_ANIM[name] || cutMode() === "still") return img;
   return `<video class="${cls}" ${al} width="${w}" height="${h}" poster="${still}" muted playsinline ${o.once ? "" : "loop "}preload="none" data-cut="${CUT + name}.webm" disablepictureinpicture>${img}</video>`;
 }
 let cutIO = null;
+function startCut(v) {
+  if (v.dataset.on) return; v.dataset.on = "1"; v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+  const s = document.createElement("source"); s.src = v.dataset.cut; s.type = 'video/webm; codecs="vp9"'; v.insertBefore(s, v.firstChild); v.preload = "auto";
+  const go = () => { const p = v.play(); if (p && p.catch) p.catch(() => { v.dataset.on = ""; }); };
+  v.addEventListener("canplay", go, { once: true }); v.load(); if (v.readyState >= 2) go();
+}
 function hydrateCuts(root) {
   const vs = (root || document).querySelectorAll("video[data-cut]:not([data-on])"); if (!vs.length) return;
-  const start = v => { if (v.dataset.on) return; v.dataset.on = "1"; const s = document.createElement("source"); s.src = v.dataset.cut; s.type = 'video/webm; codecs="vp9"'; v.appendChild(s); v.load(); const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  const start = startCut;
+  /* sheets, toasts and the win pill are on screen as soon as they open: load + play right away (the IntersectionObserver can miss fixed/animated layers) */
+  const now = [...vs].filter(v => v.closest(".sheet, #toast, #winpill, .nhero, .nthink.on, .scene")); now.forEach(start);
   if (!("IntersectionObserver" in window)) return vs.forEach(start);
   if (!cutIO) cutIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { cutIO.unobserve(e.target); start(e.target); } }), { rootMargin: "120px" });
   vs.forEach(v => cutIO.observe(v));
 }
+new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1 && (n.matches && n.matches("video[data-cut]") || n.querySelector && n.querySelector("video[data-cut]"))) { hydrateCuts(n.parentNode || document); return; } }).observe(document.documentElement, { childList: true, subtree: true });
 if (window.matchMedia) { const mq = matchMedia("(prefers-reduced-motion: reduce)"); const f = () => { try { render(); } catch (e) {} }; mq.addEventListener ? mq.addEventListener("change", f) : mq.addListener && mq.addListener(f); }
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -334,7 +353,8 @@ const RN_LAT = { Linh: "Sora", "Khôi": "Minho", Khoi: "Minho", "Ngân": "Haneul
 const RN_KO = [[/(^|[\s"(:])린(?=[ 님이에한으랑])/g, "$1소라"], [/코이/g, "민호"], [/응[언안]/g, "하늘"], [/호아/g, "다미"], [/프엉|푸엉/g, "보라"], [/응옥/g, "지유"], [/뚜안|투안/g, "준호"], [/(^|[\s"(:])킴(?=[ 님이에한으랑])/g, "$1혜진"], [/(^|[\s"(:])짬(?=[ 님이에한으랑])/g, "$1채원"], [/(^|[\s"(:])란 님/g, "$1은지 님"], [/(^|[\s"(:])비 (선생님|님)/g, "$1예린 $2"]];
 const rn = x => { if (MARKET !== "kr" || typeof x !== "string") return x; x = x.replace(/(?<![\p{L}])(Linh|Khôi|Khoi|Ngân|Ngan|Vy|Hoa|Phương|Phuong|Ngọc|Trâm|Tuấn|Lành|Kim)(?![\p{L}])/gu, m => RN_LAT[m]); for (const [re, to] of RN_KO) x = x.replace(re, to); return x; };
 const CUR = MARKET === "kr" ? "KRW" : "VND", CURSYM = MARKET === "kr" ? "₩" : "₫";
-const fxMoneyTxt = x => MARKET === "kr" && typeof x === "string" ? x.replace(/(\d{1,3}(?:\.\d{3})+)\s?₫/g, (m, a) => vnd(+a.replace(/\./g, ""))) : x;
+/* KR market: every VND amount in copy becomes ₩ ("50.000 ₫", "50,000₫", "50000 đ", "50.000 VND", "₫50.000") */
+const fxMoneyTxt = x => MARKET === "kr" && typeof x === "string" ? x.replace(/(\d[\d.,]*\d|\d)\s?(?:₫|đ(?![\p{L}])|VNĐ|VND\b)/gu, (m, a) => vnd(+a.replace(/[.,]/g, ""))).replace(/₫\s?(\d[\d.,]*\d|\d)/g, (m, a) => vnd(+a.replace(/[.,]/g, ""))) : x;
 const SAFE_LINE = "Please see a doctor or your instructor before your visit.";
 const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
 const SKIN_RE = /\b(acne|eczema|rash\w*|itch\w*|psoria\w*|rosacea|breakouts?|pimples?|sunburn\w*|hives|peeling|dermatitis|melasma|allergic reaction|reaction to|redness|irritat\w*)\b/;
@@ -759,6 +779,7 @@ const IP = {
   search: '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>', back: '<path d="M15 5l-7 7 7 7"/>', chev: '<path d="M9 5l7 7-7 7"/>',
   send: '<path d="M4 12l16-7-6 16-3-7z"/>', pin: '<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+  wallet: '<rect x="3" y="6" width="18" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 12.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M5 6l10-3 1 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   star: '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/>', lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   shirt: '<path d="M8 4l-4 3 2 4 2-1v10h8V10l2 1 2-4-4-3c-.5 1.5-2 2.5-4 2.5S8.5 5.5 8 4z"/>', bag: '<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>',
   leaf: '<path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19l7-7"/>', dir: '<path d="M12 3l9 9-9 9-9-9z"/><path d="M10 14v-3h4"/>'
@@ -1136,7 +1157,7 @@ let toastT = null, toastUndo = null;
 function toast(msg, undo) {
   const el = $("#toast"); clearTimeout(toastT); toastUndo = undo || null;
   el.innerHTML = `<span class="tx">${esc(trS(msg))}</span>` + (undo ? `<button data-act="toastundo">${t("undo")}</button>` : "");
-  el.classList.remove("win"); if (toastCut) { putToastCut(el, toastCut); toastCut = null; }
+  el.classList.remove("win"); if (toastCut && !undo) { const n = toastCut; toastCut = null; el.hidden = true; clearTimeout(toastT); return showWin(msg, n); } toastCut = null;
   el.hidden = false; toastT = setTimeout(() => { el.hidden = true; toastUndo = null; el.classList.remove("win"); }, undo ? 7000 : 3500);
 }
 
@@ -1693,7 +1714,7 @@ function sendToStore(sid, text) {
 const unreadAt = sid => INBOX.some(m => m.s === sid && m.unread);
 const lvl = () => lvlOf(ME);
 function header() {
-  const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page === "bookings" ? t("bkTitle") : ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
+  const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page === "bookings" ? t("bkTitle") : YOU_PAGES.includes(ST.page) ? youTitle(ST.page) : ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
   return `<div class="brand">${ST.store || ST.page ? `<button class="icb" data-act="back" aria-label="${t("back")}">${ic("back")}</button>` : `<span class="nm" aria-hidden="true">N</span>`}<span class="t">${esc(title)}</span></div>
   <div class="tr"><button class="icb" data-act="lang" aria-label="${t("language")}: ${L.toUpperCase()}">${ic("globe", "s")}${L.toUpperCase()}</button>
   <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + L3(unread + " unread", unread + " chưa đọc", "읽지 않음 " + unread) : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
@@ -1822,19 +1843,79 @@ function journeySVG() {
     return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${ms ? 11 : 8}" fill="${done ? "#B04A5E" : "#FFFDF9"}" stroke="${cur || done ? "#B04A5E" : "#B9A89D"}" stroke-width="${cur ? 3 : 1.6}"/>${ms ? `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="${done ? "#fff" : "#6B5E62"}">${n}</text>` : ""}`; }).join("");
   return `<svg class="journey" viewBox="0 0 ${W} ${H}" role="img" aria-label="${L3(`Journey: step ${ST.steps} of ${N}. Step 10 unlocks the spring park scene.`, `Hành trình: bước ${ST.steps}/${N}. Bước 10 mở cảnh công viên mùa xuân.`, `여정: ${N}단계 중 ${ST.steps}단계. 10단계에서 봄 공원 장면이 열려요.`)}"><path d="${path}" fill="none" stroke="#E3D7CC" stroke-width="6" stroke-linecap="round"/>${dots}</svg>`;
 }
+/* wallet rows are real buttons that open a detail sheet (pass / package / credit / deposit) */
+const wKind = p => p.credit != null ? "credit" : p.svc ? "package" : "pass";
+const wBal = p => p.credit != null ? vnd(p.credit) : L3(`${p.left} left`, `còn ${p.left}`, `${p.left}회 남음`);
+function walletRow(sid, p) {
+  const nm = tr(p.t), lbl = `${nm}, ${S[sid].name}, ${wBal(p)}`;
+  return `<button class="svc wrow" data-act="wallet" data-s="${sid}" data-v="${p.id}" aria-label="${esc(lbl)}">${logo(sid)}<span class="grow"><b class="sm">${esc(nm)}</b><br><span class="sub sm">${esc(t("storeOnly", { s: S[sid].name }))} · ${esc(tr(p.exp))}</span></span><b>${esc(wBal(p))}</b>${ic("chev")}</button>`;
+}
+function depRow(b) {
+  const lbl = `${tr("Deposit held")}, ${S[b.store].name}, ${vnd(b.dep)}`;
+  return `<button class="svc wrow" data-act="walletdep" data-id="${b.id}" aria-label="${esc(lbl)}">${logo(b.store)}<span class="grow"><b class="sm">${tr("Deposit held")}</b><br><span class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</span></span><b>${vnd(b.dep)}</b>${ic("chev")}</button>`;
+}
+function walletSheet(sid, id) {
+  const p = (WALLET[sid] || []).find(q => q.id === id); if (!p) return; const s = S[sid], k = wKind(p), P = s.policy, nm = tr(p.t);
+  const svc = p.svc ? N(svcOf(sid, p.svc).n) : "";
+  const rules = k === "credit" ? [L3(`Use toward any booking at ${s.name}.`, `Dùng cho bất kỳ lịch nào tại ${s.name}.`, `${s.name}의 모든 예약에 사용할 수 있어요.`), L3("No cash value; it can't be moved to another place.", "Không quy đổi thành tiền mặt, không chuyển sang nơi khác.", "현금으로 바꾸거나 다른 매장으로 옮길 수 없어요.")]
+    : [k === "package" ? L3(`For ${svc} only, at ${s.name}.`, `Chỉ dùng cho ${svc} tại ${s.name}.`, `${s.name}의 ${svc}에만 사용할 수 있어요.`) : L3(`Any class at ${s.name}.`, `Mọi buổi tại ${s.name}.`, `${s.name}의 모든 수업에 사용할 수 있어요.`),
+       L3("1 per booking. Cancel in the free window and it goes back.", "Mỗi lịch dùng 1 buổi. Hủy trong thời gian miễn phí thì được hoàn lại.", "예약 1회에 1회 차감돼요. 무료 취소 기간 안에 취소하면 돌려드려요."),
+       L3(`Late cancel: ${tr(P.late)}. No-show: ${tr(P.noshow)}.`, `Hủy muộn: ${tr(P.late)}. Không đến: ${tr(P.noshow)}.`, `늦은 취소: ${tr(P.late)}. 노쇼: ${tr(P.noshow)}.`)];
+  const act = k === "credit" ? `<button class="btn full" data-act="go" data-v="store:${sid}">${esc(L3(`Use at ${s.name}`, `Dùng tại ${s.name}`, `${s.name}에서 사용`))}</button>`
+    : `<button class="btn full" data-act="walletbook" data-s="${sid}">${esc(L3("Book with this", "Đặt lịch bằng gói này", "이걸로 예약하기"))}</button>`;
+  openSheet(sheetHd(nm) + storeBar(sid) + `<dl class="conf" style="margin-top:10px"><dt>${esc(L3("Item", "Mục", "항목"))}</dt><dd>${esc(nm)}</dd><dt>${esc(L3("Store", "Cửa hàng", "매장"))}</dt><dd>${esc(s.name)}</dd><dt>${esc(k === "credit" ? L3("Balance", "Số dư", "잔액") : L3("Remaining", "Còn lại", "남은 횟수"))}</dt><dd><b>${esc(wBal(p))}</b></dd><dt>${esc(L3("Valid", "Hiệu lực", "유효 기간"))}</dt><dd>${esc(tr(p.exp))}</dd></dl>
+  <h3 style="margin:12px 0 4px;font-size:15px">${esc(L3("How it works", "Cách dùng", "사용 방법"))}</h3><ul class="sm" style="margin:0;padding-left:18px">${rules.map(r => `<li>${esc(r)}</li>`).join("")}</ul>
+  <div class="stack" style="margin-top:12px">${act}<button class="btn ghost full" data-act="close">${t("close")}</button></div>`, nm);
+}
+function depositSheet(id) {
+  const b = B.find(z => z.id === id); if (!b) return; const s = S[b.store], P = bkPol(b), free = bkFree(b), nm = tr("Deposit held");
+  const refund = free ? L3(`Cancel before ${fDeadline(b.store, b.d, b.m, P)} and it's returned in full.`, `Hủy trước ${fDeadline(b.store, b.d, b.m, P)} thì được hoàn đủ.`, `${fDeadline(b.store, b.d, b.m, P)} 전에 취소하면 전액 돌려드려요.`) : L3("The free cancel window has passed.", "Đã qua thời gian hủy miễn phí.", "무료 취소 기간이 지났어요.");
+  openSheet(sheetHd(nm) + storeBar(b.store) + `<dl class="conf" style="margin-top:10px"><dt>${esc(L3("Item", "Mục", "항목"))}</dt><dd>${esc(nm)} · ${esc(N(svcOf(b.store, b.svc).n))}</dd><dt>${esc(L3("Store", "Cửa hàng", "매장"))}</dt><dd>${esc(s.name)}</dd><dt>${esc(L3("Amount", "Số tiền", "금액"))}</dt><dd><b>${vnd(b.dep)}</b></dd><dt>${esc(L3("For", "Cho lịch", "예약"))}</dt><dd>${fWhen(b.d, b.m)}</dd></dl>
+  <h3 style="margin:12px 0 4px;font-size:15px">${esc(L3("Refund rule", "Quy định hoàn tiền", "환불 규정"))}</h3><ul class="sm" style="margin:0;padding-left:18px"><li>${esc(L3("Taken off the total when you visit.", "Được trừ vào tổng tiền khi bạn đến.", "방문하면 총액에서 빼 드려요."))}</li><li>${esc(refund)}</li><li>${esc(L3(`After that: ${tr(P.late)}. No-show: ${tr(P.noshow)}.`, `Sau đó: ${tr(P.late)}. Không đến: ${tr(P.noshow)}.`, `이후: ${tr(P.late)}. 노쇼: ${tr(P.noshow)}.`))}</li></ul>
+  <div class="stack" style="margin-top:12px"><button class="btn full" data-act="go" data-v="bookings:up:${b.id}">${esc(L3("View booking", "Xem lịch", "예약 보기"))}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, nm);
+}
+/* You (simplified): profile + one points/streak line, one next-reward line, 3 tiles, Settings row. Everything else lives on subpages. */
+const youWallet = () => joinedIds().reduce((n, sid) => n + (WALLET[sid] || []).length, 0) + upcoming().filter(b => b.dep).length;
+const youReady = () => ME ? ME.claims.filter(c => c.status === "ready").length : 0;
+function nextReward() {
+  const m = ME, lf = life(m), lv = lvlOf(m), nx = LVL[lv];
+  if (PV.flag) { const now = PV.now(), b = bal(m), v = PV.defs.filter(x => listed(x, now) && x.cost > b).sort((a, c) => a.cost - c.cost)[0];
+    if (v) return { txt: L3(`${fmtN(v.cost - b)} points to ${pvTx(v.title)}`, `Còn ${fmtN(v.cost - b)} điểm để đổi ${pvTx(v.title)}`, `${pvTx(v.title)}까지 ${fmtN(v.cost - b)}포인트`), pct: Math.round(100 * b / v.cost) };
+    if (PV.defs.some(x => listed(x, now))) return { txt: L3("You have enough points for a voucher", "Bạn đủ điểm để đổi ưu đãi", "쿠폰으로 바꿀 포인트가 충분해요"), pct: 100 }; }
+  return nx ? { txt: pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 }), pct: Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) } : { txt: lvlName(5), pct: 100 };
+}
+const YOU_PAGES = ["wallet", "vouchers", "settings"];
+const youTitle = p => p === "wallet" ? t("wallet") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
 function vYou() {
-  let h = notesCard() + `<div class="card row"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm">${tr("One account")} · ${joinedIds().length} ${tr("places")}</div></div></div>`;
-  h += pointsBlock();
-  h += rewardsBlock();
-  h += `<h2>${t("wallet")}</h2><div class="card stack">${joinedIds().map(sid => (WALLET[sid] || []).map(p => `<div class="row">${logo(sid)}<span class="grow"><b class="sm">${esc(tr(p.t))}</b><br><span class="sub sm">${esc(t("storeOnly", { s: S[sid].name }))} · ${esc(tr(p.exp))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("")).join("")}
-    ${upcoming().filter(b => b.dep).map(b => `<div class="row">${logo(b.store)}<span class="grow"><b class="sm">${tr("Deposit held")}</b><br><span class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</span></span><b>${vnd(b.dep)}</b></div>`).join("")}
-    ${PV.flag ? `<div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div>` : ""}</div>`;
-  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack">${[["mybk", "cal", t("bkTitle"), bkUpcoming().length + " " + t("bkUp").toLowerCase() + " · " + bkPastList().length + " " + t("bkPast").toLowerCase()], ["pvquest", "star", t("quest") + " · " + t("journey"), tr("step") + " " + ST.steps + "/14"], ["pvwardrobe", "shirt", t("wardrobe"), OUTFIT[Math.max(0, +String(ST.wear).replace(/\D/g, "") - 1)] || ""], ["inbox", "bell", t("inbox"), INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase()]].map(([act, i, n, sub]) => `<button class="svc" data-act="${act}">${ic(i)}<span class="grow"><b>${esc(n)}</b><br><span class="sub sm">${esc(sub)}</span></span>${ic("chev")}</button>`).join("")}</div>`;
-  h += storeAppBtn();
-  h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p><h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div><h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
+  const m = ME, nr = nextReward(), pts = PV.flag ? fmtPts(bal(m)) : fmtPts(life(m));
+  let h = notesCard() + `<section class="card row" id="you-prof"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sm" id="you-pts"><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</div></div></section>`;
+  h += `<div class="card" id="you-next" style="margin-top:12px"><div class="sm"><b>${esc(nr.txt)}</b></div><div class="bar" role="progressbar" aria-label="${esc(nr.txt)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${nr.pct}"><i style="width:${nr.pct}%"></i></div></div>`;
+  const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)]];
+  h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
+  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications, points info", "Ngôn ngữ, thông báo, thông tin điểm", "언어, 알림, 포인트 정보")}</span></span>${ic("chev")}</button></div>`;
   return h;
 }
-function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").classList.toggle("nari-v", ST.tab === "nari" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
+function vWallet() {
+  const rows = joinedIds().map(sid => (WALLET[sid] || []).map(p => walletRow(sid, p)).join("")).join("") + upcoming().filter(b => b.dep).map(depRow).join("");
+  return `<div class="card stack" id="wallet-list">${rows || nEmpty(esc(L3("Nothing in your wallet yet.", "Ví của bạn đang trống.", "지갑이 비어 있어요.")), "idle")}
+    ${PV.flag ? `<div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div>` : ""}</div>`;
+}
+function vVouchers() {
+  const seg = ST.vseg || "mine";
+  const sb = (k, l) => `<button class="chip" role="tab" aria-selected="${seg === k}" aria-pressed="${seg === k}" data-act="vseg" data-v="${k}">${esc(l)}</button>`;
+  return `<div class="chips seg" role="tablist" aria-label="${youTitle("vouchers")}">${sb("mine", L3("Mine", "Của tôi", "내 쿠폰"))}${sb("more", L3("Get more", "Đổi thêm", "더 받기"))}</div>` + (!PV.flag ? "" : seg === "mine" ? mineBlock() : rewardsBlock()) + (PV.flag ? "" : `<div class="card"><p class="sm" style="margin:0">${esc(L3("Vouchers to swap your points for are coming soon.", "Sắp có ưu đãi để đổi điểm.", "포인트로 바꿀 수 있는 쿠폰이 곧 나와요."))}</p></div>`);
+}
+function vSettings() {
+  let h = ``;
+  h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p>`;
+  h += `<h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div>`;
+  h += pointsBlock();
+  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack">${[["pvquest", "star", t("quest") + " · " + t("journey"), tr("step") + " " + ST.steps + "/14"], ["pvwardrobe", "shirt", t("wardrobe"), OUTFIT[Math.max(0, +String(ST.wear).replace(/\D/g, "") - 1)] || ""], ["inbox", "bell", t("inbox"), INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase()]].map(([act, i, n, sub]) => `<button class="svc" data-act="${act}">${ic(i)}<span class="grow"><b>${esc(n)}</b><br><span class="sub sm">${esc(sub)}</span></span>${ic("chev")}</button>`).join("")}</div>`;
+  h += storeAppBtn();
+  h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
+  return h;
+}
+function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").classList.toggle("nari-v", ST.tab === "nari" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
 function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
@@ -2361,6 +2442,11 @@ document.addEventListener("click", e => {
     case "calldemo": closeSheet(); openCall(); break;
     case "callstore": callStoreSheet(d.v); break;
     case "askstudio": askStudioSheet(bk(d.id)); break;
+    case "youpage": if (d.v === "bookings") { go("bookings:up::you"); break; } ST.page = d.v; render(); window.scrollTo(0, 0); $("#view").focus(); break;
+    case "vseg": ST.vseg = d.v; render(); { const b = $(`[data-act=vseg][data-v=${d.v}]`); if (b) b.focus(); } break;
+    case "wallet": walletSheet(d.s, d.v); break;
+    case "walletbook": go("nari:store:" + d.s); if (S[d.s] && S[d.s].joined) { CH.nari.scope = d.s; nariBookPrompt(); render(); scrollThread("nari"); } break;
+    case "walletdep": depositSheet(+d.id); break;
     case "askstudiook": { const b = bk(d.id), r = askStudioSend(b, ($("#asn") || {}).value || ""); if (r.ok) { closeSheet(); render(); toast(t("askStudioSent", { store: S[b.store].name })); } break; }
     case "rate": rateSheet(bk(d.id)); break;
     case "rstar": RS.stars = +d.v; RS.err = ""; RS.note = ($("#rnote") || {}).value || RS.note; rateSheet(bk(RS.id), true); { const f = $(`[data-act="rstar"][data-v="${d.v}"]`); if (f) f.focus(); } break;
@@ -2630,7 +2716,7 @@ function validateDraft(d) { /* AC-P31, AC-P51 */
   return e;
 }
 function publish(d) { const e = validateDraft(d); if (e.length) return { ok: false, errors: e };
-  const v = Object.assign({ id: "V" + PV.seq++, ver: 1, funder: "store", minLevel: 1, minStreak: 0, stock: 50, validFor: 30, start: 0, end: Infinity, paused: false, cur: CUR }, d, { cost: +d.cost }); PV.defs.push(v); return { ok: true, v }; }
+  const v = Object.assign({ id: "V" + PV.seq++, ver: 1, funder: "store", minLevel: 1, minStreak: 0, stock: 50, validFor: 30, start: 0, end: Infinity, paused: false, cur: CUR }, d, { cost: +d.cost }); if (MARKET === "kr") { if (Array.isArray(v.title)) v.title = v.title.map(fxMoneyTxt); v.terms = Array.isArray(v.terms) ? v.terms.map(fxMoneyTxt) : fxMoneyTxt(v.terms); } PV.defs.push(v); return { ok: true, v }; }
 function editDef(id, ch) { const v = PV.defs.find(x => x.id === id); Object.assign(v, ch); v.ver++; return v; } /* stock & claim limits carry over (same definition) */
 const scopeOf = v => v.store ? [v.store] : v.stores || null; /* null = any participating store */
 function eligibility(m, v, now) {
@@ -2705,7 +2791,7 @@ function pvSeed() {
 
 /* ===== Points UI (member) + Store app demo (staff, EN only) ===== */
 const PVL = () => (L === "vi" ? 1 : L === "ko" ? 2 : 0);
-const pvTx = x => Array.isArray(x) ? x[PVL()] : x;
+const pvTx = x => fxMoneyTxt(Array.isArray(x) ? x[PVL()] : x); /* voucher titles/terms: always ₩ in KR, also for vouchers published or edited later */
 const fDateP = t => new Intl.DateTimeFormat(LOC[L], { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(t));
 const lvlName = n => pvT("lvl" + n);
 const storeNm = sid => sid && S[sid] ? S[sid].name : sid;
@@ -2738,7 +2824,7 @@ function pointsBlock() {
 ${!PV.flag ? `<div id="pv-how" style="margin-top:10px"><b class="sm">${esc(pvT("howEarnT"))}</b><ul class="sm" style="margin:4px 0 0;padding-left:18px"><li>${esc(pvT("eVisit", { n: EARN.visit, d: EARN.perDay }))}</li><li>${esc(pvT("eNew", { n: EARN.newplace, m: EARN.newPerMonth }))}</li><li>${esc(pvT("eMission", { n: EARN.mission, d: EARN.misDay, w: EARN.misWeek }))}</li></ul></div>` : ""}
 ${m.legacyOpen ? `<p class="sub sm" id="pv-legacy" style="margin:6px 0 0">${esc(pvT("legacyPending", { n: fmtN(m.legacyCoins) }))}</p>` : ""}`;
   const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
-  h += `<button class="link" data-act="pvhist">${esc(pvT("history"))}</button></div>`;
+  h += `<button class="link" data-act="pvhist" style="min-height:44px">${esc(pvT("history"))}</button></div>`;
   return h;
 }
 function wardrobe() {
@@ -2749,6 +2835,15 @@ function wardrobe() {
 function vchLine(c) { const v = c.terms; return v.type === "percent" ? v.value + "%" : v.type === "fixed" ? fmtMoney(v.value, v.cur || "VND") : pvTx(v.title); }
 function scopeTx(v) { return v.brand ? pvT("offeredBy", { brand: v.brand }) : (v.store ? pvT("onlyAt", { s: storeNm(v.store) }) : L3("Any participating place", "Mọi nơi tham gia", "참여 매장 어디서나")); }
 function reasonTx(el) { return el.k === "notEnough" ? pvT("notEnough", { n: fmtN(el.n) }) : el.k === "levelLocked" ? pvT("levelLocked", { n: el.n }) : el.k === "needStreak" ? pvT("needStreak", { n: el.n }) : el.k === "maxReady" ? pvT("maxReady", { s: storeNm(el.s) }) : pvT(el.k); }
+function mineBlock() {
+  if (!ME) return ""; const now = PV.now(); pvTick(ME, now);
+  const mine = ME.claims.filter(c => ["ready", "used", "expired"].includes(c.status));
+  let h = `<h2 id="pv-mine">${esc(pvT("myVouchers"))}</h2><div class="card stack">${mine.length ? mine.map(c => {
+    const st = c.status === "ready" ? pvT("statusReady") : c.status === "used" ? pvT("statusUsed") : pvT("statusExpired"), warn = voucherWarns(ME, now).find(w => w.c === c);
+    return `<div class="pv-c${c.status === "ready" ? " vready" : ""}" data-c="${c.id}"><div class="vtx"><b class="sm">${esc(pvTx(c.terms.title))}</b> <span class="tag ${c.status === "ready" ? "ok" : ""}">${esc(st)}</span><br><span class="sub sm">${esc(c.scope ? pvT("onlyAt", { s: c.scope.map(storeNm).join(", ") }) : scopeTx({}))} · ${c.status === "used" ? esc(pvT("redeemed", { s: storeNm(c.usedStore), date: fDateP(c.usedAt) })) : esc(pvT("validUntil", { date: fDateP(c.exp) }))}</span>${warn ? `<br><b class="sm">${esc(pvT("voucherExpireWarn", { v: pvTx(c.terms.title), n: warn.n }))}</b>` : ""}</div>
+    ${c.status === "ready" ? `<button class="btn full vuse" data-act="pvuse" data-c="${c.id}">${esc(pvT("useBtn"))}</button>${canCancel(ME, c, now) ? `<button class="btn ghost small vcan" data-act="pvcancel" data-c="${c.id}">${esc(pvT("cancelClaim", { n: fmtN(c.cost) }))}</button>` : ""}` : ""}</div>`; }).join("") : nEmpty(esc(L3("No vouchers yet.", "Chưa có ưu đãi nào.", "아직 쿠폰이 없어요.")), "idle")}</div>`;
+  return h;
+}
 function rewardsBlock() {
   if (!PV.flag) return "";
   const now = PV.now(); pvTick(ME, now);
@@ -2756,11 +2851,6 @@ function rewardsBlock() {
   h += PV.defs.filter(v => listed(v, now)).map(v => { const el = eligibility(ME, v, now);
     return `<div class="row top pv-v" data-v="${v.id}"><span class="grow"><b class="sm">${esc(pvTx(v.title))}</b><br><span class="sub sm">${esc(scopeTx(v))} · ${esc(fmtPts(v.cost))}</span>${el.ok ? "" : `<br><span class="sm pv-why">${esc(reasonTx(el))}</span>`}</span>
     <button class="btn${el.ok ? "" : " pvoff"}" data-act="pvclaim" data-v="${v.id}" ${el.ok ? "" : 'disabled aria-disabled="true"'} aria-label="${esc(pvT("claimBtn", { n: fmtN(v.cost) }))}: ${esc(pvTx(v.title))}">${esc(pvT("claimBtn", { n: fmtN(v.cost) }))}</button></div>`; }).join("") + `</div>`;
-  const mine = ME.claims.filter(c => ["ready", "used", "expired"].includes(c.status));
-  h += `<h2 id="pv-mine">${esc(pvT("myVouchers"))}</h2><div class="card stack">${mine.length ? mine.map(c => {
-    const st = c.status === "ready" ? pvT("statusReady") : c.status === "used" ? pvT("statusUsed") : pvT("statusExpired"), warn = voucherWarns(ME, now).find(w => w.c === c);
-    return `<div class="row top pv-c" data-c="${c.id}"><span class="grow"><b class="sm">${esc(pvTx(c.terms.title))}</b> <span class="tag ${c.status === "ready" ? "ok" : ""}">${esc(st)}</span><br><span class="sub sm">${esc(c.scope ? pvT("onlyAt", { s: c.scope.map(storeNm).join(", ") }) : scopeTx({}))} · ${c.status === "used" ? esc(pvT("redeemed", { s: storeNm(c.usedStore), date: fDateP(c.usedAt) })) : esc(pvT("validUntil", { date: fDateP(c.exp) }))}</span>${warn ? `<br><b class="sm">${esc(pvT("voucherExpireWarn", { v: pvTx(c.terms.title), n: warn.n }))}</b>` : ""}</span>
-    ${c.status === "ready" ? `<span class="stack" style="gap:6px"><button class="btn" data-act="pvuse" data-c="${c.id}">${esc(pvT("useBtn"))}</button>${canCancel(ME, c, now) ? `<button class="btn ghost" data-act="pvcancel" data-c="${c.id}">${esc(pvT("cancelClaim", { n: fmtN(c.cost) }))}</button>` : ""}</span>` : ""}</div>`; }).join("") : nEmpty(esc(L3("No vouchers yet.", "Chưa có ưu đãi nào.", "아직 쿠폰이 없어요.")), "shy")}</div>`;
   return h;
 }
 /* PR11-P5 / review P2: staff tools, voucher publishing and the U1 toggle only in demo/debug mode (?demo=1, ?debug=1 or ?realRewards=1) */
@@ -2844,7 +2934,20 @@ document.addEventListener("input", e => { const k = e.target.dataset && e.target
 /* ===== micro-motion: confetti + Nari cheer pop on wins (skipped with prefers-reduced-motion) ===== */
 /* the win cut-out sits inside the small toast near the bottom (never over content) and leaves with it */
 let toastCut = null;
-function popCut(name) { const el = $("#toast"); if (el && !el.hidden) { putToastCut(el, name); } else toastCut = name; }
+function popCut(name) { const el = $("#toast"); if (el && !el.hidden && !toastUndo) { const msg = el.querySelector(".tx") ? el.querySelector(".tx").textContent : ""; clearTimeout(toastT); el.hidden = true; showWin(msg, name); } else toastCut = name; }
+/* the win message sits in the header's free space (between the title and the KO/bell buttons), never over chips, buttons, the input or a banner; short text, full text for screen readers */
+let winT = null;
+function winShort(msg, name) { const m = String(msg).match(/[+＋]\s?[\d.,]+/); if (m) return m[0].replace(/\s/g, "") + " " + L3("pts", "điểm", "P"); return name === "voucher" ? L3("Voucher saved", "Đã lưu", "바우처 받음") : L3("Nice!", "Tuyệt!", "좋아요!"); }
+function showWin(msg, name) {
+  let p = $("#winpill"); if (!p) { p = document.createElement("div"); p.id = "winpill"; p.setAttribute("role", "status"); p.setAttribute("aria-live", "polite"); document.body.appendChild(p); }
+  const hd = $("header.top"), br = hd && hd.querySelector(".brand"), tr = hd && hd.querySelector(".tr"); if (!hd || !br || !tr) return;
+  const H = hd.getBoundingClientRect(), b = br.getBoundingClientRect(), r = tr.getBoundingClientRect();
+  const left = b.right + 6, right = r.left - 6, w = right - left;
+  p.innerHTML = `<span class="vh">${esc(trS(msg))}</span><span class="wcut" aria-hidden="true">${w >= 96 ? cut(name, { once: 1, eager: 1 }) : ""}</span><b aria-hidden="true">${esc(winShort(msg, name))}</b>`;
+  p.style.cssText = `top:${Math.max(0, H.top) + (H.height - 40) / 2}px;left:${left}px;max-width:${Math.max(56, w)}px`;
+  p.hidden = false; p.classList.remove("go"); void p.offsetWidth; p.classList.add("go"); hydrateCuts(p);
+  clearTimeout(winT); winT = setTimeout(() => { p.hidden = true; p.innerHTML = ""; }, 3200);
+}
 function putToastCut(el, name) { const o = el.querySelector(".tcut"); if (o) o.remove(); const d = document.createElement("span"); d.className = "tcut tcut-" + name; d.setAttribute("aria-hidden", "true"); d.innerHTML = cut(name, { once: 1, eager: 1 }); el.insertBefore(d, el.firstChild); el.classList.add("win"); hydrateCuts(el); }
 function celebrate(pop) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -2854,8 +2957,8 @@ function celebrate(pop) {
   document.body.appendChild(c); setTimeout(() => c.remove(), 2000);
   if (pop !== false) popCut("jump");
 }
-const nEmpty = (txt, pose) => `<div class="nempty">${cut(pose || "shy")}<p class="sub" style="margin:0">${txt}</p></div>`;
-document.addEventListener("input", e => { const ta = e.target; if (ta.tagName === "TEXTAREA" && /^in-/.test(ta.id)) { const th = $("#nthink-" + ta.id.slice(3)); if (th) th.classList.toggle("on", !!ta.value.trim()); } });
+const nEmpty = (txt, pose) => `<div class="nempty">${cut(pose || "idle")}<p class="sub" style="margin:0">${txt}</p></div>`;
+document.addEventListener("input", e => { const ta = e.target; if (ta.tagName === "TEXTAREA" && /^in-/.test(ta.id)) { const th = $("#nthink-" + ta.id.slice(3)); if (th) { th.classList.toggle("on", !!ta.value.trim()); if (th.classList.contains("on")) th.querySelectorAll("video[data-cut]").forEach(startCut); } } });
 ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
@@ -2875,7 +2978,7 @@ function checkJumps() {
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
