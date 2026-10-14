@@ -1,9 +1,10 @@
 import json,re
 from playwright.sync_api import sync_playwright
-U='http://localhost:8851/platform-app.html'
+import sys,os
+U=sys.argv[1] if len(sys.argv)>1 else os.environ.get('BASE_URL','http://localhost:%s/platform-app.html'%os.environ.get('PORT','8851'))
 SCR=[('home',"ST.tab='home'"),('discover',"ST.tab='discover'"),('discover-map',"ST.tab='discover';discAct('dview',{v:'map'})"),('discover-hair',"ST.tab='discover';discAct('dtype',{v:'hair'})"),('cici',"ST.tab='cici'"),('you',"ST.tab='you'"),('you-wallet',"ST.tab='you';ST.page='wallet'"),('you-vouchers',"ST.tab='you';ST.page='vouchers';ST.vseg='mine'"),('you-vouchers-more',"ST.tab='you';ST.page='vouchers';ST.vseg='more'"),('you-settings',"ST.tab='you';ST.page='settings'"),('notif',"ST.page='notif'"),('nset',"ST.page='nset'")]
 for s in ['capsule','salon','skin','spa','pickle','nails','yoga','barber','moc','rally']: SCR.append(('store-'+s,f"ST.store='{s}'"))
-CLK=[('sheet-join','discover','store'),('sheet-stretch','home','stretch'),('sheet-manage','home','managebk'),('slots-again0','cici','nagain'),('confirm','cici','nagain'),('success','cici','nagain+chatbook'),('bookings','home','mybk'),('rate','home','mybk+bkpast+rate'),('cancel','home','mybk+cancelask'),('sheet-lang','home','lang')]
+CLK=[('sheet-join','discover','store'),('sheet-qr','discover','joinsheet+qr'),('sheet-link','discover','joinsheet+linkjoin'),('sheet-stretch','home','stretch'),('sheet-manage','home','managebk'),('slots-again0','cici','nagain'),('confirm','cici','nagain'),('success','cici','nagain+chatbook'),('bookings','home','mybk'),('rate','home','mybk+bkpast+rate'),('cancel','home','mybk+cancelask'),('sheet-lang','home','lang')]
 AUD=r"""(()=>{
  const vis=e=>{const r=e.getBoundingClientRect();const cs=getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!='hidden'&&cs.display!='none'&&!e.closest('[hidden]')};
  const small=[...document.querySelectorAll('button,a[href],input,select,textarea,[role=button],[role=switch],label.row')].filter(vis).filter(e=>{const r=e.getBoundingClientRect();return (r.width<44||r.height<44)&&!(e.type=='checkbox'&&e.closest('label')&&e.closest('label').getBoundingClientRect().height>=44)}).map(e=>(e.dataset.act||e.tagName)+':'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,20)+':'+Math.round(e.getBoundingClientRect().width)+'x'+Math.round(e.getBoundingClientRect().height));
@@ -36,7 +37,7 @@ with sync_playwright() as p:
          tab,act=[(x[1],x[2]) for x in CLK if x[0]==name][0]
          pg.evaluate(f"()=>{{ST.tab='{tab}';render()}}")
          for a in act.split('+'):
-           sel={'store':'[data-act=store]','nagain':'[data-act=nagain][data-i="1"]','chatbook':'[data-act=chatbook]','bkpast':'[data-act=bkseg][data-v=past]','rate':'[data-act=rate]','cancelask':'[data-act=cancelask]','again':'[data-act=again][data-i="1"]','slot':'.sheet [data-act=slot]','dobook':'.sheet [data-act=dobook]','qr':'.sheet [data-act=qr]','linkjoin':'.sheet [data-act=linkjoin]'}.get(a,f'[data-act={a}]')
+           sel={'store':'[data-act=store]','qr':'.sheet [data-act=qr]','linkjoin':'.sheet [data-act=linkjoin]','nagain':'[data-act=nagain][data-i="1"]','chatbook':'[data-act=chatbook]','bkpast':'[data-act=bkseg][data-v=past]','rate':'[data-act=rate]','cancelask':'[data-act=cancelask]','again':'[data-act=again][data-i="1"]','slot':'.sheet [data-act=slot]','dobook':'.sheet [data-act=dobook]','qr':'.sheet [data-act=qr]','linkjoin':'.sheet [data-act=linkjoin]'}.get(a,f'[data-act={a}]')
            pg.locator(sel).first.click();pg.wait_for_timeout(200)
        pg.wait_for_timeout(250)
        a=pg.evaluate(AUD);a['err']=list(E);E.clear()

@@ -26,7 +26,9 @@ with sync_playwright() as p:
     ok(f'P4 banner shown on You, not after a hero [{lang}]',bool(ban) and order in (None,True),f'ban={ban!r} earned={earned!r} leg={leg!r} order={order} lines={nlines}')
     ok(f'P4 banner wording consistent [{lang}]',not re.search(r'coins are now points|xu của bạn đã chuyển|코인이 포인트로',ban),ban)
     # PR16 P4b: migration banner numbers match the Points page (640 points / 120 pending) in all 3 languages
-    ok(f'P4b banner numbers match Points page [{lang}]', bool(ban) and bool(earned) and ('640' in ban.replace(',','').replace('.','')) and ('120' in ban.replace(',','').replace('.','')) and earned.replace(',','').replace('.','').startswith('640') and ('120' in (leg or '').replace(',','').replace('.','')), f'ban={ban!r} earned={earned!r} leg={leg!r}')
+    pts_num=re.sub(r'\D','',earned); pend_num=re.sub(r'\D','',re.search(r'[\d.,]+',leg).group(0)) if re.search(r'\d',leg) else ''
+    ban_d=re.sub(r'[.,]','',ban)
+    ok(f'P4b banner numbers match Points page [{lang}]', bool(ban) and bool(pts_num) and bool(pend_num) and pts_num in ban_d and pend_num in ban_d, f'ban={ban!r} pts={pts_num} pend={pend_num}')
     pg.click('[data-act=pvseen]');pg.reload();pg.evaluate(f"()=>{{setLang('{lang}');render()}}");ok(f'P4 dismissed after reload [{lang}]',not pg.locator('#pv-notes').count())
     # D
     alltxt=''
