@@ -244,6 +244,29 @@ button:active:not([disabled]){transform:scale(.94)}
 @keyframes dot{50%{transform:translateY(-4px);opacity:.5}}@keyframes pop{0%{transform:translate(-50%,40px) scale(.6);opacity:0}20%{transform:translate(-50%,0) scale(1.05);opacity:1}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-10px)}}
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.cheerpop,.confetti{display:none}}
+
+/* Discover v2: photo-first cards (sample photos) */
+.dfrow{display:flex;gap:8px;align-items:center;margin-top:10px}.dfrow .dchips{flex:1;margin:0 -16px 0 0;padding-left:2px;gap:6px}
+.dchips .chip{border:0;background:#F7EEF0;color:#4A3F42;padding:6px 12px;font-size:13.5px;box-shadow:none}.dchips .chip .ico{width:16px;height:16px}
+.dchips .chip[aria-pressed=true]{background:#B04A5E;color:#fff;border:0;font-weight:650}
+.dfbtn{position:relative;flex:none;border:0;background:#F7EEF0;border-radius:999px;color:#4A3F42}.dfbtn[aria-pressed=true]{background:#B04A5E;color:#fff}
+.dfn{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:8px;background:#fff;color:#8E3346;font-size:11px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 1px #B04A5E}
+.dlist{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+.dcard{padding:0;background:none;border:0;box-shadow:none}.dcard.sel .dphoto{box-shadow:0 0 0 3px #B04A5E}
+.dhit{display:block;position:relative;width:100%;padding:0;border:0;background:none;text-align:left;border-radius:16px}
+.dphoto{width:100%;height:auto;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#F7EEF0;display:block;position:relative}
+.dimg{width:100%;height:100%;object-fit:cover;display:block}
+.dinit{display:grid;place-items:center}
+.dov{position:absolute;display:inline-flex;align-items:center;gap:4px;border-radius:999px;font-size:12px;font-weight:650;padding:4px 9px;white-space:nowrap}
+.dov.dj{left:10px;top:10px;background:rgba(255,255,255,.94);color:#8E3346}.dov.dj .ico{width:13px;height:13px;fill:#B04A5E;stroke:#B04A5E}
+.dov.splabel{left:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-weight:600;font-size:11.5px}
+.dbody{display:flex;align-items:center;gap:10px;padding:8px 2px 0}.dtx{min-width:0;flex:1;line-height:1.35}
+.dname{display:block;font-size:16px;overflow-wrap:anywhere}.dmeta{font-size:13px;color:#6B5E62}
+@media (max-width:350px){.dfrow .dchips{margin-right:-12px}}
+.dslot{flex:none;min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-radius:999px;border:1.5px solid #E9B3BF;background:#FFF8F9;color:#8E3346;font-size:13px;font-weight:650;white-space:nowrap}
+.dslot .ico{width:14px;height:14px}.dslot:hover{border-color:#B04A5E}.dnone{flex:none}
+.cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}
+.hsample{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px}
 </style>
 </head>
 <body>
@@ -1793,7 +1816,7 @@ function vDiscover() {
 function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
-  let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
+  let h = `<div class="card">${s.photo ? `<div class="cover hero">${shopImg(sid, "himg", true)}<span class="hsample">${t("sample")}</span></div>` : `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
   <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
@@ -1853,9 +1876,11 @@ Object.assign(NAMES, { "Men's cut": ["Cắt tóc nam", "남성 커트"], "Thai m
 Object.assign(TRD, { "Cut, wash and a hot towel.": ["Cắt, gội và khăn nóng.", "커트, 샴푸, 핫타월."], "Stretch-based massage, light clothing provided.": ["Massage kết hợp kéo giãn, có sẵn đồ mặc.", "스트레칭 위주 마사지, 편한 옷 제공."], "Indoor courts, air-conditioned.": ["Sân trong nhà, có máy lạnh.", "실내 코트, 에어컨 완비."] });
 /* Korea-first demo seed (default): Seoul neighbourhoods, ₩ prices; staff names unchanged for now */
 if (MARKET === "kr") {
-  const AREA = { capsule: ["Seongsu-dong, Seoul", "Seongsu-dong, Seoul", "서울 성수동"], salon: ["Hongdae, Seoul", "Hongdae, Seoul", "서울 홍대"], skin: ["Sinsa-dong, Seoul", "Sinsa-dong, Seoul", "서울 신사동"], spa: ["Hannam-dong, Seoul", "Hannam-dong, Seoul", "서울 한남동"],
-    pickle: ["Ttukseom, Seoul", "Ttukseom, Seoul", "서울 뚝섬"], nails: ["Yeonnam-dong, Seoul", "Yeonnam-dong, Seoul", "서울 연남동"], yoga: ["Seongsu-dong, Seoul", "Seongsu-dong, Seoul", "서울 성수동"], barber: ["Hongdae, Seoul", "Hongdae, Seoul", "서울 홍대"],
-    moc: ["Seongsu-dong, Seoul", "Seongsu-dong, Seoul", "서울 성수동"], rally: ["Jamsil, Seoul", "Jamsil, Seoul", "서울 잠실"] };
+  /* Seoul neighbourhoods, consistent with the distances in DISC (measured from Seongsu-dong) */
+  const AREA = { capsule: ["Seongsu-dong, Seoul", "Seongsu-dong, Seoul", "서울 성수동"], moc: ["Seongsu-dong, Seoul", "Seongsu-dong, Seoul", "서울 성수동"], pickle: ["Ttukseom, Seoul", "Ttukseom, Seoul", "서울 뚝섬"],
+    yoga: ["Seoul Forest, Seoul", "Seoul Forest, Seoul", "서울 서울숲"], rally: ["Hwayang-dong, Seoul", "Hwayang-dong, Seoul", "서울 화양동"], nails: ["Hannam-dong, Seoul", "Hannam-dong, Seoul", "서울 한남동"],
+    spa: ["Cheongdam-dong, Seoul", "Cheongdam-dong, Seoul", "서울 청담동"], skin: ["Gangnam, Seoul", "Gangnam, Seoul", "서울 강남"], salon: ["Yeonnam-dong, Seoul", "Yeonnam-dong, Seoul", "서울 연남동"],
+    barber: ["Mangwon-dong, Seoul", "Mangwon-dong, Seoul", "서울 망원동"] };
   for (const sid in AREA) if (S[sid]) { S[sid].area = AREA[sid][0]; NAMES[AREA[sid][0]] = [AREA[sid][1], AREA[sid][2]]; }
   for (const k of Object.keys(TRD)) if (/₫/.test(k)) TRD[fxMoneyTxt(k)] = TRD[k].map(fxMoneyTxt);
   /* Korean staff names: data, Hangul aliases for the parser, and every text that names them */
@@ -1880,9 +1905,24 @@ const DISC = {
   moc: { km: 0.9, rate: 4.6, n: 74, p: 2, fr: null, open: true, x: 54, y: 52, type: "massage", ad: true },
   rally: { km: 2.8, rate: 4.3, n: 52, p: 3, fr: null, open: false, x: 88, y: 34, type: "sport" }
 };
+if (MARKET === "kr") { DISC.salon.km = 9.8; DISC.barber.km = 10.5; } /* Yeonnam / Mangwon are across the river from Seongsu */
+/* Discover photos: SAMPLE images (generated, not the real stores) */
+const PHALT = { capsule: ["Bright barre studio with a ballet barre and blush walls", "Phòng tập barre sáng với thanh barre và tường hồng phấn", "발레 바와 블러시 톤 벽이 있는 밝은 바레 스튜디오"],
+  salon: ["Airy hair salon with styling chairs and mirrors", "Salon tóc thoáng với ghế làm tóc và gương", "스타일링 의자와 거울이 있는 화사한 헤어 살롱"],
+  skin: ["Calm skincare room with a treatment bed", "Phòng chăm sóc da yên tĩnh với giường trị liệu", "관리 베드가 있는 차분한 스킨케어 룸"],
+  spa: ["Soft-lit spa room with towels and candles", "Phòng spa ánh sáng dịu với khăn và nến", "타월과 캔들이 있는 은은한 스파 룸"],
+  pickle: ["Indoor pickleball court in morning light", "Sân pickleball trong nhà dưới nắng sớm", "아침 햇살이 드는 실내 피클볼 코트"],
+  nails: ["Nail bar with pastel polish bottles", "Tiệm nail với những lọ sơn màu pastel", "파스텔 네일 컬러가 놓인 네일 바"],
+  yoga: ["Sunny yoga loft with mats and plants", "Phòng yoga đầy nắng với thảm và cây xanh", "매트와 식물이 있는 햇살 가득한 요가 로프트"],
+  barber: ["Modern barber shop with a leather chair", "Tiệm cắt tóc nam hiện đại với ghế da", "가죽 의자가 있는 모던한 바버숍"],
+  moc: ["Wooden spa room with a massage bed", "Phòng spa gỗ với giường massage", "마사지 베드가 있는 우드톤 스파 룸"],
+  rally: ["Indoor court with nets and soft light", "Sân trong nhà với lưới và ánh sáng dịu", "네트와 은은한 조명이 있는 실내 코트"] };
+for (const sid in PHALT) if (S[sid]) Object.assign(S[sid], { photo: "assets/shops/" + sid + ".webp", sample: true });
+const photoAlt = sid => (PHALT[sid] ? PHALT[sid][L === "vi" ? 1 : L === "ko" ? 2 : 0] : S[sid].name) + " (" + L3("sample photo", "ảnh mẫu", "샘플 사진") + ")";
+const shopImg = (sid, cls, eager) => S[sid].photo ? `<img class="${cls}" src="${S[sid].photo}" alt="${esc(photoAlt(sid))}" width="800" height="600" loading="${eager ? "eager" : "lazy"}" decoding="async">` : "";
 const travelMin = km => Math.max(3, Math.round(km * 3 + 2));
-const DTYPES = [["all", "All", "Tất cả", "전체", "compass"], ["fitness", "Fitness/Barre", "Thể hình/Barre", "피트니스/바레", "spark"], ["hair", "Hair", "Tóc", "헤어", "shirt"], ["skin", "Skincare", "Chăm sóc da", "스킨케어", "leaf"],
-  ["massage", "Massage/Spa", "Massage/Spa", "마사지/스파", "leaf"], ["sport", "Pickleball/Courts", "Pickleball/Sân", "피클볼/코트", "star"], ["nails", "Nails", "Làm móng", "네일", "star"], ["yoga", "Yoga", "Yoga", "요가", "spark"], ["more", "More", "Thêm", "더보기", "chev"]];
+const DTYPES = [["all", "All", "Tất cả", "전체", "compass"], ["fitness", "Fitness/Barre", "Thể hình/Barre", "피트니스/바레", "dfit"], ["hair", "Hair", "Tóc", "헤어", "dhair"], ["skin", "Skincare", "Chăm sóc da", "스킨케어", "dskin"],
+  ["massage", "Massage/Spa", "Massage/Spa", "마사지/스파", "dspa"], ["sport", "Pickleball/Courts", "Pickleball/Sân", "피클볼/코트", "dball"], ["nails", "Nails", "Làm móng", "네일", "dnail"], ["yoga", "Yoga", "Yoga", "요가", "dyoga"], ["more", "More", "Thêm", "더보기", "chev"]];
 IP.spark = '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>';
 IP.info = '<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>'; IP.map = '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'; IP.list = '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>';
 const DSYN = { fitness: "barre pilates gym fitness tập thể dục lớp tập 운동 피트니스 바레 필라테스", hair: "hair haircut cut trim salon barber cắt tóc tóc gội salon 헤어 커트 미용실 바버", skin: "facial skin skincare chăm sóc da da mặt 피부 페이셜 스킨케어",
@@ -1905,18 +1945,24 @@ function discList() {
   }).sort((a, b) => DISC[a].km - DISC[b].km);
 }
 function photo(sid) {
-  /* PR11-D1: no photo yet -> the store's initials on its brand tint (never a spinner or an unrelated icon) */
-  return `<div class="dphoto dinit" style="background:linear-gradient(135deg,${S[sid].color}26,${S[sid].color}55)" aria-hidden="true"><span>${esc(S[sid].logo)}</span></div>`;
+  /* photo-first (sample photos); falls back to the brand tint with initials if a store has none */
+  const s = S[sid];
+  return s.photo ? `<div class="dphoto">${shopImg(sid, "dimg")}</div>` : `<div class="dphoto dinit" style="background:linear-gradient(135deg,${s.color}26,${s.color}55)" aria-hidden="true"><span>${esc(s.logo)}</span></div>`;
 }
 function dcard(sid) {
   const s = S[sid], f = DISC[sid], nf = nextFree(sid), sel = DF.pin === sid;
-  const badge = s.joined ? `<span class="tag">${t("joined")}</span>` : f.fr ? `<span class="tag ok">${L3("Friends", "Bạn bè", "친구")}</span>` : "";
-  return `<article class="card dcard${sel ? " sel" : ""}" id="dc-${sid}" aria-label="${esc(s.name)}${f.ad ? ", " + esc(pvT("offeredBy", { brand: s.name })) : ""}">
-  ${f.ad ? `<div class="splabel">${esc(pvT("offeredBy", { brand: s.name }))}</div>` : ""}<button class="dhit" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}">${photo(sid)}<span class="dtx"><b>${esc(s.name)}</b> ${badge}<br>
-  <span class="sub sm">${esc(typeLabel(sid))}</span><br>
-  <span class="sm">${f.km.toFixed(1)} km${FLAGS.publicRatings ? " · ★ " + f.rate.toFixed(1) : ""}</span></span></button>
-  <div class="row" style="margin-top:8px;justify-content:flex-end">${nf ? `<button class="btn sec" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} ${esc(fWhen(nf.d, nf.m))}</button>` : `<span class="sub sm">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`}</div></article>`;
+  const badge = s.joined ? `<span class="dov dj">${ic("heart", "s")} ${t("joined")}</span>` : f.fr ? `<span class="dov dj">${L3("Friends", "Bạn bè", "친구")}</span>` : "";
+  const meta = [typeLabel(sid), f.km.toFixed(1) + " km"].concat(FLAGS.publicRatings ? ["★ " + f.rate.toFixed(1)] : []).map(esc).join(" · ");
+  const slot = nf ? `<button class="dslot" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} ${esc(fDay(nf.d) + " " + fTime(nf.m))}</button>` : `<span class="sub sm dnone">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`;
+  return `<article class="dcard${sel ? " sel" : ""}" id="dc-${sid}" aria-label="${esc(s.name)}${f.ad ? ", " + esc(pvT("offeredBy", { brand: s.name })) : ""}">
+  <button class="dhit" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}">${photo(sid)}${badge}${f.ad ? `<span class="dov splabel">${esc(pvT("offeredBy", { brand: s.name }))}</span>` : ""}</button>
+  <div class="dbody"><div class="dtx"><b class="dname">${esc(s.name)}</b><div class="dmeta">${meta}</div></div>${slot}</div></article>`;
 }
+IP.dfit = '<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>'; IP.dhair = '<circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5L20 17M8 15.5L20 7"/>';
+IP.dskin = '<path d="M12 3c3.5 4.5 6 7.6 6 10.5a6 6 0 0 1-12 0C6 10.6 8.5 7.5 12 3z"/>'; IP.dspa = '<path d="M12 20c-4 0-8-3-8-8 3 0 6 1.5 8 4 2-2.5 5-4 8-4 0 5-4 8-8 8z"/><path d="M12 16c-1.5-3-1.5-7 0-11 1.5 4 1.5 8 0 11z"/>';
+IP.dball = '<circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r=".8"/><circle cx="14" cy="9" r=".8"/><circle cx="12" cy="14" r=".8"/><circle cx="15.5" cy="13.5" r=".8"/><circle cx="8.5" cy="14.5" r=".8"/>';
+IP.dnail = '<rect x="7" y="10" width="10" height="11" rx="2.5"/><path d="M9.5 10V6h5v4M11 6V3h2v3"/>'; IP.dyoga = '<circle cx="12" cy="5" r="2"/><path d="M12 8v6M5 11l7 2 7-2M8 20l4-6 4 6"/>';
+IP.sliders = '<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>'; IP.heart = '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>';
 IP.clock = '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>';
 function mapSVG(list) {
   const pins = list.map(sid => { const f = DISC[sid], x = f.x * 3.4, y = f.y * 2.2, sel = DF.pin === sid;
@@ -1924,7 +1970,7 @@ function mapSVG(list) {
   return `<svg class="dmap" viewBox="0 0 340 220" role="group" aria-label="${L3("Map (sample, not to scale)", "Bản đồ (mẫu, không theo tỉ lệ)", "지도 (샘플, 축척 아님)")}">
   <rect width="340" height="220" rx="16" fill="#EFE8DC"/><path d="M0 150 C80 120 140 170 220 130 S320 90 340 100" stroke="#BCD6DE" stroke-width="18" fill="none"/>
   <path d="M30 0 L120 220 M0 60 L340 90 M200 0 L260 220 M0 190 L340 170" stroke="#FFFDF9" stroke-width="7" fill="none"/>
-  <text x="250" y="122" font-size="10" fill="#4C6A73">${L3("Saigon River", "Sông Sài Gòn", "사이공강")}</text>
+  <text x="250" y="122" font-size="10" fill="#4C6A73">${MARKET === "kr" ? L3("Han River", "Sông Hán", "한강") : L3("Saigon River", "Sông Sài Gòn", "사이공강")}</text>
   <circle cx="${62 * 3.4 - 18}" cy="${38 * 2.2 + 16}" r="6" fill="#1F5FAD" stroke="#fff" stroke-width="2"/><text x="${62 * 3.4 - 48}" y="${38 * 2.2 + 32}" font-size="10" fill="#2B2326">${L3("You", "Bạn", "나")}</text>${pins}</svg>`;
 }
 const nFilters = () => (DF.dist < 99 ? 1 : 0) + (DF.open ? 1 : 0) + (DF.price ? 1 : 0) + (DF.rate ? 1 : 0);
@@ -1941,9 +1987,9 @@ function vDiscover() {
   const chipB = (act, v, cur, label) => `<button class="chip" data-act="${act}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${label}</button>`;
   let h = `<div class="row"><h1 class="grow" style="margin:0">${t("discover")}</h1><button class="icb" data-act="dview" data-v="${DF.map ? "list" : "map"}" aria-label="${DF.map ? L3("Show list", "Xem danh sách", "목록 보기") : L3("Show map", "Xem bản đồ", "지도 보기")}">${ic(DF.map ? "list" : "map")}</button></div>
   <div class="dsearch" style="margin-top:8px"><label class="vh" for="dq">${t("search")}</label><input id="dq" class="inp" type="search" placeholder="${t("search")}" value="${esc(ST.q || "")}"><button class="icb" data-act="joinsheet" style="border:1px solid var(--line);background:var(--card)" aria-label="${t("scan")} / ${t("link")}">${ic("qr")}</button></div>
-  <div class="scroll" style="margin-top:12px" role="group" aria-label="${L3("Store type", "Loại cửa hàng", "매장 유형")}"><button class="chip" data-act="dfilters" aria-pressed="${nf > 0}">${L3("Filters", "Bộ lọc", "필터")}${nf ? " · " + nf : ""}</button>${DTYPES.filter(r => r[0] !== "more").map(r => chipB("dtype", r[0], DF.type, esc(r[li]))).join("")}</div>`;
+  <div class="dfrow"><button class="icb dfbtn" data-act="dfilters" aria-pressed="${nf > 0}" aria-label="${L3("Filters", "Bộ lọc", "필터")}${nf ? " · " + nf : ""}">${ic("sliders")}${nf ? `<span class="dfn" aria-hidden="true">${nf}</span>` : ""}</button><div class="scroll dchips" role="group" aria-label="${L3("Store type", "Loại cửa hàng", "매장 유형")}">${DTYPES.filter(r => r[0] !== "more").map(r => chipB("dtype", r[0], DF.type, ic(r[4], "s") + " " + esc(r[li]))).join("")}</div></div>`;
   if (DF.map) h += mapSVG(list) + (DF.pin && list.includes(DF.pin) ? `<div style="margin-top:10px">${dcard(DF.pin)}</div>` : `<p class="sub sm">${L3("Tap a pin to see the place.", "Chạm vào ghim để xem.", "핀을 눌러 매장을 보세요.")}</p>`);
-  else h += `<div class="stack" id="dres" style="margin-top:8px">${list.length ? list.map(dcard).join("") : nEmpty(L3("No places match. Try fewer filters.", "Không có nơi phù hợp. Thử bớt bộ lọc.", "조건에 맞는 곳이 없어요. 필터를 줄여 보세요."), "surprised")}</div>`;
+  else h += `<div class="dlist" id="dres">${list.length ? list.map(dcard).join("") : nEmpty(L3("No places match. Try fewer filters.", "Không có nơi phù hợp. Thử bớt bộ lọc.", "조건에 맞는 곳이 없어요. 필터를 줄여 보세요."), "surprised")}</div>`;
   return h;
 }
 function discAct(a, d) {
