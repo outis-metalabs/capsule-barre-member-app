@@ -41,6 +41,9 @@ a{color:var(--rasp)}
 .btn.ghost{border-color:var(--line);background:var(--card);color:var(--ink);font-weight:600}
 .btn.full{width:100%}
 .btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn.pvoff[disabled]{opacity:1;background:#EFE4DA;border-color:#EFE4DA;color:#2B2326}
+.pv-why{color:#8E3346;font-weight:650}
+button.tile[aria-pressed=true]{border:1.5px solid var(--rasp);background:var(--tint)}
 .link{background:none;border:0;color:var(--rasp);font-weight:650;min-height:44px;padding:0 4px;text-decoration:underline;text-underline-offset:3px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .scroll{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;margin:0 -16px;padding-left:16px;padding-right:16px}
@@ -591,7 +594,7 @@ const STR = {
     whatBook: "What would you like to book?", bookHint: "Type it like a message, or tap below.", askNari: "Ask Nari", callNari: "Call Nari", typeHere: "Type a message", level: "Level", streak: "{n}-week streak", coins: "coins",
     wardrobe: "Nari's wardrobe", shop: "Nari shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
     gm: "Good morning, Mina", ga: "Good afternoon, Mina", ge: "Good evening, Mina", gn: "Still up, Mina?", booked: "Booked", moved: "Moved", cancelled: "Cancelled", back: "Back", close: "Close", with: "with",
-    payAt: "Pay at the store", storeOnly: "Only at {s}", journey: "Journey", quest: "Cross-store quest", restDay: "Rest day? That counts too", mAttend: "Show up for your next visit", mNew: "Try a new place", mStretch: "Stretch for 2 minutes", mRest: "Rest day: 1-minute stretch + water",
+    payAt: "Pay at the store", storeOnly: "Only at {s}", journey: "Journey", quest: "Cross-store quest", restDay: "Rest day", mAttend: "Show up for your next visit", mNew: "Try a new place", mStretch: "Stretch for 2 minutes", mRest: "Rest day: 1-minute stretch + water",
     demo: "Demo", hang: "Hang up", mute: "Mute", unmute: "Unmute", xp: "XP", nothingUp: "Nothing booked yet.", newPlace: "Join", cats: "Categories", nearby: "Places near Thảo Điền", sample: "sample",
     noAds: "No ads here", inboxEmpty: "No messages yet.", msgStore: "Message {s}", confirmTitle: "Check and book", nothingBooked: "Nothing is booked until you tap the button.", arrive: "Late arrival" },
   vi: { home: "Trang chủ", discover: "Khám phá", book: "Đặt lịch", ask: "Hỏi", you: "Bạn", upNext: "Sắp tới", myPlaces: "Nơi của tôi", missions: "Nhiệm vụ hôm nay", bookAgain: "Đặt lại", today: "Hôm nay", tomorrow: "Ngày mai",
@@ -600,7 +603,7 @@ const STR = {
     whatBook: "Bạn muốn đặt gì?", bookHint: "Gõ như nhắn tin, hoặc chạm bên dưới.", askNari: "Hỏi Nari", callNari: "Gọi Nari", typeHere: "Nhập tin nhắn", level: "Cấp", streak: "Chuỗi {n} tuần", coins: "xu",
     wardrobe: "Tủ đồ của Nari", shop: "Cửa hàng Nari", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
     gm: "Chào buổi sáng, Mina", ga: "Chào buổi chiều, Mina", ge: "Chào buổi tối, Mina", gn: "Vẫn còn thức à, Mina?", booked: "Đã đặt", moved: "Đã đổi", cancelled: "Đã hủy", back: "Quay lại", close: "Đóng", with: "với",
-    payAt: "Thanh toán tại cửa hàng", storeOnly: "Chỉ dùng tại {s}", journey: "Hành trình", quest: "Nhiệm vụ nhiều nơi", restDay: "Ngày nghỉ? Cũng được tính", mAttend: "Đến buổi hẹn tiếp theo", mNew: "Thử một nơi mới", mStretch: "Giãn cơ 2 phút", mRest: "Ngày nghỉ: giãn cơ 1 phút + uống nước",
+    payAt: "Thanh toán tại cửa hàng", storeOnly: "Chỉ dùng tại {s}", journey: "Hành trình", quest: "Nhiệm vụ nhiều nơi", restDay: "Ngày nghỉ", mAttend: "Đến buổi hẹn tiếp theo", mNew: "Thử một nơi mới", mStretch: "Giãn cơ 2 phút", mRest: "Ngày nghỉ: giãn cơ 1 phút + uống nước",
     demo: "Demo", hang: "Gác máy", mute: "Tắt tiếng", unmute: "Bật tiếng", xp: "XP", nothingUp: "Chưa có lịch nào.", newPlace: "Tham gia", cats: "Danh mục", nearby: "Gần Thảo Điền", sample: "mẫu",
     noAds: "Không quảng cáo", inboxEmpty: "Chưa có tin nhắn.", msgStore: "Nhắn {s}", confirmTitle: "Kiểm tra và đặt", nothingBooked: "Chưa có gì được đặt cho đến khi bạn chạm nút.", arrive: "Đến muộn" },
   ko: { home: "홈", discover: "둘러보기", book: "예약", ask: "질문", you: "나", upNext: "다가오는 예약", myPlaces: "내 매장", missions: "오늘의 미션", bookAgain: "다시 예약", today: "오늘", tomorrow: "내일",
@@ -609,7 +612,7 @@ const STR = {
     whatBook: "무엇을 예약할까요?", bookHint: "메시지처럼 입력하거나 아래를 누르세요.", askNari: "나리에게 묻기", callNari: "나리에게 전화", typeHere: "메시지 입력", level: "레벨", streak: "{n}주 연속", coins: "코인",
     wardrobe: "나리 옷장", shop: "나리 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
     gm: "좋은 아침이에요, 미나", ga: "좋은 오후예요, 미나", ge: "좋은 저녁이에요, 미나", gn: "아직 안 자요, 미나?", booked: "예약됨", moved: "변경됨", cancelled: "취소됨", back: "뒤로", close: "닫기", with: "담당",
-    payAt: "매장에서 결제", storeOnly: "{s}에서만 사용", journey: "여정", quest: "여러 매장 퀘스트", restDay: "쉬는 날도 인정돼요", mAttend: "다음 예약에 참석하기", mNew: "새로운 곳 가보기", mStretch: "2분 스트레칭", mRest: "쉬는 날: 1분 스트레칭 + 물",
+    payAt: "매장에서 결제", storeOnly: "{s}에서만 사용", journey: "여정", quest: "여러 매장 퀘스트", restDay: "쉬는 날", mAttend: "다음 예약에 참석하기", mNew: "새로운 곳 가보기", mStretch: "2분 스트레칭", mRest: "쉬는 날: 1분 스트레칭 + 물",
     demo: "데모", hang: "통화 종료", mute: "음소거", unmute: "음소거 해제", xp: "XP", nothingUp: "아직 예약이 없어요.", newPlace: "가입", cats: "카테고리", nearby: "타오디엔 주변", sample: "샘플",
     noAds: "광고 없음", inboxEmpty: "메시지가 없어요.", msgStore: "{s}에 메시지", confirmTitle: "확인 후 예약", nothingBooked: "버튼을 누르기 전에는 예약되지 않아요.", arrive: "지각" }
 };
@@ -711,8 +714,8 @@ const fDeadline = (sid, d, m) => { const x = deadline(sid, d, m); return fWhen(x
 const fCancel = (sid, d, m) => freeNow(sid, d, m) ? t("freeCancel") + " " + fDeadline(sid, d, m) : tr("Free cancel ended");
 
 /* ===== member state (one account across stores) ===== */
-const ST = { tab: "home", store: null, xp: 640, coins: 120, steps: 9, weeks: 3, week: [1, 0, 1, 0, 0, 0, 0], miss: { attend: false, newplace: false, stretch: false, rest: false },
-  quest: { active: false, relax: false }, owned: ["wrap"] };
+const ST = { tab: "home", store: null, xp0: 640, coins0: 120, wear: "o2", steps: 9, weeks: 3, week: [1, 0, 1, 0, 0, 0, 0], miss: { attend: false, newplace: false, stretch: false, rest: false },
+  quest: { active: false, relax: false }, owned: ["wrap", "lan"] }; /* xp0/coins0 = pre-points prototype state, migrated once into points (spec §10) */
 const WALLET = { capsule: [{ id: "p10", t: "10-class pass", left: 6, exp: "Valid until 30 Nov" }], spa: [{ id: "pk5", t: "5-massage package (Aroma 60)", left: 3, exp: "Valid until 31 Dec", svc: "aroma60" }],
   pickle: [{ id: "cr", t: "Store credit", credit: 120000, exp: "No expiry" }], salon: [], skin: [], nails: [], yoga: [] };
 let B = []; let BID = 1;
@@ -932,7 +935,7 @@ const NFEED = [
   { type: "event", s: null, day: 3, at: 600, tx: ["Tết is coming. Salons get busy, so booking early is a kind gift to yourself.", "Tết sắp đến. Salon sẽ đông, đặt sớm là món quà dễ thương cho chính bạn.", "설이 다가와요. 미용실이 붐비니 일찍 예약하는 건 나에게 주는 선물이에요."] },
   { type: "winback", s: "spa", day: 4, at: 600, n: 2, tx: ["One more hello from Sen Spa. After this, we'll stay quiet until you come back.", "Một lời chào nữa từ Sen Spa. Sau đây chúng mình sẽ im lặng đến khi bạn quay lại.", "Sen Spa에서 한 번 더 인사해요. 이후로는 다시 오실 때까지 조용히 있을게요."] },
   { type: "winback", s: "spa", day: 6, at: 600, n: 3, tx: ["(3rd win-back: never sent)", "(lần 3: không gửi)", "(3번째: 보내지 않음)"] },
-  { type: "mission", s: null, day: 2, at: 2 * 60, tx: ["3-week streak! Rest days count too.", "Chuỗi 3 tuần! Ngày nghỉ cũng được tính.", "3주 연속! 쉬는 날도 인정돼요."] }
+  { type: "mission", s: null, day: 2, at: 2 * 60, tx: ["3-week streak! Visits earn ×1.2 this week.", "Chuỗi 3 tuần! Mỗi lần đến được ×1.2 tuần này.", "3주 연속! 이번 주 방문 시 ×1.2 적립."] }
 ];
 function deliver() {
   /* rules: reminders always on; others muted by type and by store; friends need both sides opted in; quiet hours 21:00-08:00 (held to 08:00),
@@ -1046,7 +1049,7 @@ let succUndo = null;
 function success(b, undo) {
   const cheerAlt = L3("Nari cheering", "Nari reo mừng", "응원하는 나리");
   const media = RM ? `<img src="${A}cheer.webp" alt="${cheerAlt}">` : `<video src="${A}cheer.webm" poster="${A}cheer.webp" autoplay muted playsinline aria-label="${cheerAlt}"></video>`;
-  openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">${L3("Nari", "Nari", "나리")}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${tr("XP comes when you show up, not for booking.")}</p></div></div>` +
+  openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">${L3("Nari", "Nari", "나리")}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(pvT("howEarn"))}</p></div></div>` +
     `<div class="stack"><button class="btn full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
   succUndo = undo;
 }
@@ -1475,7 +1478,7 @@ function sendToStore(sid, text) {
 }
 /* ===== renderers ===== */
 const unreadAt = sid => INBOX.some(m => m.s === sid && m.unread);
-const lvl = () => Math.floor(ST.xp / 200) + 1;
+const lvl = () => lvlOf(ME);
 function header() {
   const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
   return `<div class="brand">${ST.store || ST.page ? `<button class="icb" data-act="back" aria-label="${t("back")}">${ic("back")}</button>` : `<span class="nm" aria-hidden="true">N</span>`}<span class="t">${esc(title)}</span></div>
@@ -1508,13 +1511,13 @@ function placeCard(sid) {
   return `<button class="place" data-act="store" data-v="${sid}" aria-label="${esc(s.name)}, ${esc(sub)}${unreadAt(sid) ? ", " + L3("new message", "tin nhắn mới", "새 메시지") : ""}">${unreadAt(sid) ? '<span class="dot" aria-hidden="true"></span>' : ""}${logo(sid)}<span class="n">${esc(s.name)}</span><span class="sub sm">${esc(sub)}</span></button>`;
 }
 function missionsCard() {
-  const M = [["attend", t("mAttend"), 50, "counts when the store marks you attended"], ["newplace", t("mNew"), 80, "any verified place, when you attend"], ["stretch", t("mStretch"), 20, "at home is fine"]];
+  const M = [["attend", t("mAttend"), 50, L3("counts when the store confirms your visit", "được tính khi cửa hàng xác nhận bạn đã đến", "매장에서 방문을 확인하면 적립")], ["newplace", t("mNew"), 80, L3("first confirmed visit to a place", "lần đầu được xác nhận tại một nơi", "처음 확인된 방문")], ["stretch", t("mStretch"), 10, L3("at home is fine", "ở nhà cũng được", "집에서도 괜찮아요")]];
   const done = M.filter(m => ST.miss[m[0]]).length;
-  const row = (k, l, x, why, btn) => `<div class="mis${ST.miss[k] ? " done" : ""}"><span class="ck" aria-hidden="true">${ST.miss[k] ? ic("check", "s") : ""}</span><span class="grow"><span class="mt">${esc(l)}</span><span class="vh">${ST.miss[k] ? ", " + tr("done") : ""}</span><br><span class="sub sm">+${x} ${t("xp")} · ${esc(tr(why))}</span></span>${ST.miss[k] ? "" : btn || ""}</div>`;
-  return `<div class="card"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${t("streak", { n: ST.weeks })}</span><span class="tag">${t("level")} ${lvl()}</span></div>
+  const row = (k, l, x, why, btn) => `<div class="mis${ST.miss[k] ? " done" : ""}"><span class="ck" aria-hidden="true">${ST.miss[k] ? ic("check", "s") : ""}</span><span class="grow"><span class="mt">${esc(l)}</span><span class="vh">${ST.miss[k] ? ", " + tr("done") : ""}</span><br><span class="sub sm">+${esc(fmtPts(x))} · ${esc(why)}</span></span>${ST.miss[k] ? "" : btn || ""}</div>`;
+  return `<div class="card"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span><span class="tag">${esc(pvT("level", { n: lvl(), name: lvlName(lvl()) }))}</span></div>
   ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : "")).join("")}
-  ${row("rest", t("restDay"), 20, t("mRest") + tr(", keeps your weekly streak"), `<button class="btn ghost" data-act="rest">${tr("Rest day")}</button>`)}
-  <p class="sub sm" style="margin:8px 0 0">${tr("Rewards are for showing up and caring for yourself, never for spending.")}<span hidden>Rewards are for showing up and caring for yourself, never for spending.</span></p></div>`;
+  ${row("rest", t("restDay"), 10, t("mRest"), `<button class="btn ghost" data-act="rest">${tr("Rest day")}</button>`)}
+  <p class="sub sm" style="margin:8px 0 0">${esc(pvT("howEarn"))}</p></div>`;
 }
 const AGAIN = [["capsule", "barre", { staff: "yuna" }, "Barre with Yuna"], ["salon", "cut", { staff: "linh" }, "Women's cut with Linh"], ["skin", "hydra", {}, "Hydrating facial"], ["spa", "aroma90", {}, "Aroma 90 min"], ["pickle", "court", { party: 4 }, "Court · 4 players"]];
 function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
@@ -1526,8 +1529,8 @@ function importCard() {
 }
 function vHome() {
   const up = upcoming();
-  return heroScene() +
-    `<h2>${t("upNext")} <span class="sub sm">${up.length} · ${tr("all places")}</span></h2><div class="card" role="list">${up.length ? up.slice(0, 5).map(upRow).join("") : `<p class="sub">${t("nothingUp")}</p>`}</div>` +
+  return notesCard() + heroScene() +
+    `<h2>${t("upNext")} <span class="sub sm">${up.length} · ${tr("all places")}</span></h2><div class="card" role="list">${up.length ? up.slice(0, 5).map(upRow).join("") : `<p class="sub">${t("nothingUp")}</p>`}</div>` + pendingCard() +
     importCard() +
     `<h2>${t("myPlaces")} <span class="sub sm">${joinedIds().length}</span></h2><div class="scroll" role="group" aria-label="${t("myPlaces")}">${joinedIds().map(placeCard).join("")}<button class="place add" data-act="joinsheet">+ ${t("join")}<span class="sub sm" style="font-weight:400">${L3("QR · link · search", "QR · liên kết · tìm", "QR · 링크 · 검색")}</span></button></div>` +
     `<h2>${t("missions")}</h2>${missionsCard()}` +
@@ -1608,21 +1611,18 @@ function journeySVG() {
   return `<svg class="journey" viewBox="0 0 ${W} ${H}" role="img" aria-label="${L3(`Journey: step ${ST.steps} of ${N}. Step 10 unlocks the spring park scene.`, `Hành trình: bước ${ST.steps}/${N}. Bước 10 mở cảnh công viên mùa xuân.`, `여정: ${N}단계 중 ${ST.steps}단계. 10단계에서 봄 공원 장면이 열려요.`)}"><path d="${path}" fill="none" stroke="#E3D7CC" stroke-width="6" stroke-linecap="round"/>${dots}</svg>`;
 }
 function vYou() {
-  const x = ST.xp % 200;
-  let h = `<div class="card row"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm">${tr("One account")} · ${joinedIds().length} ${tr("places")}</div></div><div style="text-align:right"><b>${ST.coins}</b> <span class="sub sm">${t("coins")}</span></div></div>`;
-  h += `<h2>${t("level")} ${lvl()}</h2><div class="card"><div class="sm">${x} / 200 ${t("xp")} ${L3("to", "để lên", "→")} ${t("level")} ${lvl() + 1}</div><div class="bar" role="progressbar" aria-label="XP" aria-valuemin="0" aria-valuemax="200" aria-valuenow="${x}"><i style="width:${x / 2}%"></i></div>
-    <div class="row" style="margin-top:12px"><b class="grow">${t("streak", { n: ST.weeks })}</b><span class="sub sm">${tr("Best: 6 weeks")}</span></div>
-    <div class="week" role="img" aria-label="${L3(`This week: ${ST.week.filter(Boolean).length} active days`, `Tuần này: ${ST.week.filter(Boolean).length} ngày hoạt động`, `이번 주: 활동 ${ST.week.filter(Boolean).length}일`)}">${(L === "vi" ? ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] : L === "ko" ? ["월", "화", "수", "목", "금", "토", "일"] : ["M", "T", "W", "T", "F", "S", "S"]).map((d, i) => `<span><b class="${ST.week[i] === 1 ? "on" : ST.week[i] === 2 ? "rest" : ""}"></b>${d}</span>`).join("")}</div><p class="sub sm" style="margin:6px 0 0">${tr("Any attended visit, or a rest-day mission, keeps the week. A missed week never takes progress away.")}</p></div>`;
+  let h = notesCard() + `<div class="card row"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm">${tr("One account")} · ${joinedIds().length} ${tr("places")}</div></div><div style="text-align:right"><b>${esc(fmtPts(bal(ME)))}</b></div></div>`;
+  h += pointsBlock();
+  h += `<div class="card" style="margin-top:12px"><div class="week" role="img" aria-label="${L3(`This week: ${ST.week.filter(x => x === 1).length} visits`, `Tuần này: ${ST.week.filter(x => x === 1).length} lượt đến`, `이번 주: 방문 ${ST.week.filter(x => x === 1).length}회`)}">${(L === "vi" ? ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] : L === "ko" ? ["월", "화", "수", "목", "금", "토", "일"] : ["M", "T", "W", "T", "F", "S", "S"]).map((d, i) => `<span><b class="${ST.week[i] === 1 ? "on" : ""}"></b>${d}</span>`).join("")}</div><p class="sub sm" style="margin:6px 0 0">${L3("A week with at least one confirmed visit keeps your streak. Missions and rest days don't.", "Tuần có ít nhất một lượt đến được xác nhận sẽ giữ chuỗi. Nhiệm vụ và ngày nghỉ thì không.", "확인된 방문이 한 번 이상 있는 주는 연속 기록이 이어져요. 미션과 쉬는 날은 해당되지 않아요.")}</p></div>`;
+  h += rewardsBlock();
   h += `<h2>${t("quest")}</h2><div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div>`;
   h += `<h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`;
-  const WD = [["wrap", tr("Studio wrap top"), tr("Owned"), "shirt"], ["cape", tr("Salon cape"), tr("Level 5"), "shirt"], ["cap", tr("Court cap"), tr("Quest reward"), "star"], ["aodai", tr("Tết áo dài"), tr("Tết event"), "leaf"]];
-  h += `<h2>${t("wardrobe")} <span class="tag">${tr("Coming soon")}</span></h2><div class="tiles">${WD.map(([id, n, how, i]) => { const own = ST.owned.includes(id); return `<div class="tile${own ? "" : " lock"}"><span class="ic">${ic(own ? i : "lock")}</span><b class="sm">${esc(tr(n))}</b><span class="sub sm">${own ? tr("Owned") : esc(tr(how))}</span></div>`; }).join("")}</div>`;
-  const SH = [["scr", tr("Raspberry scrunchie"), 40], ["lan", tr("Mid-Autumn lantern"), 120], ["room", tr("Cozy room theme"), 200]];
-  h += `<h2>${t("shop")} <span class="demo">${t("demo")}</span></h2><div class="card stack"><p class="sub sm" style="margin:0">${tr("Cosmetic only. Coins can't pay for services, and XP can't be bought.")}</p>${SH.map(([id, n, c]) => `<div class="row"><span class="tile" style="min-height:0;padding:10px;border:0;background:#F2E8DE">${ic("bag", "s")}</span><span class="grow"><b class="sm">${esc(tr(n))}</b><br><span class="sub sm">${c} ${t("coins")}</span></span>${ST.owned.includes(id) ? `<span class="tag ok">${tr("Owned")}</span>` : `<button class="btn ghost" data-act="buy" data-v="${id}" data-c="${c}" aria-label="${esc(L3(`Get ${n} for ${c} coins`, `Lấy ${n} với ${c} xu`, `${c}코인으로 ${n} 받기`))}">${tr("Get")}</button>`}</div>`).join("")}</div>`;
+  h += wardrobe();
   h += `<h2>${t("wallet")}</h2><div class="card stack">${joinedIds().map(sid => (WALLET[sid] || []).map(p => `<div class="row">${logo(sid)}<span class="grow"><b class="sm">${esc(tr(p.t))}</b><br><span class="sub sm">${esc(t("storeOnly", { s: S[sid].name }))} · ${esc(tr(p.exp))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("")).join("")}
     ${upcoming().filter(b => b.dep).map(b => `<div class="row">${logo(b.store)}<span class="grow"><b class="sm">${tr("Deposit held")}</b><br><span class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</span></span><b>${vnd(b.dep)}</b></div>`).join("")}
-    <div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#6B5E62" aria-hidden="true">N</span><span class="grow"><b class="sm">${tr("Nari coins (platform)")}</b><br><span class="sub sm">${tr("Cosmetics only · separate from store money")}</span></span><b>${ST.coins}</b></div></div>`;
+    <div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div></div>`;
   h += `<h2 id="inboxH">${t("inbox")}</h2><div class="card stack">${INBOX.slice(0, 6).map(m => `<button class="svc" data-act="store" data-v="${m.s}">${logo(m.s)}<span class="grow sm"><b>${esc(S[m.s].name)}</b> · <span class="sub">${esc(tr(m.when))}</span><br>${esc(trS(m.text))}</span>${m.unread ? `<span class="tag">${tr("New")}</span>` : ""}</button>`).join("")}</div>`;
+  h += storeAppBtn();
   h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p><h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div><h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Get help now' bar is always there. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Thanh 'Trợ giúp ngay' luôn có sẵn. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '지금 도움 받기' 버튼은 항상 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
@@ -1756,15 +1756,15 @@ function checkin(b) {
     if (on) cells += `<rect x="${j}" y="${i}" width="1" height="1"/>`;
   }
   openSheet(sheetHd(t("checkin")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b> · ${fWhen(b.d, b.m)}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="${L3("Check-in code, sample", "Mã check-in, mẫu", "체크인 코드, 샘플")}" shape-rendering="crispEdges"><g fill="#2B2326">${cells}</g></svg><p class="sub sm" style="text-align:center">${tr("Show this at the desk. It works offline.")}</p>
-  <button class="btn full" data-act="attend" data-id="${b.id}">${tr("Demo: the store marks you attended")}</button>`, t("checkin"));
+  <button class="btn full" data-act="attend" data-id="${b.id}">${L3("Demo: the store scans this code", "Demo: cửa hàng quét mã này", "데모: 매장에서 이 코드를 스캔")}</button><p class="sub sm" style="text-align:center">${esc(pvT("pendingConfirm", { s: S[b.store].name }))}</p>`, t("checkin"));
 }
-function attend(b) {
-  b.status = "attended"; const s = S[b.store]; let gain = 50, msg = "+50 XP · one journey step";
-  ST.miss.attend = true; ST.steps = Math.min(14, ST.steps + 1);
-  if (s.visits === 0 && !ST.miss.newplace) { ST.miss.newplace = true; gain += 80; msg += " · new place +80 XP"; }
-  s.visits++; const before = lvl(); ST.xp += gain; ST.coins += 10; ST.week[(wd(0) + 6) % 7] = 1;
+function attend(b) { /* the Store app scans the member's code (demo); points come only from store confirmation (E1, AC-P39) */
+  const s = S[b.store]; if (!BKREG[b.id]) { const t0 = PV.now(); pvBook(b.id, { store: b.store, member: ME.id, start: t0 - (b.len || 50) * MIN, end: t0, label: N(svcOf(b.store, b.svc).n) }); }
+  const r = confirmVisit(ME, b.id, "staff:" + b.store + "-desk"); b.status = "attended";
+  ST.miss.attend = true; ST.steps = Math.min(14, ST.steps + 1); if (r.bonus) ST.miss.newplace = true;
+  s.visits++; ST.week[(wd(0) + 6) % 7] = 1;
   if (["fitness", "sport"].includes(s.cat)) ST.quest.active = true; if (["massage", "skin"].includes(s.cat)) ST.quest.relax = true;
-  closeSheet(); render(); toast(msg + (lvl() > before ? ` · ${t("level")} ${lvl()}!` : "") + " · +10 coins");
+  closeSheet(); render(); toast(r.pts ? pvT("earnVisit", { n: r.pts, s: s.name }) + (r.bonus ? " · " + pvT("earnNewPlace", { n: r.bonus, s: s.name }) : "") : pvT("howEarn"));
 }
 let stretchT = null;
 function stretchSheet() {
@@ -1773,7 +1773,7 @@ function stretchSheet() {
   <p class="sub sm" style="margin-top:8px">${tr("Stop if anything hurts.")}</p><div class="stack"><button class="btn full" data-act="stretchdone">${tr("Finish (demo: skip the timer)")}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("mStretch"));
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000);
 }
-function finishStretch() { clearInterval(stretchT); if (!ST.miss.stretch) { ST.miss.stretch = true; ST.xp += 20; } closeSheet(); render(); toast("Stretch done · +20 XP"); }
+function finishStretch() { clearInterval(stretchT); const r = pvMission(ME, "stretch"); ST.miss.stretch = true; closeSheet(); render(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("mStretch") }) : pvT(r.msg)); }
 function manage(b) {
   const s = S[b.store], free = freeNow(b.store, b.d, b.m);
   openSheet(sheetHd(t("manage")) + storeBar(b.store) + draftRows(b) + `<p class="sub sm">${tr("The policy is saved with your booking, so a later change never surprises you.")}</p><div class="stack">
@@ -1901,7 +1901,7 @@ document.addEventListener("click", e => {
     case "attend": attend(bk(d.id)); break;
     case "stretch": stretchSheet(); break;
     case "stretchdone": finishStretch(); break;
-    case "rest": ST.miss.rest = true; ST.xp += 20; ST.week[(wd(0) + 6) % 7] = ST.week[(wd(0) + 6) % 7] || 2; render(); toast("Rest day logged · +20 XP · your week still counts"); break;
+    case "rest": { const r = pvMission(ME, "rest"); ST.miss.rest = true; render(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("restDay") }) : pvT(r.msg)); break; }
     case "joinsheet": joinSheet(); break;
     case "impok": { const s = S[IMPORT.sid]; IMPORT.state = "accepted"; s.joined = true; s.visits = IMPORT.visits; INBOX.unshift({ s: IMPORT.sid, text: `Welcome to ${s.name}! (sample store)`, when: L3("Now", "Vừa xong", "방금"), unread: false }); render(); toast(L3(`${s.name} is linked. Your ${IMPORT.visits} past visits are in your history; offers stay off.`, `Đã liên kết ${s.name}. ${IMPORT.visits} lần đến trước đã vào lịch sử; ưu đãi vẫn tắt.`, `${s.name} 연결됨. 지난 방문 ${IMPORT.visits}회가 기록에 들어갔고, 혜택 알림은 꺼져 있어요.`)); break; }
     case "impno": IMPORT.state = "declined"; render(); toast(L3(`Thanks. We told ${S[IMPORT.sid].name} it isn't you; nothing is linked.`, `Cảm ơn. Đã báo ${S[IMPORT.sid].name} đây không phải bạn; không liên kết gì.`, `알려 줘서 고마워요. ${S[IMPORT.sid].name}에 본인이 아니라고 전했고, 연결하지 않았어요.`)); break;
@@ -1916,7 +1916,6 @@ document.addEventListener("click", e => {
     case "cat": ST.cat = d.v; renderView(); { const el2 = $(`[data-act="cat"][data-v="${d.v}"]`); if (el2) el2.focus(); } break;
     case "whyad": toast("Sponsored by area (Thảo Điền). Not based on your bookings or health."); break;
     case "fake": toast(d.v); break;
-    case "buy": { const c = +d.c; if (ST.coins < c) { toast("Not enough coins yet. Missions earn coins. (Coin packs are a placeholder, no real purchase.)"); break; } ST.coins -= c; ST.owned.push(d.v); render(); toast("Demo: added to Nari's wardrobe. No real money used."); break; }
     case "call": openCall(); break;
     case "mute": if (CALL) { CALL.muted = !CALL.muted; el.setAttribute("aria-pressed", String(CALL.muted)); el.setAttribute("aria-label", CALL.muted ? t("unmute") : t("mute")); el.innerHTML = ic(CALL.muted ? "micoff" : "mic"); $("#mutel").textContent = CALL.muted ? t("unmute") : t("mute"); if (CALL.muted) try { speechSynthesis.cancel(); } catch (er) {} } break;
     case "hang": endCall(); break;
@@ -1953,6 +1952,374 @@ function selfTest() {
   for (const lang of ["en", "vi", "ko"]) { L = lang; for (const c of exampleChips()) { n++; if (safety(c.val.say) !== null) fail.push([lang, "chip: " + c.val.say, null, safety(c.val.say)]); } }
   L = L0; return { total: n, passed: n - fail.length, fail };
 }
+/* ===== Points & vouchers (spec v4, PO+BA co-signed). One currency: points. Real value gated on the realRewards flag (U1, OFF by default).
+   Demo data below uses the spec's recommended defaults for U2–U8 and is labelled as such. Simulated "server" = this page (PV.now()). ===== */
+const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER REVIEW */
+  points: ["{n} points", "{n} điểm", "{n}포인트"], pointsTab: ["Rewards", "Ưu đãi", "리워드"], balance: ["Your points", "Điểm của bạn", "내 포인트"],
+  level: ["Level {n} · {name}", "Cấp {n} · {name}", "레벨 {n} · {name}"],
+  lvl1: ["Newcomer", "Người mới", "뉴커머"], lvl2: ["Regular", "Thân quen", "레귤러"], lvl3: ["Devoted", "Gắn bó", "디보티드"], lvl4: ["Radiant", "Rạng rỡ", "래디언트"], lvl5: ["Icon", "Biểu tượng", "아이콘"],
+  nextLevel: ["{n} points to Level {m}", "Còn {n} điểm để lên Cấp {m}", "레벨 {m}까지 {n}포인트"], streak: ["{n}-week streak", "Chuỗi {n} tuần", "{n}주 연속"],
+  multiplier: ["Visits earn ×{x} this week", "Mỗi lần đến được ×{x} tuần này", "이번 주 방문 시 ×{x} 적립"], freezeHeld: ["1 streak freeze saved", "Đã có 1 lượt giữ chuỗi", "연속 기록 보호 1회 보유"],
+  freezeUsed: ["We used your streak freeze — your streak is safe.", "Đã dùng lượt giữ chuỗi — chuỗi của bạn vẫn được giữ.", "연속 기록 보호를 사용했어요. 기록은 그대로예요."],
+  streakReset: ["New week, fresh start. Visit any store to begin a new streak.", "Tuần mới, khởi đầu mới. Ghé bất kỳ cửa hàng nào để bắt đầu chuỗi mới.", "새로운 한 주예요. 아무 매장이나 방문해 새 기록을 시작해요."],
+  earnVisit: ["+{n} points for your visit to {s}", "+{n} điểm cho lần đến {s}", "{s} 방문으로 +{n}포인트"], earnNewPlace: ["+{n} bonus for your first visit to {s}", "+{n} điểm thưởng cho lần đầu đến {s}", "{s} 첫 방문 보너스 +{n}포인트"],
+  earnMission: ["+{n} points for {mission}", "+{n} điểm cho {mission}", "{mission} 완료 +{n}포인트"],
+  missionCap: ["You've reached today's mission points. Come back tomorrow!", "Bạn đã đạt giới hạn điểm nhiệm vụ hôm nay. Hẹn bạn ngày mai!", "오늘 미션 포인트를 모두 받았어요. 내일 또 만나요!"],
+  missionWeekCap: ["You've reached this week's mission points.", "Bạn đã đạt giới hạn điểm nhiệm vụ tuần này.", "이번 주 미션 포인트를 모두 받았어요."],
+  howEarn: ["Points come when you show up, not for booking.", "Điểm được tính khi bạn đến, không phải khi đặt lịch.", "포인트는 예약이 아니라 방문할 때 쌓여요."],
+  pendingConfirm: ["Points appear once {s} confirms your visit.", "Điểm sẽ được cộng khi {s} xác nhận bạn đã đến.", "{s}에서 방문을 확인하면 포인트가 적립돼요."],
+  milestone: ["{n}-week streak! A reward is waiting in your wallet.", "Chuỗi {n} tuần! Một phần quà đang chờ trong ví của bạn.", "{n}주 연속! 지갑에 리워드가 도착했어요."],
+  claimBtn: ["Claim for {n} points", "Đổi với {n} điểm", "{n}포인트로 받기"], notEnough: ["You need {n} more points", "Bạn cần thêm {n} điểm", "{n}포인트가 더 필요해요"],
+  levelLocked: ["Unlocks at Level {n}", "Mở khóa ở Cấp {n}", "레벨 {n}에서 열려요"], claimed: ["Already claimed", "Đã đổi", "이미 받음"], onlyAt: ["Only at {s}", "Chỉ dùng tại {s}", "{s}에서만 사용"],
+  offeredBy: ["Offered by {brand}", "Do {brand} tài trợ", "{brand} 제공"], myVouchers: ["My vouchers", "Ưu đãi của tôi", "내 쿠폰"], useBtn: ["Use at the counter", "Dùng tại quầy", "카운터에서 사용"],
+  showCode: ["Show this to staff. Code valid for {m} min.", "Đưa mã này cho nhân viên. Mã có hiệu lực {m} phút.", "직원에게 보여주세요. 코드는 {m}분간 유효해요."],
+  maxReady: ["You already have 3 vouchers for {s}", "Bạn đã có 3 ưu đãi tại {s}", "{s} 쿠폰을 이미 3개 갖고 있어요"], refreshCode: ["Get a new code", "Lấy mã mới", "새 코드 받기"],
+  offlineCode: ["Connect to show your code", "Kết nối mạng để hiện mã của bạn", "코드를 보려면 인터넷에 연결하세요"], codeReplaced: ["This code was replaced by a newer one.", "Mã này đã được thay bằng mã mới hơn.", "이 코드는 새 코드로 바뀌었어요."],
+  redeemed: ["Used at {s} on {date}", "Đã dùng tại {s} ngày {date}", "{date} {s}에서 사용함"], statusReady: ["Ready", "Sẵn sàng", "사용 가능"], statusUsed: ["Used", "Đã dùng", "사용 완료"], statusExpired: ["Expired", "Hết hạn", "만료"],
+  needStreak: ["{n} more weeks of streak needed", "Cần thêm {n} tuần liên tiếp", "연속 기록 {n}주 더 필요해요"], outOfStock: ["Out of stock", "Đã hết", "품절"],
+  belowZero: ["Balance below zero. Earn points to claim rewards again.", "Số điểm đang âm. Hãy tích điểm để đổi ưu đãi lại.", "포인트가 0 미만이에요. 적립 후 다시 받을 수 있어요."],
+  validUntil: ["Valid until {date}", "Hạn đến {date}", "{date}까지"], cancelClaim: ["Cancel and get {n} points back", "Hủy và nhận lại {n} điểm", "취소하고 {n}포인트 돌려받기"],
+  pointsExpireWarn: ["{n} points expire on {date}. Visit any store to keep them.", "{n} điểm sẽ hết hạn vào {date}. Ghé bất kỳ cửa hàng nào để giữ điểm.", "{n}포인트가 {date}에 만료돼요. 아무 매장이나 방문하면 유지돼요."],
+  voucherExpireWarn: ["Your {v} voucher expires in {n} days.", "Ưu đãi {v} của bạn sẽ hết hạn sau {n} ngày.", "{v} 쿠폰이 {n}일 후 만료돼요."],
+  reversed: ["{n} points were reversed: {s} updated your visit.", "Đã trừ {n} điểm: {s} đã cập nhật lần đến của bạn.", "{s}에서 방문 기록을 수정해 {n}포인트가 차감됐어요."],
+  history: ["Points history", "Lịch sử điểm", "포인트 내역"], outfitUnlocked: ["New outfit for Nari unlocked!", "Đã mở khóa trang phục mới cho Nari!", "Nari의 새 의상이 열렸어요!"],
+  migrated: ["Your XP and coins are now points. Your level is kept.", "XP và xu của bạn đã chuyển thành điểm. Cấp độ của bạn được giữ nguyên.", "XP와 코인이 포인트로 바뀌었어요. 레벨은 그대로예요."],
+  noCash: ["Points have no cash value and can't be transferred.", "Điểm không có giá trị quy đổi tiền mặt và không thể chuyển nhượng.", "포인트는 현금 가치가 없으며 양도할 수 없어요."]
+};
+/* staff strings (Store app) — EN only for now; VI/KO due before the Store app is built (BA) */
+const PV_STAFF = { notHere: "Not valid at this store", expiredOn: "Expired on {date}", usedOn: "Already used on {date} at {store}", offlineValidate: "Can't validate offline. Try again", codeReplaced: "This code was replaced by a newer one.", markLimit: "Daily Mark attended limit reached", flagged: "Store flagged: {n} marks today (over 20)", review: "Needs owner review" };
+const pvT = (k, v) => { let s = (PV_STR[k] || [k])[L === "vi" ? 1 : L === "ko" ? 2 : 0] || PV_STR[k][0]; if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+const fmtN = n => n.toLocaleString(L === "vi" ? "vi-VN" : "en-US");
+const fmtPts = n => pvT("points", { n: fmtN(n) });
+const MONEY = { VND: new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }), KRW: new Intl.NumberFormat("ko-KR", { style: "currency", currency: "KRW" }), USD: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }) };
+const fmtMoney = (n, cur) => MONEY[cur].format(n); /* fixed per-currency formatter, ignores the UI locale (AC-P29) */
+const TZOFF = { "Asia/Saigon": 420, "Asia/Seoul": 540, "America/Los_Angeles": -420 }; /* fixed offsets; good enough for the prototype */
+const DAY = 864e5, MIN = 6e4;
+const PV = {
+  flag: false, srvOff: 0, online: true, storeOnline: true, defs: [], members: {}, codes: {}, staffMarks: {}, storeMarks: {}, audit: [], notes: [], seq: 1, markLimit: 10, storeFlagAt: 20,
+  now() { return Date.now() + this.srvOff; }
+};
+const LVL = [0, 500, 1500, 3000, 6000], OUTFIT = ["Default", "Studio", "Glow", "Bloom", "Icon"];
+const homeTz = m => m.tz || "Asia/Saigon";
+const loc = (t, tz) => new Date(t + TZOFF[tz] * MIN); /* read with getUTC* */
+const dayKey = (m, t) => loc(t, homeTz(m)).toISOString().slice(0, 10);
+const monKey = (m, t) => dayKey(m, t).slice(0, 7);
+function weekStart(m, t) { const d = loc(t, homeTz(m)); const wdx = (d.getUTCDay() + 6) % 7; return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - wdx) - TZOFF[homeTz(m)] * MIN; }
+const weekKey = (m, t) => dayKey(m, weekStart(m, t));
+const addMonths = (t, n) => { const d = new Date(t); d.setUTCMonth(d.getUTCMonth() + n); return +d; };
+function pvMember(id, o) {
+  const m = Object.assign({ id, name: id, tz: "Asia/Saigon", ledger: [], att: {}, visited: {}, npMonth: {}, dayVisits: {}, misDay: {}, misWeek: {}, weekVisits: {}, streak: 0, freeze: 0, run: 0,
+    closedTo: null, msReached: [], msGranted: [], claims: [], lastVisit: null, migrated: false, legacyOpen: false, enabledAt: PV.flag ? PV.now() : null, notices: [], lvlSeen: 1 }, o || {});
+  PV.members[id] = m; if (m.closedTo == null) m.closedTo = weekStart(m, PV.now()); return m;
+}
+const bal = m => m.ledger.reduce((a, r) => a + (r.delta || 0), 0);
+const life = m => m.ledger.reduce((a, r) => a + (r.life || 0), 0);
+const lvlOf = m => { const l = life(m); let n = 1; LVL.forEach((x, i) => { if (l >= x) n = i + 1; }); return n; };
+const mult = m => m.streak >= 6 ? 1.5 : m.streak >= 3 ? 1.2 : 1;
+function row(m, o, t) { /* append-only ledger (A8, AC-P37) */
+  const r = Object.freeze(Object.assign({ id: "L" + PV.seq++, member: m.id, store: null, src: null, delta: 0, life: 0, reason: "", actor: "system", t: t == null ? PV.now() : t }, o));
+  m.ledger.push(r); return r;
+}
+function note(m, k, v) { m.notices.push({ k, v: v || {}, t: PV.now() }); }
+function checkLevel(m) { const n = lvlOf(m); if (n > m.lvlSeen) { m.lvlSeen = n; note(m, "outfitUnlocked", { lvl: n, outfit: OUTFIT[n - 1] }); } }
+/* migration (§10, AC-P34, AC-P54a/b) — idempotent */
+function pvMigrate(m, old) {
+  if (m.migrated) return false; m.migrated = true;
+  row(m, { reason: "migration", life: old.xp, src: "xp", note: "lifetime" });
+  row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins" }); m.legacyOpen = true; m.legacyCoins = old.coins;
+  m.streak = old.weeks; m.lvlSeen = lvlOf(m); note(m, "migrated"); return true;
+}
+/* weekly roll (§2): runs at each Sun 23:59 home time that has passed */
+function pvTick(m, now) {
+  now = now == null ? PV.now() : now;
+  while (now >= m.closedTo + 7 * DAY) {
+    const wk = dayKey(m, m.closedTo), had = (m.weekVisits[wk] || 0) > 0;
+    if (had) {
+      m.streak++; m.run++; if (m.run % 4 === 0 && m.freeze < 1) m.freeze = 1;
+      for (const ms of [4, 8, 12]) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msWeek = Object.assign(m.msWeek || {}, { [ms]: wk }); note(m, "milestone", { n: ms }); }
+    } else if (m.freeze) { m.freeze = 0; note(m, "freezeUsed"); }
+    else { if (m.streak) note(m, "streakReset"); m.streak = 0; m.run = 0; }
+    m.closedTo += 7 * DAY;
+  }
+  if (PV.flag) {
+    grantMilestones(m, now);
+    const L0 = Math.max(m.lastVisit || 0, m.enabledAt || 0), exp = addMonths(L0, 12);
+    if (L0 && now >= exp && m.expL !== L0) { m.expL = L0; const b = bal(m); if (b > 0) row(m, { reason: "expired", delta: -b }, exp); } /* a negative balance is never wiped */
+    for (const c of m.claims) if (c.status === "ready" && now >= c.exp) c.status = "expired";
+  }
+}
+function pointsWarn(m, now) { if (!PV.flag) return null; const L0 = Math.max(m.lastVisit || 0, m.enabledAt || 0); if (!L0) return null; const exp = addMonths(L0, 12), b = bal(m); return now >= exp - 30 * DAY && now < exp && b > 0 ? { n: b, date: exp } : null; }
+function voucherWarns(m, now) { return PV.flag ? m.claims.filter(c => c.status === "ready" && c.exp - now <= 3 * DAY && c.exp > now).map(c => ({ c, n: Math.ceil((c.exp - now) / DAY) })) : []; }
+/* visit confirmation from the Store app only (E1, A1, AC-P39) */
+const BKREG = {}; /* bookingId -> { store, member, start, end, status } */
+function pvBook(id, o) { BKREG[id] = Object.assign({ status: "booked" }, o); return BKREG[id]; }
+function confirmVisit(m, bid, actor, now) {
+  now = now == null ? PV.now() : now; pvTick(m, now);
+  const bk = BKREG[bid]; if (!bk || bk.member !== m.id) return { ok: false, err: "nobooking" };
+  if (!/^staff:|^ops:/.test(String(actor))) return { ok: false, err: "store_only" }; /* no self check-in */
+  if (m.att[bid]) return { ok: true, dup: true }; /* idempotent (AC-P38) */
+  const s = bk.store, dk = dayKey(m, now), dv = m.dayVisits[dk] = m.dayVisits[dk] || [];
+  m.att[bid] = { store: s, t: now, actor, rows: [], week: weekKey(m, now) }; bk.status = "attended";
+  if (dv.includes(s) || dv.length >= 2) { row(m, { store: s, src: bid, reason: "daily_cap", actor }, now); m.att[bid].capped = true; return { ok: true, pts: 0, reason: "daily_cap" }; }
+  dv.push(s); m.weekVisits[m.att[bid].week] = (m.weekVisits[m.att[bid].week] || 0) + 1; m.lastVisit = now;
+  const base = Math.floor(50 * mult(m)), out = { ok: true, pts: base, bonus: 0 };
+  m.att[bid].rows.push(row(m, { store: s, src: bid, delta: base, life: base, reason: "visit", actor, x: mult(m) }, now).id);
+  if (!m.visited[s]) { m.visited[s] = true; const mk = monKey(m, now);
+    if ((m.npMonth[mk] || 0) < 4) { m.npMonth[mk] = (m.npMonth[mk] || 0) + 1; m.att[bid].np = mk; out.bonus = 80; m.att[bid].rows.push(row(m, { store: s, src: bid, delta: 80, life: 80, reason: "newplace", actor }, now).id); }
+    else { row(m, { store: s, src: bid, reason: "newplace_cap", actor }, now); out.npCap = true; } }
+  checkLevel(m); return out;
+}
+function markNoShow(m, bid) { const bk = BKREG[bid]; if (bk) bk.status = "noshow"; return { pts: 0 }; }
+const pendingFor = (m, now) => Object.entries(BKREG).filter(([id, b]) => b.member === m.id && b.status === "booked" && now >= b.start && now < b.end + DAY && !m.att[id]).map(([id, b]) => Object.assign({ id }, b));
+/* missions (E3): 10 each, 2/day, 60/week, never multiplied, never extend the streak */
+function pvMission(m, kind, now) {
+  now = now == null ? PV.now() : now; pvTick(m, now);
+  const dk = dayKey(m, now), wk = weekKey(m, now);
+  if ((m.misDay[dk] || 0) >= 2) { row(m, { reason: "mission_cap", src: kind }, now); return { pts: 0, msg: "missionCap" }; }
+  if ((m.misWeek[wk] || 0) >= 60) { row(m, { reason: "mission_week_cap", src: kind }, now); return { pts: 0, msg: "missionWeekCap" }; }
+  m.misDay[dk] = (m.misDay[dk] || 0) + 1; m.misWeek[wk] = (m.misWeek[wk] || 0) + 10;
+  row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); return { pts: 10 };
+}
+/* Store app: Mark attended fallback (E1, AC-P45) */
+function markAttended(staff, store, m, bid, reason, now) {
+  now = now == null ? PV.now() : now; const bk = BKREG[bid];
+  if (!bk || bk.store !== store || bk.member !== m.id) return { ok: false, err: "Member has no booking here" };
+  if (!reason) return { ok: false, err: "Reason required" };
+  if (now >= bk.end + DAY) return { ok: false, err: "Mark attended closed (24 h after class end)" };
+  const sk = staff + "|" + dayKey(m, now), stk = store + "|" + dayKey(m, now);
+  if ((PV.staffMarks[sk] || 0) >= PV.markLimit) return { ok: false, err: PV_STAFF.markLimit };
+  PV.staffMarks[sk] = (PV.staffMarks[sk] || 0) + 1; PV.storeMarks[stk] = (PV.storeMarks[stk] || 0) + 1;
+  PV.audit.push({ staff, member: m.id, booking: bid, reason, t: now, store });
+  if (PV.storeMarks[stk] > PV.storeFlagAt) PV.audit.flag = Object.assign(PV.audit.flag || {}, { [stk]: PV.storeMarks[stk] });
+  return Object.assign({ ok: true }, confirmVisit(m, bid, staff, now));
+}
+/* Store app: Reverse visit (A5, AC-P24, AC-P49) */
+const REASONS = ["staff_error", "service_refund", "fraud", "other"];
+function reverseVisit(actor, m, bid, reason, noteTxt, now, ops) {
+  now = now == null ? PV.now() : now; const a = m.att[bid];
+  if (!a || a.reversed) return { ok: false, err: "Nothing to reverse" };
+  if (!REASONS.includes(reason) || (reason === "other" && !noteTxt)) return { ok: false, err: "Reason code required" };
+  if (now - a.t > 14 * DAY && !(ops && reason === "fraud")) return { ok: false, err: "Reverse visit unavailable after 14 days" };
+  let n = 0; for (const id of a.rows) { const r = m.ledger.find(x => x.id === id); n += r.delta; row(m, { store: a.store, src: bid, delta: -r.delta, life: -r.life, reason: "reversed:" + reason, actor, note: noteTxt || "" }, now); }
+  a.reversed = true; if (a.np) m.npMonth[a.np]--; if (!a.capped) { m.weekVisits[a.week]--;
+    if (m.weekVisits[a.week] === 0 && now >= weekStart(m, a.t) + 7 * DAY) { /* week already counted: remove its credit */ m.streak = Math.max(0, m.streak - 1);
+      for (const ms of [4, 8, 12]) if (m.msWeek && m.msWeek[ms] === a.week) { const c = m.claims.find(c => c.milestone === ms && c.status === "ready"); if (c) c.status = "reversed"; if (!m.msGranted.includes(ms)) m.msGranted.push(ms); /* once ever */ } } }
+  note(m, "reversed", { n, s: a.store }); return { ok: true, n };
+}
+/* vouchers (§4, §5) */
+function validateDraft(d) { /* AC-P31, AC-P51 */
+  const e = [], int = x => Number.isInteger(+x) && String(x).trim() !== "";
+  if (!int(d.cost) || d.cost < 100 || d.cost > 5000) e.push("Point cost must be 100–5,000");
+  if (d.type === "percent" && (!int(d.value) || d.value < 5 || d.value > 50)) e.push("Percent must be 5–50");
+  if (d.validFor != null && (!int(d.validFor) || d.validFor < 7 || d.validFor > 90)) e.push("Valid for must be 7–90 days");
+  if (d.minStreak != null && (!int(d.minStreak) || d.minStreak < 0 || d.minStreak > 12)) e.push("Min streak must be 0–12");
+  if (d.minLevel != null && (!int(d.minLevel) || d.minLevel < 1 || d.minLevel > 5)) e.push("Min level must be 1–5");
+  return e;
+}
+function publish(d) { const e = validateDraft(d); if (e.length) return { ok: false, errors: e };
+  const v = Object.assign({ id: "V" + PV.seq++, ver: 1, funder: "store", minLevel: 1, minStreak: 0, stock: 50, validFor: 30, start: 0, end: Infinity, paused: false, cur: "VND" }, d, { cost: +d.cost }); PV.defs.push(v); return { ok: true, v }; }
+function editDef(id, ch) { const v = PV.defs.find(x => x.id === id); Object.assign(v, ch); v.ver++; return v; } /* stock & claim limits carry over (same definition) */
+const scopeOf = v => v.store ? [v.store] : v.stores || null; /* null = any participating store */
+function eligibility(m, v, now) {
+  const b = bal(m), mine = m.claims.filter(c => c.def === v.id);
+  if (mine.some(c => c.status === "ready" || c.status === "used") || mine.length >= 2) return { ok: false, k: "claimed" };
+  if (b < 0) return { ok: false, k: "belowZero" };
+  if (v.stock <= 0) return { ok: false, k: "outOfStock" };
+  if (lvlOf(m) < v.minLevel) return { ok: false, k: "levelLocked", n: v.minLevel };
+  if (m.streak < v.minStreak) return { ok: false, k: "needStreak", n: v.minStreak - m.streak };
+  if (v.store && m.claims.filter(c => c.store === v.store && c.status === "ready").length >= 3) return { ok: false, k: "maxReady", s: v.store };
+  if (b < v.cost) return { ok: false, k: "notEnough", n: v.cost - b };
+  return { ok: true };
+}
+const listed = (v, now) => !v.paused && now >= v.start && now <= v.end && !v.milestone;
+function claim(m, id, now) { /* atomic: deduct + stock − 1 + voucher, or nothing (AC-P17, AC-P41) */
+  now = now == null ? PV.now() : now; if (!PV.flag) return { ok: false, k: "off" }; pvTick(m, now);
+  const v = PV.defs.find(x => x.id === id); if (!v || !listed(v, now)) return { ok: false, k: "unlisted" };
+  const el = eligibility(m, v, now); if (!el.ok) return el;
+  v.stock--; const c = { id: "C" + PV.seq++, def: v.id, ver: v.ver, terms: JSON.parse(JSON.stringify({ title: v.title, type: v.type, value: v.value, cur: v.cur, max: v.max, terms: v.terms, cost: v.cost, brand: v.brand })), store: v.store || null, scope: scopeOf(v), t: now, exp: now + v.validFor * DAY, status: "ready", cost: v.cost };
+  row(m, { store: v.store || null, src: c.id, delta: -v.cost, reason: "claim", actor: m.id }, now); m.claims.push(c); return { ok: true, c };
+}
+function cancelClaim(m, cid, now) { now = now == null ? PV.now() : now; const c = m.claims.find(x => x.id === cid);
+  if (!c || c.status !== "ready" || now - c.t > DAY || c.milestone) return { ok: false };
+  c.status = "cancelled"; if (c.code) PV.codes[c.code].dead = true; const v = PV.defs.find(x => x.id === c.def); v.stock++;
+  row(m, { store: c.store, src: c.id, delta: c.cost, reason: "claim_cancel", actor: m.id }, now); return { ok: true }; }
+const canCancel = (m, c, now) => c.status === "ready" && !c.milestone && now - c.t <= DAY;
+function useCode(m, cid, now) { now = now == null ? PV.now() : now; const c = m.claims.find(x => x.id === cid);
+  if (!PV.online) return { ok: false, k: "offlineCode" }; if (!c || c.status !== "ready") return { ok: false };
+  if (c.code) PV.codes[c.code].replaced = true;
+  let code; do { code = Array.from({ length: 6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join(""); } while (PV.codes[code]);
+  PV.codes[code] = { cid, member: m.id, t: now }; c.code = code; return { ok: true, code, until: now + 10 * MIN }; }
+function validateCode(store, code, now) { /* Store app Validate (scan or typed code, AC-P43) */
+  now = now == null ? PV.now() : now; code = String(code || "").trim().toUpperCase();
+  if (!PV.storeOnline) return { ok: false, msg: PV_STAFF.offlineValidate };
+  const k = PV.codes[code]; if (!k || k.dead) return { ok: false, msg: "Code not found" };
+  const m = PV.members[k.member], c = m.claims.find(x => x.id === k.cid); pvTick(m, now);
+  const d = x => new Date(x).toISOString().slice(0, 10);
+  if (c.status === "used") return { ok: false, msg: PV_STAFF.usedOn.replace("{date}", d(c.usedAt)).replace("{store}", S[c.usedStore] ? S[c.usedStore].name : c.usedStore) };
+  if (k.replaced) return { ok: false, msg: PV_STAFF.codeReplaced };
+  if (c.status === "expired") return { ok: false, msg: PV_STAFF.expiredOn.replace("{date}", d(c.exp)) };
+  if (now > k.t + 10 * MIN) return { ok: false, msg: PV_STAFF.expiredOn.replace("{date}", d(k.t + 10 * MIN)) };
+  if (c.status !== "ready") return { ok: false, msg: "Not valid" };
+  if (c.scope && !c.scope.includes(store)) return { ok: false, msg: PV_STAFF.notHere };
+  return { ok: true, m, c, member: m.name, reward: c.terms.title, terms: c.terms.terms, status: "Ready" };
+}
+function redeem(staff, store, code, now) { now = now == null ? PV.now() : now; const r = validateCode(store, code, now); if (!r.ok) return r;
+  Object.assign(r.c, { status: "used", usedAt: now, usedBy: staff, usedStore: store }); return { ok: true, c: r.c }; }
+function grantMilestones(m, now) { /* U2 demo values: 50.000 / 75.000 / 100.000 ₫, platform-funded */
+  for (const ms of m.msReached) if (!m.msGranted.includes(ms)) { m.msGranted.push(ms); const val = { 4: 50000, 8: 75000, 12: 100000 }[ms];
+    m.claims.push({ id: "C" + PV.seq++, def: "MS" + ms, milestone: ms, terms: { title: [`${ms}-week streak reward`, `Quà chuỗi ${ms} tuần`, `${ms}주 연속 리워드`], type: "fixed", value: val, cur: "VND", terms: ["Platform-funded. Demo value, pending U2.", "Nền tảng tài trợ. Giá trị demo, chờ U2.", "플랫폼 제공. 데모 금액, U2 결정 대기."] }, store: null, scope: null, t: now, exp: now + 30 * DAY, status: "ready", cost: 0 }); }
+}
+function setFlag(on, now) { /* U1. Turning on: one-time coin conversion at U8 ×5, milestone grants, expiry clock starts */
+  now = now == null ? PV.now() : now; PV.flag = !!on;
+  for (const m of Object.values(PV.members)) { if (!on) continue;
+    if (m.enabledAt == null) m.enabledAt = now;
+    if (m.legacyOpen) { m.legacyOpen = false; row(m, { reason: "migration", src: "legacy_coins", delta: m.legacyCoins * 5, note: "coins ×5 (U8 demo rate)" }, now); m.legacyClosed = true; }
+    pvTick(m, now); }
+}
+/* ---- demo seed: Mina migrates from xp 640 / coins 120 / 3 weeks; demo vouchers use U2–U8 recommended defaults ---- */
+function pvSeed() {
+  const m = pvMember("mina", { name: "Mina" }); pvMigrate(m, { xp: ST.xp0, coins: ST.coins0, weeks: ST.weeks }); for (const sid in S) if (S[sid].visits > 0) m.visited[sid] = true; /* past visits from before points */
+  const D = { demo: true }; /* labelled "Demo data" in the UI */
+  [{ store: "capsule", title: ["10% off any class", "Giảm 10% một buổi tập bất kỳ", "모든 수업 10% 할인"], type: "percent", value: 10, max: 50000, cost: 500, stock: 50, terms: ["One class at this store. Max 50.000 ₫ off.", "Một buổi tại cửa hàng này. Giảm tối đa 50.000 ₫.", "이 매장 수업 1회. 최대 50.000 ₫ 할인."] },
+   { store: "salon", title: ["Free hair mask with any cut", "Tặng ủ tóc khi cắt tóc", "커트 시 헤어 마스크 무료"], type: "addon", value: "Hair mask", cost: 400, minLevel: 2, stock: 30, terms: ["With any cut at this store.", "Kèm bất kỳ dịch vụ cắt tóc nào tại cửa hàng này.", "이 매장의 모든 커트와 함께."] },
+   { store: "spa", title: ["50.000 ₫ off Aroma 90", "Giảm 50.000 ₫ Aroma 90", "아로마 90 50.000 ₫ 할인"], type: "fixed", value: 50000, cost: 300, minStreak: 4, stock: 20, terms: ["Aroma massage 90 min at this store.", "Massage aroma 90 phút tại cửa hàng này.", "이 매장 아로마 마사지 90분."] },
+   { store: "skin", title: ["15% off any facial", "Giảm 15% chăm sóc da mặt", "모든 페이셜 15% 할인"], type: "percent", value: 15, max: 150000, cost: 1200, minLevel: 3, stock: 10, terms: ["Any facial at this store. Max 150.000 ₫ off.", "Bất kỳ liệu trình da mặt nào tại cửa hàng này. Giảm tối đa 150.000 ₫.", "이 매장 모든 페이셜. 최대 150.000 ₫ 할인."] },
+   { funder: "platform", title: ["30.000 ₫ off at any place", "Giảm 30.000 ₫ tại bất kỳ nơi nào", "어느 매장에서나 30.000 ₫ 할인"], type: "fixed", value: 30000, cost: 600, stock: 100, terms: ["Platform-funded. Any participating store. Demo value, pending U2.", "Nền tảng tài trợ. Mọi cửa hàng tham gia. Giá trị demo, chờ U2.", "플랫폼 제공. 참여 매장 어디서나. 데모 금액, U2 결정 대기."] }].forEach(d => publish(Object.assign({}, D, d)));
+  /* U3 default: no advertiser vouchers at launch, so none is listed */
+  return m;
+}
+
+/* ===== Points UI (member) + Store app demo (staff, EN only) ===== */
+const PVL = () => (L === "vi" ? 1 : L === "ko" ? 2 : 0);
+const pvTx = x => Array.isArray(x) ? x[PVL()] : x;
+const fDateP = t => new Intl.DateTimeFormat(LOC[L], { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(t));
+const lvlName = n => pvT("lvl" + n);
+const storeNm = sid => sid && S[sid] ? S[sid].name : sid;
+const DEMO_U = () => L3("Demo data · rewards use the recommended defaults for U2–U8, pending your decision (U1).", "Dữ liệu demo · ưu đãi dùng mặc định đề xuất cho U2–U8, đang chờ bạn quyết định (U1).", "데모 데이터 · 리워드는 U2–U8 권장 기본값을 사용하며 결정(U1)을 기다리고 있어요.");
+let ME = null, PVSTORE = "capsule", PVCODE = null, PVVAL = null, PVDRAFT = { type: "percent", cost: 500, value: 10, validFor: 30, minStreak: 0, minLevel: 1 };
+function noteText(n) {
+  const v = n.v || {};
+  if (n.k === "milestone") return pvT("milestone", { n: v.n });
+  if (n.k === "reversed") return pvT("reversed", { n: fmtN(v.n), s: storeNm(v.s) });
+  if (n.k === "outfitUnlocked") return pvT("outfitUnlocked") + " " + v.outfit + " · " + pvT("level", { n: v.lvl, name: lvlName(v.lvl) });
+  return pvT(n.k);
+}
+function notesCard() {
+  if (!ME) return ""; pvTick(ME); const ns = ME.notices.filter(n => !n.seen && (n.k !== "milestone" || PV.flag));
+  if (!ns.length) return "";
+  return `<section class="card" id="pv-notes" style="margin-bottom:12px;border-color:var(--rasp)" aria-live="polite">${ns.map(n => `<p class="sm" style="margin:0 0 6px"><b>${esc(noteText(n))}</b></p>`).join("")}<button class="btn sec" data-act="pvseen">${t("close") === "close" ? "OK" : "OK"}</button></section>`;
+}
+function pendingCard() {
+  if (!ME) return ""; const p = pendingFor(ME, PV.now()); if (!p.length) return "";
+  return `<div class="card" id="pv-pending" style="margin-top:12px">${p.map(b => `<div class="row">${logo(b.store)}<span class="grow sm"><b>${esc(storeNm(b.store))}</b><br><span class="sub">${esc(pvT("pendingConfirm", { s: storeNm(b.store) }))}</span></span></div>`).join("")}</div>`;
+}
+function pointsBlock() {
+  const m = ME, lv = lvlOf(m), lf = life(m), nx = LVL[lv], b = bal(m), pct = nx ? Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) : 100;
+  let h = `<h2 id="pv-level">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</h2><div class="card">
+  <div class="row"><span class="grow"><span class="sub sm">${esc(pvT("balance"))}</span><br><b id="pv-bal" style="font-size:22px">${esc(fmtPts(b))}</b></span></div>
+  <div class="sm" style="margin-top:8px">${nx ? esc(pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 })) : esc(lvlName(5))}</div><div class="bar" role="progressbar" aria-label="${esc(pvT("level", { n: lv, name: lvlName(lv) }))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>
+  <div class="row wrap" style="margin-top:12px;gap:6px"><b class="grow">${esc(pvT("streak", { n: m.streak }))}</b>${mult(m) > 1 ? `<span class="tag">${esc(pvT("multiplier", { x: mult(m) }))}</span>` : ""}${m.freeze ? `<span class="tag ok">${esc(pvT("freezeHeld"))}</span>` : ""}</div>
+  <p class="sub sm" style="margin:6px 0 0">${esc(pvT("howEarn"))}</p>`;
+  const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
+  h += `<p class="sub sm" style="margin:6px 0 0" id="pv-nocash">${esc(pvT("noCash"))}</p><button class="link" data-act="pvhist">${esc(pvT("history"))}</button></div>`;
+  return h;
+}
+function wardrobe() {
+  const lv = lvlOf(ME), OF = [["o1", 1], ["o2", 2], ["o3", 3], ["o4", 4], ["o5", 5]], CO = [["wrap", tr("Studio wrap top")], ["lan", tr("Mid-Autumn lantern")]].filter(([id]) => ST.owned.includes(id));
+  const tile = (id, nm, sub, ok) => `<button class="tile${ok ? "" : " lock"}" data-act="pvwear" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : "disabled"} style="min-height:44px;font:inherit;color:inherit"><span class="ic">${ic(ok ? "shirt" : "lock")}</span><b class="sm">${esc(nm)}</b><span class="sub sm">${esc(sub)}</span></button>`;
+  return `<h2>${t("wardrobe")}</h2><div class="tiles">${OF.map(([id, n]) => tile(id, OUTFIT[n - 1], n <= lv ? (ST.wear === id ? "✓" : tr("Owned")) : pvT("levelLocked", { n }), n <= lv)).join("")}${CO.map(([id, nm]) => tile(id, nm, tr("Owned"), true)).join("")}</div>`;
+}
+function vchLine(c) { const v = c.terms; return v.type === "percent" ? v.value + "%" : v.type === "fixed" ? fmtMoney(v.value, v.cur || "VND") : pvTx(v.title); }
+function scopeTx(v) { return v.brand ? pvT("offeredBy", { brand: v.brand }) : (v.store ? pvT("onlyAt", { s: storeNm(v.store) }) : L3("Any participating place", "Mọi nơi tham gia", "참여 매장 어디서나")); }
+function reasonTx(el) { return el.k === "notEnough" ? pvT("notEnough", { n: fmtN(el.n) }) : el.k === "levelLocked" ? pvT("levelLocked", { n: el.n }) : el.k === "needStreak" ? pvT("needStreak", { n: el.n }) : el.k === "maxReady" ? pvT("maxReady", { s: storeNm(el.s) }) : pvT(el.k); }
+function rewardsBlock() {
+  if (!PV.flag) return "";
+  const now = PV.now(); pvTick(ME, now);
+  let h = `<h2 id="pv-rewards">${esc(pvT("pointsTab"))} <span class="demo">${t("demo")}</span></h2><p class="sub sm" style="margin:0 0 8px">${esc(DEMO_U())}</p><div class="card stack">`;
+  h += PV.defs.filter(v => listed(v, now)).map(v => { const el = eligibility(ME, v, now);
+    return `<div class="row top pv-v" data-v="${v.id}"><span class="grow"><b class="sm">${esc(pvTx(v.title))}</b><br><span class="sub sm">${esc(scopeTx(v))} · ${esc(fmtPts(v.cost))}</span>${el.ok ? "" : `<br><span class="sm pv-why">${esc(reasonTx(el))}</span>`}</span>
+    <button class="btn${el.ok ? "" : " pvoff"}" data-act="pvclaim" data-v="${v.id}" ${el.ok ? "" : 'disabled aria-disabled="true"'} aria-label="${esc(pvT("claimBtn", { n: fmtN(v.cost) }))}: ${esc(pvTx(v.title))}">${esc(pvT("claimBtn", { n: fmtN(v.cost) }))}</button></div>`; }).join("") + `</div>`;
+  const mine = ME.claims.filter(c => ["ready", "used", "expired"].includes(c.status));
+  h += `<h2 id="pv-mine">${esc(pvT("myVouchers"))}</h2><div class="card stack">${mine.length ? mine.map(c => {
+    const st = c.status === "ready" ? pvT("statusReady") : c.status === "used" ? pvT("statusUsed") : pvT("statusExpired"), warn = voucherWarns(ME, now).find(w => w.c === c);
+    return `<div class="row top pv-c" data-c="${c.id}"><span class="grow"><b class="sm">${esc(pvTx(c.terms.title))}</b> <span class="tag ${c.status === "ready" ? "ok" : ""}">${esc(st)}</span><br><span class="sub sm">${esc(c.scope ? pvT("onlyAt", { s: c.scope.map(storeNm).join(", ") }) : scopeTx({}))} · ${c.status === "used" ? esc(pvT("redeemed", { s: storeNm(c.usedStore), date: fDateP(c.usedAt) })) : esc(pvT("validUntil", { date: fDateP(c.exp) }))}</span>${warn ? `<br><b class="sm">${esc(pvT("voucherExpireWarn", { v: pvTx(c.terms.title), n: warn.n }))}</b>` : ""}</span>
+    ${c.status === "ready" ? `<span class="stack" style="gap:6px"><button class="btn" data-act="pvuse" data-c="${c.id}">${esc(pvT("useBtn"))}</button>${canCancel(ME, c, now) ? `<button class="btn ghost" data-act="pvcancel" data-c="${c.id}">${esc(pvT("cancelClaim", { n: fmtN(c.cost) }))}</button>` : ""}</span>` : ""}</div>`; }).join("") : `<p class="sub sm" style="margin:0">—</p>`}</div>`;
+  return h;
+}
+function storeAppBtn() { return `<h2>${L3("Store app (demo)", "Ứng dụng cửa hàng (demo)", "매장 앱 (데모)")}</h2><div class="stack"><button class="svc" data-act="pvstore">${ic("info")}<span class="grow"><b>${L3("Open the staff view", "Mở màn hình nhân viên", "직원 화면 열기")}</b><br><span class="sub sm">${L3("Confirm visits, validate vouchers. Staff screens are English only for now.", "Xác nhận lượt đến, kiểm tra ưu đãi. Màn hình nhân viên hiện chỉ có tiếng Anh.", "방문 확인, 쿠폰 확인. 직원 화면은 현재 영어로만 제공돼요.")}</span></span>${ic("chev")}</button>
+  <label class="row sm" style="min-height:44px"><input type="checkbox" id="pv-flag" data-act="pvflag" ${PV.flag ? "checked" : ""} style="width:24px;height:24px"><span class="grow">${L3("Demo: turn on real rewards (U1 not decided yet)", "Demo: bật ưu đãi thật (U1 chưa quyết định)", "데모: 실제 리워드 켜기 (U1 미결정)")}</span></label></div>`; }
+function histSheet() {
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: L3("Earlier balance, kept until rewards open", "Số dư cũ, giữ đến khi mở ưu đãi", "이전 잔액, 리워드 오픈 전까지 보관"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
+}
+function claimSheet(id) {
+  const v = PV.defs.find(x => x.id === id), now = PV.now();
+  openSheet(sheetHd(pvTx(v.title)) + `<div class="card"><dl class="conf"><dt>${esc(L3("Cost", "Giá", "비용"))}</dt><dd>${esc(fmtPts(v.cost))}</dd><dt>${esc(L3("Where", "Nơi dùng", "사용처"))}</dt><dd>${esc(scopeTx(v))}</dd><dt>${esc(L3("Expiry", "Hạn dùng", "유효기간"))}</dt><dd>${esc(pvT("validUntil", { date: fDateP(now + v.validFor * DAY) }))}</dd><dt>${esc(L3("Terms", "Điều kiện", "조건"))}</dt><dd>${esc(pvTx(v.terms))}</dd></dl></div>
+  <p class="sub sm">${esc(pvT("noCash"))}</p><button class="btn full" data-act="pvclaimok" data-v="${v.id}">${esc(pvT("claimBtn", { n: fmtN(v.cost) }))}</button>`, pvTx(v.title));
+}
+function qrCells(seed) { let cells = ""; for (let i = 0; i < 21; i++) for (let j = 0; j < 21; j++) { const fi = i < 7 ? i : i > 13 ? i - 14 : -1, fj = j < 7 ? j : j > 13 ? j - 14 : -1; let on;
+  if (fi >= 0 && fj >= 0 && !(i > 13 && j > 13)) on = fi === 0 || fi === 6 || fj === 0 || fj === 6 || (fi > 1 && fi < 5 && fj > 1 && fj < 5); else on = hsh(seed + "_" + i + "_" + j) % 2 === 0; if (on) cells += `<rect x="${j}" y="${i}" width="1" height="1"/>`; } return cells; }
+function useSheet(cid, fresh) {
+  const c = ME.claims.find(x => x.id === cid); let r = fresh ? useCode(ME, cid) : (c.code && PV.codes[c.code] && !PV.codes[c.code].replaced && PV.now() < PV.codes[c.code].t + 10 * MIN ? { ok: true, code: c.code } : useCode(ME, cid));
+  const body = r.ok ? `<p id="pv-code" style="font-size:32px;font-weight:800;letter-spacing:4px;text-align:center;margin:8px 0">${r.code}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="QR ${r.code}" shape-rendering="crispEdges"><g fill="#2B2326">${qrCells(r.code)}</g></svg><p class="sm" style="text-align:center">${esc(pvT("showCode", { m: 10 }))}</p><button class="btn sec full" data-act="pvrefresh" data-c="${cid}">${esc(pvT("refreshCode"))}</button>`
+    : `<p id="pv-offline" class="sm"><b>${esc(pvT("offlineCode"))}</b></p><button class="btn sec full" data-act="pvrefresh" data-c="${cid}">${esc(pvT("refreshCode"))}</button>`;
+  openSheet(sheetHd(pvTx(c.terms.title)) + `<p class="sub sm">${esc(vchLine(c))} · ${esc(c.scope ? pvT("onlyAt", { s: c.scope.map(storeNm).join(", ") }) : scopeTx({}))}</p>` + body + `<label class="row sm" style="min-height:44px;margin-top:8px"><input type="checkbox" data-act="pvmoff" ${PV.online ? "" : "checked"} style="width:24px;height:24px"> ${L3("Demo: phone offline", "Demo: điện thoại mất mạng", "데모: 휴대폰 오프라인")}</label>`, pvT("useBtn"));
+}
+/* ---- Store app (staff, EN only) ---- */
+function storeSheet(msg) {
+  const now = PV.now(), sid = PVSTORE, pend = pendingFor(ME, now).filter(b => b.store === sid);
+  const att = Object.entries(ME.att).filter(([id, a]) => a.store === sid && !a.reversed);
+  const opt = (o, n) => `<select id="${n}" style="min-height:44px;font:inherit;border-radius:10px;border:1px solid var(--line);padding:0 8px">${o.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select>`;
+  const err = validateDraft(PVDRAFT);
+  let h = `<p class="sub sm" lang="en">Staff view · demo · English only for now</p><div class="chips" role="group" aria-label="Store">${joinedIds().map(s => `<button class="chip" data-act="pvsstore" data-v="${s}" aria-pressed="${s === sid}">${esc(S[s].name)}</button>`).join("")}</div>`;
+  if (msg) h += `<p class="card sm" id="pv-smsg" role="status" style="margin-top:10px"><b>${esc(msg)}</b></p>`;
+  h += `<h2>Visits</h2><div class="card stack">${pend.length ? pend.map(b => `<div class="stack"><b class="sm">Booked: Mina · ${esc(b.label || "class")}</b><div class="row wrap" style="gap:8px"><button class="btn" data-act="pvscan" data-v="${b.id}">Scan member code</button>${opt([["no_phone", "No phone"], ["app_issue", "App issue"], ["other", "Other (note)"]], "pv-mreason")}<button class="btn sec" data-act="pvmark" data-v="${b.id}">Mark attended</button></div></div>`).join("") : `<p class="sub sm" style="margin:0">No booked member waiting.</p>`}
+  ${att.map(([id, a]) => `<div class="row wrap" style="gap:8px"><span class="grow sm">Confirmed: Mina · ${esc(fDateP(a.t))}</span>${now - a.t <= 14 * DAY ? `${opt([["staff_error", "Staff error"], ["service_refund", "Service refund"], ["fraud", "Fraud"], ["other", "Other (note)"]], "pv-rreason-" + id)}<button class="btn ghost" data-act="pvrev" data-v="${id}">Reverse visit</button>` : `<span class="sub sm">Reverse visit unavailable (over 14 days)</span>`}</div>`).join("")}</div>`;
+  if (PV.flag) h += `<h2>Validate</h2><div class="card stack"><label class="sm" for="pv-vcode">Enter code</label><input id="pv-vcode" autocomplete="off" maxlength="6" style="min-height:44px;font:inherit;font-size:20px;letter-spacing:3px;border-radius:10px;border:1px solid var(--line);padding:0 10px" value="${esc(PVCODE || "")}">
+    <div class="row wrap" style="gap:8px"><button class="btn sec" data-act="pvscanv">Scan member code</button><button class="btn" data-act="pvvalidate">Validate</button></div>
+    ${PVVAL ? (PVVAL.ok ? `<div class="card sm" id="pv-vres"><b>${esc(pvTx(PVVAL.reward))}</b><br>Member: <b>${esc(PVVAL.member)}</b> (check against the person at the counter)<br>Status: ${esc(PVVAL.status)}<br>${esc(pvTx(PVVAL.terms) || "")}</div><button class="btn full" data-act="pvredeem">Redeem</button>` : `<p class="sm" id="pv-vres"><b>${esc(PVVAL.msg)}</b></p>`) : ""}
+    <label class="row sm" style="min-height:44px"><input type="checkbox" data-act="pvsoff" ${PV.storeOnline ? "" : "checked"} style="width:24px;height:24px"> Demo: Store app offline</label></div>`;
+  h += `<h2>Rewards · New voucher</h2><div class="card stack" id="pv-new">${opt([["percent", "Percent off"], ["fixed", "Fixed amount off"], ["addon", "Free add-on"]], "pv-dtype")}
+    ${[["cost", "Point cost"], ["value", "Value"], ["validFor", "Valid for (days)"], ["minStreak", "Min streak"], ["minLevel", "Min level"]].map(([k, l]) => `<label class="row sm"><span class="grow">${l}${k === "cost" ? ` <span class="sub">≈ ${Math.floor((+PVDRAFT.cost || 0) / 50)} visits</span>` : ""}</span><input data-pvd="${k}" inputmode="numeric" value="${esc(PVDRAFT[k])}" style="width:96px;min-height:44px;font:inherit;border-radius:10px;border:1px solid var(--line);padding:0 8px"></label>`).join("")}
+    ${err.length ? `<p class="sm" id="pv-derr" role="alert" style="color:#8E3346;margin:0"><b>${err.map(esc).join(" · ")}</b></p>` : ""}<button class="btn full" data-act="pvpublish" ${err.length ? "disabled" : ""}>Publish</button>
+    ${PV.defs.filter(v => v.store === sid).map(v => `<div class="row sm"><span class="grow">${esc(pvTx(v.title))} · v${v.ver} · stock ${v.stock}</span><button class="btn ghost" data-act="pvpause" data-v="${v.id}">${v.paused ? "Resume" : "Pause"}</button></div>`).join("")}</div>`;
+  const au = PV.audit.filter(a => a.store === sid), fl = PV.audit.flag && PV.audit.flag[sid + "|" + dayKey(ME, now)];
+  h += `<h2>Audit report</h2><div class="card stack">${fl ? `<p class="sm"><b>${PV_STAFF.flagged.replace("{n}", fl)} · ${PV_STAFF.review}</b></p>` : ""}${au.length ? au.map(a => `<p class="sm" style="margin:0">Marked by ${esc(a.staff)} · ${esc(a.reason)} · ${esc(a.member)} · booking ${esc(a.booking)} · ${new Date(a.t).toISOString().slice(0, 16).replace("T", " ")} UTC</p>`).join("") : `<p class="sub sm" style="margin:0">No marks yet.</p>`}</div>`;
+  openSheet(sheetHd("Store app · " + S[sid].name) + `<div lang="en">${h}</div>`, "Store app");
+}
+function pvAct(a, d, el) {
+  const now = PV.now();
+  switch (a) {
+    case "pvseen": ME.notices.forEach(n => { if (n.k !== "milestone" || PV.flag) n.seen = true; }); render(); return;
+    case "pvhist": histSheet(); return;
+    case "pvflag": setFlag(el.checked); render(); toast(el.checked ? L3("Demo: real rewards on", "Demo: đã bật ưu đãi thật", "데모: 실제 리워드 켜짐") : L3("Demo: real rewards off", "Demo: đã tắt ưu đãi thật", "데모: 실제 리워드 꺼짐")); return;
+    case "pvwear": ST.wear = d.v; render(); return;
+    case "pvclaim": claimSheet(d.v); return;
+    case "pvclaimok": { const r = claim(ME, d.v); closeSheet(); render(); toast(r.ok ? pvT("myVouchers") + ": " + pvTx(r.c.terms.title) : reasonTx(r)); return; }
+    case "pvuse": useSheet(d.c); return;
+    case "pvrefresh": useSheet(d.c, true); return;
+    case "pvmoff": PV.online = !el.checked; return;
+    case "pvcancel": { cancelClaim(ME, d.c); render(); toast(pvT("cancelClaim", { n: "" }).replace(/\s+/g, " ")); return; }
+    case "pvstore": PVVAL = null; storeSheet(); return;
+    case "pvsstore": PVSTORE = d.v; PVVAL = null; storeSheet(); return;
+    case "pvscan": { const r = confirmVisit(ME, d.v, "staff:" + PVSTORE + "-desk"); render(); storeSheet(r.ok ? (r.dup ? "Already recorded" : `Visit confirmed · +${r.pts + (r.bonus || 0)}${r.reason ? " (" + r.reason + ")" : ""}`) : "No booking"); return; }
+    case "pvmark": { const r = markAttended("staff:" + PVSTORE + "-desk", PVSTORE, ME, d.v, ($("#pv-mreason") || {}).value); render(); storeSheet(r.ok ? `Marked attended · +${r.pts + (r.bonus || 0)}` : r.err); return; }
+    case "pvrev": { const r = reverseVisit("staff:" + PVSTORE + "-desk", ME, d.v, ($("#pv-rreason-" + d.v) || {}).value, "demo note"); render(); storeSheet(r.ok ? `Visit reversed · −${r.n}` : r.err); return; }
+    case "pvscanv": { const c = ME.claims.find(c => c.code && c.status === "ready"); PVCODE = c ? c.code : ""; PVVAL = validateCode(PVSTORE, PVCODE); storeSheet(); return; }
+    case "pvvalidate": PVCODE = ($("#pv-vcode") || {}).value; PVVAL = validateCode(PVSTORE, PVCODE); storeSheet(); return;
+    case "pvredeem": { const r = redeem("staff:" + PVSTORE + "-desk", PVSTORE, PVCODE); PVVAL = null; render(); storeSheet(r.ok ? "Redeemed · Used" : r.msg); return; }
+    case "pvsoff": PV.storeOnline = !el.checked; return;
+    case "pvpublish": { const r = publish(Object.assign({ store: PVSTORE, title: "New voucher", terms: "Store voucher" }, PVDRAFT)); render(); storeSheet(r.ok ? "Published" : r.errors.join(" · ")); return; }
+    case "pvpause": { const v = PV.defs.find(x => x.id === d.v); v.paused = !v.paused; render(); storeSheet(); return; }
+  }
+}
+document.addEventListener("click", e => { const el = e.target.closest("[data-act^=pv]"); if (el && !el.disabled) pvAct(el.dataset.act, el.dataset, el); });
+document.addEventListener("change", e => { if (e.target.id === "pv-dtype") { PVDRAFT.type = e.target.value; storeSheet(); } });
+document.addEventListener("input", e => { const k = e.target.dataset && e.target.dataset.pvd; if (k) { PVDRAFT[k] = e.target.value.trim() === "" ? "" : +e.target.value; const err = validateDraft(PVDRAFT), pb = $("[data-act=pvpublish]"); if (pb) pb.disabled = !!err.length; let p = $("#pv-derr"); if (err.length) { if (!p) { p = document.createElement("p"); p.id = "pv-derr"; p.className = "sm"; p.setAttribute("role", "alert"); p.style.cssText = "color:#8E3346;margin:0"; pb.before(p); } p.innerHTML = "<b>" + err.map(esc).join(" · ") + "</b>"; } else if (p) p.remove(); } });
+
+ME = pvSeed();
+{ const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
+pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
 seed(); render();
 /* test hooks for headless QA only */
 /* dev check: every "Get help now" jump opens the same two-way choice, and opening it twice gives the same result */
@@ -1967,7 +2334,7 @@ function checkJumps() {
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest };
+window.__plat = { SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
