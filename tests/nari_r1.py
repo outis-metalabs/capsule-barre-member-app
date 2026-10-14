@@ -82,11 +82,23 @@ with sync_playwright() as p:
   ok('P3-6 returning thread shows slim chips, not the empty hello', pg.locator('#view .chips.slim').count() == 1 and pg.locator('#view [data-act=nagain]').count() == 0)
   J(pg, "()=>{__plat.chatSend('nari','i want to end my life')}"); pg.reload(); pg.wait_for_timeout(150)
   ok('P3-6 safety gate survives reload', J(pg, "()=>__plat.gated()") is True)
+  J(pg, "()=>{__plat.chatSend('nari','my friend fainted and is not breathing')}"); pg.wait_for_timeout(80)
+  raw = J(pg, "()=>localStorage.getItem('nari.thread')"); pg.reload(); pg.wait_for_timeout(150); J(pg, "()=>{setTab('nari');render()}")
+  ok('R1-2 crisis/urgent member text never stored', 'end my life' not in raw and 'not breathing' not in raw and 'fainted' not in raw and 'what time do you open' in raw, raw[:300])
+  ok('R1-2 placeholder shown, hold kept, normal text kept', J(pg, "()=>CH.nari.msgs.filter(m=>m.redacted).length") == 2 and 'not saved' in pg.inner_text('#th-nari') and 'end my life' not in pg.inner_text('#th-nari') and J(pg, "()=>__plat.gated()") is True and 'what time do you open' in pg.inner_text('#th-nari'))
   pg.close(); ctx.close()
   r = []
   for L, txt in [('vi', 'Chào Mina, mình là Nari. Mình có thể đặt lịch ở mọi nơi của bạn, đổi lịch, hoặc trả lời câu hỏi đơn giản.'), ('ko', '안녕하세요 미나, 저는 나리예요. 모든 매장의 예약과 변경, 간단한 질문을 도와드려요.')]:
     pg = page(); r.append(J(pg, "t=>__plat.migrateThreads([{who:'me',text:'hi',t:1}],[{who:'n',text:t,t:0}]).length", txt)); pg.close()
   ok('P3-6 VI/KO old Ask greeting dropped on migrate', r == [1, 1], r)
+  # R1-1 policy copy with 'after that' in EN/VI/KO for every store
+  pg = page(); exp = {'en': 'Free up to 4h before · after that ₩5,000', 'vi': 'Miễn phí đến 4 giờ trước · sau đó ₩5,000', 'ko': '4시간 전까지 무료 · 이후 ₩5,000'}
+  for L, e in exp.items():
+    J(pg, f"()=>{{setLang('{L}');render()}}"); lines = J(pg, "()=>Object.keys(S).map(k=>__plat.policyLine(k))")
+    J(pg, "()=>{ST.tab='discover';ST.store='nails';render()}"); v = pg.inner_text('#view')
+    ok(f'R1-1 {L} Ipsae Nail copy exact on store page', J(pg, "()=>__plat.policyLine('nails')") == e and e in v, J(pg, "()=>__plat.policyLine('nails')"))
+    ok(f'R1-1 {L} every store has after-that', all(({'en': 'after that', 'vi': 'sau đó', 'ko': '이후'}[L]) in x for x in lines), lines)
+  pg.close()
   # P3-7 KO placeholder at 320, Message + Call side by side
   for w in (320, 390):
     pg = page('ko', w=w); J(pg, "()=>{setTab('nari');render()}")

@@ -797,6 +797,10 @@ const deadline = (sid, d, m, pol) => { const P = pol || S[sid].policy; const a =
 const freeNow = (sid, d, m, pol) => nowMin() < deadline(sid, d, m, pol).abs;
 const fDeadline = (sid, d, m, pol) => { const x = deadline(sid, d, m, pol); return fWhen(x.d, x.m); };
 const freeTxt = sid => { const P = S[sid].policy; return P.cut != null ? L3(`Free until ${fTime(P.cut)} the day before`, `Miễn phí đến ${fTime(P.cut)} hôm trước`, `전날 ${fTime(P.cut)}까지 무료`) : tr("Free up to") + " " + P.free + tr("h before · after that:").split(" ·")[0]; };
+/* full cancel copy: "Free up to 4h before · after that ₩5,000" (every store, EN/VI/KO) */
+const policyLine = sid => { const P = S[sid].policy; let lt = tr(P.late); if (L !== "ko") lt = lt.charAt(0).toLowerCase() + lt.slice(1);
+  if (P.cut != null) { lt = lt.replace(/\s*\([^)]*\)$/, ""); return L3(`Free until ${fTime(P.cut)} the day before · after that, ${lt}`, `Miễn phí đến ${fTime(P.cut)} hôm trước · sau đó ${lt}`, `전날 ${fTime(P.cut)}까지 무료 · 이후 ${lt}`); }
+  return L3(`Free up to ${P.free}h before · after that ${lt}`, `Miễn phí đến ${P.free} giờ trước · sau đó ${lt}`, `${P.free}시간 전까지 무료 · 이후 ${lt}`); };
 const fCancel = (sid, d, m) => freeNow(sid, d, m) ? t("freeCancel") + " " + fDeadline(sid, d, m) : tr("Free cancel ended");
 
 /* ===== member state (one account across stores) ===== */
@@ -1705,7 +1709,7 @@ function chatUI(cid, placeholder, above) {
   const c = CH[cid], g = gated();
   const th = c.msgs.map((m, i) => {
     if (m.who === "sys") return m.div ? `<div class="ndiv" role="separator">${esc(t("divider"))}</div>` : "";
-    if (m.who === "me") return `<div class="msg me"><span class="vh">${L3("You","Bạn","나")}: </span>${esc(m.text)}</div>`;
+    if (m.who === "me") return `<div class="msg me"><span class="vh">${L3("You","Bạn","나")}: </span>${m.redacted ? `<i>${esc(L3("Message not saved, for your privacy", "Tin nhắn không được lưu để bảo vệ quyền riêng tư", "개인정보 보호를 위해 저장하지 않은 메시지"))}</i>` : esc(m.text)}</div>`;
     let body = (m.note ? esc(m.note.split(/(?<=\.) /).map(trS).join(" ")) + " " : "") + esc(trS(m.text)).replace(/\n/g, "<br>");
     if (m.card) body += `<div class="mcard${m.care ? " care" : ""}"><div class="sub sm"><b>${esc(trS(m.card.kicker))}</b></div><b>${esc(trS(m.card.title))}</b><div class="sm">${esc(L === "en" ? m.card.body : m.card.body.split("\n").map(l => { const q = l.match(/^(.+?) \((.+?)\): (.+)$/); return q ? N(q[1]) + " (" + q[2] + "): " + tr(q[3]) : trS(l); }).join("\n")).replace(/\n/g, "<br>")}</div>${m.card.src ? `<div class="src">${esc(trS(m.card.src))}</div>` : ""}</div>`;
     if (m.src) body += `<div class="src">${esc(L === "en" ? m.src : m.src.replace(/^From (.+?)'s (info|price list)$/, (q, a, b) => L === "vi" ? "Theo " + (b === "info" ? "thông tin" : "bảng giá") + " của " + a : a + " " + (b === "info" ? "정보" : "가격표") + " 기준"))}</div>`;
@@ -1732,7 +1736,7 @@ function helpSheet(cid) {
 function vDiscover() {
   const q = norm(ST.q || ""), cats = [["all", "All"], ["hair", "Hair"], ["nails", "Nails"], ["skin", "Skin"], ["massage", "Massage"], ["fitness", "Fitness"], ["sport", "Courts"]];
   const list = ORDER0.filter(sid => (!ST.cat || ST.cat === "all" || S[sid].cat === ST.cat) && (!q || norm(S[sid].name + " " + S[sid].area + " " + S[sid].cat + " " + S[sid].svcs.map(v => v.n).join(" ")).includes(q)));
-  const card = sid => `<div class="card row">${logo(sid)}<div class="grow"><b>${esc(S[sid].name)}</b> <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span><div class="sub sm">${esc(N(S[sid].area))} · ${esc(S[sid].svcs.map(priceLabel).filter(x => x !== "Free").slice(0, 2).join(" – "))}</div><div class="sub sm">${freeTxt(sid)}${S[sid].policy.dep ? " · " + t("deposit") + " " + vnd(S[sid].policy.dep) : ""}</div></div>
+  const card = sid => `<div class="card row">${logo(sid)}<div class="grow"><b>${esc(S[sid].name)}</b> <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span><div class="sub sm">${esc(N(S[sid].area))} · ${esc(S[sid].svcs.map(priceLabel).filter(x => x !== "Free").slice(0, 2).join(" – "))}</div><div class="sub sm">${esc(policyLine(sid))}${S[sid].policy.dep ? " · " + t("deposit") + " " + vnd(S[sid].policy.dep) : ""}</div></div>
     <button class="btn ${S[sid].joined ? "ghost" : ""}" data-act="store" data-v="${sid}" aria-label="${S[sid].joined ? t("joined") : t("join")}: ${esc(S[sid].name)}">${S[sid].joined ? t("joined") : t("join")}</button></div>`;
   const items = list.map(card);
   const ad = `<aside class="card spons" aria-label="${t("sponsored")}"><div class="row"><span class="tag sp">${t("sponsored")}</span><span class="grow"></span><button class="link sm" data-act="whyad">${tr("Why this?")}</button></div><div class="row" style="margin-top:6px"><span class="slogo" style="background:#5C6B5A" aria-hidden="true">MJ</span><div class="grow"><b>Mint Juice Bar</b> <span class="tag">${t("sample")}</span><div class="sub sm">${tr("Cold-pressed juice near Thảo Điền. Shown by area, not by your bookings.")}</div></div></div></aside>`;
@@ -1747,7 +1751,7 @@ function vStore(sid) {
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
   <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn grow" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button>${callBtn(sid, "grow")}<button class="btn ghost grow" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
-  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${freeTxt(sid)} · ${esc(tr(s.policy.late))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
+  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
   if (s.kind === "class") {
     for (const [cid, m, tid] of s.sched) {
@@ -2262,8 +2266,9 @@ function migrateThreads(book, ask) {
 }
 /* the merged thread is saved on this device across sessions (last 60 messages; text, cards and the safety gate only; action chips aren't kept) */
 const THREAD_KEY = "nari.thread";
-function saveThread(store) { try { store = store || localStorage; const c = CH.nari; const ms = c.msgs.slice(-60).map(m => { const o = { who: m.who, text: m.text, t: m.t || 0 }; for (const k of ["div", "care", "card", "src", "note", "bk"]) if (m[k] != null) o[k] = m[k]; return o; }); store.setItem(THREAD_KEY, JSON.stringify({ v: 1, msgs: ms, gate: !!c.gate })); } catch (e) {} }
-function loadThread(store) { try { store = store || localStorage; const o = JSON.parse(store.getItem(THREAD_KEY) || "null"); if (o && Array.isArray(o.msgs) && o.msgs.length) { CH.nari.msgs = o.msgs.filter(m => m && (m.who === "me" || m.who === "n" || m.who === "sys")); CH.nari.gate = !!o.gate; return true; } } catch (e) {} return false; }
+function saveThread(store) { try { store = store || localStorage; const c = CH.nari; const all = c.msgs, safeAt = i => { for (let j = i + 1; j < all.length && all[j].who !== "me"; j++) if (all[j].care) return true; return false; }; /* privacy: a member message answered by a crisis / urgent / check-in turn is never written to storage */
+    const ms = all.map((m, i) => m.who === "me" && (m.redacted || safeAt(i)) ? { who: "me", text: "", redacted: 1, t: m.t || 0 } : m).slice(-60).map(m => { if (m.redacted) return m; const o = { who: m.who, text: m.text, t: m.t || 0 }; for (const k of ["div", "care", "card", "src", "note", "bk"]) if (m[k] != null) o[k] = m[k]; return o; }); store.setItem(THREAD_KEY, JSON.stringify({ v: 1, msgs: ms, gate: !!c.gate })); } catch (e) {} }
+function loadThread(store) { try { store = store || localStorage; const o = JSON.parse(store.getItem(THREAD_KEY) || "null"); if (o && Array.isArray(o.msgs) && o.msgs.length) { CH.nari.msgs = o.msgs.filter(m => m && (m.who === "me" || m.who === "n" || m.who === "sys")).map(m => m.redacted ? { who: "me", text: "", redacted: 1, t: m.t || 0 } : m); CH.nari.gate = !!o.gate; return true; } } catch (e) {} return false; }
 function migrateOnLoad(store) {
   store = store || localStorage;
   const st = store.getItem("nari.tab"); if (st) { ST.tab = ["book", "ask"].includes(st) ? "nari" : ["home", "discover", "nari", "you"].includes(st) ? st : "home"; store.removeItem("nari.tab"); } /* NT-7: an old saved tab lands on Nari */
@@ -2821,7 +2826,7 @@ function checkJumps() {
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
