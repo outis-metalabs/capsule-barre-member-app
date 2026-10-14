@@ -32,7 +32,7 @@ with sync_playwright() as p:
   pg.click('[data-act=pvseen]'); pg.evaluate("()=>{ST.tab='you';render()}"); banner2 = 'Your XP and coins are now points' in pg.inner_text('#view')
   pg.evaluate("()=>{__plat.pv.pvMigrate(__plat.pv.ME(),{xp:640,coins:120,weeks:3})}"); again = pg.evaluate("__plat.pv.ME().ledger.length")
   # wardrobe: owned lantern (above level) selectable
-  pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear")
+  pg.click('[data-act=pvwardrobe]'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear"); pg.evaluate("closeSheet()")
   pg.click('#pv-flag'); on = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   pg.click('#pv-flag'); pg.click('#pv-flag'); on2 = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 3 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 600 and on['rows'] == 1 and on2 == on, [st, on, on2])
@@ -46,7 +46,7 @@ with sync_playwright() as p:
   b0 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())"); pg.evaluate("()=>{ST.tab='home';render()}")
   pg.locator('[data-act=checkin]').first.click(); pg.locator('[data-act=attend]').first.click(); b1 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())")
   ok('AC-P44', hidden and b1 - b0 == 60 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
-  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.locator('[data-act=again][data-i="1"]').click(); pg.locator('.sheet [data-act=slot],.sheet [data-act=classpick]').first.click(); pg.locator('.sheet [data-act=dobook]').click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")
+  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='book';render()}"); pg.locator('[data-act=again][data-i="1"]').click(); pg.locator('.sheet [data-act=slot],.sheet [data-act=classpick]').first.click(); pg.locator('.sheet [data-act=dobook]').click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")
   n1 = pg.evaluate("__plat.pv.ME().ledger.length"); nb = pg.evaluate("__plat.B.length")
   ok('AC-P2', R['AC-P2'][0] and n1 == n0, R['AC-P2'][1] + [n0, n1, nb])
   # AC-P3 UI: pending card shown on Home, gone after store scan
@@ -124,7 +124,7 @@ with sync_playwright() as p:
           r = pg.evaluate(f"[...document.getElementById('th-ask').children].slice({n+1}).map(x=>x.innerText).join(' ')")
           for m_ in FORBID.findall(r): bad35.append([w, lang, fl, 'nari:' + qq, m_])
         pg.evaluate("()=>{ST.tab='you';render()}"); c = pg.evaluate(CONTRAST); pg.screenshot(path=f'{SHOTS}/you-{w}-{lang}-{fl}.png', full_page=True)
-        for sh in ['pvhist', 'pvstore'] + (['pvclaim'] if fl == 'on' else []):
+        for sh in ['pvhist', 'pvstore', 'pvwardrobe', 'pvquest'] + (['pvclaim'] if fl == 'on' else []):
           sel = f'[data-act={sh}]' + (':not([disabled])' if sh == 'pvclaim' else '')
           pg.click(sel); t_ = pg.inner_text('.sheet'); cs = pg.evaluate(CONTRAST)
           if sh != 'pvstore':
