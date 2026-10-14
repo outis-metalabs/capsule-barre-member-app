@@ -20,32 +20,32 @@ with sync_playwright() as p:
     ok(f'{L} confetti never shows through the header', J("()=>{const e=document.elementFromPoint(200,20);return !!(e&&e.closest('header.top'))}"))
     pg.wait_for_timeout(3700); J("()=>window.scrollTo(0,0)")
     # Nari tab empty
-    J("()=>{setTab('nari');render()}"); pg.wait_for_timeout(200)
-    e = J("()=>{const c=document.querySelector('.nhero .cut-wave'),i=document.getElementById('in-nari').getBoundingClientRect(),n=document.getElementById('tabs').getBoundingClientRect();return {h:c?Math.round(c.getBoundingClientRect().height):0,inBottom:i.bottom,navTop:n.top,q:document.querySelectorAll('#view [data-act=qbook]').length}}")
+    J("()=>{setTab('cici');render()}"); pg.wait_for_timeout(200)
+    e = J("()=>{const c=document.querySelector('.nhero .cut-wave'),i=document.getElementById('in-cici').getBoundingClientRect(),n=document.getElementById('tabs').getBoundingClientRect();return {h:c?Math.round(c.getBoundingClientRect().height):0,inBottom:i.bottom,navTop:n.top,q:document.querySelectorAll('#view [data-act=qbook]').length}}")
     ok(f'{L} empty Nari: large wave cut-out + greeting', e['h'] >= 180 and J("()=>!!document.querySelector('.nhero .msg.n')"), e)
     ok(f'{L} input pinned to the bottom, above the tab bar', e['navTop'] - e['inBottom'] < 80 and e['inBottom'] <= e['navTop'], e)
     ok(f'{L} quick chips once on empty', e['q'] == 1, e)
     J("()=>toast('x')"); t2 = J("()=>{const t=document.getElementById('toast').getBoundingClientRect(),i=document.querySelector('#view .dock').getBoundingClientRect();return {tb:t.bottom,dt:i.top}}")
     ok(f'{L} Nari tab: toast sits above the docked input', t2['tb'] <= t2['dt'] + 1, t2); J("()=>{document.getElementById('toast').hidden=true}")
     pg.click('[data-act=qbook]'); pg.wait_for_timeout(200)
-    r = J("()=>({q:document.querySelectorAll('#view [data-act=qbook],#view [data-act=qask]').length,sug:[...document.querySelectorAll('#th-nari .mchips .chip.sug')].map(c=>getComputedStyle(c).borderStyle),plain:getComputedStyle(document.querySelector('.chip:not(.sug)')||document.body).borderStyle,ib:document.getElementById('in-nari').getBoundingClientRect().bottom,nt:document.getElementById('tabs').getBoundingClientRect().top})")
+    r = J("()=>({q:document.querySelectorAll('#view [data-act=qbook],#view [data-act=qask]').length,sug:[...document.querySelectorAll('#th-cici .mchips .chip.sug')].map(c=>getComputedStyle(c).borderStyle),plain:getComputedStyle(document.querySelector('.chip:not(.sug)')||document.body).borderStyle,ib:document.getElementById('in-cici').getBoundingClientRect().bottom,nt:document.getElementById('tabs').getBoundingClientRect().top})")
     ok(f'{L} after a reply: no repeated Book/Ask/My bookings chips', r['q'] == 0, r)
     ok(f'{L} example chips use the lighter suggestion style', len(r['sug']) >= 3 and all(x == 'dashed' for x in r['sug']), r)
     ok(f'{L} input still pinned after a reply', 0 <= r['nt'] - r['ib'] < 80, r)
-    for q in ['주차 돼요?', 'what time do you open?', '내일 바레']: J(f"()=>{{__plat.chatSend('nari',{json.dumps(q)});render()}}")
+    for q in ['주차 돼요?', 'what time do you open?', '내일 바레']: J(f"()=>{{__plat.chatSend('cici',{json.dumps(q)});render()}}")
     pg.wait_for_timeout(100); J("()=>window.scrollTo(0,0)"); pg.wait_for_timeout(50)
-    k = J("()=>{const i=document.getElementById('in-nari').getBoundingClientRect(),n=document.getElementById('tabs').getBoundingClientRect();return {ib:i.bottom,nt:n.top,long:document.documentElement.scrollHeight>innerHeight}}")
+    k = J("()=>{const i=document.getElementById('in-cici').getBoundingClientRect(),n=document.getElementById('tabs').getBoundingClientRect();return {ib:i.bottom,nt:n.top,long:document.documentElement.scrollHeight>innerHeight}}")
     ok(f'{L} long thread: input stays docked above the tab bar while scrolled to top', (not k['long']) or (0 <= k['nt'] - k['ib'] < 80), k)
     # store page
     J("()=>{ST.tab='discover';ST.store='capsule';ST.page=null;render();window.scrollTo(0,0)}"); pg.wait_for_timeout(100)
-    sp = J("()=>{const b=document.querySelector('.sacts > [data-v=\"nari:store:capsule\"]'),a=[...document.querySelectorAll('.sact3 .sact')].map(x=>{const r=x.getBoundingClientRect();return [x.innerText.replace(/\\s+/g,' ').trim(),Math.round(r.width),Math.round(r.height),Math.round(r.top)]});return {bw:b?Math.round(b.getBoundingClientRect().width):0,cw:Math.round(document.querySelector('.sacts').getBoundingClientRect().width),a,call:document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')}}")
+    sp = J("()=>{const b=document.querySelector('.sacts > [data-v=\"cici:store:capsule\"]'),a=[...document.querySelectorAll('.sact3 .sact')].map(x=>{const r=x.getBoundingClientRect();return [x.innerText.replace(/\\s+/g,' ').trim(),Math.round(r.width),Math.round(r.height),Math.round(r.top)]});return {bw:b?Math.round(b.getBoundingClientRect().width):0,cw:Math.round(document.querySelector('.sacts').getBoundingClientRect().width),a,call:document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')}}")
     labels = {'ko': ['전화', '카카오톡', '지도'], 'en': ['Call', 'KakaoTalk', 'Map']}[L]
     ok(f'{L} store: full-width Book here', sp['bw'] == sp['cw'] and sp['bw'] > 300, sp)
     ok(f'{L} store: 3 equal icon+label buttons Call/KakaoTalk/Map, one row', [x[0] for x in sp['a']] == labels and len({x[1] for x in sp['a']}) == 1 and len({x[3] for x in sp['a']}) == 1 and all(x[2] >= 44 for x in sp['a']), sp)
     ok(f'{L} store: Call keeps the full store name for screen readers', 'Capsule Barre' in (sp['call'] or ''), sp['call'])
     # no wrapped button text across main screens
     bad = {}
-    for nm, js in [('home', "setTab('home')"), ('discover', "setTab('discover')"), ('nari', "setTab('nari')"), ('you', "setTab('you')"), ('you-wallet', "setTab('you');ST.page='wallet'"), ('you-vouchers', "setTab('you');ST.page='vouchers';ST.vseg='more'"), ('you-settings', "setTab('you');ST.page='settings'"), ('store', "ST.tab='discover';ST.store='capsule'"), ('store-salon', "ST.tab='discover';ST.store='salon'"), ('bookings', "__plat.openBookings('up')"), ('past', "__plat.openBookings('past')")]:
+    for nm, js in [('home', "setTab('home')"), ('discover', "setTab('discover')"), ('cici', "setTab('cici')"), ('you', "setTab('you')"), ('you-wallet', "setTab('you');ST.page='wallet'"), ('you-vouchers', "setTab('you');ST.page='vouchers';ST.vseg='more'"), ('you-settings', "setTab('you');ST.page='settings'"), ('store', "ST.tab='discover';ST.store='capsule'"), ('store-salon', "ST.tab='discover';ST.store='salon'"), ('bookings', "__plat.openBookings('up')"), ('past', "__plat.openBookings('past')")]:
       for w in (320, 390):
         pg.set_viewport_size({'width': w, 'height': 844}); J(f"()=>{{ST.page=null;ST.store=null;{js};render()}}"); pg.wait_for_timeout(40); x = J(WRAP)
         if x: bad[f'{nm}@{w}'] = x

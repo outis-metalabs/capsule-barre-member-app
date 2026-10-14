@@ -9,9 +9,9 @@ with sync_playwright() as p:
     for i in range(5):
       pg=b.new_page(viewport={'width':vw[0],'height':vw[1]});E=[]
       pg.on('console',lambda m:E.append(m.text) if m.type in('error','warning') else None);pg.on('pageerror',lambda e:E.append(str(e)))
-      pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');ST.tab='nari';render()}}");n0=pg.evaluate("__plat.B.length")
+      pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');ST.tab='cici';render()}}");n0=pg.evaluate("__plat.B.length")
       taps=[];pg.locator(f'[data-act=nagain][data-i="{i}"]').click();taps.append('nagain');pg.wait_for_timeout(150)
-      s1=pg.evaluate("(document.querySelector('#th-nari .mcard')||{}).innerText||''").replace('\n',' | ')  # Nari tab: inline confirm card, next slot pre-picked
+      s1=pg.evaluate("(document.querySelector('#th-cici .mcard')||{}).innerText||''").replace('\n',' | ')  # Nari tab: inline confirm card, next slot pre-picked
       if pg.locator('[data-act=chatbook]').count(): s2=s1;pg.locator('[data-act=chatbook]').last.click();taps.append('chatbook')
       for step in range(0 if 'chatbook' in taps else 4):
         if pg.locator('.sheet [data-act=dobook]').count(): 

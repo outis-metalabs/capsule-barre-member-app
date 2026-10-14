@@ -29,8 +29,8 @@ with sync_playwright() as p:
   pg.wait_for_timeout(3400)
   J(pg, "()=>{window.claim=()=>({ok:true,c:{terms:{title:['Voucher','Voucher','바우처']}}});document.body.insertAdjacentHTML('beforeend','<button id=tclaim data-act=pvclaimok data-v=x>c</button>');document.getElementById('tclaim').click()}")
   r = J(pg, CT, '#winpill video.cut-voucher'); ok('voucher claimed: 06 voucher plays', r and r.get('t', 0) > 0, r)
-  J(pg, "()=>{setTab('nari');render()}"); r = J(pg, CT, '.nhero video.cut-wave'); ok('Nari tab empty: wave plays', r and r.get('t', 0) > 0, r)
-  pg.fill('#in-nari', '내일'); r = J(pg, CT, '#nthink-nari.on video.cut-thinking'); ok('Nari tab typing: 04 thinking plays', r and r.get('t', 0) > 0, r)
+  J(pg, "()=>{setTab('cici');render()}"); r = J(pg, CT, '.nhero video.cut-wave'); ok('Nari tab empty: wave plays', r and r.get('t', 0) > 0, r)
+  pg.fill('#in-cici', '내일'); r = J(pg, CT, '#nthink-cici.on video.cut-thinking'); ok('Nari tab typing: 04 thinking plays', r and r.get('t', 0) > 0, r)
   ok('videos stay muted + playsinline', J(pg, "()=>[...document.querySelectorAll('video.cut')].every(v=>v.muted&&v.playsInline)"))
   pg.close()
   pg = page('?realRewards=1'); J(pg, "()=>{ME.notices.push({k:'milestone',v:{n:4},t:PV.now()});setTab('home');render()}")
@@ -41,9 +41,9 @@ with sync_playwright() as p:
   # --- win message never covers controls (Home / Nari, 320 + 390, KO + EN) ---
   for w in (320, 390):
     for L in ('ko', 'en'):
-      for scr in ('home', 'nari', 'nari-reply'):
+      for scr in ('home', 'cici', 'nari-reply'):
         pg = page('', L, w)
-        if scr != 'home': J(pg, "()=>{setTab('nari');render()}")
+        if scr != 'home': J(pg, "()=>{setTab('cici');render()}")
         if scr == 'nari-reply': pg.click('[data-act=qbook]')
         for y in (0, 400, 900):
           J(pg, f"()=>{{window.scrollTo(0,{y});celebrate();toast('+60 points for showing up')}}"); pg.wait_for_timeout(420)
@@ -54,28 +54,28 @@ with sync_playwright() as p:
         pg.close()
   pg = page('', 'ko'); J(pg, "()=>{setTab('home');render();toast('Saved',()=>{})}"); ok('undo toasts stay at the bottom (not the pill)', J(pg, "()=>!document.getElementById('toast').hidden && !(document.getElementById('winpill')&&!document.getElementById('winpill').hidden)")); pg.close()
   # --- PO conditions: NT-14 ---
-  pg = page('', 'en'); J(pg, "()=>{setTab('nari');render();__plat.chatSend('nari','what time do you open at capsule barre?');render()}")
+  pg = page('', 'en'); J(pg, "()=>{setTab('cici');render();__plat.chatSend('cici','what time do you open at capsule barre?');render()}")
   ok('NT-14 PO: returning thread has the calendar icon → My bookings', J(pg, "()=>!!document.querySelector('#view > .row [data-act=mybk]')"))
   pg.click('#view > .row [data-act=mybk]'); ok('NT-14 PO: calendar icon opens My bookings', J(pg, "()=>ST.page==='bookings'"))
   J(pg, "()=>{ST.page=null;setTab('home');render()}")
   ok('NT-14 PO: Home Next class card links to bookings', J(pg, "()=>!!document.querySelector('#view [data-act=mybk], #view [data-act=go][data-v^=\"bookings\"], #view [data-act=allbk]')"))
   J(pg, "()=>{setTab('you');render()}"); ok('NT-14 PO: You has My bookings', 'My bookings' in pg.inner_text('#view') and pg.locator('[data-act=youpage][data-v=bookings]').count() == 1)
-  J(pg, "()=>{setTab('nari');render();__plat.chatSend('nari','book');render()}")
-  ok("NT-14 PO: typing 'book' starts booking", J(pg, "()=>{const m=CH.nari.msgs.at(-1);return m.kind==='bookPrompt'||/book/i.test(m.text)&&(m.chips||[]).length>0}"), J(pg, "()=>CH.nari.msgs.at(-1).text"))
+  J(pg, "()=>{setTab('cici');render();__plat.chatSend('cici','book');render()}")
+  ok("NT-14 PO: typing 'book' starts booking", J(pg, "()=>{const m=CH.cici.msgs.at(-1);return m.kind==='bookPrompt'||/book/i.test(m.text)&&(m.chips||[]).length>0}"), J(pg, "()=>CH.cici.msgs.at(-1).text"))
   pg.close()
   # --- PO conditions: NT-25 ---
   for L, full, short in [('en', 'Call Capsule Barre', 'Call'), ('ko', 'Capsule Barre에 전화', '전화')]:
     pg = page('', L); bad = []
-    for js in ["ST.tab='discover';ST.store='capsule'", "__plat.openBookings('up')", "setTab('home')", "setTab('nari')", "setTab('discover')", "setTab('you')"]:
+    for js in ["ST.tab='discover';ST.store='capsule'", "__plat.openBookings('up')", "setTab('home')", "setTab('cici')", "setTab('discover')", "setTab('you')"]:
       J(pg, f"()=>{{ST.page=null;ST.store=null;{js};render()}}")
       bad += J(pg, "()=>[...document.querySelectorAll('[data-act=callstore]')].filter(b=>b.offsetParent&&!b.closest('.sacts, .bkrow, .mcard, .card')).map(b=>b.innerText)")
     ok(f'NT-25 PO {L}: short Call only inside a store or booking card', not bad, bad)
     J(pg, "()=>{ST.store=null;ST.page=null;ST.tab='discover';ST.store='capsule';render()}")
     c = J(pg, "()=>{const b=document.querySelector('[data-act=callstore]');return [b.innerText.trim(),b.getAttribute('aria-label')]}")
     ok(f'NT-25 PO {L}: label "{short}", accessible name keeps "{full}"', c[0] == short and c[1].startswith(full), c)
-    J(pg, "()=>{setTab('nari');render();__plat.chatSend('nari','i want to end my life');render()}")
+    J(pg, "()=>{setTab('cici');render();__plat.chatSend('cici','i want to end my life');render()}")
     n = 0
-    for js in ["setTab('nari')", "ST.tab='discover';ST.store='capsule'", "__plat.openBookings('up')"]:
+    for js in ["setTab('cici')", "ST.tab='discover';ST.store='capsule'", "__plat.openBookings('up')"]:
       J(pg, f"()=>{{ST.page=null;ST.store=null;{js};render()}}"); n += J(pg, "()=>document.querySelectorAll('[data-act=callstore]').length")
     ok(f'NT-25 PO {L}: no Call button during a crisis turn', n == 0, n); pg.close()
   br.close()

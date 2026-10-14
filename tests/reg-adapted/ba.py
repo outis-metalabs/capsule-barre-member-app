@@ -1,5 +1,5 @@
 def _np(b,**k):
-  pg=b.new_page(**k);pg.add_init_script("try{localStorage.removeItem('nari.thread')}catch(e){}");return pg
+  pg=b.new_page(**k);pg.add_init_script("try{localStorage.removeItem('cici.thread')}catch(e){}");return pg
 import json,re,sys
 from playwright.sync_api import sync_playwright
 B=sys.argv[1] if len(sys.argv)>1 else 'http://localhost:8851/platform-app.html';R={}
@@ -20,11 +20,13 @@ with sync_playwright() as p:
     ok(f'P5 no toggle/store app [{lang}]',not pg.locator('#pv-flag').count() and not pg.locator('[data-act=pvstore]').count())
     leg=pg.inner_text('#pv-legacy') if pg.locator('#pv-legacy').count() else '';earned=pg.inner_text('#pv-earned')
     pg.evaluate("()=>{setTab('you');render()}");ban=pg.inner_text('#pv-notes') if pg.locator('#pv-notes').count() else ''  # since PR #15 the migration notice sits at the top of You
-    order=pg.evaluate("()=>{const n=document.querySelector('#pv-notes'),h=document.querySelector('.scene,.hero,[class*=hero]');return n&&h?!!(h.compareDocumentPosition(n)&Node.DOCUMENT_POSITION_FOLLOWING):null}")
+    order=pg.evaluate("()=>{const n=document.querySelector('#pv-notes'),h=document.querySelector('#home-cici,.scene,.hero,[class*=hero]');return n&&h?!!(h.compareDocumentPosition(n)&Node.DOCUMENT_POSITION_FOLLOWING):null}")
     nlines=pg.evaluate("()=>{const n=document.querySelector('#pv-notes p');return n?Math.round(n.getBoundingClientRect().height/parseFloat(getComputedStyle(n).lineHeight||20)):0}")
     num=re.findall(r'[\d.,]+',leg)
     ok(f'P4 banner shown on You, not after a hero [{lang}]',bool(ban) and order in (None,True),f'ban={ban!r} earned={earned!r} leg={leg!r} order={order} lines={nlines}')
     ok(f'P4 banner wording consistent [{lang}]',not re.search(r'coins are now points|xu của bạn đã chuyển|코인이 포인트로',ban),ban)
+    # PR16 P4b: migration banner numbers match the Points page (640 points / 120 pending) in all 3 languages
+    ok(f'P4b banner numbers match Points page [{lang}]', bool(ban) and bool(earned) and ('640' in ban.replace(',','').replace('.','')) and ('120' in ban.replace(',','').replace('.','')) and earned.replace(',','').replace('.','').startswith('640') and ('120' in (leg or '').replace(',','').replace('.','')), f'ban={ban!r} earned={earned!r} leg={leg!r}')
     pg.click('[data-act=pvseen]');pg.reload();pg.evaluate(f"()=>{{setLang('{lang}');render()}}");ok(f'P4 dismissed after reload [{lang}]',not pg.locator('#pv-notes').count())
     # D
     alltxt=''
@@ -62,7 +64,7 @@ with sync_playwright() as p:
           else: ok(ent,not re.search(r'doctor|emergency|bác sĩ|cấp cứu|의사|응급|stop exercising',txt,re.I),txt[:120])
           pg.close()
   # VN market & demo mode
-  pg=page('?market=vn','en');t=pg.inner_text('body');pg.evaluate("()=>{ST.tab='you';render()}");t+=pg.inner_text('body');ok('market=vn: ₫, no ₩',('₫' in t) and '₩' not in t)
+  pg=page('?market=vn','en');t=pg.inner_text('body');pg.evaluate("()=>{ST.tab='you';render()}");t+=pg.inner_text('body');pg.evaluate("()=>{ST.tab='you';ST.page='wallet';render()}");t+=pg.inner_text('body');ok('market=vn: ₫, no ₩',('₫' in t) and '₩' not in t)
   pg=page('?demo=1','en');pg.evaluate("()=>{ST.tab='you';ST.page='points';render()}");ok('?demo=1 shows toggle+store app',pg.locator('#pv-flag').count() and pg.locator('[data-act=pvstore]').count())
   pg=page('?realRewards=1','ko');pg.evaluate("()=>{ST.tab='you';ST.page='vouchers';ST.vseg='more';render()}");t=pg.inner_text('body');ok('flag on KO: vouchers in ₩, no ₫',('₩' in t) and '₫' not in t,re.findall(r'.{0,15}[₩₫].{0,5}',t)[:5])
 json.dump(R,open('ba.json','w'),ensure_ascii=False,indent=1)

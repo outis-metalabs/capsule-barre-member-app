@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nari · multi-store member app (prototype)</title>
+<title>Cici · multi-store member app (prototype)</title>
 <meta name="description" content="Clickable prototype: one member account across many small businesses, booking by tap, sentence or demo call. Sample data only.">
 <style>
 :root{--cream:#F7F1EA;--card:#FFFDF9;--ink:#2B2326;--sub:#6B5E62;--rasp:#B04A5E;--raspd:#8E3346;--pink:#E98597;--mint:#A8D5C2;--line:#E3D7CC;--tint:#F6E3E7}
@@ -36,8 +36,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 a{color:var(--rasp)}
 .btn{min-height:44px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--rasp);background:var(--rasp);color:#fff;font-weight:650;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .btn:hover{background:var(--raspd);border-color:var(--raspd)}
-.btn.sec{background:var(--card);color:var(--rasp)}
+.btn.sec{background:var(--card);color:var(--raspd)}
 .btn.sec:hover{background:var(--tint)}
+.btn.sec.dk{color:#8E3346} /* PR16 P3: staff Mark attended text >= 4.5:1 */
 .btn.ghost{border-color:var(--line);background:var(--card);color:var(--ink);font-weight:600}
 .btn.full{width:100%}
 .btn[disabled]{opacity:.55;cursor:not-allowed}
@@ -208,7 +209,7 @@ h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .scene{border-radius:24px;background:linear-gradient(135deg,#FFD9DF 0%,#FFE4D3 100%);box-shadow:0 10px 30px rgba(233,133,151,.25)}
 .scene .pic{background:transparent;width:48%;max-width:190px;min-height:230px}
 html{min-height:100%;background:#FFF6F3}
-.scene .pic img:not(.cut),.nari-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
+.scene .pic img:not(.cut),.cici-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
 .scene .pic img:not(.cut){animation:nfloat 4s ease-in-out infinite}
 .cut{display:block;background:transparent}
 .scene .pic .cut{position:absolute;inset:auto 0 0 0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none}
@@ -218,9 +219,9 @@ html{min-height:100%;background:#FFF6F3}
 .toast.win{padding-left:8px;background:#fff;color:var(--ink);border:1.5px solid #F3C9D2;box-shadow:0 8px 24px rgba(176,74,94,.22)}.toast.win .tx{font-weight:650}.toast.win button{color:var(--raspd)}.tcut{flex:none;width:56px;height:76px;margin:-30px 0 -4px;display:block}.tcut .cut{width:56px;height:76px;object-fit:contain;object-position:50% 100%}
 html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .cut-note{width:72px;height:auto;flex:none}
-/* polish: Nari tab like a chat app (input pinned above the tab bar), store action row */
-#view.nari-v{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - 72px - env(safe-area-inset-bottom));padding-bottom:0}
-#view.nari-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FFF4F1;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
+/* polish: Cici tab like a chat app (input pinned above the tab bar), store action row */
+#view.cici-v{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - 72px - env(safe-area-inset-bottom));padding-bottom:0}
+#view.cici-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FFF4F1;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
 .nhero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0 14px;text-align:center}
 .nhero-cut{width:auto;height:200px;max-width:60%;object-fit:contain}
 .nhero .msg.n{max-width:100%;text-align:center;font-size:16px;line-height:1.45;padding:12px 16px}
@@ -230,13 +231,26 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .btn.sact svg{color:var(--rasp)}
 .btn,.chip{white-space:nowrap}
 #winpill{position:fixed;z-index:16;height:40px;display:flex;align-items:center;gap:4px;padding:0 12px 0 4px;border-radius:999px;background:#fff;border:1.5px solid #F3C9D2;color:var(--raspd);font-size:14px;white-space:nowrap;overflow:hidden;pointer-events:none;box-shadow:0 4px 14px rgba(176,74,94,.18)}
-#winpill[hidden]{display:none} 
+#winpill[hidden]{display:none}
+/* MVP character-first Home + unlock */
+.chome{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 0}
+.chome .cpic{position:relative;width:200px;height:240px;margin:0 auto}
+.chome .cpic .cut,.chome .cpic video,.chome .cpic img{width:100%;height:100%;object-fit:contain;object-position:50% 100%}
+.chome .cg{font-size:21px;margin:8px 0 6px}
+.wear-acc{position:absolute;top:18px;right:34px;width:34px;height:34px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.wear-tag{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:#F6E3E7;color:#8E3346;font-size:13px;font-weight:650}
+.lvlbar{margin-top:14px}.lvlbar .bar{margin-top:8px}
+.munlock{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(43,35,38,.5);padding:24px}
+.munlock .box{background:#FFFDF9;border-radius:20px;padding:18px 16px;max-width:330px;width:100%;text-align:center}
+.munlock .cpic{position:relative;width:150px;height:180px;margin:0 auto 6px}.munlock .cpic .cut,.munlock .cpic video,.munlock .cpic img{width:100%;height:100%;object-fit:contain}
+.munlock .wear-acc{top:10px;right:22px}
+.cav-h{position:relative;display:inline-block}.cav-h .wear-acc{top:-6px;right:-8px;width:20px;height:20px} 
 /* post-merge polish */ .ptsbtn{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:44px;padding:0;margin:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.ptsbtn svg{width:16px;height:16px;flex:none;color:#B04A5E} input.cb44{-webkit-appearance:none;appearance:none;width:44px;height:44px;margin:0 0 0 -10px;flex:none;cursor:pointer;border:0;background:center/22px 22px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='1' y='1' width='20' height='20' rx='5' fill='%23fff' stroke='%23767676' stroke-width='2'/%3E%3C/svg%3E")} input.cb44:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='0' y='0' width='22' height='22' rx='5' fill='%23B04A5E'/%3E%3Cpath d='M5.5 11.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")} input.cb44:focus-visible{outline:3px solid #B04A5E;outline-offset:-6px;border-radius:10px}input.cb44:disabled{opacity:.5;cursor:default} .pv-v{flex-wrap:wrap;row-gap:8px}.pv-v>.grow{flex:1 1 170px;min-width:0}.pv-v>.btn{flex:none;white-space:nowrap;margin-left:auto} 
 #winpill.go{animation:wpin .35s cubic-bezier(.3,1.5,.5,1)}
 #winpill .wcut{display:block;width:30px;height:40px;flex:none}#winpill .wcut .cut{width:30px;height:40px;object-fit:contain;object-position:50% 100%}
 #winpill .wcut:empty{display:none}
 @keyframes wpin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
-body:has(#view.nari-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} /* on the Nari tab the toast sits above the docked input */
+body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} /* on the Cici tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
@@ -279,6 +293,7 @@ button:active:not([disabled]){transform:scale(.94)}
 .dslot .ico{width:14px;height:14px}.dslot:hover{border-color:#B04A5E}.dnone{flex:none}
 .cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}
 .hsample{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -290,7 +305,7 @@ button:active:not([disabled]){transform:scale(.94)}
 </div>
 <div id="sheetRoot"></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tx"></span></div>
-<div id="call" role="dialog" aria-modal="true" aria-label="Demo call with Nari" hidden></div>
+<div id="call" role="dialog" aria-modal="true" aria-label="Demo call with Cici" hidden></div>
 <script>
 "use strict";
 /* ===== safety logic reused verbatim from mascot3d-app.html (ask-hana-spec §3) ===== */
@@ -329,7 +344,13 @@ const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collap
 /* ===== platform prototype: sample data only, nothing is sent anywhere ===== */
 const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const A = "assets/mascot3d/";
-/* real alpha Nari cut-outs (assets/nari-cut): VP9-alpha WebM with the WebP still as poster + fallback.
+/* MVP-R1 / OQ1: the character's display name. The KO spelling (씨씨 vs 시시) is pending a native check, so it lives in ONE constant. */
+const CICI_KO = "씨씨";
+const CICI = { en: "Cici", vi: "Cici", ko: CICI_KO };
+const ciciNm = () => CICI[L] || CICI.en;
+/* legacy (pre-rename) name, only used to recognise threads saved by older builds (NT-9); never displayed */
+const LEGACY_NAME = { en: "Nari", ko: "\uB098\uB9AC" };
+/* real alpha Cici cut-outs (assets/nari-cut): VP9-alpha WebM with the WebP still as poster + fallback.
    Safari / iOS (any iOS browser is WebKit) has no VP9 alpha, so they get the still; so does prefers-reduced-motion. Videos load lazily when on screen. */
 const CUT = "assets/nari-cut/";
 const CUT_SZ = { wave: [270, 480], cheer: [400, 400], jump: [346, 480], thinking: [240, 240], voucher: [270, 480], ribbon: [500, 400], idle: [222, 360], surprised: [307, 360] };
@@ -599,7 +620,7 @@ function safety5b(text) {
 
 /* ===== round 6: risk-word check-in, extra urgent concepts, body-condition claims (EN / VI with or without tone marks / KO).
    A risk word that is not part of a clear service phrase ("haircut", "cut and colour", "jump rope", "dead skin", "pores disappear")
-   overrides booking, claim and the fallback: Nari answers with the crisis copy and asks whether the member is okay. ===== */
+   overrides booking, claim and the fallback: Cici answers with the crisis copy and asks whether the member is okay. ===== */
 const RISK_STRIP_F = [
   /\b(hair ?cut\w*|cut (and|&|n) (colou?r|blow ?dry|style|dry|wash)|(wash|colou?r|trim|blow ?dry) (and|&|n) cut|cut (my |her |his )?(hair|bangs|fringe|ends|layers)|(quick|short|long|men.?s|kids?|bob|pixie|layered|buzz|fade) cut|cut (with|by|at|for|on|tomorrow|today|tonight|this|next|saturday|sunday|monday|tuesday|wednesday|thursday|friday) ?|book (a |my )?cut|(a|my|the) cut\b(?! (my|on|in|her|him|them|into|myself|deep))|cut$)/g,
   /\b(jump (rope|squats?|training|class(es)?|lunges?|start)|calorie ?burn\w*|fat ?burn\w*|burn (fat|calories)|razor burn|dying (for|to) |dying of (heat|laughter|boredom|hunger|thirst|cuteness)|(is|are|its|it s|was|thats|that s) killing me|killing (my|me) (back|feet|legs|shoulders|neck)|burning (rash|sensation|skin|feeling|eyes)|(rash|skin|face|eyes?) (is |are |feels? )?burning|sun ?burn\w*|dead (skin|ends|sea)|existing (booking|appointment|member\w*|pass\w*|class\w*|reservation|customer|account|card)|take (a )?note|(side|quick|small) note|^note\W|\bnote ?:|(pores?|wrinkles?|lines|spots|acne|pimples?|scars?|dark (circles|spots)|pigment\w*|freckles|cellulite|fat|redness|blackheads?) (\w+ ){0,3}disappear\w*|disappear\w* (my |the |all )?(pores?|wrinkles?|spots|acne|scars?|dark circles|cellulite)|(class|session|booking|treatment|massage|facial) end\w*|end (time|of (the )?(class|session|day|week|month))|on the weekend)\b/g ];
@@ -740,8 +761,8 @@ const STR = {
   en: { home: "Home", discover: "Discover", book: "Book", ask: "Ask", you: "You", upNext: "Up next", myPlaces: "My places", missions: "Today's missions", bookAgain: "Book again", today: "Today", tomorrow: "Tomorrow",
     confirm: "Book", payBook: "Pay deposit & book (demo)", move: "Move booking", cancel: "Cancel booking", keep: "Keep booking", undo: "Undo", reschedule: "Reschedule", manage: "Manage", checkin: "Check in", join: "Join", joined: "Joined",
     policies: "Policies, up front", freeCancel: "Free cancel until", deposit: "Deposit", noShow: "No-show", lateCancel: "Late cancel", none: "None", total: "Total", services: "Book here", passes: "My passes & credit here", inbox: "Inbox", send: "Send",
-    whatBook: "What would you like to book?", bookHint: "Type it like a message, or tap below.", askNari: "Ask Nari", callNari: "Call Nari", typeHere: "Type a message", level: "Level", streak: "{n}-week streak", coins: "coins",
-    wardrobe: "Nari's wardrobe", shop: "Nari shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
+    whatBook: "What would you like to book?", bookHint: "Type it like a message, or tap below.", askCici: "Ask Cici", callCici: "Call Cici", typeHere: "Type a message", level: "Level", streak: "{n}-week streak", coins: "coins",
+    wardrobe: "Cici's look", shop: "Cici shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
     gm: "Good morning, Mina", ga: "Good afternoon, Mina", ge: "Good evening, Mina", gn: "Still up, Mina?", booked: "Booked", moved: "Moved", cancelled: "Cancelled", back: "Back", close: "Close", with: "with",
     payAt: "Pay at the store", storeOnly: "Only at {s}", journey: "Journey", quest: "Cross-store quest", restDay: "Rest day", mAttend: "Show up for your next visit", mNew: "Try a new place", mStretch: "Stretch for 2 minutes", mRest: "Rest day: 1-minute stretch + water",
     demo: "Demo", hang: "Hang up", mute: "Mute", unmute: "Unmute", xp: "XP", nothingUp: "Nothing booked yet.", newPlace: "Join", cats: "Categories", sample: "sample",
@@ -749,8 +770,8 @@ const STR = {
   vi: { home: "Trang chủ", discover: "Khám phá", book: "Đặt lịch", ask: "Hỏi", you: "Bạn", upNext: "Sắp tới", myPlaces: "Nơi của tôi", missions: "Nhiệm vụ hôm nay", bookAgain: "Đặt lại", today: "Hôm nay", tomorrow: "Ngày mai",
     confirm: "Đặt lịch", payBook: "Đặt cọc & đặt lịch (demo)", move: "Đổi lịch", cancel: "Hủy lịch", keep: "Giữ lịch", undo: "Hoàn tác", reschedule: "Đổi giờ", manage: "Quản lý", checkin: "Check-in", join: "Tham gia", joined: "Đã tham gia",
     policies: "Chính sách, nói trước", freeCancel: "Hủy miễn phí trước", deposit: "Đặt cọc", noShow: "Không đến", lateCancel: "Hủy muộn", none: "Không", total: "Tổng", services: "Đặt tại đây", passes: "Gói & tín dụng của tôi ở đây", inbox: "Hộp thư", send: "Gửi",
-    whatBook: "Bạn muốn đặt gì?", bookHint: "Gõ như nhắn tin, hoặc chạm bên dưới.", askNari: "Hỏi Nari", callNari: "Gọi Nari", typeHere: "Nhập tin nhắn", level: "Cấp", streak: "Chuỗi {n} tuần", coins: "xu",
-    wardrobe: "Tủ đồ của Nari", shop: "Cửa hàng Nari", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
+    whatBook: "Bạn muốn đặt gì?", bookHint: "Gõ như nhắn tin, hoặc chạm bên dưới.", askCici: "Hỏi Cici", callCici: "Gọi Cici", typeHere: "Nhập tin nhắn", level: "Cấp", streak: "Chuỗi {n} tuần", coins: "xu",
+    wardrobe: "Tủ đồ của Cici", shop: "Cửa hàng Cici", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
     gm: "Chào buổi sáng, Mina", ga: "Chào buổi chiều, Mina", ge: "Chào buổi tối, Mina", gn: "Vẫn còn thức à, Mina?", booked: "Đã đặt", moved: "Đã đổi", cancelled: "Đã hủy", back: "Quay lại", close: "Đóng", with: "với",
     payAt: "Thanh toán tại cửa hàng", storeOnly: "Chỉ dùng tại {s}", journey: "Hành trình", quest: "Nhiệm vụ nhiều nơi", restDay: "Ngày nghỉ", mAttend: "Đến buổi hẹn tiếp theo", mNew: "Thử một nơi mới", mStretch: "Giãn cơ 2 phút", mRest: "Ngày nghỉ: giãn cơ 1 phút + uống nước",
     demo: "Demo", hang: "Gác máy", mute: "Tắt tiếng", unmute: "Bật tiếng", xp: "XP", nothingUp: "Chưa có lịch nào.", newPlace: "Tham gia", cats: "Danh mục", sample: "mẫu",
@@ -758,8 +779,8 @@ const STR = {
   ko: { home: "홈", discover: "둘러보기", book: "예약", ask: "질문", you: "나", upNext: "다가오는 예약", myPlaces: "내 매장", missions: "오늘의 미션", bookAgain: "다시 예약", today: "오늘", tomorrow: "내일",
     confirm: "예약하기", payBook: "예약금 결제 후 예약 (데모)", move: "예약 변경", cancel: "예약 취소", keep: "유지하기", undo: "되돌리기", reschedule: "시간 변경", manage: "관리", checkin: "체크인", join: "가입", joined: "가입됨",
     policies: "정책 미리 보기", freeCancel: "무료 취소 기한", deposit: "예약금", noShow: "노쇼", lateCancel: "늦은 취소", none: "없음", total: "합계", services: "여기서 예약", passes: "이 매장의 이용권·크레딧", inbox: "받은 메시지", send: "보내기",
-    whatBook: "무엇을 예약할까요?", bookHint: "메시지처럼 입력하거나 아래를 누르세요.", askNari: "나리에게 묻기", callNari: "나리에게 전화", typeHere: "메시지 입력", level: "레벨", streak: "{n}주 연속", coins: "코인",
-    wardrobe: "나리 옷장", shop: "나리 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
+    whatBook: "무엇을 예약할까요?", bookHint: "메시지처럼 입력하거나 아래를 누르세요.", askCici: CICI_KO + "에게 묻기", callCici: CICI_KO + "에게 전화", typeHere: "메시지 입력", level: "레벨", streak: "{n}주 연속", coins: "코인",
+    wardrobe: CICI_KO + " 스타일", shop: CICI_KO + " 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
     gm: "좋은 아침이에요, 미나", ga: "좋은 오후예요, 미나", ge: "좋은 저녁이에요, 미나", gn: "아직 안 자요, 미나?", booked: "예약됨", moved: "변경됨", cancelled: "취소됨", back: "뒤로", close: "닫기", with: "담당",
     payAt: "매장에서 결제", storeOnly: "{s}에서만 사용", journey: "여정", quest: "여러 매장 퀘스트", restDay: "쉬는 날", mAttend: "다음 예약에 참석하기", mNew: "새로운 곳 가보기", mStretch: "2분 스트레칭", mRest: "쉬는 날: 1분 스트레칭 + 물",
     demo: "데모", hang: "통화 종료", mute: "음소거", unmute: "음소거 해제", xp: "XP", nothingUp: "아직 예약이 없어요.", newPlace: "가입", cats: "카테고리", sample: "샘플",
@@ -767,27 +788,27 @@ const STR = {
 };
 const t = (k, v) => { let s = (STR[L] && STR[L][k]) || STR.en[k] || k; if (v) for (const x in v) s = s.replace("{" + x + "}", v[x]); return s; };
 /* nari-tab spec §8 copy (VI/KO flagged ⚠ for native review) */
-Object.assign(STR.en, { nari: "Nari", nariAria: "Nari, book or ask", nariHello: "Hi {name}, I'm Nari. Book a class, ask me anything, or check your bookings.", chipBook: "Book a class", chipAsk: "Ask a question", chipMyBk: "My bookings", askPrompt: "Sure, what would you like to know?",
+Object.assign(STR.en, { cici: "Cici", ciciAria: "Cici, book or ask", ciciHello: "Hi {name}, I'm Cici. Book a class, ask me anything, or check your bookings.", chipBook: "Book a class", chipAsk: "Ask a question", chipMyBk: "My bookings", askPrompt: "Sure, what would you like to know?",
   nextClass: "Next class", allBookings: "All bookings ({n})", bkTitle: "My bookings", bkUp: "Upcoming", bkPast: "Past", bkEmptyUp: "No upcoming bookings.", bkEmptyPast: "No past visits yet.", bkAttended: "Attended", bkCancelled: "Cancelled", bkNoShow: "No-show", bkRequested: "Cancel requested",
   bkPending: "Pending confirmation", bkUnconf: "Not confirmed by the store", bkReversed: "reversed", bkReversedV: "Visit reversed", bkLate: "late", askStudio: "Ask the studio", askStudioHint: "It's past 4pm the day before, so the studio decides. We'll send them your request.", askStudioSent: "Request sent to {store}. They'll reply in your inbox.",
   rate: "Rate", ratePrompt: "How was {service} with {staff}?", ratePromptNo: "How was {service}?", rate1: "Not great", rate2: "Okay", rate3: "Good", rate4: "Great", rate5: "Loved it", tag1: "Instructor", tag2: "Atmosphere", tag3: "Cleanliness", tag4: "Value", tag5: "On time",
   rateNote: "Add a note (optional)", ratePrivate: "Only {store} sees this.", rateThanks: "Thanks, {store} will see your feedback.", rateLow: "Want to tell the studio more?", rateEdit: "Edit rating", rateSubmit: "Send rating", rateDelete: "Delete rating", rateVisit: "Your visit", rateInst: "Instructor (optional)", rateHeld: "Your review is being checked",
-  callStore: "Call {store}", callStoreAria: "Call {store}, studio phone", nariDemo: "Talk to Nari (demo)", more: "More options", removeScope: "Remove {store}", bookHere: "Book here", divider: "Book and Ask are now one chat with Nari", taken: "That time was just taken", newReply: "new reply" });
-Object.assign(STR.vi, { nari: "Nari", nariAria: "Nari, đặt lịch hoặc hỏi", nariHello: "Chào {name}, mình là Nari. Đặt lớp, hỏi mình bất cứ điều gì, hoặc xem lịch của bạn.", chipBook: "Đặt lớp", chipAsk: "Đặt câu hỏi", chipMyBk: "Lịch của tôi", askPrompt: "Được chứ, bạn muốn biết gì?",
+  callStore: "Call {store}", callStoreAria: "Call {store}, studio phone", ciciDemo: "Talk to Cici (demo)", more: "More options", removeScope: "Remove {store}", bookHere: "Book here", divider: "Book and Ask are now one chat with Cici", taken: "That time was just taken", newReply: "new reply" });
+Object.assign(STR.vi, { cici: "Cici", ciciAria: "Cici, đặt lịch hoặc hỏi", ciciHello: "Chào {name}, mình là Cici. Đặt lớp, hỏi mình bất cứ điều gì, hoặc xem lịch của bạn.", chipBook: "Đặt lớp", chipAsk: "Đặt câu hỏi", chipMyBk: "Lịch của tôi", askPrompt: "Được chứ, bạn muốn biết gì?",
   nextClass: "Lớp tiếp theo", allBookings: "Tất cả lịch ({n})", bkTitle: "Lịch của tôi", bkUp: "Sắp tới", bkPast: "Đã qua", bkEmptyUp: "Chưa có lịch sắp tới.", bkEmptyPast: "Chưa có buổi nào đã qua.", bkAttended: "Đã đến", bkCancelled: "Đã hủy", bkNoShow: "Không đến", bkRequested: "Đã gửi yêu cầu hủy",
   bkPending: "Chờ xác nhận", bkUnconf: "Cửa hàng chưa xác nhận", bkReversed: "đã thu hồi", bkReversedV: "Buổi đã bị thu hồi", bkLate: "muộn", askStudio: "Hỏi studio", askStudioHint: "Đã quá 4 giờ chiều hôm trước nên studio sẽ quyết định. Chúng mình sẽ gửi yêu cầu cho họ.", askStudioSent: "Đã gửi yêu cầu tới {store}. Họ sẽ trả lời trong hộp thư.",
   rate: "Đánh giá", ratePrompt: "Buổi {service} với {staff} thế nào?", ratePromptNo: "Buổi {service} thế nào?", rate1: "Chưa ổn", rate2: "Tạm được", rate3: "Tốt", rate4: "Rất tốt", rate5: "Rất thích", tag1: "Huấn luyện viên", tag2: "Không khí", tag3: "Sạch sẽ", tag4: "Đáng tiền", tag5: "Đúng giờ",
   rateNote: "Thêm ghi chú (không bắt buộc)", ratePrivate: "Chỉ {store} xem được.", rateThanks: "Cảm ơn bạn, {store} sẽ xem góp ý của bạn.", rateLow: "Bạn muốn nói thêm với studio không?", rateEdit: "Sửa đánh giá", rateSubmit: "Gửi đánh giá", rateDelete: "Xóa đánh giá", rateVisit: "Buổi của bạn", rateInst: "Huấn luyện viên (không bắt buộc)", rateHeld: "Đánh giá của bạn đang được kiểm tra",
-  callStore: "Gọi {store}", callStoreAria: "Gọi {store}, số điện thoại của studio", nariDemo: "Nói chuyện với Nari (demo)", more: "Tùy chọn khác", removeScope: "Bỏ {store}", bookHere: "Đặt tại đây", divider: "Đặt lịch và Hỏi giờ là một cuộc trò chuyện với Nari", taken: "Giờ đó vừa có người đặt", newReply: "tin trả lời mới" });
-Object.assign(STR.ko, { nari: "나리", nariAria: "나리, 예약하거나 물어보기", nariHello: "{name}님, 안녕하세요. 나리예요. 수업 예약, 궁금한 점, 내 예약 확인 모두 도와드릴게요.", chipBook: "수업 예약", chipAsk: "질문하기", chipMyBk: "내 예약", askPrompt: "네, 무엇이 궁금하세요?",
+  callStore: "Gọi {store}", callStoreAria: "Gọi {store}, số điện thoại của studio", ciciDemo: "Nói chuyện với Cici (demo)", more: "Tùy chọn khác", removeScope: "Bỏ {store}", bookHere: "Đặt tại đây", divider: "Đặt lịch và Hỏi giờ là một cuộc trò chuyện với Cici", taken: "Giờ đó vừa có người đặt", newReply: "tin trả lời mới" });
+Object.assign(STR.ko, { cici: CICI_KO, ciciAria: CICI_KO + ", 예약하거나 물어보기", ciciHello: "{name}님, 안녕하세요. " + CICI_KO + "예요. 수업 예약, 궁금한 점, 내 예약 확인 모두 도와드릴게요.", chipBook: "수업 예약", chipAsk: "질문하기", chipMyBk: "내 예약", askPrompt: "네, 무엇이 궁금하세요?",
   nextClass: "다음 수업", allBookings: "전체 예약 ({n})", bkTitle: "내 예약", bkUp: "예정", bkPast: "지난 예약", bkEmptyUp: "예정된 예약이 없어요.", bkEmptyPast: "아직 지난 방문이 없어요.", bkAttended: "방문 완료", bkCancelled: "취소됨", bkNoShow: "노쇼", bkRequested: "취소 요청됨",
   bkPending: "확인 대기 중", bkUnconf: "매장 미확인", bkReversed: "취소 처리됨", bkReversedV: "방문 취소 처리됨", bkLate: "늦은 취소", askStudio: "스튜디오에 문의", askStudioHint: "전날 오후 4시가 지나서 스튜디오가 결정해요. 요청을 대신 보내 드릴게요.", askStudioSent: "{store}에 요청을 보냈어요. 알림함으로 답장이 와요.",
   rate: "평가하기", ratePrompt: "{staff}님과의 {service}, 어떠셨어요?", ratePromptNo: "{service}, 어떠셨어요?", rate1: "아쉬웠어요", rate2: "괜찮았어요", rate3: "좋았어요", rate4: "아주 좋았어요", rate5: "최고였어요", tag1: "강사", tag2: "분위기", tag3: "청결", tag4: "가성비", tag5: "시간 준수",
   rateNote: "메모 추가 (선택)", ratePrivate: "{store}만 볼 수 있어요.", rateThanks: "감사해요. {store}에 전달할게요.", rateLow: "스튜디오에 더 이야기하시겠어요?", rateEdit: "평가 수정", rateSubmit: "평가 보내기", rateDelete: "평가 삭제", rateVisit: "방문 평가", rateInst: "강사 평가 (선택)", rateHeld: "리뷰를 확인하고 있어요",
-  callStore: "{store}에 전화", callStoreAria: "{store}에 전화, 매장 전화번호", nariDemo: "나리와 통화 (데모)", more: "더보기", removeScope: "{store} 빼기", bookHere: "여기서 예약", divider: "예약과 질문이 이제 나리와의 대화 하나로 합쳐졌어요", taken: "방금 그 시간이 마감됐어요", newReply: "새 답장" });
+  callStore: "{store}에 전화", callStoreAria: "{store}에 전화, 매장 전화번호", ciciDemo: CICI_KO + "와 데모 통화", more: "더보기", removeScope: "{store} 빼기", bookHere: "여기서 예약", divider: "예약과 질문이 이제 " + CICI_KO + "와의 대화 하나로 합쳐졌어요", taken: "방금 그 시간이 마감됐어요", newReply: "새 답장" });
 /* ===== icons (simple muted line icons) ===== */
 const IP = {
-  nari: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M12 9.5c-1.2-1.5-3-1.8-3-.4s1.8 1.1 3 .4c1.2.7 3 1 3-.4s-1.8-1.1-3 .4z"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+  cici: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M12 9.5c-1.2-1.5-3-1.8-3-.4s1.8 1.1 3 .4c1.2.7 3 1 3-.4s-1.8-1.1-3 .4z"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
   home: '<path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
   compass: '<circle cx="12" cy="12" r="8"/><path d="M15 9l-2 4-4 2 2-4z"/>',
   cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
@@ -816,9 +837,9 @@ const S = {
   capsule: { name: "Capsule Barre", area: "Thảo Điền, Thủ Đức", cat: "fitness", kind: "class", color: "#A1475A", logo: "CB", joined: true, visits: 12, unread: 1,
     policy: { free: 12, cut: 960, studio: true, late: "The studio decides (Ask the studio)", dep: 0, noshow: "1 class from your pass", arrive: "Doors close 5 min after start" }, /* own rule: free until 16:00 the day before, then Ask the studio (F18) */
     staff: [{ id: "yuna", n: "Yuna" }, { id: "jiwoo", n: "Jiwoo" }],
-    svcs: [{ id: "barre", n: "Barre", len: 50, price: 250000, kw: /\bbarre\b/, desc: "Ballet-inspired, low-impact. All levels." },
-           { id: "reformer", n: "Reformer", len: 50, price: 380000, kw: /\breformers?\b/, desc: "Machine class, 8 reformers." },
-           { id: "stretch", n: "Stretch", len: 40, price: 200000, kw: /\b(stretch\w*|gian co|keo gian|do deo)\b|스트레칭/, desc: "Slow mobility and stretching." }],
+    svcs: [{ id: "barre", n: "Barre", len: 50, room: "Studio 1", price: 250000, kw: /\bbarre\b/, desc: "Ballet-inspired, low-impact. All levels." },
+           { id: "reformer", n: "Reformer", len: 50, room: "Reformer room", price: 380000, kw: /\breformers?\b/, desc: "Machine class, 8 reformers." },
+           { id: "stretch", n: "Stretch", len: 40, room: "Studio 2", price: 200000, kw: /\b(stretch\w*|gian co|keo gian|do deo)\b|스트레칭/, desc: "Slow mobility and stretching." }],
     sched: [["barre", 420, "yuna", 10], ["reformer", 720, "jiwoo", 8], ["barre", 1080, "jiwoo", 10], ["stretch", 1140, "yuna", 12], ["reformer", 1170, "yuna", 8]],
     kw: /\b(barre|class|classes|pilates|capsule|studio)\b/, names: /\bcapsule\b/,
     kb: { bring: "Grip socks (the desk sells them), a water bottle and comfy fitted clothes. Arrive 10 minutes early for your first class.", parking: "Motorbike parking at the front; cars park on the street." } },
@@ -942,7 +963,7 @@ function slotsFor(sid, vid, d, o = {}) {
       if (cid !== vid || m < minM || (o.staff && o.staff !== "any" && tid !== o.staff)) continue;
       const mine = B.some(b => b.id !== o.ignore && b.status === "confirmed" && b.store === sid && b.d === d && b.m === m);
       const left = Math.max(0, cap - 2 - hsh(sid + cid + d + m) % cap - (mine ? 1 : 0));
-      out.push({ d, m, len: svc.len, rids: [tid], price: svc.price, left, mine });
+      out.push({ d, m, len: svc.len, rids: [tid], price: svc.price, left, mine, cap });
     }
     return out;
   }
@@ -964,7 +985,7 @@ function slotsFor(sid, vid, d, o = {}) {
   return out;
 }
 const passFor = (sid, vid) => (WALLET[sid] || []).find(p => p.left > 0 && (!p.svc || p.svc === vid));
-/* ===== full EN / VI / KO layer: UI literals, Nari's replies, store content, notifications ===== */
+/* ===== full EN / VI / KO layer: UI literals, Cici's replies, store content, notifications ===== */
 const TRD = {
   "Service": ["Dịch vụ", "서비스"], "When": ["Thời gian", "일시"], "Court": ["Sân", "코트"], "With": ["Người làm", "담당"], "(store time)": ["(giờ cửa hàng)", "(매장 시간)"],
   " now, taken off the total": [" ngay, trừ vào tổng", " 지금 결제, 합계에서 차감"], "Past the free window": ["Đã qua hạn hủy miễn phí", "무료 취소 기한 지남"], "(sample)": ["(mẫu)", "(샘플)"],
@@ -990,9 +1011,9 @@ const TRD = {
   "Studio wrap top": ["Áo quấn tập", "스튜디오 랩 탑"], "Salon cape": ["Áo choàng salon", "살롱 케이프"], "Court cap": ["Mũ ra sân", "코트 캡"], "Tết áo dài": ["Áo dài Tết", "설 아오자이"], "Level 5": ["Cấp 5", "레벨 5"], "Quest reward": ["Thưởng nhiệm vụ", "퀘스트 보상"], "Tết event": ["Sự kiện Tết", "설 이벤트"],
   "Cosmetic only. Coins can't pay for services, and XP can't be bought.": ["Chỉ trang trí. Xu không trả được dịch vụ, và không mua được XP.", "꾸미기 전용이에요. 코인으로 서비스를 결제할 수 없고 XP는 살 수 없어요."], "Get": ["Lấy", "받기"],
   "Raspberry scrunchie": ["Dây buộc tóc mâm xôi", "라즈베리 곱창밴드"], "Mid-Autumn lantern": ["Đèn lồng Trung thu", "추석 등불"], "Cozy room theme": ["Chủ đề phòng ấm áp", "아늑한 방 테마"],
-  "Nari coins (platform)": ["Xu Nari (nền tảng)", "나리 코인 (플랫폼)"], "Cosmetics only · separate from store money": ["Chỉ trang trí · tách khỏi tiền cửa hàng", "꾸미기 전용 · 매장 결제와 분리"],
+  "Cici coins (platform)": ["Xu Cici (nền tảng)", CICI_KO + " 코인 (플랫폼)"], "Cosmetics only · separate from store money": ["Chỉ trang trí · tách khỏi tiền cửa hàng", "꾸미기 전용 · 매장 결제와 분리"],
   "Prices always show in the store's currency:": ["Giá luôn theo tiền tệ của cửa hàng:", "가격은 항상 매장 통화로 표시돼요:"], "Join a place": ["Tham gia một nơi", "매장 가입"],
-  "Each place keeps its own passes and rules. Your account, Nari and your journey come with you.": ["Mỗi nơi giữ gói và quy định riêng. Tài khoản, Nari và hành trình đi cùng bạn.", "매장마다 이용권과 규정은 따로예요. 계정, 나리, 여정은 함께 가요."],
+  "Each place keeps its own passes and rules. Your account, Cici and your journey come with you.": ["Mỗi nơi giữ gói và quy định riêng. Tài khoản, Cici và hành trình đi cùng bạn.", "매장마다 이용권과 규정은 따로예요. 계정, " + CICI_KO + ", 여정은 함께 가요."],
   "Search places": ["Tìm nơi", "매장 검색"], "Point at the QR on the counter": ["Hướng vào mã QR ở quầy", "카운터의 QR을 비춰 주세요"], ": no camera is used": [": không dùng camera", ": 카메라를 쓰지 않아요"], "Simulate scan · Ipsae Nail Bar": ["Mô phỏng quét · Ipsae Nail Bar", "스캔 시뮬레이션 · Ipsae Nail Bar"],
   "Invite link from SMS or Zalo": ["Liên kết mời từ SMS hoặc Zalo", "SMS나 Zalo로 받은 초대 링크"], "Open link": ["Mở liên kết", "링크 열기"], "Not now": ["Để sau", "나중에"],
   "Show this at the desk. It works offline.": ["Đưa mã này ở quầy. Dùng được khi không có mạng.", "데스크에 보여 주세요. 오프라인에서도 돼요."], "Demo: the store marks you attended": ["Demo: cửa hàng xác nhận bạn đã đến", "데모: 매장이 참석 처리"],
@@ -1010,8 +1031,8 @@ const TRD = {
   "Deposit is kept": ["Giữ lại tiền cọc", "예약금 반환 안 됨"], "10 min grace": ["Cho phép trễ 10 phút", "10분 유예"], "50% of the price": ["50% giá", "가격의 50%"], "Full price": ["Toàn bộ giá", "전액"], "Your time ends on schedule": ["Kết thúc đúng giờ đã đặt", "예정된 시간에 종료돼요"],
   "Half the court fee": ["Nửa phí sân", "코트 요금의 절반"], "Full court fee": ["Toàn bộ phí sân", "코트 요금 전액"], "Your block ends on time": ["Kết thúc đúng giờ", "정해진 시간에 종료"], "1 class": ["1 buổi", "1회"], "Doors close at start": ["Đóng cửa khi bắt đầu", "시작 시 입장 마감"],
   "10-class pass": ["Gói 10 buổi", "10회 이용권"], "5-massage package (Aroma 60)": ["Gói 5 lần massage (Aroma 60)", "마사지 5회 패키지 (아로마 60)"], "Store credit": ["Tín dụng cửa hàng", "매장 크레딧"], "Valid until 30 Nov": ["Hạn đến 30/11", "11월 30일까지"], "Valid until 31 Dec": ["Hạn đến 31/12", "12월 31일까지"], "No expiry": ["Không hết hạn", "만료 없음"],
-  /* Nari's fixed lines */
-  "Hi Mina, I'm Nari. I can book at any of your places, move a booking, or answer simple questions about them.": ["Chào Mina, mình là Nari. Mình có thể đặt lịch ở mọi nơi của bạn, đổi lịch, hoặc trả lời câu hỏi đơn giản.", "안녕하세요 미나, 저는 나리예요. 모든 매장의 예약과 변경, 간단한 질문을 도와드려요."],
+  /* Cici's fixed lines */
+  "Hi Mina, I'm Cici. I can book at any of your places, move a booking, or answer simple questions about them.": ["Chào Mina, mình là Cici. Mình có thể đặt lịch ở mọi nơi của bạn, đổi lịch, hoặc trả lời câu hỏi đơn giản.", "안녕하세요 미나, 저는 " + CICI_KO + "예요. 모든 매장의 예약과 변경, 간단한 질문을 도와드려요."],
   "Pregnancy massage at Soom Spa is from the second trimester. If you're unsure, check with your GP or midwife first.": ["Massage bầu ở Soom Spa dành cho mẹ từ tam cá nguyệt thứ hai. Nếu chưa chắc, hãy hỏi nữ hộ sinh hoặc nơi bạn khám thai trước nhé.", "Soom Spa 임산부 마사지는 임신 중기부터 받을 수 있어요. 확실하지 않으면 다니는 산부인과에 먼저 확인해 주세요."],
   "If you're hurt or unwell, please see a doctor or your instructor. I can help with bookings too.": ["Nếu bạn bị đau hoặc không khỏe, hãy gặp bác sĩ hoặc huấn luyện viên của bạn. Mình cũng có thể giúp đặt lịch.", "다쳤거나 몸이 안 좋다면 의사나 담당 강사와 상의해 주세요. 예약도 도와드릴게요."],
   "Thanks for telling me. Please stop exercising now and get medical help right away.": ["Cảm ơn bạn đã cho mình biết. Hãy dừng tập ngay và tìm trợ giúp y tế ngay lập tức.", "말해 줘서 고마워요. 지금 바로 운동을 멈추고 즉시 의료 도움을 받으세요."],
@@ -1040,7 +1061,7 @@ const TRD = {
   "Booking undone. Nothing charged.": ["Đã hoàn tác lịch. Không tính phí.", "예약을 되돌렸어요. 청구된 건 없어요."], "Move undone": ["Đã hoàn tác đổi lịch", "변경을 되돌렸어요"], "Booking restored": ["Đã khôi phục lịch", "예약을 복원했어요"], "Stretch done · +20 XP": ["Giãn cơ xong · +20 XP", "스트레칭 완료 · +20 XP"],
   "Rest day logged · +20 XP · your week still counts": ["Đã ghi ngày nghỉ · +20 XP · tuần của bạn vẫn được tính", "쉬는 날 기록 · +20 XP · 이번 주도 인정돼요"], "Call ended · nothing booked": ["Cuộc gọi kết thúc · chưa đặt gì", "통화 종료 · 예약 없음"],
   
-  "Demo: added to Nari's wardrobe. No real money used.": ["Demo: đã thêm vào tủ đồ Nari. Không dùng tiền thật.", "데모: 나리 옷장에 추가했어요. 실제 돈은 쓰지 않았어요."], "Not enough coins yet. Missions earn coins. (Coin packs are a placeholder, no real purchase.)": ["Chưa đủ xu. Làm nhiệm vụ để nhận xu. (Gói xu chỉ là chỗ giữ, không mua thật.)", "코인이 부족해요. 미션으로 모을 수 있어요. (코인 팩은 자리 표시용, 실제 구매 없음)"],
+  "Demo: added to Cici's look. No real money used.": ["Demo: đã thêm vào phong cách Cici. Không dùng tiền thật.", "데모: " + CICI_KO + " 스타일에 추가했어요. 실제 돈은 쓰지 않았어요."], "Not enough coins yet. Missions earn coins. (Coin packs are a placeholder, no real purchase.)": ["Chưa đủ xu. Làm nhiệm vụ để nhận xu. (Gói xu chỉ là chỗ giữ, không mua thật.)", "코인이 부족해요. 미션으로 모을 수 있어요. (코인 팩은 자리 표시용, 실제 구매 없음)"],
   "Calls the store's phone (demo).": ["Gọi điện cho cửa hàng (demo).", "매장에 전화 (데모)."], "Opens the store's KakaoTalk chat (demo).": ["Mở chat KakaoTalk của cửa hàng (demo).", "매장 카카오톡 채팅 열기 (데모)."], "Opens the store's Zalo chat (demo).": ["Mở chat Zalo của cửa hàng (demo).", "매장 Zalo 채팅 열기 (데모)."], "Opens directions (demo).": ["Mở chỉ đường (demo).", "길찾기 열기 (데모)."],
   "Teacher": ["Giáo viên", "강사"], "Free cancel ended": ["Hết hạn hủy miễn phí", "무료 취소 기간 종료"], "spots open": ["chỗ trống", "자리 있음"],
   [vnd(100000) + " added to your next visit"]: [vnd(100000) + " cộng vào lần đến sau", "다음 방문 시 " + vnd(100000) + " 추가"],
@@ -1078,7 +1099,7 @@ const FRAG = [
   [/^(.+?)'s info doesn't say\. Want me to ask them\?$/, (m, s) => [`Thông tin của ${s} chưa có. Mình hỏi giúp nhé?`, `${s} 정보에는 없어요. 대신 물어볼까요?`]],
   [/^(Booked|Đã đặt|예약됨): (.+?) · (.+)$/, (m, b, a, s) => [`Đã đặt: ${N(a)} · ${s}`, `예약됨: ${N(a)} · ${s}`]],
   [/^Sent to (.+?)\. Replies land here and in your inbox\.$/, (m, s) => [`Đã gửi đến ${s}. Trả lời sẽ hiện ở đây và trong hộp thư.`, `${s}에 보냈어요. 답장은 여기와 받은 메시지에 와요.`]],
-  [/^(.+) added to My places\. Nari: “New place! Want to book your first visit\?”$/, (m, s) => [`Đã thêm ${s} vào Nơi của tôi. Nari: “Nơi mới! Đặt buổi đầu tiên nhé?”`, `${s}이(가) 내 매장에 추가됐어요. 나리: “새로운 곳! 첫 방문 예약할까요?”`]],
+  [/^(.+) added to My places\. Cici: “New place! Want to book your first visit\?”$/, (m, s) => [`Đã thêm ${s} vào Nơi của tôi. Cici: “Nơi mới! Đặt buổi đầu tiên nhé?”`, `${s}이(가) 내 매장에 추가됐어요. ${CICI_KO}: “새로운 곳! 첫 방문 예약할까요?”`]],
   [/^Message (.+)$/, (m, s) => [`Nhắn ${s}`, `${s}에 메시지`]],
   [/^Welcome to (.+?)! \(sample store\)$/, (m, s) => [`Chào mừng đến ${s}! (cửa hàng mẫu)`, `${s}에 오신 걸 환영해요! (샘플 매장)`]],
   [/^You: (.+)$/, (m, s) => [`Bạn: ${s}`, `나: ${s}`]],
@@ -1097,17 +1118,17 @@ function trS(s) {
 }
 /* remember language: saved on this device only */
 /* Korea-first: KO is the default locale; EN and VI stay selectable (saved choice or ?lang= wins) */
-try { const ql = new URLSearchParams(location.search).get("lang"), sv = localStorage.getItem("nari.lang"); if (ql && STR[ql]) L = ql; else if (sv && STR[sv]) L = sv; else L = MARKET === "kr" ? "ko" : ((navigator.language || "en").slice(0, 2) in STR ? (navigator.language || "en").slice(0, 2) : "en"); } catch (e) {}
-function setLang(k) { L = k; try { localStorage.setItem("nari.lang", k); } catch (e) {} }
+try { const ql = new URLSearchParams(location.search).get("lang"), sv = localStorage.getItem("cici.lang") || localStorage.getItem("nari.lang"); if (ql && STR[ql]) L = ql; else if (sv && STR[sv]) L = sv; else L = MARKET === "kr" ? "ko" : ((navigator.language || "en").slice(0, 2) in STR ? (navigator.language || "en").slice(0, 2) : "en"); } catch (e) {}
+function setLang(k) { L = k; try { localStorage.setItem("cici.lang", k); } catch (e) {} }
 
-/* ===== notifications: inbox + push previews in Nari's warm voice ===== */
+/* ===== notifications: inbox + push previews in Cici's warm voice ===== */
 const NTYPES = [["reminder", ["Booking reminders", "Nhắc lịch hẹn", "예약 알림"], true], ["waitlist", ["Waitlist spots", "Có chỗ trống từ danh sách chờ", "대기 자리"], false], ["pass", ["Pass ending soon", "Gói sắp hết hạn", "이용권 만료 예정"], false],
   ["mission", ["Missions & streaks", "Nhiệm vụ & chuỗi", "미션 & 연속 기록"], false], ["friend", ["Friends", "Bạn bè", "친구"], false], ["nudge", ["Smart suggestions", "Gợi ý thông minh", "스마트 추천"], false], ["winback", ["“It's been a while”", "“Lâu rồi không gặp”", "“오랜만이에요”"], false], ["event", ["Birthdays & Tết", "Sinh nhật & Tết", "생일 & 설"], false]];
 const MARKETING = ["nudge", "winback", "event"];
 /* marketing (suggestions, win-backs, events) is OFF until the member opts in; store-sent marketing also needs that store's opt-in */
 const NSET = { types: { reminder: true, waitlist: true, pass: true, mission: true, friend: false, nudge: false, winback: false, event: false }, muted: {}, optin: {}, friendOptIn: false, maiShares: true };
-try { const sv = JSON.parse(localStorage.getItem("nari.notif2") || "null"); if (sv) Object.assign(NSET, sv); } catch (e) {}
-const saveN = () => { try { localStorage.setItem("nari.notif2", JSON.stringify(NSET)); } catch (e) {} };
+try { const sv = JSON.parse((localStorage.getItem("cici.notif2") || localStorage.getItem("nari.notif2")) || "null"); if (sv) Object.assign(NSET, sv); } catch (e) {}
+const saveN = () => { try { localStorage.setItem("cici.notif2", JSON.stringify(NSET)); } catch (e) {} };
 const TIME_SENSITIVE = ["waitlist"];
 /* demo feed: day 0 = today, at = minutes; texts EN / VI / KO */
 const NFEED = [
@@ -1120,7 +1141,7 @@ const NFEED = [
   { type: "pass", s: "capsule", day: 1, at: 540, tx: ["Your 10-class pass at Capsule Barre has 6 classes left and ends on 30 Nov.", "Gói 10 buổi ở Capsule Barre còn 6 buổi, hết hạn 30/11.", "Capsule Barre 10회 이용권이 6회 남았고 11월 30일에 끝나요."] },
   { type: "winback", s: "spa", day: 1, at: 600, n: 1, tx: ["It's been a while since Soom Spa. Hoa says hi. Whenever you're ready, a quiet hour is waiting.", "Lâu rồi bạn chưa ghé Soom Spa. Chị Hoa gửi lời chào. Khi nào bạn sẵn sàng, một giờ thư giãn đang chờ.", "Soom Spa에 간 지 좀 됐네요. 호아가 안부 전해요. 준비되면 조용한 한 시간이 기다려요."] },
   { type: "nudge", s: "pickle", day: 1, at: 960, tx: ["Courts are quiet after 18:00 tomorrow. Bring three friends?", "Tối mai sau 18:00 sân khá vắng. Rủ thêm ba người bạn nhé?", "내일 18:00 이후 코트가 한산해요. 친구 셋 데려올래요?"] },
-  { type: "event", s: null, day: 2, at: 540, tx: ["Happy birthday, Mina! Nari baked you a (pixel) cake. Your places may have a small treat for you.", "Chúc mừng sinh nhật Mina! Nari nướng cho bạn một chiếc bánh (pixel). Các nơi của bạn có thể có quà nhỏ.", "생일 축하해요, 미나! 나리가 (픽셀) 케이크를 구웠어요. 매장에서 작은 선물이 있을지도 몰라요."] },
+  { type: "event", s: null, day: 2, at: 540, tx: ["Happy birthday, Mina! Cici baked you a (pixel) cake. Your places may have a small treat for you.", "Chúc mừng sinh nhật Mina! Cici nướng cho bạn một chiếc bánh (pixel). Các nơi của bạn có thể có quà nhỏ.", "생일 축하해요, 미나! " + CICI_KO + "가 (픽셀) 케이크를 구웠어요. 매장에서 작은 선물이 있을지도 몰라요."] },
   { type: "event", s: null, day: 3, at: 600, tx: ["Tết is coming. Salons get busy, so booking early is a kind gift to yourself.", "Tết sắp đến. Salon sẽ đông, đặt sớm là món quà dễ thương cho chính bạn.", "설이 다가와요. 미용실이 붐비니 일찍 예약하는 건 나에게 주는 선물이에요."] },
   { type: "winback", s: "spa", day: 4, at: 600, n: 2, tx: ["One more hello from Soom Spa. After this, we'll stay quiet until you come back.", "Một lời chào nữa từ Soom Spa. Sau đây chúng mình sẽ im lặng đến khi bạn quay lại.", "Soom Spa에서 한 번 더 인사해요. 이후로는 다시 오실 때까지 조용히 있을게요."] },
   { type: "winback", s: "spa", day: 6, at: 600, n: 3, tx: ["(3rd win-back: never sent)", "(lần 3: không gửi)", "(3번째: 보내지 않음)"] },
@@ -1134,7 +1155,8 @@ function deliver() {
   for (const n of NFEED.slice().sort((a, b) => a.day * 1440 + a.at - (b.day * 1440 + b.at))) {
     const r = { n, why: null, at: n.at };
     if (n.type !== "reminder") {
-      if (!NSET.types[n.type]) r.why = "type";
+      if (gated()) r.why = "care"; /* A5/AC5: after a crisis/urgent turn, no promo/booking/mission nudges until the member raises booking */
+      else if (!NSET.types[n.type]) r.why = "type";
       else if (n.s && NSET.muted[n.s]) r.why = "store";
       else if (n.friend && !(NSET.friendOptIn && NSET.maiShares)) r.why = "friend";
       else if (n.type === "winback" && ++wins > 2) r.why = "winback";
@@ -1151,12 +1173,12 @@ const WHY = { type: ["Muted type", "Đã tắt loại này", "꺼 둔 유형"], 
 const L3 = (en, vi, ko) => L === "vi" ? vi : L === "ko" ? ko : en;
 function vNotif() {
   const list = deliver(), sent = list.filter(r => !r.why), held = list.filter(r => r.why);
-  const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Nari"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>${n.type === "reminder" && sid && upcoming().some(b => b.store === sid) ? `<button class="link" data-act="go" data-v="bookings:up:${upcoming().find(b => b.store === sid).id}:page:notif">${L3("See booking", "Xem lịch", "예약 보기")}</button>` : ""}
+  const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Cici"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>${n.type === "reminder" && sid && upcoming().some(b => b.store === sid) ? `<button class="link" data-act="go" data-v="bookings:up:${upcoming().find(b => b.store === sid).id}:page:notif">${L3("See booking", "Xem lịch", "예약 보기")}</button>` : ""}
     <div class="row wrap" style="gap:6px;margin-top:4px"><span class="tag">${esc(NTYPES.find(x => x[0] === n.type)[1][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span>${r.held ? `<span class="tag warn">${L3("Quiet hours: delivered 08:00", "Giờ yên tĩnh: gửi lúc 08:00", "방해 금지: 08:00에 전달")}</span>` : ""}${r.urgentNow ? `<span class="tag ok">${L3("Time-sensitive: sent right away", "Cần kịp lúc: gửi ngay", "시간 제한 알림: 바로 전달")}</span>` : ""}${n.friend && !r.why ? `<button class="btn ghost" data-act="cheer">${L3("Send a cheer", "Gửi cổ vũ", "응원 보내기")}</button>` : ""}</div></div></div>`; };
-  return `<h1>${L3("Notifications", "Thông báo", "알림")}</h1><div class="row"><p class="sub grow" style="margin:0">${L3("Lock-screen previews, in Nari's voice.", "Xem trước trên màn hình khóa, bằng giọng Nari.", "잠금 화면 미리보기, 나리의 말투로.")}</p><button class="btn sec" data-act="nset">${L3("Settings", "Cài đặt", "설정")}</button></div>
-  ${INBOX.some(m => !m.s) ? `<h2>${L3("Messages", "Tin nhắn", "메시지")}</h2><div class="stack">${INBOX.filter(m => !m.s).map(m => { m.unread = false; return `<div class="card row top"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><div class="grow"><div class="row sm"><b class="grow">Nari</b><span class="sub">${esc(m.when)}</span></div><div class="sm">${esc(m.text)}</div></div></div>`; }).join("")}</div>` : ""}
+  return `<h1>${L3("Notifications", "Thông báo", "알림")}</h1><div class="row"><p class="sub grow" style="margin:0">${L3("Lock-screen previews, in Cici's voice.", "Xem trước trên màn hình khóa, bằng giọng Cici.", "잠금 화면 미리보기, " + CICI_KO + "의 말투로.")}</p><button class="btn sec" data-act="nset">${L3("Settings", "Cài đặt", "설정")}</button></div>
+  ${INBOX.some(m => !m.s) ? `<h2>${L3("Messages", "Tin nhắn", "메시지")}</h2><div class="stack">${INBOX.filter(m => !m.s).map(m => { m.unread = false; return `<div class="card row top"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><div class="grow"><div class="row sm"><b class="grow">Cici</b><span class="sub">${esc(m.when)}</span></div><div class="sm">${esc(m.text)}</div></div></div>`; }).join("")}</div>` : ""}
   <h2>${L3("Delivered", "Đã gửi", "전달됨")} <span class="sub sm">${sent.length}</span></h2><div class="stack">${sent.map(card).join("")}</div>
-  <h2>${L3("Held back by your rules", "Bị giữ lại theo quy tắc", "규칙에 따라 보류됨")} <span class="sub sm">${held.length}</span></h2><div class="stack">${held.map(r => `<div class="card sm row"><span class="grow">${r.n.s ? esc(S[r.n.s].name) : "Nari"} · ${esc(fDay(r.n.day))}<br><span class="sub">${esc(r.n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></span><span class="tag">${esc(WHY[r.why][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></div>`).join("")}</div>`;
+  <h2>${L3("Held back by your rules", "Bị giữ lại theo quy tắc", "규칙에 따라 보류됨")} <span class="sub sm">${held.length}</span></h2><div class="stack">${held.map(r => `<div class="card sm row"><span class="grow">${r.n.s ? esc(S[r.n.s].name) : "Cici"} · ${esc(fDay(r.n.day))}<br><span class="sub">${esc(r.n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></span><span class="tag">${esc(WHY[r.why][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span></div>`).join("")}</div>`;
 }
 function vNSet() {
   const li = L === "vi" ? 1 : L === "ko" ? 2 : 0;
@@ -1176,7 +1198,7 @@ function openSheet(html, label) {
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" data-act="bgclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}</div></div>`;
   const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); (f || sh).focus();
 }
-function closeSheet() { const had = !!$(".sheet"); $("#sheetRoot").innerHTML = ""; if (!had) return; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus(); }
+function closeSheet() { const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } $("#sheetRoot").innerHTML = ""; if (!had) return; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus(); }
 const sheetHd = title => `<div class="hd"><h2>${esc(title)}</h2><button class="icb" data-act="close" aria-label="${t("close")}">${ic("x")}</button></div>`;
 let toastT = null, toastUndo = null;
 function toast(msg, undo) {
@@ -1187,6 +1209,16 @@ function toast(msg, undo) {
 }
 
 /* ===== booking core ===== */
+/* MVP-B1 review helpers: room, capacity, plain cancel policy, pass used */
+const ROOM_TX = { "Studio 1": ["Phòng tập 1", "1번 스튜디오"], "Studio 2": ["Phòng tập 2", "2번 스튜디오"], "Reformer room": ["Phòng máy reformer", "리포머 룸"], "Main studio": ["Phòng tập chính", "메인 스튜디오"] };
+const roomTx = r => { const x = ROOM_TX[r]; return x ? L3(r, x[0], x[1]) : r; };
+function capInfo(x) {
+  const s = S[x.store]; if (s.kind !== "class") return null;
+  let z = x.cap != null ? x : null; try { if (!z) z = slotsFor(x.store, x.svc, x.d).find(q => q.m === x.m); } catch (e) {}
+  if (!z || z.cap == null) return null; const left = Math.max(0, z.left), booked = Math.min(z.cap, z.cap - left);
+  return { cap: z.cap, left, booked, full: left <= 0 };
+}
+const capTx = c => c.full ? L3(`Full · ${c.cap}/${c.cap}`, `Đã đầy · ${c.cap}/${c.cap}`, `마감 · ${c.cap}/${c.cap}`) : L3(`${c.booked}/${c.cap} booked · ${c.left} ${c.left === 1 ? "spot" : "spots"} left`, `${c.booked}/${c.cap} đã đặt · còn ${c.left} chỗ`, `${c.booked}/${c.cap} 예약 · ${c.left}자리 남음`);
 function draftRows(x) {
   const s = S[x.store], v = svcOf(x.store, x.svc), pass = x.usePass ? (WALLET[x.store] || []).find(p => p.id === x.usePass) : null;
   const who = x.rids.map(r => resName(x.store, r)).join(" + ");
@@ -1198,8 +1230,12 @@ function draftRows(x) {
     <dt>${tr("Service")}</dt><dd>${what}</dd>
     <dt>${tr("When")}</dt><dd>${fWhen(x.d, x.m)}–${fTime(x.m + x.len)} <span class="sub sm">${tr("(store time)")}</span></dd>
     <dt>${s.kind === "rental" ? tr("Court") : tr("With")}</dt><dd>${esc(who)}</dd>
+    ${s.kind === "class" ? `<dt>${L3("Room", "Phòng", "룸")}</dt><dd class="rv-room">${esc(roomTx(v.room || "Main studio"))}</dd>` : ""}
+    ${(() => { const c = x.status ? null : capInfo(x); return c ? `<dt>${L3("Spots", "Chỗ", "정원")}</dt><dd class="rv-cap">${esc(capTx(c))}</dd>` : ""; })()}
+    ${pass ? `<dt>${L3("Pass", "Gói", "이용권")}</dt><dd class="rv-pass">${esc(L3(`${pass.t} · ${pass.left} left`, `${tr(pass.t)} · còn ${pass.left}`, `${tr(pass.t)} · ${pass.left}회 남음`))}</dd>` : ""}
     <dt>${t("total")}</dt><dd class="tot">${priceTxt}</dd>
     <dt>${t("deposit")}</dt><dd>${P.dep ? vnd(P.dep) + tr(" now, taken off the total") : t("none") + " · " + t("payAt")}</dd>
+    ${x.pol ? "" : `<dt>${L3("Cancel policy", "Chính sách hủy", "취소 규정")}</dt><dd class="rv-pol">${esc(policyLine(x.store))}</dd>`}
     <dt>${t("freeCancel")}</dt><dd>${free ? fDeadline(x.store, x.d, x.m, x.pol) : `<span class='tag warn'>${tr("Past the free window")}</span>`}</dd>
     <dt>${t("lateCancel")}</dt><dd>${esc(tr(P.late))}</dd>
     <dt>${t("noShow")}</dt><dd>${esc(tr(P.noshow))}</dd>
@@ -1209,14 +1245,21 @@ function storeBar(sid) { return `<div class="storebar" style="background:${S[sid
 function completeDraft(x) { const pass = passFor(x.store, x.svc); if (pass && !x.move && !pass.credit && S[x.store].kind !== "rental") x.usePass = pass.id; return x; }
 let PEND = null;
 function openConfirm(x) {
-  completeDraft(x); PEND = x; const s = S[x.store];
+  if (gated()) return; /* MVP-B7: no review card in a crisis/urgent turn */
+  completeDraft(x); PEND = x; track("booking_review_open", { via: "sheet" }); const s = S[x.store];
   const mv = x.move ? B.find(b => b.id === x.move) : null;
   const lbl = mv ? t("move") : (s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm"));
   const lateMove = mv && !freeNow(mv.store, mv.d, mv.m);
   openSheet(sheetHd(mv ? t("reschedule") : t("confirmTitle")) + storeBar(x.store) +
     (mv ? `<p class="sub" style="margin-top:10px">${L3(`From <b>${fWhen(mv.d, mv.m)}</b> to <b>${fWhen(x.d, x.m)}</b>. Same price${mv.dep ? ", deposit carried over" : ""}. One move, never cancel and rebook.`, `Từ <b>${fWhen(mv.d, mv.m)}</b> sang <b>${fWhen(x.d, x.m)}</b>. Giữ nguyên giá${mv.dep ? ", chuyển tiền cọc theo" : ""}. Chỉ dời lịch, không hủy rồi đặt lại.`, `<b>${fWhen(mv.d, mv.m)}</b> → <b>${fWhen(x.d, x.m)}</b>. 가격은 같아요${mv.dep ? ", 예약금도 그대로 옮겨져요" : ""}. 취소 후 재예약이 아니라 한 번에 변경돼요.`)}</p>` : "") +
     (x.joinOnBook && !S[x.store].joined ? `<p class="sub sm" style="margin-top:8px">${L3(`Booking also adds ${esc(S[x.store].name)} to My places and shares your name and phone with them.`, `Đặt lịch sẽ thêm ${esc(S[x.store].name)} vào Nơi của tôi và chia sẻ tên, số điện thoại với họ.`, `예약하면 ${esc(S[x.store].name)}이(가) 내 매장에 추가되고 이름과 전화번호가 공유돼요.`)}</p>` : "") + draftRows(x) + (lateMove ? `<p class="tag warn">${esc(L3(`Moving now costs ${tr(s.policy.late)} under ${s.name}'s policy.`, `Dời lịch lúc này mất ${tr(s.policy.late)} theo chính sách của ${s.name}.`, `지금 옮기면 ${s.name} 정책에 따라 ${tr(s.policy.late)}이(가) 적용돼요.`))}</p>` : "") +
-    `<p class="sub sm">${t("nothingBooked")}</p><div class="stack"><button class="btn full" data-act="dobook">${esc(lbl)}</button><button class="btn ghost full" data-act="close">${mv ? t("keep") : t("back")}</button></div>`, t("confirmTitle"));
+    `<p class="sub sm">${t("nothingBooked")}</p><div class="stack">${(() => { const c = !mv && capInfo(x); return c && c.full ? `<button class="btn full" data-act="waitlist" id="rv-wait">${esc(L3("Full · join waitlist", "Đã đầy · vào danh sách chờ", "마감 · 대기 신청"))}</button>` : `<button class="btn full" data-act="dobook">${esc(lbl)}</button>`; })()}<button class="btn ghost full" data-act="close">${mv ? t("keep") : t("back")}</button></div>`, t("confirmTitle"));
+}
+/* MVP-B6: that time was just taken -> alternatives, no cheer, nothing booked */
+function takenSheet(x) {
+  closeSheet(); track("booking_abandon", { step: "taken" }); const s = S[x.store], alt = [];
+  for (let d = x.d; d < x.d + 7 && alt.length < 3; d++) { try { slotsFor(x.store, x.svc, d).filter(z => z.left !== 0 && !(d === x.d && z.m === x.m)).forEach(z => { if (alt.length < 3) alt.push(z); }); } catch (e) {} }
+  openSheet(sheetHd(t("taken")) + storeBar(x.store) + `<p class="sm" id="rv-taken" style="margin-top:10px"><b>${esc(t("taken"))}.</b> ${esc(L3("Nothing was booked. Here's what's open:", "Chưa đặt gì cả. Đây là các giờ còn trống:", "예약되지 않았어요. 지금 가능한 시간이에요:"))}</p><div class="stack">${alt.map(z => `<button class="svc" data-act="classpick" data-s="${x.store}" data-v="${x.svc}" data-d="${z.d}" data-m="${z.m}"><span class="grow"><b>${fWhen(z.d, z.m)}</b></span>${ic("chev")}</button>`).join("") || `<p class="sub sm">${esc(L3("Nothing open in the next week.", "Tuần tới chưa có giờ trống.", "다음 주까지 빈 시간이 없어요."))}</p>`}</div>`, t("taken"));
 }
 function doBook(x, quiet) {
   if (x.move) { /* MB-6: one atomic move; new booking id, old one released; a taken slot leaves the original unchanged */
@@ -1226,12 +1269,14 @@ function doBook(x, quiet) {
     return b;
   }
   const s = S[x.store];
+  if (!quiet) { let ok = true; try { const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : s.kind === "class" ? {} : { staff: x.rids[0], room: x.rids[1] }; ok = slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0); } catch (e) {}
+    if (!ok) { takenSheet(x); return null; } }
   const b = { id: BID++, status: "confirmed", source: x.source || "app", store: x.store, svc: x.svc, d: x.d, m: x.m, len: x.len, rids: x.rids, price: x.price, party: x.party || 0, paddles: x.paddles || 0, dep: s.policy.dep || 0, usePass: x.usePass || null, pol: Object.assign({}, s.policy) };
   if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; }
   B.push(b); if (x.joinOnBook && !S[b.store].joined) S[b.store].joined = true;
   if (quiet) { render(); return b; }
   track("booking_confirmed", { store: b.store, via: "sheet" });
-  if (!gated()) say(CH.nari, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in My bookings.`, { bk: b.id }); /* §5: a sheet booking adds a confirm bubble to the thread */
+  if (!gated()) say(CH.cici, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in My bookings.`, { bk: b.id }); /* §5: a sheet booking adds a confirm bubble to the thread */
   const undo = () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); };
   closeSheet(); render(); success(b, undo); toast(`${t("booked")}: ${N(svcOf(b.store, b.svc).n)} · ${S[b.store].name}`, undo);
   return b;
@@ -1255,10 +1300,10 @@ const uncancelMsg = r => r.ok ? "Booking restored" : r.err === "started" ? L3("I
 const lateLine = b => tr(bkPol(b).late) + (b.lateFee ? " (" + vnd(b.lateFee) + ")" : "") + (b.usePass ? " " + (b.passBack ? L3("The class goes back on your pass.", "Buổi được hoàn vào gói.", "이용권 횟수는 돌려드려요.") : L3("1 class is used from your pass.", "Gói bị trừ 1 buổi.", "이용권 1회가 차감돼요.")) : "");
 let succUndo = null;
 function success(b, undo) {
-  const cheerAlt = L3("Nari cheering", "Nari reo mừng", "응원하는 나리");
-  const media = cut("cheer", { alt: cheerAlt, eager: 1 }); setTimeout(() => celebrate(false), 50);
-  openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">${L3("Nari", "Nari", "나리")}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(pvT("howEarn"))}</p></div></div>` +
-    `<div class="stack"><button class="btn full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
+  const cheerAlt = L3("Cici cheering", "Cici reo mừng", "응원하는 " + CICI_KO);
+  const calm = gated(); /* MVP-B7/A6: no cheer in a crisis/urgent turn */ const media = calm ? "" : cut("cheer", { alt: cheerAlt, eager: 1, once: 1 }); if (!calm) setTimeout(() => celebrate(false), 50);
+  openSheet(sheetHd(t("booked")) + `<div class="card scene" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(pvT("howEarn"))}</p></div></div>` +
+    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="close">${tr("Done")}</button><button class="btn sec full" data-act="addcal" data-id="${b.id}">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</button><button class="btn ghost full" data-act="mybk" data-from="home">${esc(t("bkTitle"))}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
   succUndo = undo;
 }
 
@@ -1393,14 +1438,15 @@ function parse(raw) {
 
 function makeChat(id, hello) { return { id, msgs: hello ? [{ who: "n", text: hello }] : [], draft: null, ask: null, fails: 0 }; }
 /* one thread for booking and asking (nari-tab §2); "book" / "ask" stay as aliases so old openers and saved ids land in the same thread */
-const CH = { nari: makeChat("nari") }; for (const k of ["book", "ask"]) Object.defineProperty(CH, k, { get: () => CH.nari, enumerable: false });
-const say = (c, text, ex) => { c.msgs.push(Object.assign({ who: "n", text, t: Date.now() }, ex || {})); if (c === CH.nari && !(ST.tab === "nari" && !ST.page && !ST.store)) c.unread = true; clearTimeout(svT); svT = setTimeout(() => saveThread(), 0); };
+const CH = { cici: makeChat("cici") }; for (const k of ["book", "ask", "nari"]) Object.defineProperty(CH, k, { get: () => CH.cici, enumerable: false }); /* nari/book/ask aliases for migration */
+const say = (c, text, ex) => { c.msgs.push(Object.assign({ who: "n", text, t: Date.now() }, ex || {})); if (c === CH.cici && !(ST.tab === "cici" && !ST.page && !ST.store)) c.unread = true; clearTimeout(svT); svT = setTimeout(() => saveThread(), 0); };
 let svT = null;
 const chip = (label, val) => ({ label, val });
 function chatSend(cid, text) {
   const c = CH[cid]; text = (text || "").trim(); if (!text) return; cid = c.id; TURN_SAFE = false;
   c.msgs.push({ who: "me", text, t: Date.now() }); CHX.draftOpen = !!(c.draft && c.ask && c.ask !== "confirm");
   try { reply(c, text); } catch (e) { console.warn(e); say(c, "Sorry, I got mixed up. Try again?"); }
+  if (!TURN_SAFE) track("cici_msg_sent"); /* NT-11: safety turns log only safety_turn{type}, never the message text */
   TURN_SAFE = false; renderView(); const inp = $("#in-" + cid); if (inp) inp.focus(); scrollThread(cid);
 }
 function scrollThread(cid) { cid = (CH[cid] || {}).id || cid; const th = $("#th-" + cid); if (th && th.lastElementChild && th.lastElementChild.scrollIntoView) th.lastElementChild.scrollIntoView({ block: "nearest" }); }
@@ -1472,7 +1518,7 @@ function reply(c, text) {
   if (sf === "claim") return say(c, "I can't promise results. Here's how Glow Lab describes its facials; the therapist can talk it through with you." + (CURE_RE.test(fold(text)) || CURE_RE.test(vnL(text)) ? " " + L3("For a health condition, please check with a medical professional first.", "Với vấn đề sức khỏe, hãy hỏi ý kiến chuyên gia y tế trước nhé.", "건강 문제라면 먼저 전문 의료진과 상의해 주세요.") : ""), { card: skinCard(), chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })].concat(bookNext(text)) });
   if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text).concat(bookNext(text)) });
-  /* AC5: after a crisis reply Nari doesn't go back to selling. It only helps with a booking when the member asks for one. */
+  /* AC5: after a crisis reply Cici doesn't go back to selling. It only helps with a booking when the member asks for one. */
   /* NT-18 / AC5: after a crisis or urgent turn the chips, cards, calendar icon and Call buttons stay hidden until the member asks for a booking or feature themselves */
   if (c.gate && !sf) { const pg = parse(text); if (pg.store || pg.cands || pg.svc || pg.staff || pg.bookWord || intentOf(text) || /\b(my bookings?|booking|lich cua toi)\b|내 ?예약/.test(s)) c.gate = false; }
   if (c.care && !sf) { const pc = parse(text); if (!(pc.store || pc.cands || pc.svc || pc.staff || pc.bookWord || intentOf(text))) return say(c, CRISIS_FOLLOWUP[L] || CRISIS_FOLLOWUP.en, { care: 1 }); c.care = false; }
@@ -1691,7 +1737,7 @@ function advance(c) {
 }
 function chatChip(cid, mi, ci) {
   cid = (CH[cid] || {}).id || cid; TURN_SAFE = false; const c = CH[cid], ch = c.msgs[mi] && c.msgs[mi].chips && c.msgs[mi].chips[ci]; if (!ch) return; const v = ch.val;
-  if (!(ch.val && /^(sos|riskx|riskok|sosu|sosx)$/.test(ch.val.act || ""))) track("chip_tap", { kind: ch.val && (ch.val.act || (ch.val.say ? "say" : "set")) });
+  if (!(ch.val && /^(sos|riskx|riskok|sosu|sosx)$/.test(ch.val.act || ""))) track("cici_chip_tap", { kind: ch.val && (ch.val.act || (ch.val.say ? "say" : "set")) });
   if (v.say) { if (v.next) c.useCarry = true; return chatSend(cid, v.say); }
   if (v.act === "sos") { c.msgs.push({ who: "me", text: ch.label }); return sosOpen(cid); }
   c.msgs.push({ who: "me", text: ch.label });
@@ -1723,13 +1769,13 @@ function chatBook(cid, mi) {
   const c = CH[cid], msg = c.msgs[mi]; if (!msg || !msg.confirm || msg.done) return;
   const x = msg.confirm, s = S[x.store];
   const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : { staff: x.rids[0], room: x.rids[1] };
-  if (!slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0)) { msg.done = "gone"; say(c, "That slot just went. Here's what's open."); c.draft = { store: x.store, svc: x.svc, d: x.d, party: x.party, len: x.len }; advance(c); render(); return; }
+  if (!slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0)) { msg.done = "gone"; say(c, t("taken") + ". " + L3("Nothing was booked. Here's what's open.", "Chưa đặt gì cả. Đây là các giờ còn trống.", "예약되지 않았어요. 지금 가능한 시간이에요.")); track("booking_abandon", { step: "taken" }); c.draft = { store: x.store, svc: x.svc, d: x.d, party: x.party, len: x.len }; advance(c); render(); return; }
   if (x.move) { const ob = B.find(z => z.id === x.move), mv = ob ? moveBooking(ob, x) : { ok: false }; if (!mv.ok) { msg.done = "gone"; say(c, t("taken") + ". " + L3("Your booking is unchanged.", "Lịch của bạn vẫn giữ nguyên.", "기존 예약은 그대로예요.")); render(); scrollThread(cid); return; } const b = mv.b; msg.done = true; msg.bookedId = b.id; c.draft = null; c.ask = null;
     say(c, L3(`Moved: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name} is now ${fWhen(b.d, b.m)}.`, `Đã dời: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name} sang ${fWhen(b.d, b.m)}.`, `변경됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, 이제 ${fWhen(b.d, b.m)}이에요.`)); render(); scrollThread(cid); return; }
   const b = doBook(Object.assign({}, x), true); msg.done = true; msg.bookedId = b.id; c.draft = null; c.ask = null; track("booking_confirmed", { store: b.store, via: "chat" });
   const nx = c.queue && c.queue.length ? c.queue.shift() : null;
   say(c, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in My bookings.`, { chips: [chip(t("undo"), { act: "undo", id: b.id })].concat(nx ? [chip(L3("Next: ", "Tiếp theo: ", "다음: ") + nx, { say: nx, next: true })] : []) });
-  render(); scrollThread(cid); toast(`${t("booked")} · ${S[b.store].name}`, () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); });
+  render(); scrollThread(cid); success(b, () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); });
 }
 function sendToStore(sid, text) {
   INBOX.unshift({ s: sid, text: "You: " + text, when: "Now" });
@@ -1745,18 +1791,35 @@ function header() {
   <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + L3(unread + " unread", unread + " chưa đọc", "읽지 않음 " + unread) : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
 }
 function tabs() {
-  /* 4 tabs, Nari in position 3 (nari-tab §1); the Nari tab shows a dot (never a number) for an unread Nari reply */
-  return [["home", "home"], ["discover", "compass"], ["nari", "nari"], ["you", "user"]].map(([k, i]) => { const dot = k === "nari" && CH.nari.unread && !(ST.tab === "nari" && !ST.page && !ST.store);
-    return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "nari" ? ` aria-label="${esc(t("nariAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; }).join("");
+  /* 4 tabs, Cici in position 3 (nari-tab §1 IDs kept); the Cici tab shows a dot (never a number) for an unread Cici reply */
+  return [["home", "home"], ["discover", "compass"], ["cici", "cici"], ["you", "user"]].map(([k, i]) => { const dot = k === "cici" && CH.cici.unread && !(ST.tab === "cici" && !ST.page && !ST.store);
+    return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "cici" ? ` aria-label="${esc(t("ciciAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; }).join("");
+}
+/* ===== MVP character-first Home (MVP-H1..H8) ===== */
+const outfitIdx = id => { const n = +String(id || "").replace(/^o/, ""); return n >= 1 && n <= 5 ? n : 0; };
+const OUTFIT_KO = ["기본", "스튜디오", "글로우", "블룸", "아이콘"], OUTFIT_VI = ["Mặc định", "Studio", "Glow", "Bloom", "Icon"];
+const outfitNm = n => L === "ko" ? OUTFIT_KO[n - 1] : L === "vi" ? OUTFIT_VI[n - 1] : OUTFIT[n - 1];
+const wearNm = () => { const n = outfitIdx(ST.wear); if (n) return outfitNm(n); return ST.wear === "wrap" ? tr("Studio wrap top") : ST.wear === "lan" ? tr("Mid-Autumn lantern") : ""; };
+/* decorative accessory drawn over the same Cici art (no new art needed): Studio ribbon, Glow sparkle, Bloom flower, Icon star clip */
+function outfitBadge(id) {
+  const n = outfitIdx(id), d = { 2: '<path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#B04A5E"/>', 3: '<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#E9B44C"/>', 4: '<g fill="#E98597"><circle cx="12" cy="6" r="4"/><circle cx="6" cy="12" r="4"/><circle cx="18" cy="12" r="4"/><circle cx="12" cy="18" r="4"/></g><circle cx="12" cy="12" r="3.2" fill="#FFD36E"/>', 5: '<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8z" fill="#8E3346"/>' }[n];
+  if (!d) return ""; return `<svg class="wear-acc" data-wear="${esc(id)}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
 }
 function heroScene() {
-  const h = new Date().getHours(), nx = upcoming()[0];
-  const nxt = nx ? L3(`Next: ${N(svcOf(nx.store, nx.svc).n)} at ${S[nx.store].name}, ${fWhen(nx.d, nx.m)}.`, `Tiếp theo: ${N(svcOf(nx.store, nx.svc).n)} ở ${S[nx.store].name}, ${fWhen(nx.d, nx.m)}.`, `다음: ${S[nx.store].name} ${N(svcOf(nx.store, nx.svc).n)}, ${fWhen(nx.d, nx.m)}.`) : L3("Nothing booked. Want to try somewhere new?", "Chưa có lịch. Thử một nơi mới nhé?", "예약이 없어요. 새로운 곳 가 볼래요?");
-  const [img, g, line, alt] = h < 11 ? ["greet", "gm", L3("Coffee first. ", "Cà phê trước đã. ", "커피 먼저요. ") + nxt, L3("Nari waving good morning", "Nari vẫy tay chào buổi sáng", "아침 인사로 손 흔드는 나리")]
-    : h < 17 ? ["warmup", "ga", L3("A 2-minute stretch counts as a mission. ", "Giãn cơ 2 phút cũng là một nhiệm vụ. ", "2분 스트레칭도 미션이에요. ") + nxt, L3("Nari warming up", "Nari đang khởi động", "몸을 푸는 나리")]
-    : h < 22 ? ["calm", "ge", nxt, L3("Nari relaxing", "Nari đang thư giãn", "쉬고 있는 나리")] : ["sleep", "gn", L3("Rest is training too. ", "Nghỉ ngơi cũng là tập luyện. ", "쉬는 것도 훈련이에요. ") + nxt, L3("Nari yawning", "Nari đang ngáp", "하품하는 나리")];
-  return `<section class="card scene" aria-label="Nari"><div class="pic">${cut("wave", { alt: L3("Nari waving hello", "Nari vẫy tay chào", "손 흔들며 인사하는 나리"), eager: 1 })}<svg class="bow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#E98597" opacity=".8"/></svg></div>
-  <div class="txt"><div class="who">Nari</div><h1 style="margin:0;font-size:20px">${t(g)}</h1><p class="sub sm">${esc(line)}</p><div><button class="btn sec" data-act="tab" data-v="book">${t("book")}</button></div></div></section>`;
+  const h = homeHour(), nm = L3("Mina", "Mina", "미나"), calm = gated(); /* MVP-H7: the last Cici turn was a crisis/urgent turn (AC5 still in force) -> calm pose, neutral greeting */
+  const greet = calm ? L3(`Hi ${nm}.`, `Chào ${nm}.`, `${nm}님, 안녕하세요.`)
+    : h < 12 ? L3(`Good morning, ${nm}.`, `Chào buổi sáng, ${nm}.`, `${nm}님, 좋은 아침이에요.`)
+    : h < 18 ? L3(`Good afternoon, ${nm}.`, `Chào buổi chiều, ${nm}.`, `${nm}님, 좋은 오후예요.`)
+    : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
+  const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
+  const wn = wearNm();
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}${calm ? "" : outfitBadge(ST.wear)}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+}
+/* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
+function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
+function homeLevelBar() {
+  const m = ME, lv = lvlOf(m), lf = life(m), nx = LVL[lv], pct = nx ? Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) : 100;
+  return `<div class="card lvlbar" id="home-lvl"><div class="row wrap" style="gap:6px"><b class="grow" id="home-lvl-t">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</b><span class="sub sm" id="home-lvl-n">${nx ? esc(pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 })) : esc(lvlName(5))}</span></div><div class="bar" role="progressbar" aria-label="${esc(pvT("level", { n: lv, name: lvlName(lv) }))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div></div>`;
 }
 function upRow(b) {
   const s = S[b.store], v = svcOf(b.store, b.svc);
@@ -1772,12 +1835,12 @@ function placeCard(sid) {
   return `<button class="place" data-act="store" data-v="${sid}" aria-label="${esc(s.name)}, ${esc(sub)}${unreadAt(sid) ? ", " + L3("new message", "tin nhắn mới", "새 메시지") : ""}">${unreadAt(sid) ? '<span class="dot" aria-hidden="true"></span>' : ""}${logo(sid)}<span class="n">${esc(s.name)}</span><span class="sub sm">${esc(sub)}</span></button>`;
 }
 function missionsCard() {
+  /* MVP-H1: 3 missions on Home (attend, new place, 2-min stretch); the rest-day option moved off Home */
   const M = [["attend", t("mAttend"), 50, L3("counts when the store confirms your visit", "được tính khi cửa hàng xác nhận bạn đã đến", "매장에서 방문을 확인하면 적립")], ["newplace", t("mNew"), 80, L3("first confirmed visit to a place", "lần đầu được xác nhận tại một nơi", "처음 확인된 방문")], ["stretch", t("mStretch"), 10, L3("at home is fine", "ở nhà cũng được", "집에서도 괜찮아요")]];
   const done = M.filter(m => ST.miss[m[0]]).length;
   const row = (k, l, x, why, btn) => `<div class="mis${ST.miss[k] ? " done" : ""}"><span class="ck" aria-hidden="true">${ST.miss[k] ? ic("check", "s") : ""}</span><span class="grow"><span class="mt">${esc(l)}</span><span class="vh">${ST.miss[k] ? ", " + tr("done") : ""}</span><br><span class="sub sm">+${esc(fmtPts(x))} · ${esc(why)}</span></span>${ST.miss[k] ? "" : btn || ""}</div>`;
-  return `<div class="card"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span><span class="tag">${esc(pvT("level", { n: lvl(), name: lvlName(lvl()) }))}</span></div>
-  ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : "")).join("")}
-  ${row("rest", t("restDay"), 10, t("mRest"), `<button class="link" data-act="rest">${tr("Rest day")}</button>`)}</div>`;
+  return `<div class="card" id="home-mis"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span></div>
+  ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : "")).join("")}</div>`;
 }
 const AGAIN = [["capsule", "barre", { staff: "yuna" }, "Barre with Yuna"], ["salon", "cut", { staff: "linh" }, "Women's cut with Linh"], ["skin", "hydra", {}, "Hydrating facial"], ["spa", "aroma90", {}, "Aroma 90 min"], ["pickle", "court", { party: 4 }, "Court · 4 players"]];
 function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
@@ -1788,12 +1851,11 @@ function importCard() {
   <div class="row wrap" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1 1 100%" data-act="impok">${L3("Accept and link", "Đồng ý liên kết", "수락하고 연결")}</button><button class="btn ghost" style="flex:1 1 40%" data-act="impno">${L3("Not me", "Không phải tôi", "제가 아니에요")}</button><button class="btn ghost" style="flex:1 1 40%" data-act="implater">${L3("Later", "Để sau", "나중에")}</button></div></section>`;
 }
 function vHome() {
-  const up = upcoming();
-  return heroScene() + notesCard() +
-    `<h2>${t("nextClass")}</h2><div class="card" role="list">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="go" data-v="nari:book">${t("chipBook")}</button>`}</div>` + pendingCard() +
-    importCard() +
-    `<h2>${t("myPlaces")} <span class="sub sm">${joinedIds().length}</span></h2><div class="scroll" role="group" aria-label="${t("myPlaces")}">${joinedIds().map(placeCard).join("")}<button class="place add" data-act="joinsheet">+ ${t("join")}</button></div>` +
-    `<h2>${t("missions")}</h2>${missionsCard()}`;
+  /* MVP-H1 order: Cici + greeting, level bar, 2–3 missions, Next class card (+ "All bookings"). Allowed extras: the one-line migration banner (A3) and the header bell. */
+  const up = upcoming(); track("home_open");
+  return heroScene() + notesCard() + homeLevelBar() +
+    `<h2>${t("missions")}</h2>${missionsCard()}` +
+    `<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="go" data-v="cici:book">${t("chipBook")}</button>`}</div>`;
 }
 function chatUI(cid, placeholder, above) {
   const c = CH[cid], g = gated();
@@ -1803,15 +1865,15 @@ function chatUI(cid, placeholder, above) {
     let body = (m.note ? esc(m.note.split(/(?<=\.) /).map(trS).join(" ")) + " " : "") + esc(trS(m.text)).replace(/\n/g, "<br>");
     if (m.card) body += `<div class="mcard${m.care ? " care" : ""}"><div class="sub sm"><b>${esc(trS(m.card.kicker))}</b></div><b>${esc(trS(m.card.title))}</b><div class="sm">${esc(L === "en" ? m.card.body : m.card.body.split("\n").map(l => { const q = l.match(/^(.+?) \((.+?)\): (.+)$/); return q ? N(q[1]) + " (" + q[2] + "): " + tr(q[3]) : trS(l); }).join("\n")).replace(/\n/g, "<br>")}</div>${m.card.src ? `<div class="src">${esc(trS(m.card.src))}</div>` : ""}</div>`;
     if (m.src) body += `<div class="src">${esc(L === "en" ? m.src : m.src.replace(/^From (.+?)'s (info|price list)$/, (q, a, b) => L === "vi" ? "Theo " + (b === "info" ? "thông tin" : "bảng giá") + " của " + a : a + " " + (b === "info" ? "정보" : "가격표") + " 기준"))}</div>`;
-    if (m.confirm && !(g && m.done !== true)) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>${m.bookedId && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${m.bookedId}">${t("manage")}</button>${callBtn(x.store, "", true)}</div>` : ""}` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>${callBtn(x.store, "", true)}`}</div>`; }
+    if (m.confirm && !(g && m.done !== true)) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>${m.bookedId && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${m.bookedId}">${t("manage")}</button>${callBtn(x.store, "", true)}</div>` : ""}` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : (() => { const c = !x.move && capInfo(x); return c && c.full ? `<button class="btn full" data-act="waitlist">${esc(L3("Full · join waitlist", "Đã đầy · vào danh sách chờ", "마감 · 대기 신청"))}</button>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>`; })() + `${callBtn(x.store, "", true)}`}</div>`; }
     if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}${b.status === "confirmed" && !bkStarted(b) && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${b.id}">${t("manage")}</button></div>` : ""}</div>`; }
     const av = `<span class="av" aria-hidden="true"><img src="${A}${m.care ? "calm" : "greet"}.webp" alt=""></span>`;
     const chips = m.chips && i === c.msgs.length - 1 && !(g && !m.care) ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip${ch.val && ch.val.say ? " sug" : ""}" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
     const sos = ""; /* the safety note shows once per screen, in the bar above the input */
-    return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Nari: </span>${body}${sos}</div></div>${chips}`;
+    return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Cici: </span>${body}${sos}</div></div>${chips}`;
   }).join("");
   return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
-  <div class="nthink${c.msgs.length ? "" : " big"}" id="nthink-${cid}" aria-hidden="true">${cut("thinking")}<span>${L3("Nari is listening", "Nari đang nghe", "나리가 듣고 있어요")}</span><i></i><i></i><i></i></div>
+  <div class="nthink${c.msgs.length ? "" : " big"}" id="nthink-${cid}" aria-hidden="true">${cut("thinking")}<span>${L3("Cici is listening", "Cici đang nghe", CICI_KO + "가 듣고 있어요")}</span><i></i><i></i><i></i></div>
   <div class="dock">${above || ""}<form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
   <div class="helpft"><button type="button" class="helplink" data-act="helpsheet" data-c="${cid}">${esc(HELP_LINK())}</button></div></div>`;
 }
@@ -1821,13 +1883,13 @@ function helpSheet(cid) {
   openSheet(sheetHd(HELP_LINK()) + `<div class="card stack" id="helpsheet"><b>${esc(L3("If you feel unwell or get hurt during class", "Nếu bạn thấy không khỏe hoặc bị thương khi tập", "수업 중 몸이 안 좋거나 다쳤다면"))}</b>
   <p class="sm" style="margin:0">${esc(L3("Stop exercising now and tell the instructor or staff nearby. Contact a doctor right away.", "Hãy dừng tập ngay và báo cho huấn luyện viên hoặc nhân viên gần bạn. Liên hệ bác sĩ ngay.", "바로 운동을 멈추고 가까운 강사나 직원에게 알려 주세요. 바로 의사에게 연락하세요."))}</p></div>
   <div class="card stack" style="margin-top:10px"><b>${esc(L3("If you're not okay", "Nếu bạn đang không ổn", "괜찮지 않다면"))}</b><p class="sm" style="margin:0">${esc(CRISIS_COPY[L] || CRISIS_COPY.en)}</p></div>
-  <button class="btn sec full" style="margin-top:10px" data-act="helptalk" data-c="${cid}">${esc(L3("Tell Nari what's happening", "Kể cho Nari điều đang xảy ra", "나리에게 상황 말하기"))}</button>`, HELP_LINK());
+  <button class="btn sec full" style="margin-top:10px" data-act="helptalk" data-c="${cid}">${esc(L3("Tell Cici what's happening", "Kể cho Cici điều đang xảy ra", CICI_KO + "에게 상황 말하기"))}</button>`, HELP_LINK());
 }
 function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card">${s.photo ? `<div class="cover hero">${shopImg(sid, "himg", true)}<span class="hsample">${t("sample")}</span></div>` : `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
-  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
+  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="cici:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
   if (s.kind === "class") {
@@ -1896,21 +1958,31 @@ function nextReward() {
     if (PV.defs.some(x => listed(x, now))) return { txt: L3("You have enough points for a voucher", "Bạn đủ điểm để đổi ưu đãi", "쿠폰으로 바꿀 포인트가 충분해요"), pct: 100 }; }
   return nx ? { txt: pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 }), pct: Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) } : { txt: lvlName(5), pct: 100 };
 }
-const YOU_PAGES = ["wallet", "vouchers", "settings", "points"];
-const youTitle = p => p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
+const YOU_PAGES = ["wallet", "vouchers", "settings", "points", "look"];
+const youTitle = p => p === "look" ? t("wardrobe") : p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
 function vYou() {
-  const m = ME, nr = nextReward(), pts = PV.flag ? fmtPts(bal(m)) : fmtPts(life(m));
-  let h = notesCard() + `<section class="card row" id="you-prof"><span class="av" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt=""></span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
-  h += `<div class="card" id="you-next" style="margin-top:12px"><div class="sm"><b>${esc(nr.txt)}</b></div><div class="bar" role="progressbar" aria-label="${esc(nr.txt)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${nr.pct}"><i style="width:${nr.pct}%"></i></div></div>`;
-  const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)]];
+  /* MVP-Y1: profile (name, lifetime points, streak, level) + tiles Wallet · My bookings · Cici's look (+ Vouchers only when realRewards is on, A1) */
+  const m = ME, lv = lvlOf(m), pts = fmtPts(life(m));
+  let h = notesCard() + `<section class="card row" id="you-prof"><span class="av cav-h" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt="">${outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm" id="you-lvl">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</div><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
+  const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)], ["look", "shirt", t("wardrobe"), wearNm() || "—"]];
+  if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
   h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
-  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications, points info", "Ngôn ngữ, thông báo, thông tin điểm", "언어, 알림, 포인트 정보")}</span></span>${ic("chev")}</button></div>`;
+  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
   return h;
+}
+/* MVP-L4: You → Cici's look. 5 outfits (L1 default + Studio/Glow/Bloom/Icon at L2–L5) + legacy owned cosmetics (AC-P54a). Cosmetic only: no price, no buy/sell/transfer (MVP-L5). */
+function vLook() {
+  const lv = lvlOf(ME), OF = [1, 2, 3, 4, 5], CO = [["wrap", tr("Studio wrap top")], ["lan", tr("Mid-Autumn lantern")]].filter(([id]) => ST.owned.includes(id));
+  const tile = (id, nm, sub, ok) => `<button class="tile${ok ? "" : " lock"}" data-act="pvwear" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : 'disabled aria-disabled="true"'} aria-label="${esc(nm + ", " + sub)}" style="min-height:44px;font:inherit;color:inherit"><span class="ic">${ok ? (outfitBadge(id) || ic("shirt")) : ic("lock")}</span><b class="sm">${esc(nm)}</b><span class="sub sm">${esc(sub)}</span></button>`;
+  const got = n => n <= lv || (ME.unlocked || []).includes("o" + n); /* MVP-L3/OQ4: kept after a reversal */
+  return `<div class="chome" style="padding-top:0"><div class="cpic" style="width:150px;height:180px">${cut("idle", { alt: L3("Cici", "Cici", CICI_KO), eager: 1 })}${outfitBadge(ST.wear)}</div></div>
+  <p class="sub sm" id="look-note">${esc(L3("Each new level unlocks a look for Cici. Looks are just for fun: they can't be bought, sold or swapped for discounts.", "Mỗi cấp mới mở một phong cách cho Cici. Chỉ để vui: không mua, bán hay đổi lấy ưu đãi được.", "레벨이 오를 때마다 " + CICI_KO + "의 새 스타일이 열려요. 재미로만 즐기는 거라 사거나 팔거나 할인으로 바꿀 수 없어요."))}</p>
+  <div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
 }
 function vWallet() {
   const rows = joinedIds().map(sid => (WALLET[sid] || []).map(p => walletRow(sid, p)).join("")).join("") + upcoming().filter(b => b.dep).map(depRow).join("");
   return `<div class="card stack" id="wallet-list">${rows || nEmpty(esc(L3("Nothing in your wallet yet.", "Ví của bạn đang trống.", "지갑이 비어 있어요.")), "idle")}
-    ${PV.flag ? `<div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div>` : ""}</div>`;
+    ${PV.flag ? `<div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div>` : ""}</div><button class="svc" data-act="pvhist" id="wallet-hist" style="margin-top:12px">${ic("star")}<span class="grow"><b>${esc(pvT("history"))}</b><br><span class="sub sm">${esc(L3("Points earned from visits and missions", "Điểm từ lượt đến và nhiệm vụ", "방문과 미션으로 받은 포인트"))}</span></span>${ic("chev")}</button>`;
 }
 function vVouchers() {
   const seg = ST.vseg || "mine";
@@ -1922,14 +1994,26 @@ function vSettings() {
   let h = ``;
   h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p>`;
   h += `<h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div>`;
-  h += pointsBlock();
-  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack">${[["pvquest", "star", t("quest") + " · " + t("journey"), tr("step") + " " + ST.steps + "/14"], ["pvwardrobe", "shirt", t("wardrobe"), OUTFIT[Math.max(0, +String(ST.wear).replace(/\D/g, "") - 1)] || ""], ["inbox", "bell", t("inbox"), INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase()]].map(([act, i, n, sub]) => `<button class="svc" data-act="${act}">${ic(i)}<span class="grow"><b>${esc(n)}</b><br><span class="sub sm">${esc(sub)}</span></span>${ic("chev")}</button>`).join("")}</div>`;
+  /* PR16 P3: points details live on the Points page only (opened from the You points line) */
+  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack"><button class="svc" data-act="inbox">${ic("bell")}<span class="grow"><b>${esc(t("inbox"))}</b><br><span class="sub sm">${esc(INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase())}</span></span>${ic("chev")}</button></div>`; /* MVP: quest/journey scene and room decoration are OUT; Cici's look moved to a You tile */
   h += storeAppBtn();
-  h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
+  h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Cici's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Cici dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.",CICI_KO + "의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").classList.toggle("nari-v", ST.tab === "nari" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); }
+function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
+/* MVP-L1/L7: the unlock animation plays once, on the next normal Home view (deferred while a crisis/urgent turn is in force, A6) */
+function maybeUnlock() {
+  if (!ME || ST.tab !== "home" || ST.page || ST.store || gated() || $(".sheet") || $(".munlock")) return;
+  const n = ME.notices.find(x => x.k === "outfitUnlocked" && !x.played); if (!n) return; n.played = true;
+  const id = n.v.item || ("o" + n.v.lvl), nm = outfitNm(outfitIdx(id)) || n.v.outfit; track("cici_item_unlock", { item: id, lvl: n.v.lvl });
+  const el = document.createElement("div"); el.className = "munlock"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "unl-t");
+  el.innerHTML = `<div class="box" id="unl-box"><div class="cpic">${cut("ribbon", { alt: L3("Cici twirling a ribbon", "Cici múa dải ruy băng", "리본을 돌리는 " + CICI_KO), eager: 1, once: 1 })}${outfitBadge(id)}</div><h2 id="unl-t" style="justify-content:center;margin:4px 0">${esc(pvT("outfitUnlocked"))}</h2><p class="sm" style="margin:0 0 12px"><b>${esc(nm)}</b> · ${esc(pvT("level", { n: n.v.lvl, name: lvlName(n.v.lvl) }))}</p><div class="stack"><button class="btn full" data-act="unlwear" data-v="${id}">${esc(L3("Wear it", "Mặc ngay", "입혀 보기"))}</button><button class="btn ghost full" data-act="unlclose">${esc(L3("Later", "Để sau", "나중에"))}</button></div></div>`;
+  document.body.appendChild(el); hydrateCuts(el); const b = el.querySelector("[data-act=unlwear]"); if (b) b.focus();
+}
+function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
+document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Cici", "Cuộc gọi demo với Cici", CICI_KO + "와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -2092,16 +2176,16 @@ document.addEventListener("click", e => { const el = e.target.closest("[data-act
 document.addEventListener("keydown", e => { const el = e.target.closest && e.target.closest('[data-act="pin"]'); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); discAct("pin", el.dataset); } });
 document.addEventListener("input", e => { if (e.target.id === "dq" && DF.map) { const tmp = document.createElement("div"); tmp.innerHTML = vDiscover(); const sv = $(".dmap"); if (sv) sv.outerHTML = tmp.querySelector(".dmap").outerHTML; } });
 /* ===== flows: join, check-in, missions, stretch ===== */
-function joinSheet() { openSheet(sheetHd(tr("Join a place")) + `<p class="sub">${tr("Each place keeps its own passes and rules. Your account, Nari and your journey come with you.")}</p><div class="stack"><button class="btn full" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec full" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button><button class="btn ghost full" data-act="gosearch">${ic("search", "s")} ${tr("Search places")}</button></div>`, tr("Join a place")); }
+function joinSheet() { openSheet(sheetHd(tr("Join a place")) + `<p class="sub">${tr("Each place keeps its own passes and rules. Your account, Cici and your journey come with you.")}</p><div class="stack"><button class="btn full" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec full" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button><button class="btn ghost full" data-act="gosearch">${ic("search", "s")} ${tr("Search places")}</button></div>`, tr("Join a place")); }
 function qrSheet() { openSheet(sheetHd(t("scan")) + `<div class="vf" role="img" aria-label="${L3("Camera viewfinder, simulated", "Khung camera, mô phỏng", "카메라 화면, 시뮬레이션")}">${tr("Point at the QR on the counter")}</div><p class="demo">${t("demo")}${tr(": no camera is used")}</p><button class="btn full" data-act="qrscan" style="margin-top:10px">${tr("Simulate scan · Ipsae Nail Bar")}</button>`, t("scan")); }
-function linkSheet() { openSheet(sheetHd(t("link")) + `<label for="lk" class="sub sm">${tr("Invite link from SMS or Zalo")}</label><input id="lk" class="inp" style="width:100%;margin:6px 0 12px" value="https://nari.example/j/bloom-yoga"><button class="btn full" data-act="linkopen">${tr("Open link")}</button>`, t("link")); }
+function linkSheet() { openSheet(sheetHd(t("link")) + `<label for="lk" class="sub sm">${tr("Invite link from SMS or Zalo")}</label><input id="lk" class="inp" style="width:100%;margin:6px 0 12px" value="https://cici.example/j/bloom-yoga"><button class="btn full" data-act="linkopen">${tr("Open link")}</button>`, t("link")); }
 function joinConsent(sid) {
   const s = S[sid];
   openSheet(sheetHd(t("join") + " " + s.name) + storeBar(sid) + `<div class="stack" style="margin-top:12px"><label class="row sm"><input type="checkbox" checked disabled style="width:22px;height:22px"><span class="grow">${L3(`Share my name and phone with ${esc(s.name)} for bookings`, `Chia sẻ tên và số điện thoại với ${esc(s.name)} để đặt lịch`, `예약을 위해 ${esc(s.name)}에 이름과 전화번호 공유`)} <span class="sub">(${L3("needed to book", "cần để đặt lịch", "예약에 필요")})</span></span></label>
   <label class="row sm"><input id="optin" type="checkbox" style="width:22px;height:22px"><span class="grow">${L3(`Get offers from ${esc(s.name)}`, `Nhận ưu đãi từ ${esc(s.name)}`, `${esc(s.name)} 혜택 받기`)} <span class="sub">(${L3("optional, off by default", "tùy chọn, mặc định tắt", "선택, 기본 꺼짐")})</span></span></label>
   <p class="sub sm">${L3(`If ${esc(s.name)} already has your number, your history links only after you join.`, `Nếu ${esc(s.name)} đã có số của bạn, lịch sử chỉ liên kết sau khi bạn tham gia.`, `${esc(s.name)}에 번호가 있어도 가입한 뒤에만 기록이 연결돼요.`)}</p><button class="btn full" data-act="joinok" data-v="${sid}">${t("join")}</button><button class="btn ghost full" data-act="close">${tr("Not now")}</button></div>`, t("join"));
 }
-function doJoin(sid) { S[sid].joined = true; INBOX.unshift({ s: sid, text: `Welcome to ${S[sid].name}! (sample store)`, when: "Now", unread: false }); closeSheet(); ST.store = sid; render(); $("#view").focus(); toast(`${S[sid].name} added to My places. Nari: “New place! Want to book your first visit?”`); }
+function doJoin(sid) { S[sid].joined = true; INBOX.unshift({ s: sid, text: `Welcome to ${S[sid].name}! (sample store)`, when: "Now", unread: false }); closeSheet(); ST.store = sid; render(); $("#view").focus(); toast(`${S[sid].name} added to My places. Cici: “New place! Want to book your first visit?”`); }
 function checkin(b) {
   let cells = "";
   for (let i = 0; i < 21; i++) for (let j = 0; j < 21; j++) {
@@ -2125,7 +2209,7 @@ function attend(b) { /* the Store app scans the member's code (demo); points com
 let stretchT = null;
 function stretchSheet() {
   let left = 120;
-  openSheet(sheetHd(t("mStretch")) + `<div class="card scene"><div class="pic"><img src="${A}warmup.webp" alt="${L3("Nari stretching", "Nari đang giãn cơ", "스트레칭하는 나리")}"></div><div class="txt"><div class="who">Nari</div><p>${tr("Slow breaths. Roll your shoulders, reach up, fold gently.")}</p><p id="stl" style="font-size:28px;font-weight:800;margin:0">2:00</p></div></div>
+  openSheet(sheetHd(t("mStretch")) + `<div class="card scene"><div class="pic"><img src="${A}warmup.webp" alt="${L3("Cici stretching", "Cici đang giãn cơ", "스트레칭하는 " + CICI_KO)}"></div><div class="txt"><div class="who">Cici</div><p>${tr("Slow breaths. Roll your shoulders, reach up, fold gently.")}</p><p id="stl" style="font-size:28px;font-weight:800;margin:0">2:00</p></div></div>
   <p class="sub sm" style="margin-top:8px">${tr("Stop if anything hurts.")}</p><div class="stack"><button class="btn full" data-act="stretchdone">${tr("Finish (demo: skip the timer)")}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("mStretch"));
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000);
 }
@@ -2144,7 +2228,7 @@ function cancelAsk(b) {
   <div class="stack"><button class="btn ghost full" data-act="close">${t("keep")}</button><button class="btn full" data-act="cancelok" data-id="${b.id}">${t("cancel")}${free ? "" : " · " + esc(tr(s.policy.late))}</button></div>`, t("cancel"));
 }
 
-/* ===== Call Nari: simulated in-app call (Dot-style), scripted, demo only ===== */
+/* ===== Call Cici: simulated in-app call (Dot-style), scripted, demo only ===== */
 let CALL = null, waveT = null;
 function callBuild(kind) {
   const P = { court: { store: "pickle", svc: "court", d: 1, want: 1140, o: { len: 60, paddles: 0 }, party: 4 },
@@ -2166,11 +2250,11 @@ function callBuild(kind) {
 }
 function openCall() {
   const vi = L === "vi", ko = L === "ko";
-  const script = [["n", L3("Hi Mina, this is Nari, your booking assistant. This is a demo call: nothing is recorded and no real phone line is used. What would you like to book?", "Xin chào, đây là Nari, trợ lý đặt lịch ảo. Đây là cuộc gọi demo, không ghi âm và không dùng đường dây thật. Bạn muốn đặt gì ạ?", "안녕하세요 미나, 예약 도우미 나리예요. 데모 통화라서 녹음되지 않고 실제 전화선도 쓰지 않아요. 무엇을 예약할까요?")], ["choose"]];
+  const script = [["n", L3("Hi Mina, this is Cici, your booking assistant. This is a demo call: nothing is recorded and no real phone line is used. What would you like to book?", "Xin chào, đây là Cici, trợ lý đặt lịch ảo. Đây là cuộc gọi demo, không ghi âm và không dùng đường dây thật. Bạn muốn đặt gì ạ?", "안녕하세요 미나, 예약 도우미 " + CICI_KO + "예요. 데모 통화라서 녹음되지 않고 실제 전화선도 쓰지 않아요. 무엇을 예약할까요?")], ["choose"]];
   CALL = { i: 0, muted: false, script, z: null, vi, ko, t0: Date.now(), timer: null, tick: null, ended: false, miss: 0 };
   lastFocus = document.activeElement;
-  const el = $("#call"); el.hidden = false; el.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화"));
-  el.innerHTML = `<div class="in"><span class="demo">${L3("Demo call · not a real phone call", "Cuộc gọi demo · không phải cuộc gọi thật", "데모 통화 · 실제 전화가 아니에요")}</span><div class="cav"><img src="${A}greet.webp" alt="${L3("Nari", "Nari", "나리")}"></div><div style="text-align:center"><b style="font-size:20px">${L3("Nari", "Nari", "나리")}</b><div class="sm" id="cst">${tr("Connecting…")}</div></div>
+  const el = $("#call"); el.hidden = false; el.setAttribute("aria-label", L3("Demo call with Cici", "Cuộc gọi demo với Cici", CICI_KO + "와 데모 통화"));
+  el.innerHTML = `<div class="in"><span class="demo">${L3("Demo call · not a real phone call", "Cuộc gọi demo · không phải cuộc gọi thật", "데모 통화 · 실제 전화가 아니에요")}</span><div class="cav"><img src="${A}greet.webp" alt="${ciciNm()}"></div><div style="text-align:center"><b style="font-size:20px">${ciciNm()}</b><div class="sm" id="cst">${tr("Connecting…")}</div></div>
     <div class="wave" id="wave" aria-hidden="true">${"<i></i>".repeat(24)}</div>
     <div class="caps" id="caps" role="log" aria-live="polite" aria-label="${L3("Live captions", "Phụ đề trực tiếp", "실시간 자막")}"></div><div class="yes" id="yes"></div>
     <div class="ctl"><div><button class="rb" id="mute" data-act="mute" aria-pressed="false" aria-label="${t("mute")}">${ic("mic")}</button><div class="lbl" id="mutel">${t("mute")}</div></div><div><button class="rb end" data-act="hang" aria-label="${t("hang")}">${ic("end")}</button><div class="lbl">${t("hang")}</div></div></div></div>`;
@@ -2197,7 +2281,7 @@ function speak(text, lang, done) {
   const fb = setTimeout(fin, Math.max(1800, text.length * 42));
   try { if (!CALL.muted && "speechSynthesis" in window && window.SpeechSynthesisUtterance) { const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.onend = () => { clearTimeout(fb); setTimeout(fin, 150); }; speechSynthesis.cancel(); speechSynthesis.speak(u); } } catch (e) {}
 }
-function cap(who, text) { const c = $("#caps"); if (!c) return; const d = document.createElement("div"); d.className = who; d.innerHTML = who === "me" ? L3("You", "Bạn", "나") + ": " + esc(text) : "<b>" + L3("Nari", "Nari", "나리") + ":</b> " + esc(text); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+function cap(who, text) { const c = $("#caps"); if (!c) return; const d = document.createElement("div"); d.className = who; d.innerHTML = who === "me" ? L3("You", "Bạn", "나") + ": " + esc(text) : "<b>" + ciciNm() + ":</b> " + esc(text); c.appendChild(d); c.scrollTop = c.scrollHeight; }
 function callStep() {
   if (!CALL || CALL.ended) return; const st = CALL.script[CALL.i]; if (!st) return;
   if (st[0] === "n") { cap("n", st[1]); speak(st[1], CALL.ko ? "ko-KR" : CALL.vi ? "vi-VN" : "en-US", () => { if (!CALL || CALL.ended) return; CALL.i++; if (CALL.script[CALL.i]) CALL.timer = setTimeout(callStep, 350); else CALL.timer = setTimeout(() => endCall(), 1400); }); }
@@ -2216,20 +2300,20 @@ function endCall() {
   const b = CALL.booking, ho = CALL.handoff ? { store: CALL.pick && CALL.pick.store } : null; CALL = null; $("#call").hidden = true; $("#call").innerHTML = ""; render();
   if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus();
   if (ho) { const hs = ho.store || null; /* name the store that was chosen; generic when none was */
-    INBOX.unshift({ s: hs, text: hs ? L3(`Nari passed your call to ${S[hs].name}. They'll call you back soon. (Demo)`, `Nari đã chuyển cuộc gọi của bạn cho ${S[hs].name}. Cửa hàng sẽ sớm gọi lại. (Demo)`, `나리가 통화를 ${S[hs].name}에 전달했어요. 곧 다시 전화드릴게요. (데모)`)
-      : L3("Nari passed your call to a person. Someone will call you back soon to help you choose a place. Nothing is booked. (Demo)", "Nari đã chuyển cuộc gọi của bạn cho nhân viên. Sẽ có người sớm gọi lại để giúp bạn chọn nơi. Chưa đặt gì cả. (Demo)", "나리가 통화를 직원에게 전달했어요. 곧 전화드려서 매장 선택을 도와드릴게요. 예약은 하지 않았어요. (데모)"), when: L3("Now", "Vừa xong", "방금"), unread: true }); }
+    INBOX.unshift({ s: hs, text: hs ? L3(`Cici passed your call to ${S[hs].name}. They'll call you back soon. (Demo)`, `Cici đã chuyển cuộc gọi của bạn cho ${S[hs].name}. Cửa hàng sẽ sớm gọi lại. (Demo)`, `${CICI_KO}가 통화를 ${S[hs].name}에 전달했어요. 곧 다시 전화드릴게요. (데모)`)
+      : L3("Cici passed your call to a person. Someone will call you back soon to help you choose a place. Nothing is booked. (Demo)", "Cici đã chuyển cuộc gọi của bạn cho nhân viên. Sẽ có người sớm gọi lại để giúp bạn chọn nơi. Chưa đặt gì cả. (Demo)", CICI_KO + "가 통화를 직원에게 전달했어요. 곧 전화드려서 매장 선택을 도와드릴게요. 예약은 하지 않았어요. (데모)"), when: L3("Now", "Vừa xong", "방금"), unread: true }); }
   toast(b ? L3(`Call ended · Booked: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `Cuộc gọi kết thúc · Đã đặt: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}`, `통화 종료 · 예약됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}`)
     : ho ? L3("Call ended · passed to a person, nothing booked", "Cuộc gọi kết thúc · đã chuyển cho nhân viên, chưa đặt gì", "통화 종료 · 직원에게 연결됨, 예약 없음") : "Call ended · nothing booked", b ? () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); } : null);
 }
 
-/* ===== Nari tab (nari-tab spec v1.0): one thread, My bookings, ratings, Call {store}, app-state routes ===== */
-/* OQ defaults (spec §10) used until the user decides: OQ-1 label "Nari"/"나리"; OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
-   OQ-4 ratings private, publicRatings off; OQ-5 0 points; OQ-6 rating notes and Ask-the-studio notes are safety-scanned; OQ-7 "Talk to Nari (demo)" in overflow only; OQ-8 store phone field + emergency blocklist, no number = no button;
+/* ===== Cici tab (nari-tab spec v1.0): one thread, My bookings, ratings, Call {store}, app-state routes ===== */
+/* OQ defaults (spec §10) used until the user decides: OQ-1 label "Cici"/"씨씨"; OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
+   OQ-4 ratings private, publicRatings off; OQ-5 0 points; OQ-6 rating notes and Ask-the-studio notes are safety-scanned; OQ-7 "Talk to Cici (demo)" in overflow only; OQ-8 store phone field + emergency blocklist, no number = no button;
    OQ-9 Past = 12 months, rating/edit window 14 days; OQ-10 store messages stay in the Inbox; OQ-11 analytics carry event names only, safety turns only safety_turn{type} */
 const FLAGS = { publicRatings: false };
 const EVT = []; let TURN_SAFE = false;
 function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
-const gated = () => !!(CH.nari.gate && CH.nari.msgs.length);
+const gated = () => !!(CH.cici.gate && CH.cici.msgs.length);
 /* store phone numbers: the store's own published line only; emergency / crisis / public short codes are rejected (NT-26) */
 const EMERG_BLOCK = ["112", "119", "911", "113", "114", "115", "1393", "109", "988", "110", "111", "117", "118", "120", "122", "125", "127", "129", "1366", "1388", "999", "000", "15770199", "15889191", "16005252"];
 const phoneDigits = n => String(n || "").replace(/\D/g, "");
@@ -2296,16 +2380,16 @@ function rateSave(b) {
   const note = RS.note.trim(), sf = note ? safety(note) : null, risky = note && (sf === "crisis" || sf === "urgent" || riskWord(note));
   const prev = RATINGS[b.id], r = { bk: b.id, store: b.store, stars: RS.stars, inst: RS.inst || 0, tags: RS.tags.slice(), note: risky ? "" : note, held: !risky && !!note && MOD_RE.test(note), ts: Date.now(), hist: prev ? prev.hist.concat([{ stars: prev.stars, inst: prev.inst, tags: prev.tags, note: prev.note, ts: prev.ts }]) : [] };
   if (risky) { closeSheet(); safetyFromSide(note, sf); return; } /* NT-11: only the safety event; no rating is saved from this turn */
-  RATINGS[b.id] = r; syncReversed(); track("rating_saved", { edit: !!prev }); /* NT-22: never forwarded as a comment; Nari shows the safety reply instead */
+  RATINGS[b.id] = r; syncReversed(); track("rating_saved", { edit: !!prev }); /* NT-22: never forwarded as a comment; Cici shows the safety reply instead */
   closeSheet(); render();
   if (r.stars <= 2) openSheet(sheetHd(t("rate")) + `<p style="margin-top:10px">${esc(t("rateThanks", { store: S[b.store].name }))}</p>${r.held ? `<p class="tag warn">${esc(t("rateHeld"))}</p>` : ""}<p>${esc(t("rateLow"))}</p><div class="stack"><button class="btn full" data-act="msgfrom" data-id="${b.id}">${esc(t("msgStore", { s: S[b.store].name }))}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("rate"));
   else toast(r.held ? t("rateHeld") : t("rateThanks", { store: S[b.store].name }));
 }
-/* a crisis / urgent note written outside the chat: Nari shows the fixed safety reply in the thread, the text isn't echoed, logged or sent */
+/* a crisis / urgent note written outside the chat: Cici shows the fixed safety reply in the thread, the text isn't echoed, logged or sent */
 function safetyFromSide(text, sf) {
-  const c = CH.nari; TURN_SAFE = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
+  const c = CH.cici; TURN_SAFE = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   if (sf === "urgent") urgentReply(c); else if (sf === "crisis") crisisReply(c, text); else riskCheckIn(c, text);
-  setTab("nari"); render(); scrollThread("nari"); TURN_SAFE = false;
+  setTab("cici"); render(); scrollThread("cici"); TURN_SAFE = false;
 }
 /* ---- Ask the studio (Capsule Barre after 16:00 the day before) ---- */
 function askStudioSheet(b) {
@@ -2365,7 +2449,7 @@ function vBookings() {
   const up = bkUpcoming(), past = bkPastList(); if (!ST.bkSeg) ST.bkSeg = up.length ? "up" : "past";
   const seg = (k, l, n) => `<button class="chip" aria-pressed="${ST.bkSeg === k}" data-act="bkseg" data-v="${k}">${l} <span class="sub sm">${n}</span></button>`;
   let h = `<h1>${t("bkTitle")}</h1><div class="chips" role="group" aria-label="${t("bkTitle")}">${seg("up", t("bkUp"), up.length)}${seg("past", t("bkPast"), past.length)}</div>`;
-  if (ST.bkSeg === "up") h += up.length ? `<div class="card" role="list" style="margin-top:10px">${up.map(bkRowUp).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("The policy is saved with your booking, so a later change never surprises you.")}</p>` : `<div class="card" style="margin-top:10px">${nEmpty(esc(t("bkEmptyUp")), "idle")}<button class="btn full" data-act="go" data-v="nari:book">${t("chipBook")}</button></div>`;
+  if (ST.bkSeg === "up") h += up.length ? `<div class="card" role="list" style="margin-top:10px">${up.map(bkRowUp).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("The policy is saved with your booking, so a later change never surprises you.")}</p>` : `<div class="card" style="margin-top:10px">${nEmpty(esc(t("bkEmptyUp")), "idle")}<button class="btn full" data-act="go" data-v="cici:book">${t("chipBook")}</button></div>`;
   else h += past.length ? `<div class="card" role="list" style="margin-top:10px">${past.map(bkRowPast).join("")}</div><p class="sub sm" style="margin-top:8px">${esc(L3("Visits from the last 12 months. Ratings are private to each place and don't earn points.", "Các buổi trong 12 tháng qua. Đánh giá chỉ nơi đó xem được và không cộng điểm.", "최근 12개월 방문이에요. 평가는 해당 매장만 볼 수 있고 포인트는 없어요."))}</p>` : `<div class="card" style="margin-top:10px">${nEmpty(esc(t("bkEmptyPast")), "idle")}</div>`;
   return h;
 }
@@ -2377,39 +2461,39 @@ function openBookings(seg, id, from) {
 }
 function bookingsBack() {
   const f = ST.bkFrom || "you"; ST.page = null; ST.bkHi = null; ST.bkSeg = null; ST.bkFrom = null;
-  if (/^store:/.test(f)) ST.store = f.slice(6); else if (/^page:/.test(f)) ST.page = f.slice(5); else ST.tab = ["home", "discover", "nari", "you"].includes(f) ? f : "you";
-  render(); if (ST.tab === "nari" && !ST.page && !ST.store) scrollThread("nari"); else window.scrollTo(0, 0); $("#view").focus();
+  if (/^store:/.test(f)) ST.store = f.slice(6); else if (/^page:/.test(f)) ST.page = f.slice(5); else ST.tab = ["home", "discover", "cici", "you"].includes(f) ? f : "you";
+  render(); if (ST.tab === "cici" && !ST.page && !ST.store) scrollThread("cici"); else window.scrollTo(0, 0); $("#view").focus();
 }
-/* ---- the Nari tab ---- */
+/* ---- the Cici tab ---- */
 const QCHIPS = () => [["qbook", t("chipBook")], ["qask", t("chipAsk")], ["mybk", t("chipMyBk")]];
-const qchipRow = slim => `<div class="chips${slim ? " slim" : ""}" role="group" aria-label="${esc(t("nari"))}">${QCHIPS().map(([a, l]) => `<button class="chip" data-act="${a}" data-from="nari">${esc(l)}</button>`).join("")}</div>`;
-function nariAgainChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => S[sid].joined ? `<button class="chip" data-act="nagain" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>` : "").join("") + `</div>`; }
-function vNari() {
-  const c = CH.nari, g = gated(); c.unread = false;
+const qchipRow = slim => `<div class="chips${slim ? " slim" : ""}" role="group" aria-label="${esc(t("cici"))}">${QCHIPS().map(([a, l]) => `<button class="chip" data-act="${a}" data-from="cici">${esc(l)}</button>`).join("")}</div>`;
+function ciciAgainChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => S[sid].joined ? `<button class="chip" data-act="nagain" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>` : "").join("") + `</div>`; }
+function vCici() {
+  const c = CH.cici, g = gated(); c.unread = false;
   const scope = c.scope && S[c.scope] ? `<div class="chips" role="group" aria-label="${L3("Booking at", "Đặt tại", "예약 매장")}"><button class="chip" aria-pressed="true" data-act="unscope" aria-label="${esc(t("removeScope", { store: S[c.scope].name }))}">${logo(c.scope)} ${esc(S[c.scope].name)} ${ic("x", "s")}</button></div>` : "";
-  const head = `<div class="row" style="margin:4px 0 6px"><span class="av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt=""></span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("nari")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
-  ${g ? "" : `<button class="icb" data-act="mybk" data-from="nari" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}<button class="icb" data-act="nmore" aria-haspopup="dialog" aria-label="${t("more")}">${ic("more")}</button></div>`;
+  const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
+  ${g ? "" : `<button class="icb" data-act="mybk" data-from="cici" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}</div>`; /* A7/OQ5: the voice-demo call is cut from the MVP, so the overflow menu that only held it is gone */
   const empty = !c.msgs.length;
-  const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Nari waving hello", "Nari vẫy tay chào", "손 흔들며 인사하는 나리"), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">Nari: </span>${esc(t("nariHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${nariAgainChips()}` : "";
-  return head + scope + hello + chatUI("nari", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "무엇이든 물어보세요"), ""); /* the 3 quick chips show once, on the empty state */
+  const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">Cici: </span>${esc(t("ciciHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${ciciAgainChips()}` : "";
+  return head + scope + hello + chatUI("cici", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "무엇이든 물어보세요"), ""); /* the 3 quick chips show once, on the empty state */
 }
-function setTab(v) { if (v === "book" || v === "ask") v = "nari"; if (v !== ST.tab) ST.prevTab = ST.tab; ST.tab = v; ST.page = null; ST.store = null; track("tab_open", { tab: v }); }
-function nariBookPrompt() {
-  const c = CH.nari; if (gated()) return; const last = c.msgs[c.msgs.length - 1];
+function setTab(v) { if (v === "book" || v === "ask") v = "cici"; if (v !== ST.tab) ST.prevTab = ST.tab; ST.tab = v; ST.page = null; ST.store = null; track("tab_open", { tab: v }); if (v === "cici") track("cici_tab_open"); }
+function ciciBookPrompt() {
+  const c = CH.cici; if (gated()) return; const last = c.msgs[c.msgs.length - 1];
   if (last && last.who === "n" && last.kind === "bookPrompt") return;
   say(c, t("whatBook"), { kind: "bookPrompt", chips: exampleChips() });
 }
-function focusNari() { const i = $("#in-nari"); if (i) i.focus(); }
+function focusCici() { const i = $("#in-cici"); if (i) i.focus(); }
 /* app-state routes (C8: internal state, no URL hash routing yet) */
 function go(r) {
   const [k, a, b, ...fr] = String(r || "").split(":"), f = fr.length ? fr.join(":") : undefined;
-  if (k === "tab") { if (a === "book") return go("nari:book"); if (a === "ask") return go("nari:ask"); closeSheet(); setTab(a || "home"); render(); window.scrollTo(0, 0); if (ST.tab === "nari") scrollThread("nari"); else $("#view").focus(); return; }
-  if (k === "nari") {
-    closeSheet(); setTab("nari");
-    if (a === "book") nariBookPrompt();
-    if (a === "store" && S[b] && S[b].joined) { CH.nari.scope = b; }
-    render(); scrollThread("nari");
-    if (a === "ask") { const q = [b, f].filter(x => x != null).join(":"); if (q) chatSend("nari", decodeURIComponent(q)); else focusNari(); } else $("#view").focus();
+  if (k === "tab") { if (a === "book") return go("cici:book"); if (a === "ask") return go("cici:ask"); closeSheet(); setTab(a || "home"); render(); window.scrollTo(0, 0); if (ST.tab === "cici") scrollThread("cici"); else $("#view").focus(); return; }
+  if (k === "cici") {
+    closeSheet(); setTab("cici");
+    if (a === "book") ciciBookPrompt();
+    if (a === "store" && S[b] && S[b].joined) { CH.cici.scope = b; }
+    render(); scrollThread("cici");
+    if (a === "ask") { const q = [b, f].filter(x => x != null).join(":"); if (q) chatSend("cici", decodeURIComponent(q)); else focusCici(); } else $("#view").focus();
     return;
   }
   if (k === "bookings") return openBookings(a || null, b || null, f || null);
@@ -2417,7 +2501,7 @@ function go(r) {
   if (k === "inbox") { closeSheet(); ST.store = null; ST.page = "notif"; ST.seenN = true; render(); window.scrollTo(0, 0); return; }
   return go("tab:home");
 }
-/* system Back (Android/browser): sheet → close; page/store → back; Nari tab never clears the thread, it goes to the previous tab, else Home */
+/* system Back (Android/browser): sheet → close; page/store → back; Cici tab never clears the thread, it goes to the previous tab, else Home */
 function sysBack() {
   if (CALL) { endCall(); return "call"; }
   if ($(".sheet")) { closeSheet(); return "sheet"; }
@@ -2427,7 +2511,7 @@ function sysBack() {
   const p = ST.prevTab && ST.prevTab !== ST.tab ? ST.prevTab : "home"; ST.prevTab = null; ST.tab = p; render(); return "tab:" + p;
 }
 /* NT-9: one-time merge of old Book + Ask threads (saved by earlier builds under nari.chat.book / nari.chat.ask) */
-const OLD_ASK_HELLO = /^Hi Mina, I'm Nari\. I can book at any of your places|^Chào Mina, mình là Nari\. Mình có thể đặt lịch ở mọi nơi|^안녕하세요 미나, 저는 나리예요\. 모든 매장의 예약/;
+const OLD_ASK_HELLO = new RegExp(`^Hi Mina, I'm (?:${LEGACY_NAME.en}|Cici)\\. I can book at any of your places|^Chào Mina, mình là (?:${LEGACY_NAME.en}|Cici)\\. Mình có thể đặt lịch ở mọi nơi|^안녕하세요 미나, 저는 (?:${LEGACY_NAME.ko}|${CICI_KO})예요\\. 모든 매장의 예약`);
 function migrateThreads(book, ask) {
   const all = [].concat(book || [], ask || []).map((m, i) => [m, i]);
   let ms = all.filter(([m]) => !(m.who === "n" && OLD_ASK_HELLO.test(m.text || "")));
@@ -2436,23 +2520,34 @@ function migrateThreads(book, ask) {
   return ms.map(([m]) => ({ who: m.who === "me" ? "me" : "n", text: String(m.text || ""), t: m.t || 0 }));
 }
 /* the merged thread is saved on this device across sessions (last 60 messages; text, cards and the safety gate only; action chips aren't kept) */
-const THREAD_KEY = "nari.thread";
-function saveThread(store) { try { store = store || localStorage; const c = CH.nari; const all = c.msgs, safeAt = i => { for (let j = i + 1; j < all.length && all[j].who !== "me"; j++) if (all[j].care) return true; return false; }; /* privacy: a member message answered by a crisis / urgent / check-in turn is never written to storage */
+const THREAD_KEY = "cici.thread"; const THREAD_KEY_OLD = "nari.thread";
+function saveThread(store) { try { store = store || localStorage; const c = CH.cici; const all = c.msgs, safeAt = i => { for (let j = i + 1; j < all.length && all[j].who !== "me"; j++) if (all[j].care) return true; return false; }; /* privacy: a member message answered by a crisis / urgent / check-in turn is never written to storage */
     const ms = all.map((m, i) => m.who === "me" && (m.redacted || safeAt(i)) ? { who: "me", text: "", redacted: 1, t: m.t || 0 } : m).slice(-60).map(m => { if (m.redacted) return m; const o = { who: m.who, text: m.text, t: m.t || 0 }; for (const k of ["div", "care", "card", "src", "note", "bk"]) if (m[k] != null) o[k] = m[k]; return o; }); store.setItem(THREAD_KEY, JSON.stringify({ v: 1, msgs: ms, gate: !!c.gate })); } catch (e) {} }
-function loadThread(store) { try { store = store || localStorage; const o = JSON.parse(store.getItem(THREAD_KEY) || "null"); if (o && Array.isArray(o.msgs) && o.msgs.length) { CH.nari.msgs = o.msgs.filter(m => m && (m.who === "me" || m.who === "n" || m.who === "sys")).map(m => m.redacted ? { who: "me", text: "", redacted: 1, t: m.t || 0 } : m); CH.nari.gate = !!o.gate; return true; } } catch (e) {} return false; }
+function loadThread(store) { try { store = store || localStorage; const o = JSON.parse(store.getItem(THREAD_KEY) || "null"); if (o && Array.isArray(o.msgs) && o.msgs.length) { CH.cici.msgs = o.msgs.filter(m => m && (m.who === "me" || m.who === "n" || m.who === "sys")).map(m => m.redacted ? { who: "me", text: "", redacted: 1, t: m.t || 0 } : m); CH.cici.gate = !!o.gate; return true; } } catch (e) {} return false; }
+/* MVP-R3: one-time, idempotent move of the saved Nari thread (nari.thread / CH.nari) to Cici (cici.thread / CH.cici); every message once, never twice */
+function migrateCiciThread(store) {
+  store = store || localStorage; if (store.getItem("cici.migrated") === "1") return false;
+  let old = null, cur = null; try { old = JSON.parse(store.getItem(THREAD_KEY_OLD) || "null"); cur = JSON.parse(store.getItem(THREAD_KEY) || "null"); } catch (e) {}
+  const om = old && Array.isArray(old.msgs) ? old.msgs : [], cm = cur && Array.isArray(cur.msgs) ? cur.msgs : [], seen = new Set(cm.map(m => [m.who, m.text, m.t].join("|")));
+  const all = cm.concat(om.filter(m => m && !seen.has([m.who, m.text, m.t].join("|"))));
+  all.sort((x, y) => (x.t || 0) - (y.t || 0));
+  if (om.length) store.setItem(THREAD_KEY, JSON.stringify({ v: 1, msgs: all.slice(-60), gate: !!((old && old.gate) || (cur && cur.gate)) }));
+  store.removeItem(THREAD_KEY_OLD); store.setItem("cici.migrated", "1"); return om.length > 0;
+}
 function migrateOnLoad(store) {
   store = store || localStorage;
-  const st = store.getItem("nari.tab"); if (st) { ST.tab = ["book", "ask"].includes(st) ? "nari" : ["home", "discover", "nari", "you"].includes(st) ? st : "home"; store.removeItem("nari.tab"); } /* NT-7: an old saved tab lands on Nari */
+  migrateCiciThread(store);
+  const st = store.getItem("cici.tab") || store.getItem("nari.tab"); if (st) { ST.tab = ["book", "ask", "nari"].includes(st) ? "cici" : ["home", "discover", "cici", "you"].includes(st) ? st : "home"; store.removeItem("nari.tab"); store.removeItem("cici.tab"); } /* NT-7 / MVP-R2: an old saved tab (nari/book/ask) lands on Cici */
   loadThread(store);
   if (store.getItem("nari.migrated") === "1") return false;
   let ob = null, oa = null; try { ob = JSON.parse(store.getItem("nari.chat.book") || "null"); oa = JSON.parse(store.getItem("nari.chat.ask") || "null"); } catch (e) {}
   const ms = migrateThreads(ob && ob.msgs || ob, oa && oa.msgs || oa);
-  if (ms.length) CH.nari.msgs = ms.concat([{ who: "sys", div: 1, t: Date.now() }]), saveThread(store);
+  if (ms.length) CH.cici.msgs = ms.concat([{ who: "sys", div: 1, t: Date.now() }]), saveThread(store);
   store.setItem("nari.migrated", "1"); store.removeItem("nari.chat.book"); store.removeItem("nari.chat.ask");
   return ms.length > 0;
 }
 
-/* NT-15: Book again in the Nari tab = 2 taps (chip → Book). The next open slot is pre-picked and stays editable (other-time chips, or the full sheet) */
+/* NT-15: Book again in the Cici tab = 2 taps (chip → Book). The next open slot is pre-picked and stays editable (other-time chips, or the full sheet) */
 function againSlots(i, n) {
   const [sid, vid, o] = AGAIN[i], s = S[sid], out = [], opt = s.kind === "rental" ? { len: 60 } : { staff: o.staff || "any" };
   for (let d = 0; d < 14 && out.length < n; d++) for (const z of slotsFor(sid, vid, d, opt)) { if (z.left === 0) continue; out.push(Object.assign({}, z, { store: sid, svc: vid, party: o.party || (s.kind === "rental" ? 4 : 0), paddles: 0, source: "chat" })); if (out.length >= n) break; }
@@ -2460,13 +2555,13 @@ function againSlots(i, n) {
 }
 const againLine = x => L3(`Next open: ${N(svcOf(x.store, x.svc).n)} at ${S[x.store].name}, ${fWhen(x.d, x.m)}. Tap Book, or pick another time.`, `Giờ trống gần nhất: ${N(svcOf(x.store, x.svc).n)} ở ${S[x.store].name}, ${fWhen(x.d, x.m)}. Chạm Đặt, hoặc chọn giờ khác.`, `가장 빠른 시간: ${S[x.store].name} ${N(svcOf(x.store, x.svc).n)}, ${fWhen(x.d, x.m)}. 예약을 누르거나 다른 시간을 고르세요.`);
 const againAlts = (i, cur) => againSlots(i, 4).filter(z => !(z.d === cur.d && z.m === cur.m)).slice(0, 3).map(z => chip(fDay(z.d) + " " + fTime(z.m), { act: "aslot", i, x: z })).concat([chip(L3("More times", "Giờ khác", "다른 시간"), { act: "againmore", i })]);
-function nariAgain(i) {
-  const c = CH.nari, [sid, vid, o, l] = AGAIN[i]; if (!AGAIN[i] || gated()) return; TURN_SAFE = false; track("chip_tap", { kind: "again" });
+function ciciAgain(i) {
+  const c = CH.cici, [sid, vid, o, l] = AGAIN[i]; if (!AGAIN[i] || gated()) return; TURN_SAFE = false; track("cici_chip_tap", { kind: "again" });
   c.msgs.push({ who: "me", text: N(l), t: Date.now() }); c.draft = null; c.ask = "confirm";
   const z = againSlots(i, 1)[0];
   if (!z) say(c, L3(`Nothing open at ${S[sid].name} in the next 2 weeks.`, `${S[sid].name} không còn chỗ trong 2 tuần tới.`, `${S[sid].name}에 앞으로 2주 동안 빈 시간이 없어요.`), { chips: [chip(L3("More times", "Giờ khác", "다른 시간"), { act: "againmore", i })] });
-  else { const x = completeDraft(z); say(c, againLine(x), { confirm: x, chips: againAlts(i, x) }); }
-  render(); scrollThread("nari");
+  else { const x = completeDraft(z); say(c, againLine(x), { confirm: x, chips: againAlts(i, x) }); track("booking_review_open", { via: "chat" }); }
+  render(); scrollThread("cici");
 }
 /* ===== events ===== */
 document.addEventListener("click", e => {
@@ -2479,19 +2574,19 @@ document.addEventListener("click", e => {
     case "go": go(d.v); break;
     case "mybk": openBookings(null, null, d.from || null); break;
     case "bkseg": ST.bkSeg = d.v; ST.bkHi = null; renderView(); { const f = $(`[data-act="bkseg"][data-v="${d.v}"]`); if (f) f.focus(); } break;
-    case "qbook": track("chip_tap", { kind: "qbook" }); CH.nari.msgs.push({ who: "me", text: t("chipBook"), t: Date.now() }); say(CH.nari, t("whatBook"), { kind: "bookPrompt", chips: exampleChips() }); renderView(); scrollThread("nari"); break;
-    case "qask": track("chip_tap", { kind: "qask" }); CH.nari.msgs.push({ who: "me", text: t("chipAsk"), t: Date.now() }); say(CH.nari, t("askPrompt"), { kind: "askPrompt" }); renderView(); scrollThread("nari"); focusNari(); break;
-    case "nagain": nariAgain(+d.i); break;
-    case "pastagain": { const b = bk(d.id); const i = AGAIN.findIndex(([sid, vid]) => sid === b.store && vid === b.svc); if (i >= 0) { setTab("nari"); render(); nariAgain(i); } else openBook(b.store, b.svc); break; }
-    case "unscope": CH.nari.scope = null; renderView(); focusNari(); break;
-    case "nmore": openSheet(sheetHd(t("more")) + `<div class="stack"><button class="btn sec full" data-act="calldemo">${ic("mic", "s")} ${esc(t("nariDemo"))}</button><p class="sub sm" style="margin:0">${esc(L3("A demo of talking to Nari by voice. It isn't a real phone call and doesn't reach a person or a store.", "Bản demo nói chuyện với Nari bằng giọng nói. Không phải cuộc gọi thật, không kết nối với người hay cửa hàng.", "나리와 음성으로 대화하는 데모예요. 실제 전화가 아니고 사람이나 매장에 연결되지 않아요."))}</p></div>`, t("more")); break;
-    case "calldemo": closeSheet(); openCall(); break;
+    case "qbook": track("cici_chip_tap", { kind: "qbook" }); CH.cici.msgs.push({ who: "me", text: t("chipBook"), t: Date.now() }); say(CH.cici, t("whatBook"), { kind: "bookPrompt", chips: exampleChips() }); renderView(); scrollThread("cici"); break;
+    case "qask": track("cici_chip_tap", { kind: "qask" }); CH.cici.msgs.push({ who: "me", text: t("chipAsk"), t: Date.now() }); say(CH.cici, t("askPrompt"), { kind: "askPrompt" }); renderView(); scrollThread("cici"); focusCici(); break;
+    case "nagain": ciciAgain(+d.i); break;
+    case "pastagain": { const b = bk(d.id); const i = AGAIN.findIndex(([sid, vid]) => sid === b.store && vid === b.svc); if (i >= 0) { setTab("cici"); render(); ciciAgain(i); } else openBook(b.store, b.svc); break; }
+    case "unscope": CH.cici.scope = null; renderView(); focusCici(); break;
+    case "nmore": openSheet(sheetHd(t("more")) + `<div class="stack"><button class="btn sec full" data-act="calldemo">${ic("mic", "s")} ${esc(t("ciciDemo"))}</button><p class="sub sm" style="margin:0">${esc(L3("A demo of talking to Cici by voice. It isn't a real phone call and doesn't reach a person or a store.", "Bản demo nói chuyện với Cici bằng giọng nói. Không phải cuộc gọi thật, không kết nối với người hay cửa hàng.", CICI_KO + "와 음성으로 대화하는 데모예요. 실제 전화가 아니고 사람이나 매장에 연결되지 않아요."))}</p></div>`, t("more")); break;
+    case "calldemo": break; /* A7/OQ5: voice demo cut */
     case "callstore": callStoreSheet(d.v); break;
     case "askstudio": askStudioSheet(bk(d.id)); break;
-    case "youpage": if (d.v === "bookings") { go("bookings:up::you"); break; } ST.page = d.v; render(); window.scrollTo(0, 0); $("#view").focus(); break;
+    case "youpage": if (d.v === "vouchers" && !PV.flag) d.v = "wallet"; if (d.v === "bookings") { go("bookings:up::you"); break; } ST.page = d.v; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "vseg": ST.vseg = d.v; render(); { const b = $(`[data-act=vseg][data-v=${d.v}]`); if (b) b.focus(); } break;
     case "wallet": walletSheet(d.s, d.v); break;
-    case "walletbook": go("nari:store:" + d.s); if (S[d.s] && S[d.s].joined) { CH.nari.scope = d.s; nariBookPrompt(); render(); scrollThread("nari"); } break;
+    case "walletbook": go("cici:store:" + d.s); if (S[d.s] && S[d.s].joined) { CH.cici.scope = d.s; ciciBookPrompt(); render(); scrollThread("cici"); } break;
     case "walletdep": depositSheet(+d.id); break;
     case "askstudiook": { const b = bk(d.id), r = askStudioSend(b, ($("#asn") || {}).value || ""); if (r.ok) { closeSheet(); render(); toast(t("askStudioSent", { store: S[b.store].name })); } break; }
     case "rate": rateSheet(bk(d.id)); break;
@@ -2543,7 +2638,7 @@ document.addEventListener("click", e => {
     case "cat": ST.cat = d.v; renderView(); { const el2 = $(`[data-act="cat"][data-v="${d.v}"]`); if (el2) el2.focus(); } break;
     case "whyad": toast("Shown by area. Not based on your bookings or health."); break;
     case "fake": toast(d.v); break;
-    case "call": openCall(); break; /* the voice demo; only reachable from the Nari overflow menu */
+    case "call": break; /* voice demo cut from MVP (OQ5/A7); handler kept as no-op */
     case "mute": if (CALL) { CALL.muted = !CALL.muted; el.setAttribute("aria-pressed", String(CALL.muted)); el.setAttribute("aria-label", CALL.muted ? t("unmute") : t("mute")); el.innerHTML = ic(CALL.muted ? "micoff" : "mic"); $("#mutel").textContent = CALL.muted ? t("unmute") : t("mute"); if (CALL.muted) try { speechSynthesis.cancel(); } catch (er) {} } break;
     case "hang": endCall(); break;
     case "callyes": callYes(true); break;
@@ -2554,7 +2649,9 @@ document.addEventListener("click", e => {
     case "helptalk": closeSheet(); CH[d.c].msgs.push({ who: "me", text: HELP_LINK() }); sosOpen(d.c); break;
     case "sos": CH[d.c].msgs.push({ who: "me", text: SOS_BTN() }); sosOpen(d.c); break;
     case "chatbook": chatBook(d.c, +d.i); break;
-    case "ex": case "askq": chatSend("nari", d.v); break;
+    case "addcal": toast(L3("Added to your calendar (demo).", "Đã thêm vào lịch (demo).", "캘린더에 추가했어요 (데모).")); break;
+    case "waitlist": PEND = null; closeSheet(); toast(L3("You're on the waitlist. We'll tell you if a spot opens. (Demo)", "Bạn đã vào danh sách chờ. Có chỗ trống sẽ báo bạn. (Demo)", "대기 명단에 올렸어요. 자리가 나면 알려 드릴게요. (데모)")); break;
+    case "ex": case "askq": chatSend("cici", d.v); break;
   }
 });
 document.addEventListener("submit", e => {
@@ -2610,7 +2707,7 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   pointsExpireWarn: ["{n} points expire on {date}. Visit any store to keep them.", "{n} điểm sẽ hết hạn vào {date}. Ghé bất kỳ cửa hàng nào để giữ điểm.", "{n}포인트가 {date}에 만료돼요. 아무 매장이나 방문하면 유지돼요."],
   voucherExpireWarn: ["Your {v} voucher expires in {n} days.", "Ưu đãi {v} của bạn sẽ hết hạn sau {n} ngày.", "{v} 쿠폰이 {n}일 후 만료돼요."],
   reversed: ["{n} points were reversed: {s} updated your visit.", "Đã trừ {n} điểm: {s} đã cập nhật lần đến của bạn.", "{s}에서 방문 기록을 수정해 {n}포인트가 차감됐어요."],
-  history: ["Points history", "Lịch sử điểm", "포인트 내역"], outfitUnlocked: ["New outfit for Nari unlocked!", "Đã mở khóa trang phục mới cho Nari!", "Nari의 새 의상이 열렸어요!"],
+  history: ["Points history", "Lịch sử điểm", "포인트 내역"], outfitUnlocked: ["New outfit for Cici unlocked!", "Đã mở khóa trang phục mới cho Cici!", CICI_KO + "의 새 의상이 열렸어요!"],
   migrated: ["Your XP and coins are now points. Your level is kept.", "XP và xu của bạn đã chuyển thành điểm. Cấp độ của bạn được giữ nguyên.", "XP와 코인이 포인트로 바뀌었어요. 레벨은 그대로예요."],
   migratedLine: ["Your XP is now {p}. Your {n} coins are pending and unlock with rewards.", "XP của bạn giờ là {p}. {n} xu của bạn đang chờ và sẽ mở khi có ưu đãi.", "XP가 {p}로 바뀌었어요. 코인 {n}개는 대기 중이며 리워드가 열리면 사용할 수 있어요."],
   legacyPending: ["{n} pending · unlocks with rewards", "{n} đang chờ · mở khi có ưu đãi", "{n} 대기 중 · 리워드가 열리면 사용 가능"],
@@ -2656,7 +2753,7 @@ function row(m, o, t) { /* append-only ledger (A8, AC-P37) */
   m.ledger.push(r); return r;
 }
 function note(m, k, v) { m.notices.push({ k, v: v || {}, t: PV.now() }); }
-function checkLevel(m) { const n = lvlOf(m); if (n > m.lvlSeen) { m.lvlSeen = n; note(m, "outfitUnlocked", { lvl: n, outfit: OUTFIT[n - 1] }); } }
+function checkLevel(m) { const n = lvlOf(m); m.unlocked = m.unlocked || []; if (n > m.lvlSeen) { for (let k = m.lvlSeen + 1; k <= n; k++) if (!m.unlocked.includes("o" + k)) m.unlocked.push("o" + k); m.lvlSeen = n; note(m, "outfitUnlocked", { lvl: n, outfit: OUTFIT[n - 1], item: "o" + n }); } } /* MVP-L1/L3: lvlSeen never goes down, so a reversal + re-earn never fires the same unlock twice; unlocked items stay (OQ4) */
 /* migration (§10, AC-P34, AC-P54a/b) — idempotent */
 function pvMigrate(m, old) {
   if (m.migrated) return false; m.migrated = true;
@@ -2721,6 +2818,60 @@ function pvMission(m, kind, now) {
   if ((m.misWeek[wk] || 0) >= 60) { row(m, { reason: "mission_week_cap", src: kind }, now); return { pts: 0, msg: "missionWeekCap" }; }
   m.misDay[dk] = (m.misDay[dk] || 0) + 1; m.misWeek[wk] = (m.misWeek[wk] || 0) + 10;
   row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); return { pts: 10 };
+}
+/* MVP-S1..S8: store confirm (scan check-in code / Mark attended). Staff strings in EN, VI, KO; VI and KO need native review before launch (S8). */
+const STAFF_TX = {
+  title: ["Store confirm", "Xác nhận cửa hàng", "매장 확인"],
+  sub: ["Staff · demo · VI/KO pending native review", "Nhân viên · demo · VI/KO chờ duyệt bản ngữ", "직원 · 데모 · VI/KO 원어민 검토 대기"],
+  toConfirm: ["Visits to confirm", "Lượt đến cần xác nhận", "확인할 방문"],
+  none: ["No pending visits.", "Không có lượt đến chờ xác nhận.", "확인 대기 중인 방문이 없어요."],
+  scan: ["Scan member code", "Quét mã của khách", "회원 코드 스캔"],
+  mark: ["Mark attended", "Xác nhận đã đến", "방문 처리"],
+  reason: ["Reason", "Lý do", "사유"],
+  pick: ["Choose a reason", "Chọn lý do", "사유 선택"],
+  r_no_phone: ["No phone", "Không mang điện thoại", "휴대폰 없음"], r_app_issue: ["App issue", "Lỗi ứng dụng", "앱 오류"], r_other: ["Other", "Khác", "기타"],
+  confirmed: ["Confirmed", "Đã xác nhận", "확인됨"],
+  okScan: ["Visit confirmed · +{n} points", "Đã xác nhận · +{n} điểm", "방문 확인 · +{n}포인트"],
+  okMark: ["Marked attended · +{n} points", "Đã xác nhận đến · +{n} điểm", "방문 처리 · +{n}포인트"],
+  needReason: ["Choose a reason first", "Hãy chọn lý do trước", "먼저 사유를 선택하세요"],
+  wrongStore: ["This code is for another store", "Mã này thuộc cửa hàng khác", "다른 매장의 코드예요"],
+  expired: ["This code has expired. Ask the member to refresh it", "Mã đã hết hạn. Nhờ khách làm mới mã", "코드가 만료됐어요. 회원에게 새로고침을 요청하세요"],
+  already: ["This visit is already confirmed", "Lượt đến này đã được xác nhận", "이미 확인된 방문이에요"],
+  closed: ["Check-in closed (24 h after class end)", "Đã đóng xác nhận (24 giờ sau buổi học)", "체크인 마감 (수업 종료 24시간 후)"],
+  early: ["Class hasn't started yet", "Buổi học chưa bắt đầu", "수업이 아직 시작되지 않았어요"],
+  noBooking: ["Member has no booking here", "Khách không có lịch đặt ở đây", "이 매장에 예약이 없어요"],
+  limit: ["Daily Mark attended limit reached", "Đã đạt giới hạn xác nhận trong ngày", "오늘 방문 처리 한도에 도달했어요"],
+  offline: ["Can't confirm offline. Try again", "Không thể xác nhận khi mất mạng. Thử lại", "오프라인에서는 확인할 수 없어요. 다시 시도하세요"],
+  offToggle: ["Demo: store app offline", "Demo: ứng dụng cửa hàng mất mạng", "데모: 매장 앱 오프라인"],
+  flagged: ["Store flagged for audit: {n} marks today (over 20)", "Cửa hàng bị gắn cờ kiểm tra: {n} lượt hôm nay (trên 20)", "감사 대상 매장: 오늘 {n}건 (20건 초과)"],
+  marksLeft: ["Mark attended left today: {n}/10", "Lượt xác nhận còn lại hôm nay: {n}/10", "오늘 남은 방문 처리: {n}/10"]
+};
+const sT = (k, v) => { let x = (STAFF_TX[k] || [k])[L === "vi" ? 1 : L === "ko" ? 2 : 0]; if (v) for (const y in v) x = x.split("{" + y + "}").join(v[y]); return x; };
+const S_ERR = { not_booked: "already", too_early: "early", window_closed: "closed", wrong_store: "noBooking", nobooking: "noBooking", store_only: "noBooking" };
+PV.ccodes = PV.ccodes || {};
+/* member check-in code: valid 10 minutes, one per booking (S1/S2) */
+function checkinCode(bid, now) { now = now == null ? PV.now() : now; const c = "C" + String(100000 + (hsh(bid + "|" + now) % 900000)); PV.ccodes[c] = { bid, exp: now + 10 * MIN }; return c; }
+function scanCheckin(staff, store, m, code, now) {
+  now = now == null ? PV.now() : now;
+  if (!PV.storeOnline) return { ok: false, key: "offline" };
+  const c = PV.ccodes[code]; if (!c) return { ok: false, key: "expired" };
+  const bk = BKREG[c.bid]; if (!bk || bk.member !== m.id) return { ok: false, key: "noBooking" };
+  if (bk.store !== store) return { ok: false, key: "wrongStore" };
+  if (m.att[c.bid] && !m.att[c.bid].reversed) return { ok: false, key: "already" };
+  if (now >= bk.end + DAY) return { ok: false, key: "closed" };
+  if (now > c.exp) return { ok: false, key: "expired" };
+  const r = confirmVisit(m, c.bid, staff, now, store); if (!r.ok) return { ok: false, key: S_ERR[r.err] || "noBooking" };
+  delete PV.ccodes[code]; return Object.assign({ key: "okScan" }, r);
+}
+function staffMark(staff, store, m, bid, reason, now) {
+  now = now == null ? PV.now() : now;
+  if (!PV.storeOnline) return { ok: false, key: "offline" };
+  if (!reason) return { ok: false, key: "needReason" };
+  if (m.att[bid] && !m.att[bid].reversed) return { ok: false, key: "already" };
+  const bk = BKREG[bid]; if (bk && now >= bk.end + DAY) return { ok: false, key: "closed" };
+  const r = markAttended(staff, store, m, bid, reason, now);
+  if (!r.ok) return { ok: false, key: r.err === PV_STAFF.markLimit ? "limit" : bk && bk.store !== store ? "noBooking" : /closed/i.test(r.err) ? "closed" : /started/i.test(r.err) ? "early" : "noBooking", err: r.err };
+  return Object.assign({ key: "okMark" }, r);
 }
 /* Store app: Mark attended fallback (E1, AC-P45) */
 function markAttended(staff, store, m, bid, reason, now) {
@@ -2855,7 +3006,7 @@ function notesCard() {
   if (!ME) return ""; pvTick(ME); const ns = ME.notices.filter(n => !n.seen && (n.k !== "milestone" || PV.flag));
   if (!ns.length) return "";
   const ms = PV.flag && ns.some(n => n.k === "milestone");
-  return `<section class="card row" id="pv-notes" style="margin:12px 0;border-color:var(--rasp);gap:8px" aria-live="polite">${ms ? cut("ribbon", { cls: "cut-note", alt: L3("Nari twirling a ribbon", "Nari múa dải ruy băng", "리본을 돌리는 나리") }) : ""}<div class="grow">${ns.map(n => `<p class="sm" style="margin:0"><b>${esc(noteText(n))}</b></p>`).join("")}</div><button class="btn sec" data-act="pvseen">OK</button></section>`;
+  return `<section class="card row" id="pv-notes" style="margin:12px 0;border-color:var(--rasp);gap:8px" aria-live="polite">${ms ? cut("ribbon", { cls: "cut-note", alt: L3("Cici twirling a ribbon", "Cici múa dải ruy băng", "리본을 돌리는 " + CICI_KO) }) : ""}<div class="grow">${ns.map(n => `<p class="sm" style="margin:0"><b>${esc(noteText(n))}</b></p>`).join("")}</div><button class="btn sec" data-act="pvseen">OK</button></section>`;
 }
 function pendingCard() {
   if (!ME) return ""; const p = pendingFor(ME, PV.now()); if (!p.length) return "";
@@ -2870,13 +3021,14 @@ function pointsBlock() {
 ${!PV.flag ? `<div id="pv-how" style="margin-top:10px"><b class="sm">${esc(pvT("howEarnT"))}</b><ul class="sm" style="margin:4px 0 0;padding-left:18px"><li>${esc(pvT("eVisit", { n: EARN.visit, d: EARN.perDay }))}</li><li>${esc(pvT("eNew", { n: EARN.newplace, m: EARN.newPerMonth }))}</li><li>${esc(pvT("eMission", { n: EARN.mission, d: EARN.misDay, w: EARN.misWeek }))}</li></ul></div>` : ""}
 ${m.legacyOpen ? `<p class="sub sm" id="pv-legacy" style="margin:6px 0 0">${esc(pvT("legacyPending", { n: fmtN(m.legacyCoins) }))}</p>` : ""}`;
   const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
+  h += pendingCard();
   h += `<button class="link" data-act="pvhist" style="min-height:44px">${esc(pvT("history"))}</button></div>`;
   return h;
 }
 function wardrobe() {
   const lv = lvlOf(ME), OF = [["o1", 1], ["o2", 2], ["o3", 3], ["o4", 4], ["o5", 5]], CO = [["wrap", tr("Studio wrap top")], ["lan", tr("Mid-Autumn lantern")]].filter(([id]) => ST.owned.includes(id));
   const tile = (id, nm, sub, ok) => `<button class="tile${ok ? "" : " lock"}" data-act="pvwear" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : "disabled"} style="min-height:44px;font:inherit;color:inherit"><span class="ic">${ic(ok ? "shirt" : "lock")}</span><b class="sm">${esc(nm)}</b><span class="sub sm">${esc(sub)}</span></button>`;
-  return `<h2>${t("wardrobe")}</h2><div class="tiles">${OF.map(([id, n]) => tile(id, OUTFIT[n - 1], n <= lv ? (ST.wear === id ? "✓" : tr("Owned")) : pvT("levelLocked", { n }), n <= lv)).join("")}${CO.map(([id, nm]) => tile(id, nm, tr("Owned"), true)).join("")}</div>`;
+  return `<h2>${t("wardrobe")}</h2><div class="tiles">${OF.map(([id, n]) => tile(id, OUTFIT[n - 1], (n <= lv || (ME.unlocked || []).includes(id)) ? (ST.wear === id ? "✓" : tr("Owned")) : pvT("levelLocked", { n }), n <= lv || (ME.unlocked || []).includes(id))).join("")}${CO.map(([id, nm]) => tile(id, nm, tr("Owned"), true)).join("")}</div>`;
 }
 function vchLine(c) { const v = c.terms; return v.type === "percent" ? v.value + "%" : v.type === "fixed" ? fmtMoney(v.value, v.cur || "VND") : pvTx(v.title); }
 function scopeTx(v) { return v.brand ? pvT("offeredBy", { brand: v.brand }) : (v.store ? pvT("onlyAt", { s: storeNm(v.store) }) : L3("Any participating place", "Mọi nơi tham gia", "참여 매장 어디서나")); }
@@ -2901,8 +3053,33 @@ function rewardsBlock() {
 }
 /* PR11-P5 / review P2: staff tools, voucher publishing and the U1 toggle only in demo/debug mode (?demo=1, ?debug=1 or ?realRewards=1) */
 const DEMO_MODE = (() => { const q = new URLSearchParams(location.search); return ["demo", "debug"].some(k => q.get(k) === "1" || q.get(k) === "true") || q.get("realRewards") === "1" || q.get("realRewards") === "true"; })();
-function storeAppBtn() { if (!DEMO_MODE) return ""; return `<h2>${L3("Store app (demo)", "Ứng dụng cửa hàng (demo)", "매장 앱 (데모)")}</h2><div class="stack"><button class="svc" data-act="pvstore">${ic("info")}<span class="grow"><b>${L3("Open the staff view", "Mở màn hình nhân viên", "직원 화면 열기")}</b><br><span class="sub sm">${L3("Confirm visits, validate vouchers. Staff screens are English only for now.", "Xác nhận lượt đến, kiểm tra ưu đãi. Màn hình nhân viên hiện chỉ có tiếng Anh.", "방문 확인, 쿠폰 확인. 직원 화면은 현재 영어로만 제공돼요.")}</span></span>${ic("chev")}</button>
-  <label class="row sm" style="min-height:44px"><input type="checkbox" id="pv-flag" data-act="pvflag" ${PV.flag ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: turn on real rewards (U1 not decided yet)", "Demo: bật ưu đãi thật (U1 chưa quyết định)", "데모: 실제 리워드 켜기 (U1 미결정)")}</span></label></div>`; }
+/* OQ7 / Q7: MVP points need store-confirmed visits (E1). A minimal Mark-attended screen ships behind this flag (default ON; ?storeConfirm=0 turns it off). The full store app (vouchers publish, audit) still needs ?demo=1. */
+const MVP = { storeConfirm: (() => { const q = new URLSearchParams(location.search).get("storeConfirm"); return !(q === "0" || q === "false"); })() };
+function storeAppBtn() {
+  let h = "";
+  if (MVP.storeConfirm || DEMO_MODE) h += `<h2>${L3("Store confirm", "Xác nhận cửa hàng", "매장 확인")}</h2><div class="stack"><button class="svc" data-act="pvconfirm" id="mvp-confirm">${ic("check")}<span class="grow"><b>${L3("Mark a visit attended", "Xác nhận khách đã đến", "방문 확인하기")}</b><br><span class="sub sm">${esc(L3("Staff confirms a booking so the member earns points.", "Nhân viên xác nhận buổi đặt để khách nhận điểm.", "직원이 예약을 확인해야 포인트가 적립돼요."))}</span></span>${ic("chev")}</button>
+  <label class="row sm" style="min-height:44px"><input type="checkbox" id="mvp-sc" data-act="mvpflag" ${MVP.storeConfirm ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: store confirm screen (OQ7)", "Demo: màn xác nhận cửa hàng (OQ7)", "데모: 매장 확인 화면 (OQ7)")}</span></label></div>`;
+  if (DEMO_MODE) h += `<h2>${L3("Store app (demo)", "Ứng dụng cửa hàng (demo)", "매장 앱 (데모)")}</h2><div class="stack"><button class="svc" data-act="pvstore">${ic("info")}<span class="grow"><b>${L3("Open the full staff view", "Mở toàn bộ màn hình nhân viên", "전체 직원 화면 열기")}</b><br><span class="sub sm">${L3("Validate vouchers, publish rewards, audit. Staff screens are English only.", "Kiểm ưu đãi, đăng ưu đãi, nhật ký. Chỉ tiếng Anh.", "쿠폰 확인, 리워드 등록, 감사. 영어만.")}</span></span>${ic("chev")}</button>
+  <label class="row sm" style="min-height:44px"><input type="checkbox" id="pv-flag" data-act="pvflag" ${PV.flag ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: turn on real rewards (U1 not decided yet)", "Demo: bật ưu đãi thật (U1 chưa quyết định)", "데모: 실제 리워드 켜기 (U1 미결정)")}</span></label></div>`;
+  return h;
+}
+/* OQ7 minimal confirm: pending bookings for the selected store + Mark attended / Scan. No voucher publish, no audit. */
+function confirmSheet(msg) {
+  if (!MVP.storeConfirm && !DEMO_MODE) return toast(L3("Store confirm is off. Turn it on in Settings, or open with ?storeConfirm=1.", "Xác nhận cửa hàng đang tắt. Bật trong Cài đặt, hoặc mở với ?storeConfirm=1.", "매장 확인이 꺼져 있어요. 설정에서 켜거나 ?storeConfirm=1로 여세요."));
+  const now = PV.now(), sid = PVSTORE, pend = pendingFor(ME, now).filter(b => b.store === sid), staff = "staff:" + sid + "-desk";
+  const att = Object.entries(ME.att).filter(([id, a]) => a.store === sid && !a.reversed);
+  const left = Math.max(0, PV.markLimit - (PV.staffMarks[staff + "|" + dayKey(ME, now)] || 0)), fl = PV.audit.flag && PV.audit.flag[sid + "|" + dayKey(ME, now)];
+  let h = `<p class="sub sm">${esc(sT("sub"))}</p><div class="chips" role="group" aria-label="${esc(sT("title"))}">${joinedIds().map(s => `<button class="chip" data-act="pvsstore" data-v="${s}" aria-pressed="${s === sid}">${esc(S[s].name)}</button>`).join("")}</div>`;
+  if (msg) h += `<p class="card sm" id="pv-smsg" role="status" style="margin-top:10px"><b>${esc(msg)}</b></p>`;
+  if (fl) h += `<p class="card sm" id="sc-flag" role="alert"><b>${esc(sT("flagged", { n: fl }))}</b></p>`;
+  h += `<h2>${esc(sT("toConfirm"))}</h2><div class="card stack">${pend.length ? pend.map(b => `<div class="stack sc-item" data-v="${b.id}"><b class="sm">Mina · ${esc(b.label || "class")} · ${esc(fDateP(b.start || PV.now()))}</b><div class="row wrap" style="gap:8px"><button class="btn" data-act="pvcscan" data-v="${b.id}">${esc(sT("scan"))}</button>
+    <label class="sr" for="sc-r-${b.id}">${esc(sT("reason"))}</label><select id="sc-r-${b.id}" style="min-height:44px;font:inherit;border-radius:10px;border:1px solid var(--line);padding:0 8px"><option value="">${esc(sT("pick"))}</option>${["no_phone", "app_issue", "other"].map(r => `<option value="${r}">${esc(sT("r_" + r))}</option>`).join("")}</select>
+    <button class="btn sec dk" data-act="pvcmark" data-v="${b.id}">${esc(sT("mark"))}</button></div></div>`).join("") : `<p class="sub sm" style="margin:0">${esc(sT("none"))}</p>`}<p class="sub sm" id="sc-left" style="margin:0">${esc(sT("marksLeft", { n: left }))}</p></div>`;
+  if (att.length) h += `<h2>${esc(sT("confirmed"))}</h2><div class="card stack">${att.map(([id, a]) => `<div class="row sm"><span class="grow">Mina · ${esc(fDateP(a.t))}</span></div>`).join("")}</div>`;
+  h += `<label class="row sm" style="min-height:44px"><input type="checkbox" id="sc-off" data-act="pvcoff" ${PV.storeOnline ? "" : "checked"} class="cb44"><span class="grow">${esc(sT("offToggle"))}</span></label>`;
+  openSheet(sheetHd(sT("title") + " · " + S[sid].name) + `<div id="sc-sheet">${h}</div>`, sT("title"));
+}
+function scDone(r) { render(); if (r.ok) maybeUnlock(); confirmSheet(sT(r.key, { n: (r.pts || 0) + (r.bonus || 0) })); }
 function questSheet() { openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
@@ -2930,7 +3107,7 @@ function storeSheet(msg) {
   const err = validateDraft(PVDRAFT);
   let h = `<p class="sub sm" lang="en">Staff view · demo · English only for now</p><div class="chips" role="group" aria-label="Store">${joinedIds().map(s => `<button class="chip" data-act="pvsstore" data-v="${s}" aria-pressed="${s === sid}">${esc(S[s].name)}</button>`).join("")}</div>`;
   if (msg) h += `<p class="card sm" id="pv-smsg" role="status" style="margin-top:10px"><b>${esc(msg)}</b></p>`;
-  h += `<h2>Visits</h2><div class="card stack">${pend.length ? pend.map(b => `<div class="stack"><b class="sm">Booked: Mina · ${esc(b.label || "class")}</b><div class="row wrap" style="gap:8px"><button class="btn" data-act="pvscan" data-v="${b.id}">Scan member code</button>${opt([["no_phone", "No phone"], ["app_issue", "App issue"], ["other", "Other (note)"]], "pv-mreason")}<button class="btn sec" data-act="pvmark" data-v="${b.id}">Mark attended</button></div></div>`).join("") : `<p class="sub sm" style="margin:0">No booked member waiting.</p>`}
+  h += `<h2>Visits</h2><div class="card stack">${pend.length ? pend.map(b => `<div class="stack"><b class="sm">Booked: Mina · ${esc(b.label || "class")}</b><div class="row wrap" style="gap:8px"><button class="btn" data-act="pvscan" data-v="${b.id}">Scan member code</button>${opt([["no_phone", "No phone"], ["app_issue", "App issue"], ["other", "Other (note)"]], "pv-mreason")}<button class="btn sec dk" data-act="pvmark" data-v="${b.id}">Mark attended</button></div></div>`).join("") : `<p class="sub sm" style="margin:0">No booked member waiting.</p>`}
   ${att.map(([id, a]) => `<div class="row wrap" style="gap:8px"><span class="grow sm">Confirmed: Mina · ${esc(fDateP(a.t))}</span>${now - a.t <= 14 * DAY ? `${opt([["staff_error", "Staff error"], ["service_refund", "Service refund"], ["fraud", "Fraud"], ["other", "Other (note)"]], "pv-rreason-" + id)}<button class="btn ghost" data-act="pvrev" data-v="${id}">Reverse visit</button>` : `<span class="sub sm">Reverse visit unavailable (over 14 days)</span>`}</div>`).join("")}</div>`;
   if (PV.flag) h += `<h2>Validate</h2><div class="card stack"><label class="sm" for="pv-vcode">Enter code</label><input id="pv-vcode" autocomplete="off" maxlength="6" style="min-height:44px;font:inherit;font-size:20px;letter-spacing:3px;border-radius:10px;border:1px solid var(--line);padding:0 10px" value="${esc(PVCODE || "")}">
     <div class="row wrap" style="gap:8px"><button class="btn sec" data-act="pvscanv">Scan member code</button><button class="btn" data-act="pvvalidate">Validate</button></div>
@@ -2950,9 +3127,9 @@ function pvAct(a, d, el) {
     case "pvseen": ME.notices.forEach(n => { if (n.k !== "milestone" || PV.flag) n.seen = true; }); try { localStorage.setItem("cb.migratedSeen", "1"); } catch (e) {} render(); return;
     case "pvhist": histSheet(); return;
     case "pvflag": if (!DEMO_MODE) return; setFlag(el.checked); render(); toast(el.checked ? L3("Demo: real rewards on", "Demo: đã bật ưu đãi thật", "데모: 실제 리워드 켜짐") : L3("Demo: real rewards off", "Demo: đã tắt ưu đãi thật", "데모: 실제 리워드 꺼짐")); return;
-    case "pvwear": ST.wear = d.v; render(); if ($("#wdsheet")) wardrobeSheet(); return;
+    case "pvwear": ST.wear = d.v; try { localStorage.setItem("cici.wear", d.v); } catch (e) {} track("cici_item_equip", { item: d.v }); render(); if ($("#wdsheet")) wardrobeSheet(); return;
     case "pvquest": questSheet(); return;
-    case "pvwardrobe": wardrobeSheet(); return;
+    case "pvwardrobe": ST.page = "look"; ST.tab = "you"; ST.store = null; closeSheet(); render(); return;
     case "pvclaim": claimSheet(d.v); return;
     case "pvclaimok": { const r = claim(ME, d.v); closeSheet(); render(); toast(r.ok ? pvT("myVouchers") + ": " + pvTx(r.c.terms.title) : reasonTx(r)); if (r.ok && !reducedMotion()) popCut("voucher"); return; }
     case "pvuse": useSheet(d.c); return;
@@ -2960,7 +3137,12 @@ function pvAct(a, d, el) {
     case "pvmoff": PV.online = !el.checked; return;
     case "pvcancel": { cancelClaim(ME, d.c); render(); toast(pvT("cancelClaim", { n: "" }).replace(/\s+/g, " ")); return; }
     case "pvstore": if (!DEMO_MODE) return; PVVAL = null; storeSheet(); return;
-    case "pvsstore": PVSTORE = d.v; PVVAL = null; storeSheet(); return;
+    case "pvconfirm": if (!MVP.storeConfirm && !DEMO_MODE) return; PVVAL = null; confirmSheet(); return;
+    case "mvpflag": MVP.storeConfirm = !!el.checked; return;
+    case "pvsstore": PVSTORE = d.v; PVVAL = null; ($("#sc-sheet") ? confirmSheet : storeSheet)(); return;
+    case "pvcscan": { const code = checkinCode(d.v); scDone(scanCheckin("staff:" + PVSTORE + "-desk", PVSTORE, ME, code)); return; }
+    case "pvcmark": scDone(staffMark("staff:" + PVSTORE + "-desk", PVSTORE, ME, d.v, ($("#sc-r-" + d.v) || {}).value)); return;
+    case "pvcoff": PV.storeOnline = !el.checked; return;
     case "pvscan": { const r = confirmVisit(ME, d.v, "staff:" + PVSTORE + "-desk", undefined, PVSTORE); render(); storeSheet(r.ok ? (r.dup ? "Already recorded" : `Visit confirmed · +${r.pts + (r.bonus || 0)}${r.reason ? " (" + r.reason + ")" : ""}`) : (STAFF_ERR[r.err] || "No booking")); return; }
     case "pvmark": { const r = markAttended("staff:" + PVSTORE + "-desk", PVSTORE, ME, d.v, ($("#pv-mreason") || {}).value); render(); storeSheet(r.ok ? `Marked attended · +${r.pts + (r.bonus || 0)}` : r.err); return; }
     case "pvrev": { const r = reverseVisit("staff:" + PVSTORE + "-desk", ME, d.v, ($("#pv-rreason-" + d.v) || {}).value, "demo note"); render(); storeSheet(r.ok ? `Visit reversed · −${r.n}` : r.err); return; }
@@ -2977,7 +3159,7 @@ document.addEventListener("change", e => { if (e.target.id === "pv-dtype") { PVD
 document.addEventListener("input", e => { const k = e.target.dataset && e.target.dataset.pvd; if (k) { PVDRAFT[k] = e.target.value.trim() === "" ? "" : +e.target.value; const err = validateDraft(PVDRAFT), pb = $("[data-act=pvpublish]"); if (pb) pb.disabled = !!err.length; let p = $("#pv-derr"); if (err.length) { if (!p) { p = document.createElement("p"); p.id = "pv-derr"; p.className = "sm"; p.setAttribute("role", "alert"); p.style.cssText = "color:#8E3346;margin:0"; pb.before(p); } p.innerHTML = "<b>" + err.map(esc).join(" · ") + "</b>"; } else if (p) p.remove(); } });
 
 
-/* ===== micro-motion: confetti + Nari cheer pop on wins (skipped with prefers-reduced-motion) ===== */
+/* ===== micro-motion: confetti + Cici cheer pop on wins (skipped with prefers-reduced-motion) ===== */
 /* the win cut-out sits inside the small toast near the bottom (never over content) and leaves with it */
 let toastCut = null;
 function popCut(name) { const el = $("#toast"); if (el && !el.hidden && !toastUndo) { const msg = el.querySelector(".tx") ? el.querySelector(".tx").textContent : ""; clearTimeout(toastT); el.hidden = true; showWin(msg, name); } else toastCut = name; }
@@ -3013,22 +3195,35 @@ ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
 pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
-seed(); try { migrateOnLoad(); } catch (e) {} render();
-addEventListener("popstate", () => { sysBack(); try { history.pushState({ nari: 1 }, ""); } catch (e) {} }); try { history.pushState({ nari: 1 }, ""); } catch (e) {}
+seed(); try { migrateOnLoad(); } catch (e) {} try { const w = localStorage.getItem("cici.wear"); if (w) ST.wear = w; } catch (e) {} render(); /* MVP-R2: deep links #/nari, #/book, #/ask (and store/svc query) land on the Cici tab */
+function hashBoot() {
+  try {
+    const h = (location.hash || "").replace(/^#\/?/, ""); if (!h) return;
+    const [path, qs] = h.split("?"), q = new URLSearchParams(qs || ""), store = q.get("store"), svc = q.get("svc");
+    if (/^(nari|cici|book|ask)(\/|$)/.test(path)) {
+      const kind = path.split("/")[0];
+      history.replaceState(null, "", location.pathname + location.search);
+      setTimeout(() => { if (store && S[store] && S[store].joined) { setTab("cici"); CH.cici.scope = store; render(); scrollThread("cici"); } else if (kind === "ask") go("cici:ask"); else go("cici:book"); }, 50);
+    }
+  } catch (e) {}
+}
+hashBoot(); addEventListener("hashchange", hashBoot);
+
+addEventListener("popstate", () => { sysBack(); try { history.pushState({ cici: 1 }, ""); } catch (e) {} }); try { history.pushState({ cici: 1 }, ""); } catch (e) {}
 /* test hooks for headless QA only */
 /* dev check: every "Get help now" jump opens the same two-way choice, and opening it twice gives the same result */
 function checkJumps() {
-  const bad = [], snap = JSON.stringify(CH), g0 = CH.nari.gate;
+  const bad = [], snap = JSON.stringify(CH), g0 = CH.cici.gate;
   for (const cid of ["ask", "book"]) for (let k = 0; k < 2; k++) {
     const n = CH[cid].msgs.length; sosOpen(cid); const m = CH[cid].msgs[CH[cid].msgs.length - 1];
     if (CH[cid].msgs.length !== n + 1 || !m.chips || m.chips.length !== 2 || m.chips[0].val.act !== "sosu" || m.chips[1].val.act !== "sosx") bad.push(cid + "#" + k);
   }
-  const o = JSON.parse(snap); for (const cid in o) CH[cid].msgs = o[cid].msgs; CH.nari.gate = g0; render();
+  const o = JSON.parse(snap); for (const cid in o) CH[cid].msgs = o[cid].msgs; CH.cici.gate = g0; render();
   if (bad.length) console.error("jump not repeatable:", bad.join(", "));
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>

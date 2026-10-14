@@ -21,10 +21,11 @@ with sync_playwright() as p:
   ok('KR-stores', 'Seongsu' in pg.evaluate("__plat.S.capsule.area") and not re.search(r'Quận|Thảo Điền|Mây Hair|Sen Spa', pg.evaluate("(()=>{ST.tab='discover';ST.page=null;render();return document.body.innerText})()")))
   pg.close()
   for lang in ['en', 'vi', 'ko']:
-    pg = page('', lang); PAGES = [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('settings', None)]  # You hub + its subpages (ends on Settings)
+    pg = page('', lang); PAGES = [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('points', None), ('settings', None)]  # You hub + its subpages (ends on Settings)
     you = html = ''
     for sp, sg in PAGES: pg.evaluate("([p,s])=>{ST.tab='you';ST.page=p;ST.vseg=s;render()}", [sp, sg]); you += pg.inner_text('#view'); html += pg.inner_html('#view')
     life = pg.evaluate("__plat.pv.life(__plat.pv.ME())")
+    pg.evaluate("()=>{ST.tab='you';ST.page='points';render()}")
     ok(f'PR11-P1 {lang}', 'pv-earned' in html and 'pv-how' in html and pg.inner_text('#pv-how').count('+') >= 3)
     ok(f'PR11-P2 {lang}', pg.locator('#pv-legacy').count() == 1 and '×' not in pg.inner_text('#pv-legacy'))
     nocash = {'en': 'no cash value', 'vi': 'giá trị quy đổi', 'ko': '현금 가치'}[lang]
