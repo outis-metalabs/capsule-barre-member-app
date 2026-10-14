@@ -719,7 +719,7 @@ const S = {
   skin: { name: "Glow Lab Skincare", area: "Quận 3 (District 3)", cat: "skin", kind: "appt", color: "#3D7366", logo: "GL", joined: true, visits: 0, unread: 1,
     policy: { free: 24, late: "Deposit is kept", dep: 100000, noshow: "Deposit is kept", arrive: "10 min grace" },
     staff: [{ id: "ngan", n: "Ngân" }, { id: "vy", n: "Vy" }], hours: [540, 1140], step: 60,
-    svcs: [{ id: "hydra", n: "Hydrating facial", len: 60, price: 650000, kw: /\bhydrat\w*/, desc: "A moisture-focused facial for skin that feels dry or tight." },
+    svcs: [{ id: "hydra", n: "Hydrating facial", len: 60, price: 650000, kw: /\bhydrat\w*|\b(facial|cham soc da( mat)?|lieu trinh|lam da) (cap|duong) am\b|수분 ?(페이셜|관리|케어)/, /* KO/VI too (was EN-only before the renames as well) */ desc: "A moisture-focused facial for skin that feels dry or tight." },
            { id: "gentle", n: "Gentle facial", len: 45, price: 520000, kw: /\b(gentle|sensitive) facial\b/, desc: "A simple facial with light, fragrance-free products." },
            { id: "consult", n: "Skin consultation", len: 20, price: 0, kw: /\b(consult\w*|tu van)\b/, desc: "Talk with a therapist before choosing a treatment." },
            { id: "fsm", n: "Face & shoulder massage", len: 30, price: 300000, kw: /\bface (and|&) shoulder\b/, desc: "A short relaxing massage." },

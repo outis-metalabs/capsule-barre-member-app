@@ -62,6 +62,11 @@ with sync_playwright() as p:
     pg.close()
   pg = page('', 'ko'); m = send(pg, 'book', '토요일 오후 소라 커트'); ok('R3-book-by-KO-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh', [x['text'] for x in m])
   pg.evaluate("()=>setLang('en')"); send(pg, 'book', 'haircut with Sora Saturday afternoon'); ok('R3-book-by-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh')
+  # R4: service + staff + store together from one message (KO/VI were missing the service before, also on dba9c09)
+  for lang, q in [('ko', '하늘이랑 수분 페이셜 일요일'), ('ko', '일요일 하늘 수분 페이셜'), ('en', 'hydrating facial with Haneul on Sunday'), ('vi', 'facial cấp ẩm với Haneul chủ nhật'), ('vi', 'chăm sóc da dưỡng ẩm với Haneul chủ nhật')]:
+    pg.evaluate(f"()=>{{setLang('{lang}');CH.book.draft=null}}"); send(pg, 'book', q); dr = pg.evaluate("CH.book.draft||{}")
+    ok(f'R4-svc+staff {lang} {q}', dr.get('store') == 'skin' and dr.get('svc') == 'hydra' and dr.get('staff') == 'ngan', dr)
+  pg.evaluate("()=>{setLang('ko');CH.book.draft=null}"); send(pg, 'book', '수분 크림 뭐 써요?'); ok('R4-no-false-service', (pg.evaluate("CH.book.draft||{}")).get('svc') != 'hydra')
   r = pg.evaluate("(()=>{const P=__plat.pv,m=P.ME(),n=__plat.PV.now();P.pvBook('x1',{store:'capsule',member:m.id,start:n-60*6e4,end:n-10*6e4});return [P.confirmVisit(m,'x1','staff:salon-desk'),P.confirmVisit(m,'x1','staff:a',n,'salon'),P.confirmVisit(m,'x1','staff:capsule-desk').ok]})()")
   ok('R3-staff-store', r[0]['err'] == 'wrong_store' and r[1]['err'] == 'wrong_store' and r[2] is True, r)
   h = pg.evaluate("(()=>{setLang('ko');ST.tab='ask';render();const e=document.querySelector('#view h1');return Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight))})()"); ok('R3-ask-title-one-line-ko', h == 1, h)
