@@ -114,7 +114,17 @@ with sync_playwright() as p:
     for lang in ('en', 'vi', 'ko'):
       for q, fl in (('', 'off'), ('?realRewards=1', 'on')):
         pg = page(q, w); pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
-        pg.screenshot(path=f'{SHOTS}/home-banner-{w}-{lang}-{fl}.png'); pg.click('[data-act=pvseen]')
+        pg.screenshot(path=f'{SHOTS}/home-banner-{w}-{lang}-{fl}.png')
+        # state 1: banner showing -> XP/coins only inside the banner
+        bt = pg.inner_text('#pv-notes'); rest = pg.evaluate("(()=>{const n=document.querySelector('#pv-notes');n.style.display='none';const t=document.body.innerText;n.style.display='';return t})()")
+        if not FORBID.search(bt): bad35.append([w, lang, fl, 'banner-missing-words', bt[:60]])
+        for m_ in FORBID.findall(rest): bad35.append([w, lang, fl, 'outside-banner', m_])
+        if fl == 'off' and not re.search(r'pending|đang chờ|대기 중', bt): bad35.append([w, lang, fl, 'banner-not-pending', bt[:80]])
+        if fl == 'off' and not pg.evaluate("(()=>{ST.tab='you';render();const ok=!!document.querySelector('#pv-legacy');ST.tab='home';render();return ok})()"): bad35.append([w, lang, fl, 'no-pending-balance'])
+        pg.click('[data-act=pvseen]')
+        # state 2: dismissed -> never shows again, even after reload
+        pg.reload(); pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
+        if pg.locator('#pv-notes').count() and 'XP' in pg.inner_text('#pv-notes'): bad35.append([w, lang, fl, 'banner-again'])
         for tab in ('home', 'discover', 'book', 'ask', 'you'):
           pg.evaluate(f"()=>{{ST.tab='{tab}';ST.store=null;render()}}"); t_ = pg.inner_text('body')
           for m_ in FORBID.findall(t_): bad35.append([w, lang, fl, tab, m_])
@@ -127,6 +137,7 @@ with sync_playwright() as p:
         for sh in ['pvhist', 'pvstore', 'pvwardrobe', 'pvquest'] + (['pvclaim'] if fl == 'on' else []):
           sel = f'[data-act={sh}]' + (':not([disabled])' if sh == 'pvclaim' else '')
           pg.click(sel); t_ = pg.inner_text('.sheet'); cs = pg.evaluate(CONTRAST)
+          if sh == 'pvhist' and fl == 'off' and not re.search(r'pending|đang chờ|대기 중', t_): bad35.append([w, lang, fl, 'history-not-pending'])
           if sh != 'pvstore':
             for m_ in FORBID.findall(t_): bad35.append([w, lang, fl, sh, m_])
           c['bad'] += cs['bad']; c['small'] += cs['small']; pg.screenshot(path=f'{SHOTS}/{sh}-{w}-{lang}-{fl}.png'); pg.evaluate("closeSheet()")

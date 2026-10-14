@@ -2024,6 +2024,7 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   reversed: ["{n} points were reversed: {s} updated your visit.", "Đã trừ {n} điểm: {s} đã cập nhật lần đến của bạn.", "{s}에서 방문 기록을 수정해 {n}포인트가 차감됐어요."],
   history: ["Points history", "Lịch sử điểm", "포인트 내역"], outfitUnlocked: ["New outfit for Nari unlocked!", "Đã mở khóa trang phục mới cho Nari!", "Nari의 새 의상이 열렸어요!"],
   migrated: ["Your XP and coins are now points. Your level is kept.", "XP và xu của bạn đã chuyển thành điểm. Cấp độ của bạn được giữ nguyên.", "XP와 코인이 포인트로 바뀌었어요. 레벨은 그대로예요."],
+  legacyPending: ["Your earlier balance ({n}) is pending and can't be spent yet. It converts when rewards open.", "Số dư cũ ({n}) đang chờ, chưa dùng được. Số dư này sẽ được chuyển đổi khi mở ưu đãi.", "이전 잔액({n})은 대기 중이라 아직 쓸 수 없어요. 리워드가 열리면 전환돼요."],
   noCash: ["Points have no cash value and can't be transferred.", "Điểm không có giá trị quy đổi tiền mặt và không thể chuyển nhượng.", "포인트는 현금 가치가 없으며 양도할 수 없어요."]
 };
 /* staff strings (Store app) — EN only for now; VI/KO due before the Store app is built (BA) */
@@ -2242,6 +2243,7 @@ function noteText(n) {
   if (n.k === "milestone") return pvT("milestone", { n: v.n });
   if (n.k === "reversed") return pvT("reversed", { n: fmtN(v.n), s: storeNm(v.s) });
   if (n.k === "outfitUnlocked") return pvT("outfitUnlocked") + " " + v.outfit + " · " + pvT("level", { n: v.lvl, name: lvlName(v.lvl) });
+  if (n.k === "migrated" && ME && ME.legacyOpen) return pvT("migrated") + " " + pvT("legacyPending", { n: fmtN(ME.legacyCoins) });
   return pvT(n.k);
 }
 function notesCard() {
@@ -2259,7 +2261,7 @@ function pointsBlock() {
   <div class="row"><span class="grow"><span class="sub sm">${esc(pvT("balance"))}</span><br><b id="pv-bal" style="font-size:22px">${esc(fmtPts(b))}</b></span></div>
   <div class="sm" style="margin-top:8px">${nx ? esc(pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 })) : esc(lvlName(5))}</div><div class="bar" role="progressbar" aria-label="${esc(pvT("level", { n: lv, name: lvlName(lv) }))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>
   <div class="row wrap" style="margin-top:12px;gap:6px"><b class="grow">${esc(pvT("streak", { n: m.streak }))}</b>${mult(m) > 1 ? `<span class="tag">${esc(pvT("multiplier", { x: mult(m) }))}</span>` : ""}${m.freeze ? `<span class="tag ok">${esc(pvT("freezeHeld"))}</span>` : ""}</div>
-`;
+${m.legacyOpen ? `<p class="sub sm" id="pv-legacy" style="margin:6px 0 0">${esc(pvT("legacyPending", { n: fmtN(m.legacyCoins) }))}</p>` : ""}`;
   const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
   h += `<button class="link" data-act="pvhist">${esc(pvT("history"))}</button></div>`;
   return h;
@@ -2291,7 +2293,7 @@ function storeAppBtn() { return `<h2>${L3("Store app (demo)", "Ứng dụng cử
 function questSheet() { openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
-  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: L3("Earlier balance, kept until rewards open", "Số dư cũ, giữ đến khi mở ưu đãi", "이전 잔액, 리워드 오픈 전까지 보관"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
   openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
 }
 function claimSheet(id) {
@@ -2332,7 +2334,7 @@ function storeSheet(msg) {
 function pvAct(a, d, el) {
   const now = PV.now();
   switch (a) {
-    case "pvseen": ME.notices.forEach(n => { if (n.k !== "milestone" || PV.flag) n.seen = true; }); render(); return;
+    case "pvseen": ME.notices.forEach(n => { if (n.k !== "milestone" || PV.flag) n.seen = true; }); try { localStorage.setItem("cb.migratedSeen", "1"); } catch (e) {} render(); return;
     case "pvhist": histSheet(); return;
     case "pvflag": setFlag(el.checked); render(); toast(el.checked ? L3("Demo: real rewards on", "Demo: đã bật ưu đãi thật", "데모: 실제 리워드 켜짐") : L3("Demo: real rewards off", "Demo: đã tắt ưu đãi thật", "데모: 실제 리워드 꺼짐")); return;
     case "pvwear": ST.wear = d.v; render(); if ($("#wdsheet")) wardrobeSheet(); return;
@@ -2374,6 +2376,7 @@ function celebrate(pop) {
 const nEmpty = (txt, pose) => `<div class="nempty"><img class="nari-blend" src="${A}${pose || "shy"}.webp" alt="${esc(L3("Nari", "Nari", "나리"))}"><p class="sub" style="margin:0">${txt}</p></div>`;
 document.addEventListener("input", e => { const ta = e.target; if (ta.tagName === "TEXTAREA" && /^in-/.test(ta.id)) { const th = $("#nthink-" + ta.id.slice(3)); if (th) th.classList.toggle("on", !!ta.value.trim()); } });
 ME = pvSeed();
+try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
 pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
 seed(); render();
