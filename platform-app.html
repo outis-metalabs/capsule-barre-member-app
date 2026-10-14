@@ -64,6 +64,10 @@ nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;
 nav.tabs button{flex:1;min-width:0;min-height:62px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--sub)}
 nav.tabs button span{white-space:nowrap;max-width:100%}
 nav.tabs button[aria-current=page]{color:var(--rasp);font-weight:750}
+nav.tabs button{position:relative}.tdot{position:absolute;top:9px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--rasp)}
+.chips.slim{margin:8px 0 6px;flex-wrap:nowrap;overflow-x:auto}.ndiv{text-align:center;font-size:12px;color:var(--sub);margin:10px 0;border-top:1px solid var(--line);padding-top:8px}
+.bkrow.hi{outline:2px solid var(--rasp);outline-offset:4px;border-radius:12px}.acts.wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.stars{display:flex;gap:4px}.star{min-width:44px;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--card);display:inline-flex;align-items:center;justify-content:center;color:var(--sub)}.star[aria-checked=true]{border-color:var(--rasp)}.star .ico.on{fill:var(--rasp);stroke:var(--rasp)}
 nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 /* hero scene card: posters have backgrounds, so they live inside a rounded frame */
 .scene{display:flex;gap:0;overflow:hidden;padding:0;border-radius:22px;background:linear-gradient(135deg,#FBEFEA,#F3E7DA)}
@@ -674,8 +678,28 @@ const STR = {
     noAds: "광고 없음", inboxEmpty: "메시지가 없어요.", msgStore: "{s}에 메시지", confirmTitle: "확인 후 예약", nothingBooked: "버튼을 누르기 전에는 예약되지 않아요.", arrive: "지각" }
 };
 const t = (k, v) => { let s = (STR[L] && STR[L][k]) || STR.en[k] || k; if (v) for (const x in v) s = s.replace("{" + x + "}", v[x]); return s; };
+/* nari-tab spec §8 copy (VI/KO flagged ⚠ for native review) */
+Object.assign(STR.en, { nari: "Nari", nariAria: "Nari, book or ask", nariHello: "Hi {name}, I'm Nari. Book a class, ask me anything, or check your bookings.", chipBook: "Book a class", chipAsk: "Ask a question", chipMyBk: "My bookings", askPrompt: "Sure, what would you like to know?",
+  nextClass: "Next class", allBookings: "All bookings ({n})", bkTitle: "My bookings", bkUp: "Upcoming", bkPast: "Past", bkEmptyUp: "No upcoming bookings.", bkEmptyPast: "No past visits yet.", bkAttended: "Attended", bkCancelled: "Cancelled", bkNoShow: "No-show", bkRequested: "Cancel requested",
+  bkPending: "Pending confirmation", bkUnconf: "Not confirmed by the store", bkReversed: "reversed", bkReversedV: "Visit reversed", bkLate: "late", askStudio: "Ask the studio", askStudioHint: "It's past 4pm the day before, so the studio decides. We'll send them your request.", askStudioSent: "Request sent to {store}. They'll reply in your inbox.",
+  rate: "Rate", ratePrompt: "How was {service} with {staff}?", ratePromptNo: "How was {service}?", rate1: "Not great", rate2: "Okay", rate3: "Good", rate4: "Great", rate5: "Loved it", tag1: "Instructor", tag2: "Atmosphere", tag3: "Cleanliness", tag4: "Value", tag5: "On time",
+  rateNote: "Add a note (optional)", ratePrivate: "Only {store} sees this.", rateThanks: "Thanks, {store} will see your feedback.", rateLow: "Want to tell the studio more?", rateEdit: "Edit rating", rateSubmit: "Send rating", rateDelete: "Delete rating", rateVisit: "Your visit", rateInst: "Instructor (optional)", rateHeld: "Your review is being checked",
+  callStore: "Call {store}", callStoreAria: "Call {store}, studio phone", nariDemo: "Talk to Nari (demo)", more: "More options", removeScope: "Remove {store}", bookHere: "Book here", divider: "Book and Ask are now one chat with Nari", taken: "That time was just taken", newReply: "new reply" });
+Object.assign(STR.vi, { nari: "Nari", nariAria: "Nari, đặt lịch hoặc hỏi", nariHello: "Chào {name}, mình là Nari. Đặt lớp, hỏi mình bất cứ điều gì, hoặc xem lịch của bạn.", chipBook: "Đặt lớp", chipAsk: "Đặt câu hỏi", chipMyBk: "Lịch của tôi", askPrompt: "Được chứ, bạn muốn biết gì?",
+  nextClass: "Lớp tiếp theo", allBookings: "Tất cả lịch ({n})", bkTitle: "Lịch của tôi", bkUp: "Sắp tới", bkPast: "Đã qua", bkEmptyUp: "Chưa có lịch sắp tới.", bkEmptyPast: "Chưa có buổi nào đã qua.", bkAttended: "Đã đến", bkCancelled: "Đã hủy", bkNoShow: "Không đến", bkRequested: "Đã gửi yêu cầu hủy",
+  bkPending: "Chờ xác nhận", bkUnconf: "Cửa hàng chưa xác nhận", bkReversed: "đã thu hồi", bkReversedV: "Buổi đã bị thu hồi", bkLate: "muộn", askStudio: "Hỏi studio", askStudioHint: "Đã quá 4 giờ chiều hôm trước nên studio sẽ quyết định. Chúng mình sẽ gửi yêu cầu cho họ.", askStudioSent: "Đã gửi yêu cầu tới {store}. Họ sẽ trả lời trong hộp thư.",
+  rate: "Đánh giá", ratePrompt: "Buổi {service} với {staff} thế nào?", ratePromptNo: "Buổi {service} thế nào?", rate1: "Chưa ổn", rate2: "Tạm được", rate3: "Tốt", rate4: "Rất tốt", rate5: "Rất thích", tag1: "Huấn luyện viên", tag2: "Không khí", tag3: "Sạch sẽ", tag4: "Đáng tiền", tag5: "Đúng giờ",
+  rateNote: "Thêm ghi chú (không bắt buộc)", ratePrivate: "Chỉ {store} xem được.", rateThanks: "Cảm ơn bạn, {store} sẽ xem góp ý của bạn.", rateLow: "Bạn muốn nói thêm với studio không?", rateEdit: "Sửa đánh giá", rateSubmit: "Gửi đánh giá", rateDelete: "Xóa đánh giá", rateVisit: "Buổi của bạn", rateInst: "Huấn luyện viên (không bắt buộc)", rateHeld: "Đánh giá của bạn đang được kiểm tra",
+  callStore: "Gọi {store}", callStoreAria: "Gọi {store}, số điện thoại của studio", nariDemo: "Nói chuyện với Nari (demo)", more: "Tùy chọn khác", removeScope: "Bỏ {store}", bookHere: "Đặt tại đây", divider: "Đặt lịch và Hỏi giờ là một cuộc trò chuyện với Nari", taken: "Giờ đó vừa có người đặt", newReply: "tin trả lời mới" });
+Object.assign(STR.ko, { nari: "나리", nariAria: "나리, 예약하거나 물어보기", nariHello: "{name}님, 안녕하세요. 나리예요. 수업 예약, 궁금한 점, 내 예약 확인 모두 도와드릴게요.", chipBook: "수업 예약", chipAsk: "질문하기", chipMyBk: "내 예약", askPrompt: "네, 무엇이 궁금하세요?",
+  nextClass: "다음 수업", allBookings: "전체 예약 ({n})", bkTitle: "내 예약", bkUp: "예정", bkPast: "지난 예약", bkEmptyUp: "예정된 예약이 없어요.", bkEmptyPast: "아직 지난 방문이 없어요.", bkAttended: "방문 완료", bkCancelled: "취소됨", bkNoShow: "노쇼", bkRequested: "취소 요청됨",
+  bkPending: "확인 대기 중", bkUnconf: "매장 미확인", bkReversed: "취소 처리됨", bkReversedV: "방문 취소 처리됨", bkLate: "늦은 취소", askStudio: "스튜디오에 문의", askStudioHint: "전날 오후 4시가 지나서 스튜디오가 결정해요. 요청을 대신 보내 드릴게요.", askStudioSent: "{store}에 요청을 보냈어요. 알림함으로 답장이 와요.",
+  rate: "평가하기", ratePrompt: "{staff}님과의 {service}, 어떠셨어요?", ratePromptNo: "{service}, 어떠셨어요?", rate1: "아쉬웠어요", rate2: "괜찮았어요", rate3: "좋았어요", rate4: "아주 좋았어요", rate5: "최고였어요", tag1: "강사", tag2: "분위기", tag3: "청결", tag4: "가성비", tag5: "시간 준수",
+  rateNote: "메모 추가 (선택)", ratePrivate: "{store}만 볼 수 있어요.", rateThanks: "감사해요. {store}에 전달할게요.", rateLow: "스튜디오에 더 이야기하시겠어요?", rateEdit: "평가 수정", rateSubmit: "평가 보내기", rateDelete: "평가 삭제", rateVisit: "방문 평가", rateInst: "강사 평가 (선택)", rateHeld: "리뷰를 확인하고 있어요",
+  callStore: "{store}에 전화", callStoreAria: "{store}에 전화, 매장 전화번호", nariDemo: "나리와 통화 (데모)", more: "더보기", removeScope: "{store} 빼기", bookHere: "여기서 예약", divider: "예약과 질문이 이제 나리와의 대화 하나로 합쳐졌어요", taken: "방금 그 시간이 마감됐어요", newReply: "새 답장" });
 /* ===== icons (simple muted line icons) ===== */
 const IP = {
+  nari: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M12 9.5c-1.2-1.5-3-1.8-3-.4s1.8 1.1 3 .4c1.2.7 3 1 3-.4s-1.8-1.1-3 .4z"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
   home: '<path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
   compass: '<circle cx="12" cy="12" r="8"/><path d="M15 9l-2 4-4 2 2-4z"/>',
   cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
@@ -701,7 +725,7 @@ const ic = (n, c = "") => `<svg class="ico ${c}" viewBox="0 0 24 24" aria-hidden
 /* ===== sample stores (fictional, clearly marked sample) ===== */
 const S = {
   capsule: { name: "Capsule Barre", area: "Thảo Điền, Thủ Đức", cat: "fitness", kind: "class", color: "#A1475A", logo: "CB", joined: true, visits: 12, unread: 1,
-    policy: { free: 12, late: "1 class from your pass", dep: 0, noshow: "1 class from your pass", arrive: "Doors close 5 min after start" },
+    policy: { free: 12, cut: 960, studio: true, late: "The studio decides (Ask the studio)", dep: 0, noshow: "1 class from your pass", arrive: "Doors close 5 min after start" }, /* own rule: free until 16:00 the day before, then Ask the studio (F18) */
     staff: [{ id: "yuna", n: "Yuna" }, { id: "jiwoo", n: "Jiwoo" }],
     svcs: [{ id: "barre", n: "Barre", len: 50, price: 250000, kw: /\bbarre\b/, desc: "Ballet-inspired, low-impact. All levels." },
            { id: "reformer", n: "Reformer", len: 50, price: 380000, kw: /\breformers?\b/, desc: "Machine class, 8 reformers." },
@@ -758,16 +782,21 @@ const priceLabel = v => v.from ? L3("from ", "từ ", "") + vnd(v.price) + L3(""
 const logo = (sid, lg) => `<span class="slogo${lg ? " lg" : ""}" style="background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span>`;
 
 /* ===== time (store time = Asia/Ho_Chi_Minh; the demo device is in the same zone) ===== */
-const T0 = new Date(); T0.setHours(0, 0, 0, 0);
+const STZ = MARKET === "kr" ? "Asia/Seoul" : "Asia/Ho_Chi_Minh"; /* store time: KST for KR stores */
+const zParts = ms => { const o = {}; for (const p of new Intl.DateTimeFormat("en-CA", { timeZone: STZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(ms))) if (p.type !== "literal") o[p.type] = +p.value; return o; };
+let NOWX = null; /* test clock: store-time minutes from today's 00:00 (null = real clock) */
+const Z0 = zParts(Date.now()), T0 = new Date(Z0.year, Z0.month - 1, Z0.day);
 const dDate = (d, m = 0) => new Date(T0.getFullYear(), T0.getMonth(), T0.getDate() + d, 0, m);
-const nowMin = () => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); };
+const nowMin = () => { if (NOWX != null) return NOWX; const z = zParts(Date.now()); return Math.round((new Date(z.year, z.month - 1, z.day) - T0) / 864e5) * 1440 + (z.hour % 24) * 60 + z.minute; };
 const wd = d => dDate(d).getDay();
 function fDay(d) { if (d === 0) return t("today"); if (d === 1) return t("tomorrow"); return new Intl.DateTimeFormat(LOC[L], { weekday: "short", day: "numeric", month: "short" }).format(dDate(d)); }
 function fTime(m) { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); }
 const fWhen = (d, m) => fDay(d) + " · " + fTime(m);
-const deadline = (sid, d, m) => { const a = d * 1440 + m - S[sid].policy.free * 60; const dd = Math.floor(a / 1440); return { d: dd, m: a - dd * 1440, abs: a }; };
-const freeNow = (sid, d, m) => nowMin() < deadline(sid, d, m).abs;
-const fDeadline = (sid, d, m) => { const x = deadline(sid, d, m); return fWhen(x.d, x.m); };
+/* a store may set a fixed cutoff the day before (Capsule Barre: 16:00 store time) instead of "free up to N hours before" */
+const deadline = (sid, d, m, pol) => { const P = pol || S[sid].policy; const a = P.cut != null ? (d - 1) * 1440 + P.cut : d * 1440 + m - P.free * 60; const dd = Math.floor(a / 1440); return { d: dd, m: a - dd * 1440, abs: a }; };
+const freeNow = (sid, d, m, pol) => nowMin() < deadline(sid, d, m, pol).abs;
+const fDeadline = (sid, d, m, pol) => { const x = deadline(sid, d, m, pol); return fWhen(x.d, x.m); };
+const freeTxt = sid => { const P = S[sid].policy; return P.cut != null ? L3(`Free until ${fTime(P.cut)} the day before`, `Miễn phí đến ${fTime(P.cut)} hôm trước`, `전날 ${fTime(P.cut)}까지 무료`) : tr("Free up to") + " " + P.free + tr("h before · after that:").split(" ·")[0]; };
 const fCancel = (sid, d, m) => freeNow(sid, d, m) ? t("freeCancel") + " " + fDeadline(sid, d, m) : tr("Free cancel ended");
 
 /* ===== member state (one account across stores) ===== */
@@ -783,6 +812,14 @@ function seed() {
   add({ store: "salon", svc: "cut", d: nextOff(6), m: 840, len: 45, rids: ["linh"], price: 350000 });
   add({ store: "pickle", svc: "court", d: 2, m: 1080, len: 90, rids: ["c3"], price: 420000, party: 4 });
   add({ store: "skin", svc: "hydra", d: 4, m: 900, len: 60, rids: ["ngan"], price: 650000, dep: 100000 });
+  /* past visits (demo): store-confirmed attended, a no-show, a free cancel, an older visit outside the 14-day rating window, and the class waiting for confirmation */
+  const past = o => { B.push(Object.assign({ id: BID++, status: "attended", source: "app", party: 0, paddles: 0, dep: 0, past: true }, o)); };
+  past({ store: "capsule", svc: "barre", d: -2, m: 420, len: 50, rids: ["yuna"], price: 250000, usePass: "p10" });
+  past({ store: "spa", svc: "aroma60", d: -6, m: 900, len: 60, rids: ["hoa", "lotus"], price: 450000 });
+  past({ store: "pickle", svc: "court", d: -9, m: 1080, len: 60, rids: ["c2"], price: 280000, party: 4, status: "noshow" });
+  past({ store: "skin", svc: "gentle", d: -12, m: 600, len: 45, rids: ["vy"], price: 520000, status: "cancelled" });
+  past({ store: "salon", svc: "cut", d: -21, m: 840, len: 45, rids: ["linh"], price: 350000 });
+  { const a = nowMin() - 100, dd = Math.floor(a / 1440); past({ store: "capsule", svc: "barre", d: dd, m: a - dd * 1440, len: 50, rids: ["jiwoo"], price: 250000, status: "confirmed", pv: "demo-past" }); }
   B.forEach(b => b.pol = Object.assign({}, S[b.store].policy));
 }
 const INBOX = [
@@ -793,8 +830,8 @@ const INBOX = [
 ];
 /* a store imported its customer list and matched Mina's phone number: nothing is linked until she accepts */
 const IMPORT = { sid: "barber", visits: 2, state: "pending" };
-const upcoming = () => B.filter(b => b.status === "confirmed").sort((a, b) => (a.d * 1440 + a.m) - (b.d * 1440 + b.m));
-const lastBooking = () => B.slice().reverse().find(b => b.status !== "cancelled");
+const upcoming = () => B.filter(b => b.status === "confirmed" && b.d * 1440 + b.m > nowMin()).sort((a, b) => (a.d * 1440 + a.m) - (b.d * 1440 + b.m));
+const lastBooking = () => B.slice().reverse().find(b => b.status !== "cancelled" && b.status !== "moved" && !b.past);
 
 /* ===== availability (deterministic sample, never random) ===== */
 function hsh(k) { let h = 7; for (const c of k) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
@@ -806,7 +843,7 @@ function resFree(sid, rid, d, m, len, ignore) {
 function priceFor(s, svc, m, len, o) { if (s.kind === "rental") return (m >= 1020 ? 280000 : 200000) * len / 60 + (o.paddles || 0) * 30000; return svc.price; }
 function slotsFor(sid, vid, d, o = {}) {
   const s = S[sid], svc = svcOf(sid, vid), out = []; if (!svc || d < 0) return out;
-  const minM = d === 0 ? nowMin() + 30 : 0;
+  const minM = Math.max(0, nowMin() + 30 - d * 1440);
   if (s.kind === "class") {
     for (const [cid, m, tid, cap] of s.sched) {
       if (cid !== vid || m < minM || (o.staff && o.staff !== "any" && tid !== o.staff)) continue;
@@ -930,6 +967,7 @@ const NAMES = { "Women's cut": ["Cắt tóc nữ", "여성 커트"], "Wash & blo
 const LI = () => (L === "vi" ? 0 : 1);
 const N = s => (L !== "en" && NAMES[s]) ? NAMES[s][LI()] : s;
 const nb = s => String(s).replace(/\u00a0/g, " ");
+Object.assign(TRD, { "The studio decides (Ask the studio)": ["Studio quyết định (Hỏi studio)", "스튜디오가 결정 (스튜디오에 문의)"] });
 const tr = s => { if (L === "en" || s == null) return s; const e = TRD[s] || TRD[nb(s)]; return e ? e[LI()] : s; };
 const PERN = { morning: ["buổi sáng", "오전"], afternoon: ["buổi chiều", "오후"], evening: ["buổi tối", "저녁"], noon: ["buổi trưa", "점심"] };
 function nN(x) { x = x.trim(); let w = ""; const m = x.match(/^(.*?) with (.+)$/); if (m) { x = m[1]; w = m[2]; } x = N(x); if (!w) return x; return L === "vi" ? x + " với " + w : w + " " + x; }
@@ -942,7 +980,7 @@ const FRAG = [
   [/^(\d\d:\d\d)(?: with (.+?))? isn't open (.+?)\. Nearest open times:$/, (m, a, w, d) => [`${a}${w ? " với " + w : ""} ${d} đã kín. Giờ gần nhất còn trống:`, `${d} ${a}${w ? " (" + w + ")" : ""}은(는) 마감이에요. 가장 가까운 시간:`]],
   [/^Nothing open (.+?)\. Other times that day:$/, (m, a) => { const p = a.replace(/ (morning|afternoon|evening|noon)/, (x, k) => " " + PERN[k][0]); const k2 = a.replace(/ (morning|afternoon|evening|noon)/, (x, k) => " " + PERN[k][1]); return [`Không còn chỗ ${p.replace(/ with /, " với ")}. Giờ khác trong ngày:`, `${k2} 예약 가능 없음. 그날 다른 시간:`]; }],
   [/^(.+?), (.+?) at (.+?)\. Which time\?$/, (m, a, d, s) => { let dp = d, dk = d; for (const k in PERN) { dp = dp.replace(" " + k, " " + PERN[k][0]); dk = dk.replace(" " + k, " " + PERN[k][1]); } return [`${nN(a)}, ${dp} ở ${s}. Bạn chọn giờ nào?`, `${s} ${nN(a)}, ${dk}. 몇 시로 할까요?`]; }],
-  [/^Booked: (.+?) at (.+?), (.+?)\. It's in Up next\.$/, (m, a, s, w) => [`Đã đặt: ${N(a)} ở ${s}, ${w}. Đã có trong mục Sắp tới.`, `예약됨: ${s} ${N(a)}, ${w}. 다가오는 예약에 있어요.`]],
+  [/^Booked: (.+?) at (.+?), (.+?)\. It's in My bookings\.$/, (m, a, s, w) => [`Đã đặt: ${N(a)} ở ${s}, ${w}. Đã có trong Lịch của tôi.`, `예약됨: ${s} ${N(a)}, ${w}. 내 예약에 있어요.`]],
   [/^Sent to (.+?)\. Replies land in your inbox\.$/, (m, s) => [`Đã gửi đến ${s}. Trả lời sẽ về hộp thư.`, `${s}에 보냈어요. 답장은 받은 메시지로 와요.`]],
   [/^(.+?)'s info doesn't say\. Want me to ask them\?$/, (m, s) => [`Thông tin của ${s} chưa có. Mình hỏi giúp nhé?`, `${s} 정보에는 없어요. 대신 물어볼까요?`]],
   [/^(Booked|Đã đặt|예약됨): (.+?) · (.+)$/, (m, b, a, s) => [`Đã đặt: ${N(a)} · ${s}`, `예약됨: ${N(a)} · ${s}`]],
@@ -1020,7 +1058,7 @@ const WHY = { type: ["Muted type", "Đã tắt loại này", "꺼 둔 유형"], 
 const L3 = (en, vi, ko) => L === "vi" ? vi : L === "ko" ? ko : en;
 function vNotif() {
   const list = deliver(), sent = list.filter(r => !r.why), held = list.filter(r => r.why);
-  const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Nari"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>
+  const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Nari"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>${n.type === "reminder" && sid && upcoming().some(b => b.store === sid) ? `<button class="link" data-act="go" data-v="bookings:up:${upcoming().find(b => b.store === sid).id}:page:notif">${L3("See booking", "Xem lịch", "예약 보기")}</button>` : ""}
     <div class="row wrap" style="gap:6px;margin-top:4px"><span class="tag">${esc(NTYPES.find(x => x[0] === n.type)[1][L === "vi" ? 1 : L === "ko" ? 2 : 0])}</span>${r.held ? `<span class="tag warn">${L3("Quiet hours: delivered 08:00", "Giờ yên tĩnh: gửi lúc 08:00", "방해 금지: 08:00에 전달")}</span>` : ""}${r.urgentNow ? `<span class="tag ok">${L3("Time-sensitive: sent right away", "Cần kịp lúc: gửi ngay", "시간 제한 알림: 바로 전달")}</span>` : ""}${n.friend && !r.why ? `<button class="btn ghost" data-act="cheer">${L3("Send a cheer", "Gửi cổ vũ", "응원 보내기")}</button>` : ""}</div></div></div>`; };
   return `<h1>${L3("Notifications", "Thông báo", "알림")}</h1><div class="row"><p class="sub grow" style="margin:0">${L3("Lock-screen previews, in Nari's voice.", "Xem trước trên màn hình khóa, bằng giọng Nari.", "잠금 화면 미리보기, 나리의 말투로.")}</p><button class="btn sec" data-act="nset">${L3("Settings", "Cài đặt", "설정")}</button></div>
   ${INBOX.some(m => !m.s) ? `<h2>${L3("Messages", "Tin nhắn", "메시지")}</h2><div class="stack">${INBOX.filter(m => !m.s).map(m => { m.unread = false; return `<div class="card row top"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><div class="grow"><div class="row sm"><b class="grow">Nari</b><span class="sub">${esc(m.when)}</span></div><div class="sm">${esc(m.text)}</div></div></div>`; }).join("")}</div>` : ""}
@@ -1087,10 +1125,10 @@ function openConfirm(x) {
     `<p class="sub sm">${t("nothingBooked")}</p><div class="stack"><button class="btn full" data-act="dobook">${esc(lbl)}</button><button class="btn ghost full" data-act="close">${mv ? t("keep") : t("back")}</button></div>`, t("confirmTitle"));
 }
 function doBook(x, quiet) {
-  if (x.move) {
-    const b = B.find(z => z.id === x.move); const old = { d: b.d, m: b.m, rids: b.rids, len: b.len, price: b.price };
-    Object.assign(b, { d: x.d, m: x.m, rids: x.rids, len: x.len, price: x.price });
-    closeSheet(); render(); toast(`${t("moved")}: ${N(svcOf(b.store, b.svc).n)} → ${fWhen(b.d, b.m)}`, () => { Object.assign(b, old); render(); toast("Move undone"); });
+  if (x.move) { /* MB-6: one atomic move; new booking id, old one released; a taken slot leaves the original unchanged */
+    const ob = B.find(z => z.id === x.move); const mv = ob ? moveBooking(ob, x) : { ok: false };
+    if (!mv.ok) { closeSheet(); render(); toast(t("taken") + ". " + L3("Your booking is unchanged.", "Lịch của bạn vẫn giữ nguyên.", "기존 예약은 그대로예요.")); return null; }
+    const b = mv.b; closeSheet(); render(); toast(`${t("moved")}: ${N(svcOf(b.store, b.svc).n)} → ${fWhen(b.d, b.m)}`, () => { mv.undo(); render(); toast("Move undone"); });
     return b;
   }
   const s = S[x.store];
@@ -1098,6 +1136,8 @@ function doBook(x, quiet) {
   if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; }
   B.push(b); if (x.joinOnBook && !S[b.store].joined) S[b.store].joined = true;
   if (quiet) { render(); return b; }
+  track("booking_confirmed", { store: b.store, via: "sheet" });
+  if (!gated()) say(CH.nari, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in My bookings.`, { bk: b.id }); /* §5: a sheet booking adds a confirm bubble to the thread */
   const undo = () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); };
   closeSheet(); render(); success(b, undo); toast(`${t("booked")}: ${N(svcOf(b.store, b.svc).n)} · ${S[b.store].name}`, undo);
   return b;
@@ -1242,16 +1282,17 @@ function parse(raw) {
 }
 
 function makeChat(id, hello) { return { id, msgs: hello ? [{ who: "n", text: hello }] : [], draft: null, ask: null, fails: 0 }; }
-const CH = { book: makeChat("book"), ask: makeChat("ask", "Hi Mina, I'm Nari. I can book at any of your places, move a booking, or answer simple questions about them.") };
-const say = (c, text, ex) => { c.msgs.push(Object.assign({ who: "n", text }, ex || {})); };
+/* one thread for booking and asking (nari-tab §2); "book" / "ask" stay as aliases so old openers and saved ids land in the same thread */
+const CH = { nari: makeChat("nari") }; for (const k of ["book", "ask"]) Object.defineProperty(CH, k, { get: () => CH.nari, enumerable: false });
+const say = (c, text, ex) => { c.msgs.push(Object.assign({ who: "n", text, t: Date.now() }, ex || {})); if (c === CH.nari && !(ST.tab === "nari" && !ST.page && !ST.store)) c.unread = true; };
 const chip = (label, val) => ({ label, val });
 function chatSend(cid, text) {
-  const c = CH[cid]; text = (text || "").trim(); if (!text) return;
-  c.msgs.push({ who: "me", text }); CHX.draftOpen = !!(c.draft && c.ask && c.ask !== "confirm");
+  const c = CH[cid]; text = (text || "").trim(); if (!text) return; cid = c.id; TURN_SAFE = false;
+  c.msgs.push({ who: "me", text, t: Date.now() }); CHX.draftOpen = !!(c.draft && c.ask && c.ask !== "confirm");
   try { reply(c, text); } catch (e) { console.warn(e); say(c, "Sorry, I got mixed up. Try again?"); }
-  renderView(); const inp = $("#in-" + cid); if (inp) inp.focus(); scrollThread(cid);
+  TURN_SAFE = false; renderView(); const inp = $("#in-" + cid); if (inp) inp.focus(); scrollThread(cid);
 }
-function scrollThread(cid) { const th = $("#th-" + cid); if (th && th.lastElementChild && th.lastElementChild.scrollIntoView) th.lastElementChild.scrollIntoView({ block: "nearest" }); }
+function scrollThread(cid) { cid = (CH[cid] || {}).id || cid; const th = $("#th-" + cid); if (th && th.lastElementChild && th.lastElementChild.scrollIntoView) th.lastElementChild.scrollIntoView({ block: "nearest" }); }
 const askStoreChips = q => joinedIds().slice(0, 3).map(sid => chip(t("msgStore", { s: S[sid].name }), { act: "askstore", store: sid, q }));
 const exampleChips = () => (MARKET === "kr" ? exampleChips0().map(c => Object.assign(c, { label: rn(c.label), val: Object.assign({}, c.val, { say: rn(c.val.say) }) })) : exampleChips0());
 const exampleChips0 = () => (L === "vi" ? ["cắt tóc với Linh chiều thứ bảy", "sân pickleball cho 4 người tối mai 7h", "chăm sóc da tuần sau"] : L === "ko" ? ["토요일 오후 린 커트", "내일 저녁 7시 피클볼 코트 4명", "다음 주 페이셜"] : ["haircut with Linh Saturday afternoon", "pickleball court for 4 tomorrow 7pm", "facial next week"]).map(q => chip(q, { say: q }));
@@ -1267,17 +1308,17 @@ const SOS_BTN = () => L3("Get help now", "Trợ giúp ngay", "지금 도움 받�
 /* AC7: crisis escalations are logged with time, member, store and category only, never the message text. The log isn't shown anywhere in the member app (staff-only in production), and no staff alert is sent (CRISIS_STAFF_ALERT = false). */
 const SAFETY_LOG = [];
 function logEscalation(cat, text) { SAFETY_LOG.push({ ts: new Date().toISOString(), member: "mina", store: ST.store || null, cat: cat + (OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? "/overdose" : "") }); }
-function crisisReply(c, text) { logEscalation("crisis", text); c.care = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null; return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 }); }
-function urgentReply(c) { return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } }); }
+function crisisReply(c, text) { logEscalation("crisis", text); TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "crisis", ts: Date.now() }); c.gate = true; c.care = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null; return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 }); }
+function urgentReply(c) { TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "urgent", ts: Date.now() }); c.gate = true; return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } }); }
 /* the permanent "Hurt or in danger? Get help now" chip: a two-way choice, never a guess */
-function sosOpen(cid) { const c = CH[cid]; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
+function sosOpen(cid) { const c = CH[cid]; c.gate = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   say(c, L3("I'm here. Which is closest?", "Mình ở đây. Điều nào đúng nhất?", "제가 여기 있어요. 어느 쪽인가요?"), { care: 1, nosos: 1, chips: [chip(L3("Someone is hurt or unwell", "Có người bị thương hoặc không khỏe", "누군가 다쳤거나 아파요"), { act: "sosu" }), chip(L3("I'm not okay", "Mình không ổn", "제가 괜찮지 않아요"), { act: "sosx" })] });
   render(); scrollThread(cid); }
 function fallbackReply(c) {
   return say(c, L3("Sorry, I didn't quite get that. What would you like to do?", "Xin lỗi, mình chưa hiểu lắm. Bạn muốn làm gì?", "잘 이해하지 못했어요. 무엇을 도와드릴까요?"), { fb: 1, chips: [chip(L3("Book something", "Đặt lịch", "예약하기"), { act: "fbbook" }), chip(L3("Ask about the studio", "Hỏi về cửa hàng", "매장에 대해 묻기"), { act: "fbask" }), chip(L3("Someone is hurt / I need help", "Có người bị thương / Tôi cần giúp", "누가 다쳤어요 / 도움이 필요해요"), { act: "sos" })] });
 }
 function riskCheckIn(c, text) {
-  logEscalation("crisis-checkin", text);
+  logEscalation("crisis-checkin", text); TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "checkin", ts: Date.now() }); c.gate = true;
   c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   return say(c, (CRISIS_COPY[L] || CRISIS_COPY.en) + " " + L3("Are you okay right now?", "Lúc này bạn có ổn không?", "지금 괜찮으세요?"), { care: 1, nosos: 1, checkin: 1,
     chips: [chip(L3("I'm not okay", "Mình không ổn", "괜찮지 않아요"), { act: "riskx", q: text }), chip(L3("I'm fine, I meant something else", "Mình ổn, ý mình là chuyện khác", "괜찮아요, 다른 뜻이었어요"), { act: "riskok", q: text })] });
@@ -1321,6 +1362,8 @@ function reply(c, text) {
   if (sf === "skin") return say(c, "Thanks for telling me. For skin concerns, please check with a dermatologist or our therapist.", { care: 1, chips: [chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true }), chip(t("msgStore", { s: "Glow Lab" }), { act: "askstore", store: "skin", q: text })].concat(bookNext(text)) });
   if (sf === "health") return say(c, "Thanks for telling me. " + SAFE_LINE, { care: 1, chips: askStoreChips(text).concat(bookNext(text)) });
   /* AC5: after a crisis reply Nari doesn't go back to selling. It only helps with a booking when the member asks for one. */
+  /* NT-18 / AC5: after a crisis or urgent turn the chips, cards, calendar icon and Call buttons stay hidden until the member asks for a booking or feature themselves */
+  if (c.gate && !sf) { const pg = parse(text); if (pg.store || pg.cands || pg.svc || pg.staff || pg.bookWord || intentOf(text) || /\b(my bookings?|booking|lich cua toi)\b|내 ?예약/.test(s)) c.gate = false; }
   if (c.care && !sf) { const pc = parse(text); if (!(pc.store || pc.cands || pc.svc || pc.staff || pc.bookWord || intentOf(text))) return say(c, CRISIS_FOLLOWUP[L] || CRISIS_FOLLOWUP.en, { care: 1 }); c.care = false; }
   if (s.length > 200) return fallbackReply(c); /* long message: safety already ran on the full text; never ask for one line */
   /* pregnancy massage named as a service: book it, with a gentle note */
@@ -1359,7 +1402,7 @@ function reply(c, text) {
     return say(c, ids.map(id => S[id].name + ": " + S[id].area).join("\n"), { src: L3("From each place's profile", "Theo hồ sơ của từng nơi", "각 매장 정보 기준") }); }
   if (/^(thanks|thank you|thx|ty|cheers|cam on|xin cam on|cam on nhieu)\b/.test(s) || /^(감사|고마워)/.test(s)) return say(c, "Anytime!");
   if (/\b(showers?|lockers?|towels?|changing rooms?|tu do|cho tam|phong tam|phong thay do|khan tam)\b/.test(s) || /샤워|사물함|탈의실|수건/.test(s)) return say(c, L3("Each place lists its facilities in its profile. Want me to ask them?", "Tiện ích của từng nơi có trong hồ sơ của họ. Bạn muốn mình hỏi họ không?", "편의시설은 각 매장 정보에 있어요. 매장에 물어볼까요?"), { chips: joinedIds().map(id => chip(t("msgStore", { s: S[id].name }), { act: "askstore", store: id, q: text })) });
-  if (/\b(cancel\w* polic\w*|polic\w* (on|for) cancel\w*|chinh sach huy|quy dinh huy|phi huy)\b/.test(s) || /취소 ?(규정|정책|수수료)/.test(s)) return say(c, joinedIds().filter(id => S[id].policy).map(id => S[id].name + ": " + L3(`free to cancel up to ${S[id].policy.free}h before`, `hủy miễn phí trước ${S[id].policy.free} giờ`, `${S[id].policy.free}시간 전까지 무료 취소`)).join("\n"), { src: L3("From each place's policy", "Theo chính sách của từng nơi", "각 매장 정책 기준") });
+  if (/\b(cancel\w* polic\w*|polic\w* (on|for) cancel\w*|chinh sach huy|quy dinh huy|phi huy)\b/.test(s) || /취소 ?(규정|정책|수수료)/.test(s)) return say(c, joinedIds().filter(id => S[id].policy).map(id => S[id].name + ": " + (S[id].policy.cut != null ? L3(`free to cancel until ${fTime(S[id].policy.cut)} the day before, then ask the studio`, `hủy miễn phí đến ${fTime(S[id].policy.cut)} hôm trước, sau đó hỏi studio`, `전날 ${fTime(S[id].policy.cut)}까지 무료 취소, 이후에는 스튜디오에 문의`) : L3(`free to cancel up to ${S[id].policy.free}h before`, `hủy miễn phí trước ${S[id].policy.free} giờ`, `${S[id].policy.free}시간 전까지 무료 취소`))).join("\n"), { src: L3("From each place's policy", "Theo chính sách của từng nơi", "각 매장 정책 기준") });
   if (/\b(cancel that|never mind|nevermind|forget it)\b/.test(s)) { c.draft = null; c.ask = null; return say(c, "Okay, nothing booked."); }
   if (!(parse(text).d != null || parse(text).m != null) && /\bdry\b.*\bskin\b|\bskin\b.*\bdry\b|\bda (toi )?(bi |hoi |rat )?kho\b|건조|\b(which|what) facial\b|\bfacial\b.*\b(best|suits?|good for|for me)\b/.test(s)) return say(c, "Here's how Glow Lab describes its facials." + (/\bdry\b|\bkho\b|건조/.test(s) ? " For skin concerns, please check with a dermatologist or our therapist." : " Our therapist can help you choose."), { card: skinCard(), chips: [chip("Book Hydrating facial", { set: { store: "skin", svc: "hydra" }, fresh: true }), chip("Book a skin consultation", { set: { store: "skin", svc: "consult" }, fresh: true })] });
   if (/\b(bring|wear|mang)\b.*\b(pickle\w*|court|san)\b|\b(pickle\w*|court)\b.*\b(bring|wear)\b/.test(s) || /피클볼.*(준비물|챙길|가져)/.test(s)) return say(c, S.pickle.kb.bring, { src: "From Sunrise Pickleball Club's info", chips: [chip("Book a court", { set: { store: "pickle", svc: "court" }, fresh: true })] });
@@ -1379,6 +1422,9 @@ function reply(c, text) {
   if (it) return manageIntent(c, it, text);
   /* 4. booking dialogue: one clarifying question at a time; two requests in one line → book the first, offer the next */
   let p = parse(text), multiNote = "";
+  if (c.scope && S[c.scope] && !(p.store && p.store !== c.scope && /\b(at|o|tai)\b|에서/.test(s))) { const sc = c.scope; /* NT-3: booking replies stay at the store chip's place until it's removed */
+    if (p.svc && !svcOf(sc, p.svc)) delete p.svc; if (p.staff && staffStore(p.staff) !== sc) delete p.staff; delete p.cands;
+    if (p.store || p.svc || p.staff || p.bookWord || p.d != null || p.m != null || p.period) p.store = sc; }
   const mp = multiSplit(text);
   if (mp) {
     const p1 = parse(mp[0]);
@@ -1450,7 +1496,8 @@ function manageIntent(c, mode, text) {
   return mode === "cancel" ? askCancel(c, list[0]) : askMove(c, list[0]);
 }
 function askCancel(c, b) {
-  const s = S[b.store], free = freeNow(b.store, b.d, b.m), v = N(svcOf(b.store, b.svc).n);
+  const s = S[b.store], free = freeNow(b.store, b.d, b.m, b.pol), v = N(svcOf(b.store, b.svc).n);
+  if (!free && bkPol(b).studio) return say(c, t("askStudioHint"), { bk: b.id, chips: [chip(t("askStudio"), { act: "askstudio", id: b.id }), chip(L3("Keep it", "Giữ lịch", "유지할게요"), { act: "keepbk" })] });
   const pol = free ? L3("It's free to cancel now.", "Hủy bây giờ được miễn phí.", "지금은 무료로 취소돼요.") : L3(`The free window has passed, so the late-cancel rule applies: ${tr(s.policy.late)}.`, `Đã qua hạn hủy miễn phí, nên áp dụng phí hủy muộn: ${tr(s.policy.late)}.`, `무료 취소 기간이 지나서 늦은 취소 규정이 적용돼요: ${tr(s.policy.late)}.`);
   c.ask = "cancelbk";
   return say(c, L3(`Cancel ${v} at ${s.name}, ${fWhen(b.d, b.m)}? ${pol} Nothing changes until you tap.`, `Hủy ${v} ở ${s.name}, ${fWhen(b.d, b.m)}? ${pol} Chưa có gì thay đổi cho đến khi bạn chạm.`, `${s.name} ${v}, ${fWhen(b.d, b.m)} 예약을 취소할까요? ${pol} 누르기 전에는 바뀌지 않아요.`),
@@ -1460,6 +1507,7 @@ function moveOpts(b) { const s = S[b.store]; return { staff: s.kind === "appt" ?
 function moveDays(b) { const out = []; for (let d = 0; d < 10 && out.length < 4; d++) if (d !== b.d && slotsFor(b.store, b.svc, d, moveOpts(b)).some(z => z.left !== 0)) out.push(d); return out; }
 function askMove(c, b, d0, m0, per) {
   const pend = c.pend || {}; const d = d0 != null ? d0 : pend.d, m = m0 != null ? m0 : pend.m, period = per || pend.period; c.pend = null;
+  if (!freeNow(b.store, b.d, b.m, b.pol) && bkPol(b).studio) return say(c, t("askStudioHint"), { bk: b.id, chips: [chip(t("askStudio"), { act: "askstudio", id: b.id }), chip(L3("Keep it", "Giữ lịch", "유지할게요"), { act: "keepbk" })] }); /* MB-7 */
   const s = S[b.store], v = N(svcOf(b.store, b.svc).n), who = s.kind === "appt" ? " · " + resName(b.store, b.rids[0]) : "";
   if (d == null) return say(c, L3(`Move ${v} at ${s.name} (now ${fWhen(b.d, b.m)}) to which day?`, `Dời ${v} ở ${s.name} (đang là ${fWhen(b.d, b.m)}) sang ngày nào?`, `${s.name} ${v}(현재 ${fWhen(b.d, b.m)})을(를) 어느 날로 옮길까요?`), { bk: b.id, chips: moveDays(b).map(x => chip(fDay(x), { act: "moveday", id: b.id, d: x })) });
   const list = slotsFor(b.store, b.svc, d, moveOpts(b)).filter(z => z.left !== 0 && !(z.d === b.d && z.m === b.m));
@@ -1531,7 +1579,8 @@ function advance(c) {
   return say(c, `${v.n}${who}, ${fDay(x.d)}${x.period ? " " + x.period : ""} at ${s.name}. Which time?`, { note, chips: pick.map(tchip).concat([chip("Another day", { set: { d: null } })]) });
 }
 function chatChip(cid, mi, ci) {
-  const c = CH[cid], ch = c.msgs[mi] && c.msgs[mi].chips && c.msgs[mi].chips[ci]; if (!ch) return; const v = ch.val;
+  cid = (CH[cid] || {}).id || cid; TURN_SAFE = false; const c = CH[cid], ch = c.msgs[mi] && c.msgs[mi].chips && c.msgs[mi].chips[ci]; if (!ch) return; const v = ch.val;
+  if (!(ch.val && /^(sos|riskx|riskok|sosu|sosx)$/.test(ch.val.act || ""))) track("chip_tap", { kind: ch.val && (ch.val.act || (ch.val.say ? "say" : "set")) });
   if (v.say) { if (v.next) c.useCarry = true; return chatSend(cid, v.say); }
   if (v.act === "sos") { c.msgs.push({ who: "me", text: ch.label }); return sosOpen(cid); }
   c.msgs.push({ who: "me", text: ch.label });
@@ -1541,11 +1590,14 @@ function chatChip(cid, mi, ci) {
   if (v.act === "riskok") { c.skipRisk = true; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
   if (v.act === "fbbook") { c.fails = 0; say(c, t("whatBook"), { chips: exampleChips() }); render(); scrollThread(cid); return; }
   if (v.act === "fbask") { say(c, L3("Ask me about opening hours, prices, parking, what to bring, or your passes.", "Bạn có thể hỏi giờ mở cửa, giá, chỗ gửi xe, cần mang gì, hoặc gói của bạn.", "영업시간, 가격, 주차, 준비물, 이용권에 대해 물어보세요."), { chips: [chip(L3("Opening hours", "Giờ mở cửa", "영업시간"), { say: L3("what time do you open", "mấy giờ mở cửa", "몇 시에 열어요?") }), chip(L3("Prices", "Giá", "가격"), { say: L3("prices", "giá bao nhiêu", "가격") }), chip(L3("My passes", "Gói của tôi", "내 이용권"), { say: L3("my pass balance", "gói của tôi còn mấy buổi", "이용권 몇 회 남았어?") })] }); render(); scrollThread(cid); return; }
+  if (v.act === "aslot") { const x = completeDraft(Object.assign({}, v.x)); say(c, againLine(x), { confirm: x, chips: againAlts(v.i, x) }); render(); scrollThread(cid); return; }
+  if (v.act === "againmore") { const [sid, vid, o] = AGAIN[v.i]; c.msgs.pop(); openBook(sid, vid, Object.assign({}, o)); return; }
   if (v.act === "booknext") { c.skipSafety = true; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
   if (v.act === "askstore") { sendToStore(v.store, v.q || "Question from chat"); say(c, `Sent to ${S[v.store].name}. Replies land in your inbox.`); }
   else if (v.act === "pickbk") { const b = B.find(z => z.id === v.id && z.status === "confirmed"); if (!b) say(c, "That one's already cancelled."); else if (v.mode === "cancel") askCancel(c, b); else askMove(c, b); }
-  else if (v.act === "cancelbk") { const b = B.find(z => z.id === v.id); if (!b || b.status !== "confirmed") say(c, "That one's already cancelled."); else { const free = freeNow(b.store, b.d, b.m); cancelB(b); c.ask = null; say(c, L3(`Cancelled: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `Đã hủy: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `취소됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}.`) + " " + (free ? L3("Nothing charged.", "Không tính phí.", "청구된 건 없어요.") + (b.usePass ? " " + tr(" The class goes back on your pass.").trim() : "") : L3(`Late cancel: ${tr(S[b.store].policy.late)}.`, `Hủy muộn: ${tr(S[b.store].policy.late)}.`, `늦은 취소: ${tr(S[b.store].policy.late)}.`)), { chips: [chip(t("undo"), { act: "uncancel", id: b.id })] }); } }
+  else if (v.act === "cancelbk") { const b = B.find(z => z.id === v.id); if (!b || b.status !== "confirmed") say(c, "That one's already cancelled."); else { const free = freeNow(b.store, b.d, b.m, b.pol); if (!free && bkPol(b).studio) { askCancel(c, b); render(); scrollThread(cid); return; } cancelB(b); if (!free) b.lateCx = true; c.ask = null; say(c, L3(`Cancelled: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `Đã hủy: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `취소됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}.`) + " " + (free ? L3("Nothing charged.", "Không tính phí.", "청구된 건 없어요.") + (b.usePass ? " " + tr(" The class goes back on your pass.").trim() : "") : L3(`Late cancel: ${tr(S[b.store].policy.late)}.`, `Hủy muộn: ${tr(S[b.store].policy.late)}.`, `늦은 취소: ${tr(S[b.store].policy.late)}.`)), { chips: [chip(t("undo"), { act: "uncancel", id: b.id })] }); } }
   else if (v.act === "uncancel") { const b = B.find(z => z.id === v.id); if (b && b.status === "cancelled") { b.status = "confirmed"; if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; } say(c, "Booking restored"); } }
+  else if (v.act === "askstudio") { const b = B.find(z => z.id === v.id); const r = b ? askStudioSend(b, "") : { ok: false }; if (r.ok) say(c, t("askStudioSent", { store: S[b.store].name })); else if (!r.safety) say(c, "That one's already cancelled."); }
   else if (v.act === "keepbk") { c.ask = null; say(c, L3("Okay, I kept it. Nothing changed.", "Vâng, mình giữ nguyên lịch. Không có gì thay đổi.", "네, 그대로 둘게요. 바뀐 건 없어요.")); }
   else if (v.act === "moveday" || v.act === "movepick") { const b = B.find(z => z.id === v.id && z.status === "confirmed"); if (!b) say(c, "That one's already cancelled."); else if (v.act === "moveday") { if (v.d == null) { c.pend = null; askMove(c, b); } else askMove(c, b, v.d); } else { const z = slotsFor(b.store, b.svc, v.d, moveOpts(b)).find(q => q.m === v.m); if (z) moveConfirm(c, b, z); else askMove(c, b, v.d); } }
   else if (v.act === "undo") { const b = B.find(z => z.id === v.id); if (b && b.status === "confirmed") { cancelB(b); say(c, "Undone. Nothing charged."); } else say(c, "That one's already cancelled."); }
@@ -1561,11 +1613,11 @@ function chatBook(cid, mi) {
   const x = msg.confirm, s = S[x.store];
   const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : { staff: x.rids[0], room: x.rids[1] };
   if (!slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0)) { msg.done = "gone"; say(c, "That slot just went. Here's what's open."); c.draft = { store: x.store, svc: x.svc, d: x.d, party: x.party, len: x.len }; advance(c); render(); return; }
-  if (x.move) { const b = doBook(Object.assign({}, x), true); msg.done = true; c.draft = null; c.ask = null;
+  if (x.move) { const ob = B.find(z => z.id === x.move), mv = ob ? moveBooking(ob, x) : { ok: false }; if (!mv.ok) { msg.done = "gone"; say(c, t("taken") + ". " + L3("Your booking is unchanged.", "Lịch của bạn vẫn giữ nguyên.", "기존 예약은 그대로예요.")); render(); scrollThread(cid); return; } const b = mv.b; msg.done = true; msg.bookedId = b.id; c.draft = null; c.ask = null;
     say(c, L3(`Moved: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name} is now ${fWhen(b.d, b.m)}.`, `Đã dời: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name} sang ${fWhen(b.d, b.m)}.`, `변경됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, 이제 ${fWhen(b.d, b.m)}이에요.`)); render(); scrollThread(cid); return; }
-  const b = doBook(Object.assign({}, x), true); msg.done = true; c.draft = null; c.ask = null;
+  const b = doBook(Object.assign({}, x), true); msg.done = true; msg.bookedId = b.id; c.draft = null; c.ask = null; track("booking_confirmed", { store: b.store, via: "chat" });
   const nx = c.queue && c.queue.length ? c.queue.shift() : null;
-  say(c, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in Up next.`, { chips: [chip(t("undo"), { act: "undo", id: b.id })].concat(nx ? [chip(L3("Next: ", "Tiếp theo: ", "다음: ") + nx, { say: nx, next: true })] : []) });
+  say(c, `${t("booked")}: ${svcOf(b.store, b.svc).n} at ${S[b.store].name}, ${fWhen(b.d, b.m)}. It's in My bookings.`, { chips: [chip(t("undo"), { act: "undo", id: b.id })].concat(nx ? [chip(L3("Next: ", "Tiếp theo: ", "다음: ") + nx, { say: nx, next: true })] : []) });
   render(); scrollThread(cid); toast(`${t("booked")} · ${S[b.store].name}`, () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); });
 }
 function sendToStore(sid, text) {
@@ -1576,13 +1628,15 @@ function sendToStore(sid, text) {
 const unreadAt = sid => INBOX.some(m => m.s === sid && m.unread);
 const lvl = () => lvlOf(ME);
 function header() {
-  const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
+  const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page === "bookings" ? t("bkTitle") : ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
   return `<div class="brand">${ST.store || ST.page ? `<button class="icb" data-act="back" aria-label="${t("back")}">${ic("back")}</button>` : `<span class="nm" aria-hidden="true">N</span>`}<span class="t">${esc(title)}</span></div>
   <div class="tr"><button class="icb" data-act="lang" aria-label="${t("language")}: ${L.toUpperCase()}">${ic("globe", "s")}${L.toUpperCase()}</button>
   <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + L3(unread + " unread", unread + " chưa đọc", "읽지 않음 " + unread) : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
 }
 function tabs() {
-  return [["home", "home"], ["discover", "compass"], ["book", "cal"], ["ask", "chat"], ["you", "user"]].map(([k, i]) => `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}>${ic(i)}<span>${t(k)}</span></button>`).join("");
+  /* 4 tabs, Nari in position 3 (nari-tab §1); the Nari tab shows a dot (never a number) for an unread Nari reply */
+  return [["home", "home"], ["discover", "compass"], ["nari", "nari"], ["you", "user"]].map(([k, i]) => { const dot = k === "nari" && CH.nari.unread && !(ST.tab === "nari" && !ST.page && !ST.store);
+    return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "nari" ? ` aria-label="${esc(t("nariAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; }).join("");
 }
 function heroScene() {
   const h = new Date().getHours(), nx = upcoming()[0];
@@ -1625,28 +1679,29 @@ function importCard() {
 function vHome() {
   const up = upcoming();
   return heroScene() + notesCard() +
-    `<h2>${t("upNext")} <span class="sub sm">${up.length} · ${tr("all places")}</span></h2><div class="card" role="list">${up.length ? up.slice(0, 3).map(upRow).join("") : nEmpty(esc(t("nothingUp")), "idle")}</div>` + pendingCard() +
+    `<h2>${t("nextClass")}</h2><div class="card" role="list">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="go" data-v="nari:book">${t("chipBook")}</button>`}</div>` + pendingCard() +
     importCard() +
     `<h2>${t("myPlaces")} <span class="sub sm">${joinedIds().length}</span></h2><div class="scroll" role="group" aria-label="${t("myPlaces")}">${joinedIds().map(placeCard).join("")}<button class="place add" data-act="joinsheet">+ ${t("join")}</button></div>` +
     `<h2>${t("missions")}</h2>${missionsCard()}`;
 }
-function chatUI(cid, placeholder) {
-  const c = CH[cid];
+function chatUI(cid, placeholder, above) {
+  const c = CH[cid], g = gated();
   const th = c.msgs.map((m, i) => {
+    if (m.who === "sys") return m.div ? `<div class="ndiv" role="separator">${esc(t("divider"))}</div>` : "";
     if (m.who === "me") return `<div class="msg me"><span class="vh">${L3("You","Bạn","나")}: </span>${esc(m.text)}</div>`;
     let body = (m.note ? esc(m.note.split(/(?<=\.) /).map(trS).join(" ")) + " " : "") + esc(trS(m.text)).replace(/\n/g, "<br>");
     if (m.card) body += `<div class="mcard${m.care ? " care" : ""}"><div class="sub sm"><b>${esc(trS(m.card.kicker))}</b></div><b>${esc(trS(m.card.title))}</b><div class="sm">${esc(L === "en" ? m.card.body : m.card.body.split("\n").map(l => { const q = l.match(/^(.+?) \((.+?)\): (.+)$/); return q ? N(q[1]) + " (" + q[2] + "): " + tr(q[3]) : trS(l); }).join("\n")).replace(/\n/g, "<br>")}</div>${m.card.src ? `<div class="src">${esc(trS(m.card.src))}</div>` : ""}</div>`;
     if (m.src) body += `<div class="src">${esc(L === "en" ? m.src : m.src.replace(/^From (.+?)'s (info|price list)$/, (q, a, b) => L === "vi" ? "Theo " + (b === "info" ? "thông tin" : "bảng giá") + " của " + a : a + " " + (b === "info" ? "정보" : "가격표") + " 기준"))}</div>`;
-    if (m.confirm) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>`}</div>`; }
-    if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}</div>`; }
+    if (m.confirm && !(g && m.done !== true)) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>${m.bookedId && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${m.bookedId}">${t("manage")}</button>${callBtn(x.store)}</div>` : ""}` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>${callBtn(x.store)}`}</div>`; }
+    if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}${b.status === "confirmed" && !bkStarted(b) && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${b.id}">${t("manage")}</button></div>` : ""}</div>`; }
     const av = `<span class="av" aria-hidden="true"><img src="${A}${m.care ? "calm" : "greet"}.webp" alt=""></span>`;
-    const chips = m.chips && i === c.msgs.length - 1 ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
+    const chips = m.chips && i === c.msgs.length - 1 && !(g && !m.care) ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
     const sos = ""; /* the safety note shows once per screen, in the bar above the input */
     return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Nari: </span>${body}${sos}</div></div>${chips}`;
   }).join("");
   return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
   <div class="nthink" id="nthink-${cid}" aria-hidden="true"><img src="${A}thinking.webp" alt=""><span>${L3("Nari is listening", "Nari đang nghe", "나리가 듣고 있어요")}</span><i></i><i></i><i></i></div>
-  <form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
+  ${above || ""}<form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
   <div class="helpft"><button type="button" class="helplink" data-act="helpsheet" data-c="${cid}">${esc(HELP_LINK())}</button></div>`;
 }
 /* PR11-H1/H2: a small neutral "Need help?" link under the chat (not above the input). Safety replies still trigger from message content (H3/H4). No phone or emergency number. */
@@ -1657,20 +1712,10 @@ function helpSheet(cid) {
   <div class="card stack" style="margin-top:10px"><b>${esc(L3("If you're not okay", "Nếu bạn đang không ổn", "괜찮지 않다면"))}</b><p class="sm" style="margin:0">${esc(CRISIS_COPY[L] || CRISIS_COPY.en)}</p></div>
   <button class="btn sec full" style="margin-top:10px" data-act="helptalk" data-c="${cid}">${esc(L3("Tell Nari what's happening", "Kể cho Nari điều đang xảy ra", "나리에게 상황 말하기"))}</button>`, HELP_LINK());
 }
-function vBook() {
-  return `<div class="row top"><div class="grow"><h1>${t("whatBook")}</h1><p class="sub">${t("bookHint")}</p></div><button class="btn sec" data-act="call" aria-label="${t("callNari")}">${ic("phone", "s")}</button></div>` + chatUI("book", L3("e.g. haircut Saturday 2pm", "vd: cắt tóc thứ bảy", "예: 토요일 커트")) +
-    (CH.book.msgs.length ? "" : `<div class="chips" style="margin-top:10px">${exampleChips().slice(0, 3).map(c => `<button class="chip" data-act="ex" data-v="${esc(c.val.say)}">“${esc(c.label)}”</button>`).join("")}</div>`) +
-    `<h2>${t("bookAgain")} <span class="sub sm">${tr("3 taps")}</span></h2>${againChips()}`;
-}
-function vAsk() {
-  return `<div class="row" style="margin:4px 0 6px"><span class="av" aria-hidden="true"><img src="${A}greet.webp" alt=""></span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("askNari")}</h1><div class="sub sm">${L3("All your places","Mọi nơi của bạn","모든 매장")}</div></div><button class="btn" data-act="call" style="flex:none" aria-label="${t("callNari")}">${ic("phone", "s")} ${L3("Call", "Gọi", "통화")}</button></div>` +
-    chatUI("ask", t("typeHere")) +
-    `<div class="chips" style="margin-top:10px">${[...(L === "vi" ? ["cắt tóc thứ bảy chiều", "sân pickleball cho 4 người tối mai 7h", "da khô nên chọn liệu trình nào?", "tôi bị đau đầu gối"] : L === "ko" ? ["토요일 오후 커트", "내일 저녁 7시 피클볼 코트 4명", "건조한 피부에 맞는 페이셜?", "무릎이 아파요"] : ["Which facial suits dry skin?", "What should I bring to pickleball?", "massage tomorrow", "the usual", "my knee hurts"])].map(q => `<button class="chip" data-act="askq" data-v="${esc(q)}">${esc(q)}</button>`).join("")}</div>`;
-}
 function vDiscover() {
   const q = norm(ST.q || ""), cats = [["all", "All"], ["hair", "Hair"], ["nails", "Nails"], ["skin", "Skin"], ["massage", "Massage"], ["fitness", "Fitness"], ["sport", "Courts"]];
   const list = ORDER0.filter(sid => (!ST.cat || ST.cat === "all" || S[sid].cat === ST.cat) && (!q || norm(S[sid].name + " " + S[sid].area + " " + S[sid].cat + " " + S[sid].svcs.map(v => v.n).join(" ")).includes(q)));
-  const card = sid => `<div class="card row">${logo(sid)}<div class="grow"><b>${esc(S[sid].name)}</b> <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span><div class="sub sm">${esc(N(S[sid].area))} · ${esc(S[sid].svcs.map(priceLabel).filter(x => x !== "Free").slice(0, 2).join(" – "))}</div><div class="sub sm">${tr("Free up to")} ${S[sid].policy.free}${tr("h before · after that:").split(" ·")[0]}${S[sid].policy.dep ? " · " + t("deposit") + " " + vnd(S[sid].policy.dep) : ""}</div></div>
+  const card = sid => `<div class="card row">${logo(sid)}<div class="grow"><b>${esc(S[sid].name)}</b> <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span><div class="sub sm">${esc(N(S[sid].area))} · ${esc(S[sid].svcs.map(priceLabel).filter(x => x !== "Free").slice(0, 2).join(" – "))}</div><div class="sub sm">${freeTxt(sid)}${S[sid].policy.dep ? " · " + t("deposit") + " " + vnd(S[sid].policy.dep) : ""}</div></div>
     <button class="btn ${S[sid].joined ? "ghost" : ""}" data-act="store" data-v="${sid}" aria-label="${S[sid].joined ? t("joined") : t("join")}: ${esc(S[sid].name)}">${S[sid].joined ? t("joined") : t("join")}</button></div>`;
   const items = list.map(card);
   const ad = `<aside class="card spons" aria-label="${t("sponsored")}"><div class="row"><span class="tag sp">${t("sponsored")}</span><span class="grow"></span><button class="link sm" data-act="whyad">${tr("Why this?")}</button></div><div class="row" style="margin-top:6px"><span class="slogo" style="background:#5C6B5A" aria-hidden="true">MJ</span><div class="grow"><b>Mint Juice Bar</b> <span class="tag">${t("sample")}</span><div class="sub sm">${tr("Cold-pressed juice near Thảo Điền. Shown by area, not by your bookings.")}</div></div></div></aside>`;
@@ -1684,8 +1729,8 @@ function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
-  <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn ghost grow" data-act="fake" data-v="Calls the store's phone (demo).">${ic("phone", "s")} ${L3("Call", "Gọi", "전화")}</button><button class="btn ghost grow" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
-  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${tr("Free up to")} ${s.policy.free}${tr("h before · after that:")} ${esc(tr(s.policy.late))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
+  <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn grow" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button>${callBtn(sid, "grow")}<button class="btn ghost grow" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
+  h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${freeTxt(sid)} · ${esc(tr(s.policy.late))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
   if (s.kind === "class") {
     for (const [cid, m, tid] of s.sched) {
@@ -1719,12 +1764,12 @@ function vYou() {
   h += `<h2>${t("wallet")}</h2><div class="card stack">${joinedIds().map(sid => (WALLET[sid] || []).map(p => `<div class="row">${logo(sid)}<span class="grow"><b class="sm">${esc(tr(p.t))}</b><br><span class="sub sm">${esc(t("storeOnly", { s: S[sid].name }))} · ${esc(tr(p.exp))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("")).join("")}
     ${upcoming().filter(b => b.dep).map(b => `<div class="row">${logo(b.store)}<span class="grow"><b class="sm">${tr("Deposit held")}</b><br><span class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</span></span><b>${vnd(b.dep)}</b></div>`).join("")}
     ${PV.flag ? `<div class="row" style="border-top:1px solid var(--line);padding-top:10px"><span class="slogo" style="background:#B04A5E" aria-hidden="true">N</span><span class="grow"><b class="sm">${esc(pvT("balance"))}</b><br><span class="sub sm">${esc(pvT("noCash"))}</span></span><b>${esc(fmtPts(bal(ME)))}</b></div>` : ""}</div>`;
-  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack">${[["pvquest", "star", t("quest") + " · " + t("journey"), tr("step") + " " + ST.steps + "/14"], ["pvwardrobe", "shirt", t("wardrobe"), OUTFIT[Math.max(0, +String(ST.wear).replace(/\D/g, "") - 1)] || ""], ["inbox", "bell", t("inbox"), INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase()]].map(([act, i, n, sub]) => `<button class="svc" data-act="${act}">${ic(i)}<span class="grow"><b>${esc(n)}</b><br><span class="sub sm">${esc(sub)}</span></span>${ic("chev")}</button>`).join("")}</div>`;
+  h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack">${[["mybk", "cal", t("bkTitle"), bkUpcoming().length + " " + t("bkUp").toLowerCase() + " · " + bkPastList().length + " " + t("bkPast").toLowerCase()], ["pvquest", "star", t("quest") + " · " + t("journey"), tr("step") + " " + ST.steps + "/14"], ["pvwardrobe", "shirt", t("wardrobe"), OUTFIT[Math.max(0, +String(ST.wear).replace(/\D/g, "") - 1)] || ""], ["inbox", "bell", t("inbox"), INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase()]].map(([act, i, n, sub]) => `<button class="svc" data-act="${act}">${ic(i)}<span class="grow"><b>${esc(n)}</b><br><span class="sub sm">${esc(sub)}</span></span>${ic("chev")}</button>`).join("")}</div>`;
   h += storeAppBtn();
   h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p><h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div><h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { $("#view").innerHTML = ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, book: vBook, ask: vAsk, you: vYou }[ST.tab])(); }
+function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
 function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
@@ -1804,7 +1849,7 @@ function dcard(sid) {
   return `<article class="card dcard${sel ? " sel" : ""}" id="dc-${sid}" aria-label="${esc(s.name)}${f.ad ? ", " + esc(pvT("offeredBy", { brand: s.name })) : ""}">
   ${f.ad ? `<div class="splabel">${esc(pvT("offeredBy", { brand: s.name }))}</div>` : ""}<button class="dhit" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}">${photo(sid)}<span class="dtx"><b>${esc(s.name)}</b> ${badge}<br>
   <span class="sub sm">${esc(typeLabel(sid))}</span><br>
-  <span class="sm">${f.km.toFixed(1)} km · ★ ${f.rate.toFixed(1)}</span></span></button>
+  <span class="sm">${f.km.toFixed(1)} km${FLAGS.publicRatings ? " · ★ " + f.rate.toFixed(1) : ""}</span></span></button>
   <div class="row" style="margin-top:8px;justify-content:flex-end">${nf ? `<button class="btn sec" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} ${esc(fWhen(nf.d, nf.m))}</button>` : `<span class="sub sm">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`}</div></article>`;
 }
 IP.clock = '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>';
@@ -1893,14 +1938,15 @@ function stretchSheet() {
 }
 function finishStretch() { clearInterval(stretchT); const r = pvMission(ME, "stretch"); ST.miss.stretch = true; closeSheet(); render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("mStretch") }) : pvT(r.msg)); }
 function manage(b) {
-  const s = S[b.store], free = freeNow(b.store, b.d, b.m);
+  if (!b) return; const s = S[b.store], P = bkPol(b), free = bkFree(b), st = bkStarted(b) || b.status !== "confirmed";
+  const acts = st ? "" : b.req ? `<span class="tag warn">${t("bkRequested")}</span>` : !free && P.studio ? `<p class="sm" style="margin:0">${esc(t("askStudioHint"))}</p><button class="btn full" data-act="askstudio" data-id="${b.id}">${t("askStudio")}</button>`
+    : `<button class="btn full" data-act="resched" data-id="${b.id}">${t("reschedule")}</button><button class="btn sec full" data-act="cancelask" data-id="${b.id}">${t("cancel")}${free ? " · " + tr("free") : " · " + esc(tr(P.late))}</button>`;
   openSheet(sheetHd(t("manage")) + storeBar(b.store) + draftRows(b) + `<p class="sub sm">${tr("The policy is saved with your booking, so a later change never surprises you.")}</p><div class="stack">
-  <button class="btn full" data-act="resched" data-id="${b.id}">${t("reschedule")}</button>
-  <button class="btn sec full" data-act="cancelask" data-id="${b.id}">${t("cancel")}${free ? " · " + tr("free") : " · " + esc(tr(s.policy.late))}</button>
-  <button class="btn ghost full" data-act="msgfrom" data-id="${b.id}">${esc(t("msgStore", { s: s.name }))}</button></div>`, t("manage"));
+  ${acts}<button class="btn ghost full" data-act="msgfrom" data-id="${b.id}">${esc(t("msgStore", { s: s.name }))}</button>${callBtn(b.store, "full")}</div>`, t("manage"));
 }
 function cancelAsk(b) {
-  const s = S[b.store], free = freeNow(b.store, b.d, b.m);
+  if (!b || b.status !== "confirmed" || bkStarted(b)) return; if (!bkFree(b) && bkPol(b).studio) return askStudioSheet(b); /* MB-3: no Cancel after the cutoff */
+  const s = { policy: bkPol(b) }, free = bkFree(b);
   openSheet(sheetHd(t("cancel")) + storeBar(b.store) + `<p style="margin-top:10px">${t("cancel")}: <b>${esc(N(svcOf(b.store, b.svc).n))}</b>, ${fWhen(b.d, b.m)}?</p><p>${free ? `<span class="tag ok">${tr("Free")}</span> ${tr("You're inside the free window.")}${b.usePass ? tr(" The class goes back on your pass.") : ""}${b.dep ? " " + L3(`Your ${vnd(b.dep)} deposit is returned.`, `Tiền cọc ${vnd(b.dep)} được hoàn lại.`, `예약금 ${vnd(b.dep)}은 돌려드려요.`) : ""}` : `<span class="tag warn">${tr("Late cancel")}</span> ${esc(tr(s.policy.late))}`}</p>
   <div class="stack"><button class="btn ghost full" data-act="close">${t("keep")}</button><button class="btn full" data-act="cancelok" data-id="${b.id}">${t("cancel")}${free ? "" : " · " + esc(tr(s.policy.late))}</button></div>`, t("cancel"));
 }
@@ -1983,6 +2029,245 @@ function endCall() {
     : ho ? L3("Call ended · passed to a person, nothing booked", "Cuộc gọi kết thúc · đã chuyển cho nhân viên, chưa đặt gì", "통화 종료 · 직원에게 연결됨, 예약 없음") : "Call ended · nothing booked", b ? () => { cancelB(b); render(); toast("Booking undone. Nothing charged."); } : null);
 }
 
+/* ===== Nari tab (nari-tab spec v1.0): one thread, My bookings, ratings, Call {store}, app-state routes ===== */
+/* OQ defaults (spec §10) used until the user decides: OQ-1 label "Nari"/"나리"; OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
+   OQ-4 ratings private, publicRatings off; OQ-5 0 points; OQ-6 rating notes and Ask-the-studio notes are safety-scanned; OQ-7 "Talk to Nari (demo)" in overflow only; OQ-8 store phone field + emergency blocklist, no number = no button;
+   OQ-9 Past = 12 months, rating/edit window 14 days; OQ-10 store messages stay in the Inbox; OQ-11 analytics carry event names only, safety turns only safety_turn{type} */
+const FLAGS = { publicRatings: false };
+const EVT = []; let TURN_SAFE = false;
+function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
+const gated = () => !!(CH.nari.gate && CH.nari.msgs.length);
+/* store phone numbers: the store's own published line only; emergency / crisis / public short codes are rejected (NT-26) */
+const EMERG_BLOCK = ["112", "119", "911", "113", "114", "115", "1393", "109", "988", "110", "111", "117", "118", "120", "122", "125", "127", "129", "1366", "1388", "999", "000", "15770199", "15889191", "16005252"];
+const phoneDigits = n => String(n || "").replace(/\D/g, "");
+const isEmergencyNum = n => { const d = phoneDigits(n); return !d || d.length <= 4 || EMERG_BLOCK.includes(d) || EMERG_BLOCK.includes(d.replace(/^82/, "").replace(/^0/, "")); };
+function setStorePhone(sid, num) { if (!S[sid]) return { ok: false, err: "no_store" }; if (isEmergencyNum(num)) { delete S[sid].phone; return { ok: false, err: "emergency_number" }; } S[sid].phone = String(num); return { ok: true }; }
+for (const [sid, kr, vn] of [["capsule", "02-6953-1201", "028 3744 1201"], ["salon", "02-332-1804", "028 3822 1804"], ["skin", "02-512-3307", "028 3930 3307"], ["spa", "02-797-4410", "028 3829 4410"], ["pickle", "02-455-2290", "028 3740 2290"], ["yoga", "02-3443-0611", "028 3744 0611"], ["barber", "02-336-7015", "028 3910 7015"]]) if (S[sid]) setStorePhone(sid, MARKET === "kr" ? kr : vn);
+/* nails, moc, rally: no published number saved → no Call button (OQ-8) */
+function callBtn(sid, cls) {
+  const s = S[sid]; if (!s || !s.phone || isEmergencyNum(s.phone) || gated()) return "";
+  return `<button class="btn ghost ${cls || ""}" data-act="callstore" data-v="${sid}" aria-label="${esc(t("callStoreAria", { store: s.name }))}">${ic("phone", "s")} ${esc(t("callStore", { store: s.name }))}</button>`;
+}
+function callStoreSheet(sid) {
+  const s = S[sid]; if (!s || !s.phone || gated()) return;
+  openSheet(sheetHd(t("callStore", { store: s.name })) + storeBar(sid) + `<p style="margin-top:10px"><b>${esc(s.phone)}</b></p><p class="sub sm">${esc(L3(`This is ${s.name}'s own published number, for questions about your booking. Demo: no real call is made.`, `Đây là số điện thoại công khai của ${s.name}, dùng để hỏi về lịch đặt. Demo: không gọi thật.`, `${s.name}에서 직접 공개한 번호로, 예약 문의용이에요. 데모: 실제 전화는 걸리지 않아요.`))}</p><div class="stack"><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("callStore", { store: s.name }));
+}
+/* ---- time helpers for bookings (store time; KST for KR stores) ---- */
+const bkAbs = b => b.d * 1440 + b.m;
+const bkStarted = b => bkAbs(b) <= nowMin();
+const tzTag = () => MARKET === "kr" ? "KST" : "ICT";
+const bkPol = b => b.pol || S[b.store].policy;
+const bkFree = b => freeNow(b.store, b.d, b.m, bkPol(b));
+const pvIdOf = b => b.pv || b.id;
+function bkOutcome(b) {
+  if (b.status === "moved") return null;
+  if (b.status === "cancelled") return { k: "cancelled", late: !!b.lateCx };
+  const reg = typeof BKREG !== "undefined" ? BKREG[pvIdOf(b)] : null, att = ME && ME.att ? ME.att[pvIdOf(b)] : null;
+  if (att && att.reversed) return { k: "reversed" };
+  if (b.status === "attended" || (reg && reg.status === "attended")) return { k: "attended" };
+  if (b.status === "noshow" || (reg && reg.status === "noshow")) return { k: "noshow" };
+  if (b.req && bkStarted(b)) return { k: "requested" };
+  if (!bkStarted(b)) return null; /* still upcoming */
+  return nowMin() < bkAbs(b) + (b.len || 0) + 24 * 60 ? { k: "pending" } : { k: "unconfirmed" };
+}
+const bkUpcoming = () => B.filter(b => b.status === "confirmed" && !bkStarted(b)).sort((a, q) => bkAbs(a) - bkAbs(q));
+const bkPastList = () => B.filter(b => bkOutcome(b) && bkAbs(b) >= nowMin() - 365 * 1440).sort((a, q) => bkAbs(q) - bkAbs(a));
+const bkPts = b => (ME.ledger || []).filter(r => String(r.src) === String(pvIdOf(b))).reduce((n, r) => n + (r.delta || 0), 0);
+const OUT_LBL = k => t({ attended: "bkAttended", cancelled: "bkCancelled", noshow: "bkNoShow", requested: "bkRequested", pending: "bkPending", unconfirmed: "bkUnconf", reversed: "bkReversedV" }[k]);
+/* ---- ratings (C2, C3, C7): stars 1–5 required, private to the store, 0 points, 14-day window ---- */
+const RATINGS = {}; const RATE_DAYS = 14;
+const rateWindowOpen = b => { const att = ME.att && ME.att[pvIdOf(b)]; const vAbs = att ? Math.min(bkAbs(b), nowMin()) : bkAbs(b); return nowMin() - vAbs <= RATE_DAYS * 1440; };
+const canRate = b => { const o = bkOutcome(b); return !!o && o.k === "attended" && rateWindowOpen(b); };
+const MOD_RE = /(\+?\d[\d\s().-]{7,}\d)|[\w.+-]+@[\w-]+\.\w+|\b(fuck\w*|shit\w*|bitch\w*|asshole|cunt|dm|dcm|vcl|dit me|du ma|lon)\b|씨발|시발|ㅅㅂ|병신|개새끼|좆/i;
+function storeRatings(sid, role) { syncReversed(); return Object.values(RATINGS).filter(r => r.store === sid && !r.held && !r.hidden).map(r => { const o = { bk: r.bk, stars: r.stars, tags: r.tags.slice(), note: r.note }; if (role === "owner") o.inst = r.inst; return o; }); }
+function publicAvg(sid) { if (!FLAGS.publicRatings) return null; const rs = storeRatings(sid); return rs.length >= 5 ? rs.reduce((n, r) => n + r.stars, 0) / rs.length : null; }
+function syncReversed() { for (const id in RATINGS) { const b = B.find(z => z.id === +id); if (b) { const o = bkOutcome(b); RATINGS[id].hidden = !!(o && o.k === "reversed"); } } }
+let RS = null;
+function rateSheet(b, keep) {
+  const ex = RATINGS[b.id]; if (!keep) RS = { id: b.id, stars: ex ? ex.stars : 0, inst: ex ? ex.inst : 0, tags: ex ? ex.tags.slice() : [], note: ex ? ex.note : "", err: "" };
+  const v = N(svcOf(b.store, b.svc).n), staff = (S[b.store].staff || []).some(x => b.rids.includes(x.id)) ? resName(b.store, b.rids[0]) : null, open = rateWindowOpen(b);
+  const stars = (k, cur) => `<div class="stars" role="radiogroup" aria-label="${esc(k === "rstar" ? t("rateVisit") : t("rateInst"))}">` + [1, 2, 3, 4, 5].map(n => `<button class="star" role="radio" aria-checked="${cur === n}" data-act="${k}" data-v="${n}" aria-label="${n} · ${esc(t("rate" + n))}" ${open ? "" : "disabled"}>${ic("star", n <= cur ? "on" : "")}</button>`).join("") + `</div>`;
+  openSheet(sheetHd(ex ? t("rateEdit") : t("rate")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(staff ? t("ratePrompt", { service: v, staff }) : t("ratePromptNo", { service: v }))}</b></p>
+  <div class="opt">${t("rateVisit")} *</div>${stars("rstar", RS.stars)}<p class="sub sm" aria-live="polite" id="rlbl" style="margin:2px 0 0">${RS.stars ? esc(t("rate" + RS.stars)) : ""}</p>
+  ${staff ? `<div class="opt">${t("rateInst")}</div>${stars("ri", RS.inst)}` : ""}
+  <div class="opt">${L3("Tags (optional)", "Thẻ (không bắt buộc)", "태그 (선택)")}</div><div class="chips" role="group" aria-label="${L3("Tags", "Thẻ", "태그")}">${[1, 2, 3, 4, 5].map(n => `<button class="chip" aria-pressed="${RS.tags.includes(n)}" data-act="rtag" data-v="${n}" ${open ? "" : "disabled"}>${esc(t("tag" + n))}</button>`).join("")}</div>
+  <label class="opt" for="rnote">${t("rateNote")}</label><textarea id="rnote" class="inp" rows="3" maxlength="500" style="width:100%" ${open ? "" : "disabled"}>${esc(RS.note)}</textarea>
+  <p class="sub sm">${esc(t("ratePrivate", { store: S[b.store].name }))} ${esc(L3("Ratings don't earn points.", "Đánh giá không cộng điểm.", "평가는 포인트가 적립되지 않아요."))}</p>
+  ${RS.err ? `<p class="tag warn" role="alert">${esc(RS.err)}</p>` : ""}${ex && ex.held ? `<p class="tag warn">${esc(t("rateHeld"))}</p>` : ""}
+  <div class="stack">${open ? `<button class="btn full" data-act="ratesave" data-id="${b.id}">${ex ? t("rateEdit") : t("rateSubmit")}</button>` : `<p class="sub sm">${esc(L3("The 14-day window to edit has ended.", "Đã hết 14 ngày để sửa.", "수정 가능 기간(14일)이 지났어요."))}</p>`}${ex ? `<button class="btn ghost full" data-act="ratedel" data-id="${b.id}">${t("rateDelete")}</button>` : ""}<button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("rate"));
+}
+function rateSave(b) {
+  const ta = $("#rnote"); RS.note = ta ? ta.value.slice(0, 500) : RS.note;
+  if (!rateWindowOpen(b)) return;
+  if (!(RS.stars >= 1 && RS.stars <= 5)) { RS.err = L3("Choose 1 to 5 stars for your visit.", "Chọn từ 1 đến 5 sao cho buổi của bạn.", "방문 별점을 1~5개 선택해 주세요."); return rateSheet(b, true); }
+  const note = RS.note.trim(), sf = note ? safety(note) : null, risky = note && (sf === "crisis" || sf === "urgent" || riskWord(note));
+  const prev = RATINGS[b.id], r = { bk: b.id, store: b.store, stars: RS.stars, inst: RS.inst || 0, tags: RS.tags.slice(), note: risky ? "" : note, held: !risky && !!note && MOD_RE.test(note), ts: Date.now(), hist: prev ? prev.hist.concat([{ stars: prev.stars, inst: prev.inst, tags: prev.tags, note: prev.note, ts: prev.ts }]) : [] };
+  RATINGS[b.id] = r; syncReversed(); track("rating_saved", { edit: !!prev });
+  if (risky) { closeSheet(); safetyFromSide(note, sf); return; } /* NT-22: never forwarded as a comment; Nari shows the safety reply instead */
+  closeSheet(); render();
+  if (r.stars <= 2) openSheet(sheetHd(t("rate")) + `<p style="margin-top:10px">${esc(t("rateThanks", { store: S[b.store].name }))}</p>${r.held ? `<p class="tag warn">${esc(t("rateHeld"))}</p>` : ""}<p>${esc(t("rateLow"))}</p><div class="stack"><button class="btn full" data-act="msgfrom" data-id="${b.id}">${esc(t("msgStore", { s: S[b.store].name }))}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("rate"));
+  else toast(r.held ? t("rateHeld") : t("rateThanks", { store: S[b.store].name }));
+}
+/* a crisis / urgent note written outside the chat: Nari shows the fixed safety reply in the thread, the text isn't echoed, logged or sent */
+function safetyFromSide(text, sf) {
+  const c = CH.nari; TURN_SAFE = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
+  if (sf === "urgent") urgentReply(c); else if (sf === "crisis") crisisReply(c, text); else riskCheckIn(c, text);
+  TURN_SAFE = false; setTab("nari"); render(); scrollThread("nari");
+}
+/* ---- Ask the studio (Capsule Barre after 16:00 the day before) ---- */
+function askStudioSheet(b) {
+  openSheet(sheetHd(t("askStudio")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b>, ${fWhen(b.d, b.m)} <span class="sub sm">${tzTag()}</span></p><p class="sm">${esc(t("askStudioHint"))}</p>
+  <label class="opt" for="asn">${L3("Message (optional)", "Lời nhắn (không bắt buộc)", "메시지 (선택)")}</label><textarea id="asn" class="inp" rows="2" maxlength="300" style="width:100%"></textarea>
+  <div class="stack"><button class="btn full" data-act="askstudiook" data-id="${b.id}">${L3("Send cancel request", "Gửi yêu cầu hủy", "취소 요청 보내기")}</button><button class="btn ghost full" data-act="close">${t("keep")}</button></div>`, t("askStudio"));
+}
+function askStudioSend(b, note) {
+  note = (note || "").trim(); const sf = note ? safety(note) : null;
+  if (note && (sf === "crisis" || sf === "urgent" || riskWord(note))) { closeSheet(); safetyFromSide(note, sf); return { ok: false, safety: true }; }
+  if (b.status !== "confirmed" || bkStarted(b)) return { ok: false };
+  b.req = true; const v = N(svcOf(b.store, b.svc).n);
+  INBOX.unshift({ s: b.store, text: "You: " + L3(`Cancel request: ${v}, ${fWhen(b.d, b.m)}.`, `Yêu cầu hủy: ${v}, ${fWhen(b.d, b.m)}.`, `취소 요청: ${v}, ${fWhen(b.d, b.m)}.`) + (note ? " " + note : ""), when: L3("Now", "Vừa xong", "방금"), req: b.id });
+  track("ask_studio_sent", { store: b.store });
+  return { ok: true };
+}
+/* ---- reschedule: one atomic move to a new booking id (MB-6, MB-8) ---- */
+function moveBooking(b, x) {
+  const s = S[b.store], o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles, ignore: b.id } : { staff: x.rids[0], room: x.rids[1], ignore: b.id };
+  if (!slotsFor(b.store, b.svc, x.d, o).some(z => z.m === x.m && z.left !== 0)) return { ok: false, err: "taken" };
+  const nb = Object.assign({}, b, { id: BID++, d: x.d, m: x.m, rids: x.rids, len: x.len, price: x.price, from: b.id, req: false, pol: Object.assign({}, bkPol(b)) });
+  delete nb.pv; b.status = "moved"; b.movedTo = nb.id; B.push(nb); track("booking_moved", { store: b.store });
+  return { ok: true, b: nb, undo: () => { const i = B.indexOf(nb); if (i >= 0) B.splice(i, 1); b.status = "confirmed"; delete b.movedTo; } };
+}
+/* ---- My bookings (ST.page = "bookings") ---- */
+function bkActs(b) {
+  const s = S[b.store], P = bkPol(b), v = N(svcOf(b.store, b.svc).n), lbl = `${esc(v)}, ${esc(s.name)}`;
+  if (bkStarted(b)) return "";
+  let h = "";
+  if (b.req) h += `<span class="tag warn">${t("bkRequested")}</span>`;
+  else if (!bkFree(b) && P.studio) h += `<p class="sub sm" style="margin:6px 0 0">${esc(t("askStudioHint"))}</p><button class="btn sec" data-act="askstudio" data-id="${b.id}" aria-label="${t("askStudio")}: ${lbl}">${t("askStudio")}</button>`;
+  else h += `<button class="btn sec" data-act="resched" data-id="${b.id}" aria-label="${t("reschedule")}: ${lbl}">${t("reschedule")}</button><button class="btn ghost" data-act="cancelask" data-id="${b.id}" aria-label="${t("cancel")}: ${lbl}">${t("cancel")}${bkFree(b) ? " · " + tr("free") : " · " + esc(tr(P.late))}</button>`;
+  h += `<button class="btn ghost" data-act="msgfrom" data-id="${b.id}" aria-label="${esc(t("msgStore", { s: s.name }))}: ${esc(v)}">${esc(t("msgStore", { s: s.name }))}</button>` + callBtn(b.store);
+  return h;
+}
+const bkPrice = b => { const p = b.usePass ? (WALLET[b.store] || []).find(q => q.id === b.usePass) : null; return p ? vnd(0) + " · " + esc(tr(p.t)) : vnd(b.price); };
+function bkRowUp(b) {
+  const s = S[b.store], v = svcOf(b.store, b.svc), res = b.rids.map(r => resName(b.store, r)).join(" + ");
+  const st = b.req ? "" : b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
+  return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}</div>
+  <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} <span class="sub">${tzTag()}</span>${res ? " · " + esc(res) : ""}</div><div class="sm">${bkPrice(b)} · <span class="sub">${esc(fCancelB(b))}</span></div>
+  <div class="acts wrap">${bkActs(b)}</div></div></div>`;
+}
+const fCancelB = b => { const P = bkPol(b); if (bkFree(b)) return t("freeCancel") + " " + fDeadline(b.store, b.d, b.m, P); return P.studio ? t("askStudio") : tr("Free cancel ended"); };
+function bkRowPast(b) {
+  const s = S[b.store], v = svcOf(b.store, b.svc), o = bkOutcome(b), pts = o.k === "attended" || o.k === "reversed" ? bkPts(b) : 0, r = RATINGS[b.id];
+  const tag = `<span class="tag${o.k === "attended" ? " ok" : o.k === "noshow" || o.k === "reversed" ? " warn" : ""}">${esc(OUT_LBL(o.k))}${o.late ? " (" + t("bkLate") + ")" : ""}</span>`;
+  const ptsTxt = o.k === "reversed" ? ` <span class="tag warn">${t("bkReversed")}</span>` : pts > 0 ? ` <span class="tag">+${esc(fmtPts(pts))}</span>` : "";
+  const rateB = canRate(b) ? `<button class="btn sec" data-act="rate" data-id="${b.id}" aria-label="${r ? t("rateEdit") : t("rate")}: ${esc(N(v.n))}, ${esc(s.name)}">${r ? t("rateEdit") + " · " + "★".repeat(r.stars) : t("rate")}</button>` : r && !r.hidden ? `<button class="btn ghost" data-act="rate" data-id="${b.id}">${"★".repeat(r.stars)} · ${t("rateDelete")}</button>` : "";
+  const again = o.k === "attended" ? `<button class="btn ghost" data-act="pastagain" data-id="${b.id}" aria-label="${t("bookAgain")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("bookAgain")}</button>` : "";
+  return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${tag}${ptsTxt}</div>
+  <div class="sm"><b>${esc(s.name)}</b> · ${fDayAbs(b.d)} ${fTime(b.m)} <span class="sub">${tzTag()}</span></div>${r && r.held ? `<div class="sm sub">${esc(t("rateHeld"))}</div>` : ""}<div class="acts wrap">${rateB}${again}</div></div></div>`;
+}
+const fDayAbs = d => d >= 0 ? fDay(d) : new Intl.DateTimeFormat(LOC[L], { weekday: "short", day: "numeric", month: "short" }).format(dDate(d));
+function vBookings() {
+  const up = bkUpcoming(), past = bkPastList(); if (!ST.bkSeg) ST.bkSeg = up.length ? "up" : "past";
+  const seg = (k, l, n) => `<button class="chip" aria-pressed="${ST.bkSeg === k}" data-act="bkseg" data-v="${k}">${l} <span class="sub sm">${n}</span></button>`;
+  let h = `<h1>${t("bkTitle")}</h1><div class="chips" role="group" aria-label="${t("bkTitle")}">${seg("up", t("bkUp"), up.length)}${seg("past", t("bkPast"), past.length)}</div>`;
+  if (ST.bkSeg === "up") h += up.length ? `<div class="card" role="list" style="margin-top:10px">${up.map(bkRowUp).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("The policy is saved with your booking, so a later change never surprises you.")}</p>` : `<div class="card" style="margin-top:10px">${nEmpty(esc(t("bkEmptyUp")), "idle")}<button class="btn full" data-act="go" data-v="nari:book">${t("chipBook")}</button></div>`;
+  else h += past.length ? `<div class="card" role="list" style="margin-top:10px">${past.map(bkRowPast).join("")}</div><p class="sub sm" style="margin-top:8px">${esc(L3("Visits from the last 12 months. Ratings are private to each place and don't earn points.", "Các buổi trong 12 tháng qua. Đánh giá chỉ nơi đó xem được và không cộng điểm.", "최근 12개월 방문이에요. 평가는 해당 매장만 볼 수 있고 포인트는 없어요."))}</p>` : `<div class="card" style="margin-top:10px">${nEmpty(esc(t("bkEmptyPast")), "idle")}</div>`;
+  return h;
+}
+function openBookings(seg, id, from) {
+  closeSheet(); ST.bkFrom = from || (ST.store ? "store:" + ST.store : ST.page ? "page:" + ST.page : ST.tab) || "you"; ST.store = null; ST.page = "bookings";
+  ST.bkHi = id ? +id : null; ST.bkSeg = seg || (ST.bkHi ? (bkUpcoming().some(b => b.id === ST.bkHi) ? "up" : "past") : null);
+  track("my_bookings_open", {}); render(); window.scrollTo(0, 0);
+  if (ST.bkHi) { const el = $("#bk-" + ST.bkHi); if (el) { el.scrollIntoView({ block: "center" }); el.setAttribute("tabindex", "-1"); el.focus(); } } else $("#view").focus();
+}
+function bookingsBack() {
+  const f = ST.bkFrom || "you"; ST.page = null; ST.bkHi = null; ST.bkSeg = null; ST.bkFrom = null;
+  if (/^store:/.test(f)) ST.store = f.slice(6); else if (/^page:/.test(f)) ST.page = f.slice(5); else ST.tab = ["home", "discover", "nari", "you"].includes(f) ? f : "you";
+  render(); if (ST.tab === "nari" && !ST.page && !ST.store) scrollThread("nari"); else window.scrollTo(0, 0); $("#view").focus();
+}
+/* ---- the Nari tab ---- */
+const QCHIPS = () => [["qbook", t("chipBook")], ["qask", t("chipAsk")], ["mybk", t("chipMyBk")]];
+const qchipRow = slim => `<div class="chips${slim ? " slim" : ""}" role="group" aria-label="${esc(t("nari"))}">${QCHIPS().map(([a, l]) => `<button class="chip" data-act="${a}" data-from="nari">${esc(l)}</button>`).join("")}</div>`;
+function nariAgainChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => S[sid].joined ? `<button class="chip" data-act="nagain" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>` : "").join("") + `</div>`; }
+function vNari() {
+  const c = CH.nari, g = gated(); c.unread = false;
+  const scope = c.scope && S[c.scope] ? `<div class="chips" role="group" aria-label="${L3("Booking at", "Đặt tại", "예약 매장")}"><button class="chip" aria-pressed="true" data-act="unscope" aria-label="${esc(t("removeScope", { store: S[c.scope].name }))}">${logo(c.scope)} ${esc(S[c.scope].name)} ${ic("x", "s")}</button></div>` : "";
+  const head = `<div class="row" style="margin:4px 0 6px"><span class="av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt=""></span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("nari")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
+  ${g ? "" : `<button class="icb" data-act="mybk" data-from="nari" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}<button class="icb" data-act="nmore" aria-haspopup="dialog" aria-label="${t("more")}">${ic("more")}</button></div>`;
+  const empty = !c.msgs.length;
+  const hello = empty ? `<div class="nrow"><span class="av" aria-hidden="true"><img src="${A}greet.webp" alt=""></span><div class="msg n"><span class="vh">Nari: </span>${esc(t("nariHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${nariAgainChips()}` : "";
+  return head + scope + hello + chatUI("nari", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "예약하거나 무엇이든 물어보세요"), !empty && !g ? qchipRow(true) : "");
+}
+function setTab(v) { if (v === "book" || v === "ask") v = "nari"; if (v !== ST.tab) ST.prevTab = ST.tab; ST.tab = v; ST.page = null; ST.store = null; track("tab_open", { tab: v }); }
+function nariBookPrompt() {
+  const c = CH.nari; if (gated()) return; const last = c.msgs[c.msgs.length - 1];
+  if (last && last.who === "n" && last.kind === "bookPrompt") return;
+  say(c, t("whatBook"), { kind: "bookPrompt", chips: exampleChips() });
+}
+function focusNari() { const i = $("#in-nari"); if (i) i.focus(); }
+/* app-state routes (C8: internal state, no URL hash routing yet) */
+function go(r) {
+  const [k, a, b, ...fr] = String(r || "").split(":"), f = fr.length ? fr.join(":") : undefined;
+  if (k === "tab") { if (a === "book") return go("nari:book"); if (a === "ask") return go("nari:ask"); closeSheet(); setTab(a || "home"); render(); window.scrollTo(0, 0); if (ST.tab === "nari") scrollThread("nari"); else $("#view").focus(); return; }
+  if (k === "nari") {
+    closeSheet(); setTab("nari");
+    if (a === "book") nariBookPrompt();
+    if (a === "store" && S[b] && S[b].joined) { CH.nari.scope = b; }
+    render(); scrollThread("nari");
+    if (a === "ask") { const q = [b, f].filter(x => x != null).join(":"); if (q) chatSend("nari", decodeURIComponent(q)); else focusNari(); } else $("#view").focus();
+    return;
+  }
+  if (k === "bookings") return openBookings(a || null, b || null, f || null);
+  if (k === "store" && S[a]) { closeSheet(); ST.page = null; ST.store = a; render(); window.scrollTo(0, 0); $("#view").focus(); return; }
+  if (k === "inbox") { closeSheet(); ST.store = null; ST.page = "notif"; ST.seenN = true; render(); window.scrollTo(0, 0); return; }
+  return go("tab:home");
+}
+/* system Back (Android/browser): sheet → close; page/store → back; Nari tab never clears the thread, it goes to the previous tab, else Home */
+function sysBack() {
+  if (CALL) { endCall(); return "call"; }
+  if ($(".sheet")) { closeSheet(); return "sheet"; }
+  if (ST.page === "bookings") { bookingsBack(); return "bookings"; }
+  if (ST.page || ST.store) { if (ST.page) ST.page = null; else ST.store = null; render(); return "page"; }
+  if (ST.tab === "home") return "none";
+  const p = ST.prevTab && ST.prevTab !== ST.tab ? ST.prevTab : "home"; ST.prevTab = null; ST.tab = p; render(); return "tab:" + p;
+}
+/* NT-9: one-time merge of old Book + Ask threads (saved by earlier builds under nari.chat.book / nari.chat.ask) */
+const OLD_ASK_HELLO = /^Hi Mina, I'm Nari\. I can book at any of your places/;
+function migrateThreads(book, ask) {
+  const all = [].concat(book || [], ask || []).map((m, i) => [m, i]);
+  let ms = all.filter(([m]) => !(m.who === "n" && OLD_ASK_HELLO.test(m.text || "")));
+  if (!ms.length) ms = [];
+  ms.sort((x, y) => ((x[0].t || 0) - (y[0].t || 0)) || (x[1] - y[1]));
+  return ms.map(([m]) => ({ who: m.who === "me" ? "me" : "n", text: String(m.text || ""), t: m.t || 0 }));
+}
+function migrateOnLoad(store) {
+  store = store || localStorage;
+  const st = store.getItem("nari.tab"); if (st) { ST.tab = ["book", "ask"].includes(st) ? "nari" : ["home", "discover", "nari", "you"].includes(st) ? st : "home"; store.removeItem("nari.tab"); } /* NT-7: an old saved tab lands on Nari */
+  if (store.getItem("nari.migrated") === "1") return false;
+  let ob = null, oa = null; try { ob = JSON.parse(store.getItem("nari.chat.book") || "null"); oa = JSON.parse(store.getItem("nari.chat.ask") || "null"); } catch (e) {}
+  const ms = migrateThreads(ob && ob.msgs || ob, oa && oa.msgs || oa);
+  if (ms.length) CH.nari.msgs = ms.concat([{ who: "sys", div: 1, t: Date.now() }]);
+  store.setItem("nari.migrated", "1"); store.removeItem("nari.chat.book"); store.removeItem("nari.chat.ask");
+  return ms.length > 0;
+}
+
+/* NT-15: Book again in the Nari tab = 2 taps (chip → Book). The next open slot is pre-picked and stays editable (other-time chips, or the full sheet) */
+function againSlots(i, n) {
+  const [sid, vid, o] = AGAIN[i], s = S[sid], out = [], opt = s.kind === "rental" ? { len: 60 } : { staff: o.staff || "any" };
+  for (let d = 0; d < 14 && out.length < n; d++) for (const z of slotsFor(sid, vid, d, opt)) { if (z.left === 0) continue; out.push(Object.assign({}, z, { store: sid, svc: vid, party: o.party || (s.kind === "rental" ? 4 : 0), paddles: 0, source: "chat" })); if (out.length >= n) break; }
+  return out;
+}
+const againLine = x => L3(`Next open: ${N(svcOf(x.store, x.svc).n)} at ${S[x.store].name}, ${fWhen(x.d, x.m)}. Tap Book, or pick another time.`, `Giờ trống gần nhất: ${N(svcOf(x.store, x.svc).n)} ở ${S[x.store].name}, ${fWhen(x.d, x.m)}. Chạm Đặt, hoặc chọn giờ khác.`, `가장 빠른 시간: ${S[x.store].name} ${N(svcOf(x.store, x.svc).n)}, ${fWhen(x.d, x.m)}. 예약을 누르거나 다른 시간을 고르세요.`);
+const againAlts = (i, cur) => againSlots(i, 4).filter(z => !(z.d === cur.d && z.m === cur.m)).slice(0, 3).map(z => chip(fDay(z.d) + " " + fTime(z.m), { act: "aslot", i, x: z })).concat([chip(L3("More times", "Giờ khác", "다른 시간"), { act: "againmore", i })]);
+function nariAgain(i) {
+  const c = CH.nari, [sid, vid, o, l] = AGAIN[i]; if (!AGAIN[i] || gated()) return; TURN_SAFE = false; track("chip_tap", { kind: "again" });
+  c.msgs.push({ who: "me", text: N(l), t: Date.now() }); c.draft = null; c.ask = "confirm";
+  const z = againSlots(i, 1)[0];
+  if (!z) say(c, L3(`Nothing open at ${S[sid].name} in the next 2 weeks.`, `${S[sid].name} không còn chỗ trong 2 tuần tới.`, `${S[sid].name}에 앞으로 2주 동안 빈 시간이 없어요.`), { chips: [chip(L3("More times", "Giờ khác", "다른 시간"), { act: "againmore", i })] });
+  else { const x = completeDraft(z); say(c, againLine(x), { confirm: x, chips: againAlts(i, x) }); }
+  render(); scrollThread("nari");
+}
 /* ===== events ===== */
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-act]"); if (!el) return; const a = el.dataset.act, d = el.dataset;
@@ -1990,8 +2275,27 @@ document.addEventListener("click", e => {
   const bk = id => B.find(b => b.id === +id);
   switch (a) {
     case "close": clearInterval(stretchT); closeSheet(); break;
-    case "tab": ST.tab = d.v; ST.store = null; ST.page = null; closeSheet(); render(); window.scrollTo(0, 0); $("#view").focus(); break;
-    case "back": if (ST.page) { ST.page = ST.page === "nset" && ST.fromFeed ? "notif" : null; ST.fromFeed = false; render(); $("#view").focus(); break; } ST.store = null; render(); window.scrollTo(0, 0); $("#view").focus(); break;
+    case "tab": go("tab:" + d.v); break;
+    case "go": go(d.v); break;
+    case "mybk": openBookings(null, null, d.from || null); break;
+    case "bkseg": ST.bkSeg = d.v; ST.bkHi = null; renderView(); { const f = $(`[data-act="bkseg"][data-v="${d.v}"]`); if (f) f.focus(); } break;
+    case "qbook": track("chip_tap", { kind: "qbook" }); CH.nari.msgs.push({ who: "me", text: t("chipBook"), t: Date.now() }); say(CH.nari, t("whatBook"), { kind: "bookPrompt", chips: exampleChips() }); renderView(); scrollThread("nari"); break;
+    case "qask": track("chip_tap", { kind: "qask" }); CH.nari.msgs.push({ who: "me", text: t("chipAsk"), t: Date.now() }); say(CH.nari, t("askPrompt"), { kind: "askPrompt" }); renderView(); scrollThread("nari"); focusNari(); break;
+    case "nagain": nariAgain(+d.i); break;
+    case "pastagain": { const b = bk(d.id); const i = AGAIN.findIndex(([sid, vid]) => sid === b.store && vid === b.svc); if (i >= 0) { setTab("nari"); render(); nariAgain(i); } else openBook(b.store, b.svc); break; }
+    case "unscope": CH.nari.scope = null; renderView(); focusNari(); break;
+    case "nmore": openSheet(sheetHd(t("more")) + `<div class="stack"><button class="btn sec full" data-act="calldemo">${ic("mic", "s")} ${esc(t("nariDemo"))}</button><p class="sub sm" style="margin:0">${esc(L3("A demo of talking to Nari by voice. It isn't a real phone call and doesn't reach a person or a store.", "Bản demo nói chuyện với Nari bằng giọng nói. Không phải cuộc gọi thật, không kết nối với người hay cửa hàng.", "나리와 음성으로 대화하는 데모예요. 실제 전화가 아니고 사람이나 매장에 연결되지 않아요."))}</p></div>`, t("more")); break;
+    case "calldemo": closeSheet(); openCall(); break;
+    case "callstore": callStoreSheet(d.v); break;
+    case "askstudio": askStudioSheet(bk(d.id)); break;
+    case "askstudiook": { const b = bk(d.id), r = askStudioSend(b, ($("#asn") || {}).value || ""); if (r.ok) { closeSheet(); render(); toast(t("askStudioSent", { store: S[b.store].name })); } break; }
+    case "rate": rateSheet(bk(d.id)); break;
+    case "rstar": RS.stars = +d.v; RS.err = ""; RS.note = ($("#rnote") || {}).value || RS.note; rateSheet(bk(RS.id), true); { const f = $(`[data-act="rstar"][data-v="${d.v}"]`); if (f) f.focus(); } break;
+    case "ri": RS.inst = RS.inst === +d.v ? 0 : +d.v; RS.note = ($("#rnote") || {}).value || RS.note; rateSheet(bk(RS.id), true); { const f = $(`[data-act="ri"][data-v="${d.v}"]`); if (f) f.focus(); } break;
+    case "rtag": { const n = +d.v; RS.tags = RS.tags.includes(n) ? RS.tags.filter(x => x !== n) : RS.tags.concat([n]); RS.note = ($("#rnote") || {}).value || RS.note; rateSheet(bk(RS.id), true); const f = $(`[data-act="rtag"][data-v="${d.v}"]`); if (f) f.focus(); break; }
+    case "ratesave": rateSave(bk(d.id)); break;
+    case "ratedel": delete RATINGS[d.id]; closeSheet(); render(); toast(L3("Rating deleted.", "Đã xóa đánh giá.", "평가를 삭제했어요.")); break;
+    case "back": if (ST.page === "bookings") { bookingsBack(); break; } if (ST.page) { ST.page = ST.page === "nset" && ST.fromFeed ? "notif" : null; ST.fromFeed = false; render(); $("#view").focus(); break; } ST.store = null; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "store": closeSheet(); ST.page = null; ST.store = d.v; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "lang": openSheet(sheetHd(t("language")) + `<div class="stack">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" style="width:100%" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div>`, t("language")); break;
     case "setlang": setLang(d.v); closeSheet(); render(); break;
@@ -2010,11 +2314,11 @@ document.addEventListener("click", e => {
     case "dobook": if (PEND) { const x = PEND; PEND = null; doBook(x); } break;
     case "succundo": { closeSheet(); const f = succUndo; succUndo = null; if (f) f(); break; }
     case "toastundo": if (toastUndo) { const f = toastUndo; toastUndo = null; $("#toast").hidden = true; f(); } break;
-    case "managebk": manage(bk(d.id)); break;
-    case "resched": { const b = bk(d.id), s = S[b.store]; openBook(b.store, b.svc, { move: b.id, d: b.d, staff: s.kind === "appt" ? b.rids[0] : "any", room: s.rooms ? b.rids[1] : "any", len: b.len, party: b.party || 4, paddles: b.paddles }); break; }
+    case "managebk": { const b = bk(d.id); if (b && b.status === "moved") manage(bk(b.movedTo)); else manage(b); break; }
+    case "resched": { const b = bk(d.id), s = S[b.store]; if (!b || bkStarted(b)) break; if (!bkFree(b) && bkPol(b).studio) { askStudioSheet(b); break; } openBook(b.store, b.svc, { move: b.id, d: b.d, staff: s.kind === "appt" ? b.rids[0] : "any", room: s.rooms ? b.rids[1] : "any", len: b.len, party: b.party || 4, paddles: b.paddles }); break; }
     case "cancelask": cancelAsk(bk(d.id)); break;
-    case "cancelok": { const b = bk(d.id); cancelB(b); closeSheet(); render(); toast(`${t("cancelled")}: ${N(svcOf(b.store, b.svc).n)}`, () => { b.status = "confirmed"; if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; } render(); toast("Booking restored"); }); break; }
-    case "msgfrom": { const b = bk(d.id); closeSheet(); ST.store = b.store; render(); const ta = $("#sm-" + b.store); if (ta) { ta.scrollIntoView(); ta.focus(); } break; }
+    case "cancelok": { const b = bk(d.id); if (b.status !== "confirmed" || bkStarted(b) || (!bkFree(b) && bkPol(b).studio)) { closeSheet(); break; } if (!bkFree(b)) b.lateCx = true; cancelB(b); closeSheet(); render(); toast(`${t("cancelled")}: ${N(svcOf(b.store, b.svc).n)}`, () => { b.status = "confirmed"; if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; } render(); toast("Booking restored"); }); break; }
+    case "msgfrom": { const b = bk(d.id); closeSheet(); ST.page = null; ST.store = b.store; render(); const ta = $("#sm-" + b.store); if (ta) { ta.scrollIntoView(); ta.focus(); } break; }
     case "checkin": checkin(bk(d.id)); break;
     case "attend": attend(bk(d.id)); break;
     case "stretch": stretchSheet(); break;
@@ -2034,7 +2338,7 @@ document.addEventListener("click", e => {
     case "cat": ST.cat = d.v; renderView(); { const el2 = $(`[data-act="cat"][data-v="${d.v}"]`); if (el2) el2.focus(); } break;
     case "whyad": toast("Shown by area. Not based on your bookings or health."); break;
     case "fake": toast(d.v); break;
-    case "call": openCall(); break;
+    case "call": openCall(); break; /* the voice demo; only reachable from the Nari overflow menu */
     case "mute": if (CALL) { CALL.muted = !CALL.muted; el.setAttribute("aria-pressed", String(CALL.muted)); el.setAttribute("aria-label", CALL.muted ? t("unmute") : t("mute")); el.innerHTML = ic(CALL.muted ? "micoff" : "mic"); $("#mutel").textContent = CALL.muted ? t("unmute") : t("mute"); if (CALL.muted) try { speechSynthesis.cancel(); } catch (er) {} } break;
     case "hang": endCall(); break;
     case "callyes": callYes(true); break;
@@ -2045,8 +2349,7 @@ document.addEventListener("click", e => {
     case "helptalk": closeSheet(); CH[d.c].msgs.push({ who: "me", text: HELP_LINK() }); sosOpen(d.c); break;
     case "sos": CH[d.c].msgs.push({ who: "me", text: SOS_BTN() }); sosOpen(d.c); break;
     case "chatbook": chatBook(d.c, +d.i); break;
-    case "ex": chatSend("book", d.v); break;
-    case "askq": chatSend("ask", d.v); break;
+    case "ex": case "askq": chatSend("nari", d.v); break;
   }
 });
 document.addEventListener("submit", e => {
@@ -2479,21 +2782,22 @@ ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
 pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
-seed(); render();
+seed(); try { migrateOnLoad(); } catch (e) {} render();
+addEventListener("popstate", () => { sysBack(); try { history.pushState({ nari: 1 }, ""); } catch (e) {} }); try { history.pushState({ nari: 1 }, ""); } catch (e) {}
 /* test hooks for headless QA only */
 /* dev check: every "Get help now" jump opens the same two-way choice, and opening it twice gives the same result */
 function checkJumps() {
-  const bad = [], snap = JSON.stringify(CH);
+  const bad = [], snap = JSON.stringify(CH), g0 = CH.nari.gate;
   for (const cid of ["ask", "book"]) for (let k = 0; k < 2; k++) {
     const n = CH[cid].msgs.length; sosOpen(cid); const m = CH[cid].msgs[CH[cid].msgs.length - 1];
     if (CH[cid].msgs.length !== n + 1 || !m.chips || m.chips.length !== 2 || m.chips[0].val.act !== "sosu" || m.chips[1].val.act !== "sosx") bad.push(cid + "#" + k);
   }
-  const o = JSON.parse(snap); for (const cid in o) CH[cid].msgs = o[cid].msgs; render();
+  const o = JSON.parse(snap); for (const cid in o) CH[cid].msgs = o[cid].msgs; CH.nari.gate = g0; render();
   if (bad.length) console.error("jump not repeatable:", bad.join(", "));
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
