@@ -8,12 +8,12 @@ with sync_playwright() as p:
     pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');render()}}");return pg
   for lang in ['en','vi','ko']:
     for ans in ['callyes','callno']:
-      pg=new(lang);pg.evaluate("()=>{ST.tab='ask';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=call]').first.click()
+      pg=new(lang);pg.evaluate("()=>{ST.tab='nari';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nmore]').first.click();pg.locator('[data-act=calldemo]').first.click()
       pg.wait_for_selector('[data-act=callpick]',timeout=30000);pg.locator('[data-act=callpick][data-v=court]').click();pg.wait_for_selector('[data-act=callyes]',timeout=30000);cap1=pg.inner_text('#caps');foc=pg.evaluate("document.activeElement.dataset.act")
       pg.screenshot(path=f'call-{lang}-readback.png');pg.locator(f'[data-act={ans}]').click();pg.wait_for_timeout(6000)
       O[f'call|{lang}|{ans}']={'caps':cap1,'focusOnAsk':foc,'booked':pg.evaluate("__plat.B.length")-n0,'callOpen':pg.evaluate("!document.getElementById('call').hidden"),'toast':pg.evaluate("document.getElementById('toast').innerText"),'src':pg.evaluate("__plat.B.slice(-1)[0].source")}
       pg.close()
-  pg=new();pg.evaluate("()=>{ST.tab='ask';render()}");pg.locator('[data-act=call]').first.click();pg.wait_for_timeout(800);pg.keyboard.press('Escape');pg.wait_for_timeout(300);O['call-esc']=[pg.evaluate("document.getElementById('call').hidden"),pg.evaluate("document.activeElement.dataset.act||document.activeElement.id")]
+  pg=new();pg.evaluate("()=>{ST.tab='nari';render()}");pg.locator('[data-act=nmore]').first.click();pg.locator('[data-act=calldemo]').first.click();pg.wait_for_timeout(800);pg.keyboard.press('Escape');pg.wait_for_timeout(300);O['call-esc']=[pg.evaluate("document.getElementById('call').hidden"),pg.evaluate("document.activeElement.dataset.act||document.activeElement.id")]
   # notifications
   pg=new();O['nset-defaults']=pg.evaluate("JSON.stringify(NSET)");pg.evaluate("()=>{ST.page='notif';render()}");O['notif']=pg.inner_text('#view')[:3000]
   # joins
@@ -29,7 +29,7 @@ with sync_playwright() as p:
   att=pg.locator('[data-act=attend]');a2=None
   if att.count(): att.first.click();pg.wait_for_timeout(300);a2=pg.evaluate("[ST.xp,ST.coins,ST.steps,JSON.stringify(ST.miss)]")
   O['game']={'start':x0,'checkinSheet':s1[:400],'afterCheckin':x1,'afterAttend':a2,'toast':pg.evaluate("document.getElementById('toast').innerText")}
-  pg=new();pg.evaluate("()=>{ST.tab='book';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=again][data-i="0"]').click();pg.locator('.sheet [data-act=slot],.sheet [data-act=classpick]').first.click();pg.locator('.sheet [data-act=dobook]').click();O['xpOnBook']=pg.evaluate("ST.xp")
+  pg=new();pg.evaluate("()=>{ST.tab='nari';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nagain][data-i="0"]').click();pg.locator('[data-act=chatbook]').last.click();O['xpOnBook']=pg.evaluate("ST.xp")
   # shop
   pg=new();pg.evaluate("()=>{ST.tab='you';render()}");O['you']=pg.inner_text('#view')[:2500];btn=pg.locator('[data-act=buy]')
   O['shop']=[btn.count(),pg.evaluate("[...document.querySelectorAll('[data-act=buy]')].map(b=>b.dataset.c+':'+b.getAttribute('aria-label'))")]

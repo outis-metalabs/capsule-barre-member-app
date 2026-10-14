@@ -1,9 +1,9 @@
 import json,re
 from playwright.sync_api import sync_playwright
 U='http://localhost:8851/platform-app.html'
-SCR=[('home',"ST.tab='home'"),('discover',"ST.tab='discover'"),('discover-map',"ST.tab='discover';discAct('dview',{v:'map'})"),('discover-hair',"ST.tab='discover';discAct('dtype',{v:'hair'})"),('book',"ST.tab='book'"),('ask',"ST.tab='ask'"),('you',"ST.tab='you'"),('notif',"ST.page='notif'"),('nset',"ST.page='nset'")]
+SCR=[('home',"ST.tab='home'"),('discover',"ST.tab='discover'"),('discover-map',"ST.tab='discover';discAct('dview',{v:'map'})"),('discover-hair',"ST.tab='discover';discAct('dtype',{v:'hair'})"),('nari',"ST.tab='nari'"),('you',"ST.tab='you'"),('notif',"ST.page='notif'"),('nset',"ST.page='nset'")]
 for s in ['capsule','salon','skin','spa','pickle','nails','yoga','barber','moc','rally']: SCR.append(('store-'+s,f"ST.store='{s}'"))
-CLK=[('sheet-join','home','joinsheet'),('sheet-qr','discover','joinsheet+qr'),('sheet-link','home','joinsheet+linkjoin'),('sheet-stretch','home','stretch'),('sheet-manage','home','managebk'),('call','ask','call'),('slots-again0','book','again'),('confirm','book','again+slot'),('success','book','again+slot+dobook'),('sheet-lang','home','lang')]
+CLK=[('sheet-join','home','joinsheet'),('sheet-qr','discover','joinsheet+qr'),('sheet-link','home','joinsheet+linkjoin'),('sheet-stretch','home','stretch'),('sheet-manage','home','managebk'),('call','nari','nmore+calldemo'),('slots-again0','nari','nagain'),('confirm','nari','nagain'),('success','nari','nagain+chatbook'),('bookings','home','mybk'),('rate','home','mybk+bkpast+rate'),('cancel','home','mybk+cancelask'),('sheet-lang','home','lang')]
 AUD=r"""(()=>{
  const vis=e=>{const r=e.getBoundingClientRect();const cs=getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!='hidden'&&cs.display!='none'&&!e.closest('[hidden]')};
  const small=[...document.querySelectorAll('button,a[href],input,select,textarea,[role=button],[role=switch],label.row')].filter(vis).filter(e=>{const r=e.getBoundingClientRect();return (r.width<44||r.height<44)&&!(e.type=='checkbox'&&e.closest('label')&&e.closest('label').getBoundingClientRect().height>=44)}).map(e=>(e.dataset.act||e.tagName)+':'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,20)+':'+Math.round(e.getBoundingClientRect().width)+'x'+Math.round(e.getBoundingClientRect().height));
@@ -30,13 +30,13 @@ with sync_playwright() as p:
      pg.on('request',lambda r:V.append(r.url.split('/')[-1]) if r.url.endswith(('.webm','.mp4')) else None)
      tag=f'{vw[0]}|{lang}{"|rm" if rm else ""}'
      for name,js in SCR+[(x[0],None) for x in CLK]:
-       pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');render()}}")
+       pg.goto(U);pg.evaluate("()=>localStorage.clear()");pg.goto(U);pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
        if js: pg.evaluate(f"()=>{{{js};render();scrollTo(0,0)}}")
        else:
          tab,act=[(x[1],x[2]) for x in CLK if x[0]==name][0]
          pg.evaluate(f"()=>{{ST.tab='{tab}';render()}}")
          for a in act.split('+'):
-           sel={'again':'[data-act=again][data-i="1"]','slot':'.sheet [data-act=slot]','dobook':'.sheet [data-act=dobook]','qr':'.sheet [data-act=qr]','linkjoin':'.sheet [data-act=linkjoin]'}.get(a,f'[data-act={a}]')
+           sel={'nagain':'[data-act=nagain][data-i="1"]','chatbook':'[data-act=chatbook]','bkpast':'[data-act=bkseg][data-v=past]','rate':'[data-act=rate]','cancelask':'[data-act=cancelask]','again':'[data-act=again][data-i="1"]','slot':'.sheet [data-act=slot]','dobook':'.sheet [data-act=dobook]','qr':'.sheet [data-act=qr]','linkjoin':'.sheet [data-act=linkjoin]'}.get(a,f'[data-act={a}]')
            pg.locator(sel).first.click();pg.wait_for_timeout(200)
        pg.wait_for_timeout(250)
        a=pg.evaluate(AUD);a['err']=list(E);E.clear()

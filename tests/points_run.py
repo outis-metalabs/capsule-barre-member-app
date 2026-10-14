@@ -47,7 +47,7 @@ with sync_playwright() as p:
   b0 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())"); pg.evaluate("()=>{ST.tab='home';render()}")
   pg.locator('[data-act=checkin]').first.click(); pg.locator('[data-act=attend]').first.click(); b1 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())")
   ok('AC-P44', hidden and b1 - b0 == 60 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
-  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='book';render()}"); pg.locator('[data-act=again][data-i="1"]').click(); pg.locator('.sheet [data-act=slot],.sheet [data-act=classpick]').first.click(); pg.locator('.sheet [data-act=dobook]').click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")
+  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='nari';render()}"); pg.locator('[data-act=nagain][data-i="1"]').click(); pg.locator('[data-act=chatbook]').last.click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")  # Nari tab: Book again = chip + Book (the Book tab and its sheet-only row are gone)
   n1 = pg.evaluate("__plat.pv.ME().ledger.length"); nb = pg.evaluate("__plat.B.length")
   ok('AC-P2', R['AC-P2'][0] and n1 == n0, R['AC-P2'][1] + [n0, n1, nb])
   # AC-P3 UI: pending card shown on Home, gone after store scan
@@ -103,9 +103,9 @@ with sync_playwright() as p:
   bad36 = []
   for lang, q in [('en', 'i want to end my life'), ('vi', 'tôi muốn tự tử'), ('ko', '죽고 싶어요')]:
     for qq in ['', '?realRewards=1']:
-      pg = page(qq); pg.evaluate(f"()=>{{setLang('{lang}');ST.tab='ask';render()}}"); n = pg.evaluate("document.getElementById('th-ask').children.length")
+      pg = page(qq); pg.evaluate(f"()=>{{setLang('{lang}');ST.tab='ask';render()}}"); n = pg.evaluate("document.getElementById('th-nari').children.length")
       pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(q)})"); pg.wait_for_timeout(80)
-      r = pg.evaluate(f"[...document.getElementById('th-ask').children].slice({n+1}).map(x=>x.innerText).join(' ')")
+      r = pg.evaluate(f"[...document.getElementById('th-nari').children].slice({n+1}).map(x=>x.innerText).join(' ')")
       if re.search(r'point|điểm|포인트|voucher|ưu đãi|쿠폰|reward|리워드|Claim', r, re.I) or not re.search(r'glad you told me|mừng vì bạn|이야기해 주셔서', r): bad36.append([lang, qq, r[:120]])
       pg.close()
   ok('AC-P36', not bad36, bad36)
@@ -131,8 +131,8 @@ with sync_playwright() as p:
           for m_ in FORBID.findall(t_): bad35.append([w, lang, fl, tab, m_])
         pg.evaluate("()=>{ST.tab='ask';render()}")
         for qq in ['how do points work', 'what are coins for', 'điểm dùng để làm gì', '포인트는 어떻게 써요?']:
-          n = pg.evaluate("document.getElementById('th-ask').children.length"); pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(qq)})"); pg.wait_for_timeout(40)
-          r = pg.evaluate(f"[...document.getElementById('th-ask').children].slice({n+1}).map(x=>x.innerText).join(' ')")
+          n = pg.evaluate("document.getElementById('th-nari').children.length"); pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(qq)})"); pg.wait_for_timeout(40)
+          r = pg.evaluate(f"[...document.getElementById('th-nari').children].slice({n+1}).map(x=>x.innerText).join(' ')")
           for m_ in FORBID.findall(r): bad35.append([w, lang, fl, 'nari:' + qq, m_])
         pg.evaluate("()=>{ST.tab='you';render()}"); c = pg.evaluate(CONTRAST); pg.screenshot(path=f'{SHOTS}/you-{w}-{lang}-{fl}.png', full_page=True)
         for sh in ['pvhist', 'pvstore', 'pvwardrobe', 'pvquest'] + (['pvclaim'] if fl == 'on' else []):
