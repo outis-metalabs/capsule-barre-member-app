@@ -1,6 +1,7 @@
 /* Points & vouchers acceptance tests (spec v4 §11). Runs inside platform-app.html: window.__pointsAC() -> {AC: [pass, detail]} */
 window.__pointsAC = function () {
-  const P = __plat.pv, PVx = __plat.PV, R = {}, DAYm = 864e5, MINm = 6e4;
+  /* store-less staff ids ("staff:d") now fail the scan store check (PR11 r5); these AC tests are about earning rules, so the scanning desk is logged in to the booking's store */
+  const P = Object.assign({}, __plat.pv, { confirmVisit: (m, b, a, n, st) => __plat.pv.confirmVisit(m, b, /^staff:[a-z0-9]+$/.test(String(a)) && !st && __plat.pv.BKREG[b] ? "staff:" + __plat.pv.BKREG[b].store + "-" + String(a).slice(6) : a, n, st) }), PVx = __plat.PV, R = {}, DAYm = 864e5, MINm = 6e4;
   const T0 = Date.UTC(2026, 9, 12, 3, 0); /* Mon 12 Oct 2026 10:00 Saigon */
   let k = 0; const mk = (o) => { const m = P.pvMember("t" + (++k), Object.assign({ name: "Tester " + k }, o || {})); m.closedTo = P.weekStart(m, T0); return m; };
   const bk = (m, store, t) => { const id = "b" + (++k); P.pvBook(id, { store, member: m.id, start: t - 60 * MINm, end: t }); return id; };
@@ -91,8 +92,8 @@ window.__pointsAC = function () {
   T("AC-P32", () => { const m = rich(); const v = def({}); const c = P.claim(m, v.id, T0).c; v.paused = true; const m2 = rich(); const r2 = P.claim(m2, v.id, T0); const u = P.useCode(m, c.id, T0); const rd = P.redeem("staff:d", "capsule", u.code, T0 + 1);
     ok("AC-P32", !r2.ok && r2.k === "unlisted" && rd.ok, [r2.k, rd.ok]); });
   T("AC-P33", () => { const L0 = L; L = "en"; const s = P.pvT("offeredBy", { brand: "Lumi Skin" }); L = L0; ok("AC-P33", s === "Offered by Lumi Skin", s); });
-  T("AC-P37", () => { const m = mk(); const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:d", T0); P.pvMission(m, "s", T0); const keys = ["member", "store", "src", "delta", "reason", "actor", "t"];
-    ok("AC-P37", m.ledger.length === 3 && m.ledger.every(r => keys.every(x => x in r) && Object.isFrozen(r)) && m.ledger[0].src === id && m.ledger[0].actor === "staff:d", m.ledger.length); });
+  T("AC-P37", () => { const m = mk(); const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:capsule-d", T0); P.pvMission(m, "s", T0); const keys = ["member", "store", "src", "delta", "reason", "actor", "t"];
+    ok("AC-P37", m.ledger.length === 3 && m.ledger.every(r => keys.every(x => x in r) && Object.isFrozen(r)) && m.ledger[0].src === id && m.ledger[0].actor === "staff:capsule-d", m.ledger.length); });
   T("AC-P38", () => { const m = mk(); const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:d", T0); const r2 = P.confirmVisit(m, id, "staff:d", T0 + 5); P.markAttended("staff:e", "capsule", m, id, "app_issue", T0 + 9);
     ok("AC-P38", r2.dup && m.ledger.filter(r => r.src === id && r.reason === "visit").length === 1, r2); });
   T("AC-P39", () => { const m = mk(); const id = bk(m, "capsule", T0); const r = P.confirmVisit(m, id, "member", T0), r2 = P.confirmVisit(m, id, m.id, T0); ok("AC-P39", !r.ok && !r2.ok && P.bal(m) === 0, [r.err]); });

@@ -71,6 +71,20 @@ with sync_playwright() as p:
   ok('R3-staff-store', r[0]['err'] == 'wrong_store' and r[1]['err'] == 'wrong_store' and r[2] is True, r)
   h = pg.evaluate("(()=>{setLang('ko');ST.tab='ask';render();const e=document.querySelector('#view h1');return Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight))})()"); ok('R3-ask-title-one-line-ko', h == 1, h)
   pg.close()
+  # R5
+  pg = page('', 'en')
+  pg.evaluate("()=>{setLang('vi');CH.book.draft=null}"); send(pg, 'book', 'massage chân 45 phút ngày mai'); ok('R5-vi-foot45', (pg.evaluate("CH.book.draft||{}")).get('svc') == 'foot', pg.evaluate("CH.book.draft"))
+  r = pg.evaluate("(()=>{const sid=Object.keys(WALLET).find(k=>(WALLET[k]||[]).length),ps=WALLET[sid][0],v=__plat.S[sid].svcs[0];const h=String(draftRows({store:sid,svc:v.id,rids:[],usePass:ps.id,len:60,party:1,d:1,m:600}));return h})()")
+  ok('R5-pass-total-krw', '₩' in r and '₫' not in r, r[:300])
+  pg.evaluate("()=>{__plat.S.nails.joined=true}")
+  for lang, q, sid, svc in [('ko','순한 페이셜','skin','gentle'),('ko','얼굴·어깨 마사지','skin','fsm'),('ko','젤 네일','nails','gel'),('ko','기본 매니큐어','nails','mani'),('vi','Gội & sấy','salon','blow'),('vi','Chăm sóc da dịu nhẹ','skin','gentle'),('vi','Massage mặt & vai','skin','fsm'),('vi','Sơn gel','nails','gel'),('vi','Làm móng cơ bản','nails','mani'),('en','Gel nails','nails','gel'),('en','Classic manicure','nails','mani')]:
+    pg.evaluate(f"()=>{{setLang('{lang}');CH.book.draft=null}}"); send(pg, 'book', q + {'ko':' 토요일','vi':' thứ bảy','en':' Saturday'}[lang]); dr = pg.evaluate("CH.book.draft||{}")
+    ok(f'R5-name {lang} {q}', dr.get('store') == sid and dr.get('svc') == svc, dr)
+  r = pg.evaluate("(()=>{const P=__plat.pv,m=P.ME(),n=__plat.PV.now();P.pvBook('x5',{store:'capsule',member:m.id,start:n-60*6e4,end:n-10*6e4});return [P.confirmVisit(m,'x5','staff:a'),P.confirmVisit(m,'x5','ops:hq').ok]})()")
+  ok('R5-storeless-staff-refused', r[0].get('err') == 'wrong_store' and r[1] is True, r)
+  pg.evaluate("()=>{setLang('en');CH.book.draft=null}"); m = send(pg, 'book', 'haircut with Linh'); txt = ' '.join(x['text'] for x in m); chips = [c['label'] for x in m for c in (x.get('chips') or [])]
+  ok('R5-kr-unknown-linh', "don't know Linh" in txt and 'Sora' in ' '.join(chips) and 'Minho' in ' '.join(chips), [txt[:200], chips])
+  pg.close()
   pg = page('?market=vn', 'en'); ok('R3-vn-keeps-names', pg.evaluate("__plat.S.salon.staff[0].n") == 'Linh'); pg.close()
   # screenshots 390 EN + KO
   for lang in ['en', 'ko']:

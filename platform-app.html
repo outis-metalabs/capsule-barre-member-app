@@ -1059,7 +1059,7 @@ function draftRows(x) {
   const s = S[x.store], v = svcOf(x.store, x.svc), pass = x.usePass ? (WALLET[x.store] || []).find(p => p.id === x.usePass) : null;
   const who = x.rids.map(r => resName(x.store, r)).join(" + ");
   let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${x.len} ${L3("min","phút","분")} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
-  const priceTxt = pass ? `0 ₫ <span class="sub sm">· ${esc(L3(`1 from your ${pass.t} (${pass.left} left)`, `1 buổi từ ${tr(pass.t)} (còn ${pass.left})`, `${tr(pass.t)}에서 1회 차감 (${pass.left}회 남음)`))}, ${esc(t("storeOnly", { s: s.name }))}</span>`
+  const priceTxt = pass ? `${vnd(0)} <span class="sub sm">· ${esc(L3(`1 from your ${pass.t} (${pass.left} left)`, `1 buổi từ ${tr(pass.t)} (còn ${pass.left})`, `${tr(pass.t)}에서 1회 차감 (${pass.left}회 남음)`))}, ${esc(t("storeOnly", { s: s.name }))}</span>`
     : (v.from ? L3("from ", "từ ", "") + vnd(x.price) + L3("", "", "부터") + ` <span class="sub sm">(${esc(L3(v.why, "tùy độ dài tóc; thợ sẽ xác nhận", "머리 길이에 따라 달라요. 디자이너가 확인해요"))})</span>` : vnd(x.price));
   const free = freeNow(x.store, x.d, x.m);
   return `<dl class="conf">
@@ -1157,6 +1157,12 @@ const VIW = { "chu nhat": 0, "thu hai": 1, "thu 2": 1, "thu ba": 2, "thu 3": 2, 
 const nextOrToday = w => (w - wd(0) + 7) % 7;
 /* Korean spellings of staff names (Hangul has no word boundaries, so only distinctive spellings) */
 const KOAL = { linh: ["린 ", "린님", "린 님", "린 선생님", "린한테", "린이랑", "린에게", "린으로", "린 디자이너"], khoi: ["코이"], ngan: ["응안", "응언"], vy: ["비 선생님", "비쌤", "비 님"], hoa: ["호아"], phuong: ["프엉", "푸엉"], yuna: ["유나"], jiwoo: ["지우 ", "지우님", "지우 선생님", "지우 쌤"], kim: ["킴"], ngoc: ["응옥"], tram: ["짬 ", "쩜"], tuan: ["뚜안", "투안"], lanh: ["란 님", "란님", "란 선생님"] };
+const nmKey = x => norm(x).replace(/[&·.,()/+-]/g, "").replace(/\s+/g, "");
+function svcByName(s) {
+  const t = nmKey(s); let best = null;
+  for (const sid of joinedIds()) for (const v of S[sid].svcs) for (const n of [v.n].concat(NAMES[v.n] || [])) { const k = nmKey(n); if (k.length >= (/[가-힣]/.test(k) ? 2 : 4) && t.includes(k) && (!best || k.length > best[2])) best = [sid, v.id, k.length]; }
+  return best;
+}
 function parse(raw) {
   let s = " " + norm(raw).replace(/[,!?]/g, " ").replace(/\s+/g, " ") + " "; const p = {}; let m;
   const cut = re => { s = s.replace(re, " "); };
@@ -1174,6 +1180,8 @@ function parse(raw) {
   else if (gen.length === 1) p.store = gen[0];
   else if (gen.length > 1) p.cands = gen;
   if (/\baroma\b/.test(s) && !p.store && S.spa.joined) { p.store = "spa"; delete p.cands; }
+  /* a service's own name in any UI language (EN name + NAMES VI/KO) selects it directly; the longest name wins */
+  { const ex = svcByName(s); if (ex && (!p.staff || p.store === ex[0])) { p.store = ex[0]; p.svc = ex[1]; delete p.cands; } }
   /* Korean phrasing (no word boundaries in Hangul) */
   const KO = [["spa", "preg", /(임산부|임부|산전) ?마사지/], ["skin", "extract", /압출/], ["salon", "cut", /커트|컷|머리 ?자르|헤어컷/], ["salon", "colour", /염색/], ["skin", null, /페이셜|피부 ?관리/], ["skin", "consult", /피부 ?상담|상담/], ["pickle", "court", /피클볼|코트/], ["capsule", "barre", /바레/], ["capsule", "reformer", /리포머/], ["spa", "foot", /발 ?마사지/]];
   if (!p.store && !p.cands && /딥 ?티슈|전신 ?마사지|아로마/.test(s) && S.spa.joined) p.store = "spa";
@@ -1317,6 +1325,12 @@ function reply(c, text) {
   if (s.length > 200) return fallbackReply(c); /* long message: safety already ran on the full text; never ask for one line */
   /* pregnancy massage named as a service: book it, with a gentle note */
   if (!sf && pregService(text)) say(c, "Pregnancy massage at Soom Spa is from the second trimester. If you're unsure, check with your GP or midwife first.", { care: 1 });
+  /* KR market: an old (Vietnamese) staff name gets an honest "I don't know them here" + that store's staff */
+  if (MARKET === "kr") { const om = text.match(/(?<![\p{L}])(Linh|Khôi|Khoi|Ngân|Ngan|Vy|Hoa|Phương|Phuong|Ngọc|Ngoc|Trâm|Tram|Tuấn|Tuan|Lành|Lanh)(?![\p{L}])/iu);
+    if (om) { const oid = Object.keys(KRN).find(id => norm(KRN[id][0]) === norm(om[1])), sid = oid && staffStore(oid);
+      if (sid && !S[sid].staff.some(x => norm(x.n) === norm(om[1]))) { const nm = S[sid].name, list = S[sid].staff.map(x => N(x.n)), rest = text.replace(om[0], " ").replace(/\s+(with|với|이랑|랑|하고)\s*(?=\s|$)/i, " ").replace(/\s+/g, " ").trim();
+        return say(c, L3(`I don't know ${om[1]} at ${nm}. The team there is ${list.join(", ")}. Who would you like?`, `Mình không biết ${om[1]} ở ${nm}. Đội ngũ ở đó gồm ${list.join(", ")}. Bạn muốn ai?`, `${nm}에는 ${om[1]} 님이 없어요. 그곳 스태프는 ${list.join(", ")}예요. 누구로 할까요?`),
+          { chips: S[sid].staff.map(x => chip(N(x.n), { say: text.replace(om[0], x.n) })).concat([chip(L3("Anyone", "Ai cũng được", "아무나"), { say: rest })]) }), true; } } }
   /* PR11-N1..N5: a first-timer question gets a direct answer first; booking is only an optional chip after it */
   { const fa = faqFirst(c, text); if (fa) return fa; }
   /* round 7: small talk in all three languages, MoMo and other payments, "open late / open on Sunday", beard trims */
@@ -2172,7 +2186,7 @@ function confirmVisit(m, bid, actor, now, store) {
   const bk = BKREG[bid]; if (!bk || bk.member !== m.id) return { ok: false, err: "nobooking" };
   if (!/^staff:|^ops:/.test(String(actor))) return { ok: false, err: "store_only" }; /* no self check-in */
   /* staff can only confirm their own store's bookings (same rule as Mark attended); the store comes from the Store app session or the "staff:<store>-…" actor */
-  { const sm = /^staff:([a-z0-9]+)-/.exec(String(actor)), st = store || (sm && S[sm[1]] ? sm[1] : null); if (st && st !== bk.store) return { ok: false, err: "wrong_store" }; }
+  { const sm = /^staff:([a-z0-9]+)-/.exec(String(actor)), st = /^ops:/.test(String(actor)) ? bk.store : store || (sm && S[sm[1]] ? sm[1] : null); if (st !== bk.store) return { ok: false, err: "wrong_store" }; } /* unknown store (e.g. "staff:a") fails too; ops can act on any store */
   if (m.att[bid] && !m.att[bid].reversed) return { ok: true, dup: true }; /* idempotent (AC-P38) */
   /* A5/AC-P3: only a booked class that has started (15 min early check-in allowed) and ended < 24 h ago; never a no-show, future or stale booking */
   if (bk.status !== "booked") return { ok: false, err: "not_booked" };
