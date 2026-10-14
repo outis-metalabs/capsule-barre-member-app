@@ -78,10 +78,10 @@ with sync_playwright() as p:
     for q in ['', '?demo=1']:
       pg.goto(U + q); pg.evaluate("()=>localStorage.clear()"); pg.goto(U + q); pg.evaluate(f"()=>{{setLang('{lang}');ME.notices.forEach(n=>n.seen=true);setTab('you');render()}}")
       st = pg.evaluate("""()=>{const v=document.getElementById('view');return {kids:[...v.children].map(c=>c.id||c.className),tiles:[...v.querySelectorAll('.ytile')].map(b=>({v:b.dataset.v,h:b.getBoundingClientRect().height,txt:b.innerText})),btns:[...v.querySelectorAll('button')].map(b=>b.dataset.act+':'+(b.dataset.v||'')),bar:!!v.querySelector('#you-next [role=progressbar]'),pts:(v.querySelector('#you-pts')||{}).innerText||''}}""")
-      ok(f'You {lang}{q}: only profile, next reward, 3 tiles, Settings', st['kids'] == ['you-prof', 'you-next', 'you-tiles', 'stack'] and st['bar'] and sorted(st['btns']) == sorted(['youpage:wallet', 'youpage:vouchers', 'youpage:bookings', 'youpage:settings']), st)
+      ok(f'You {lang}{q}: only profile, next reward, 3 tiles, Settings', st['kids'] == ['you-prof', 'you-next', 'you-tiles', 'stack'] and st['bar'] and sorted(st['btns']) == sorted(['youpage:wallet', 'youpage:vouchers', 'youpage:bookings', 'youpage:settings', 'youpage:points']), st)
       ok(f'You {lang}{q}: tiles with counts, >=44px', len(st['tiles']) == 3 and all(x['h'] >= 44 and any(ch.isdigit() for ch in x['txt']) for x in st['tiles']), st['tiles'])
       ok(f'You {lang}{q}: one points + streak line', st['pts'].count('\n') == 0 and '·' in st['pts'], st['pts'])
-      for sp in ['wallet', 'vouchers', 'settings', 'bookings']:
+      for sp in ['wallet', 'vouchers', 'settings', 'bookings', 'points']:
         pg.evaluate("()=>{setTab('you');render()}"); pg.click(f'[data-act=youpage][data-v={sp}]'); pg.wait_for_timeout(80)
         at = pg.evaluate("()=>ST.page"); pg.evaluate("()=>sysBack()"); back = pg.evaluate("()=>[ST.tab,ST.page]")
         pg.evaluate("()=>{setTab('you');render()}"); pg.click(f'[data-act=youpage][data-v={sp}]'); pg.click('[data-act=back]'); back2 = pg.evaluate("()=>[ST.tab,ST.page]")

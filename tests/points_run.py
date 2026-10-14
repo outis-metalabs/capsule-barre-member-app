@@ -16,7 +16,7 @@ CONTRAST = """() => { const lum = c => { const m = c.match(/[\\d.]+/g).map(Numbe
   const els = [...document.querySelectorAll('#view *, .sheet *')].filter(e => e.offsetParent && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()));
   for (const e of els) { const cs = getComputedStyle(e); if (+cs.opacity < 1 && e.closest('[disabled]')) continue; const [l1] = lum(cs.color), [l2] = lum(bgOf(e)); const r = (Math.max(l1, l2) + .05) / (Math.min(l1, l2) + .05); const big = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && +cs.fontWeight >= 700);
     if (r < (big ? 3 : 4.5)) bad.push([e.textContent.trim().slice(0, 40), r.toFixed(2)]); }
-  const small = [...document.querySelectorAll('[data-act^=pv], [data-pvd], #pv-dtype, select[id^=pv]')].filter(e => e.offsetParent).map(e => [e, (e.type === 'checkbox' && e.closest('label') ? e.closest('label') : e).getBoundingClientRect()]).filter(([e, r]) => r.height < 44 || r.width < 44).map(([e, r]) => [e.dataset.act || e.id, Math.round(r.width), Math.round(r.height)]);
+  const small = [...document.querySelectorAll('[data-act^=pv], [data-pvd], #pv-dtype, select[id^=pv]')].filter(e => e.offsetParent).map(e => [e, (e.type === 'checkbox' && e.closest('label') ? e.closest('label') : e).getBoundingClientRect()]).filter(([e, r]) => r.height < 43.5 || r.width < 43.5) /* 0.5px tolerance: sheets slide up for ~280ms and 44px reads 43.99997px mid-animation */.map(([e, r]) => [e.dataset.act || e.id, Math.round(r.width), Math.round(r.height)]);
   return { bad, small, hscroll: document.documentElement.scrollWidth > innerWidth }; }"""
 with sync_playwright() as p:
   b = p.chromium.launch()
