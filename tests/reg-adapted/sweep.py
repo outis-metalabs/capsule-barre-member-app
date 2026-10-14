@@ -30,7 +30,7 @@ with sync_playwright() as p:
      pg.on('request',lambda r:V.append(r.url.split('/')[-1]) if r.url.endswith(('.webm','.mp4')) else None)
      tag=f'{vw[0]}|{lang}{"|rm" if rm else ""}'
      for name,js in SCR+[(x[0],None) for x in CLK]:
-       pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');render()}}")
+       pg.goto(U);pg.evaluate("()=>localStorage.clear()");pg.goto(U);pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
        if js: pg.evaluate(f"()=>{{{js};render();scrollTo(0,0)}}")
        else:
          tab,act=[(x[1],x[2]) for x in CLK if x[0]==name][0]

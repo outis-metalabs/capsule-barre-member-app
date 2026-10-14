@@ -113,7 +113,7 @@ with sync_playwright() as p:
   pg.goto(U); pg.wait_for_timeout(120); ms = J(pg, "CH.nari.msgs.map(m=>m.div?'DIV':m.text)")
   ok('NT-9 merged by timestamp, Ask greeting dropped, one divider', ms == ['parking?', 'barre tomorrow', 'Which time?', 'Motorbike parking at the front.', 'DIV'] and pg.locator('#view .ndiv').count() == 0, ms)
   J(pg, "go('tab:nari')"); ok('NT-9 divider shows once in the thread', pg.locator('#view .ndiv').count() == 1)
-  pg.goto(U); pg.wait_for_timeout(120); ok('NT-9 reload does not migrate again', J(pg, "CH.nari.msgs.length") == 0 and J(pg, "localStorage.getItem('nari.migrated')") == '1' and J(pg, "localStorage.getItem('nari.chat.ask')") is None)
+  pg.goto(U); pg.wait_for_timeout(120); ok('NT-9 reload does not migrate again (saved thread kept, one divider)', J(pg, "CH.nari.msgs.length") == 5 and J(pg, "CH.nari.msgs.filter(m=>m.div).length") == 1 and J(pg, "localStorage.getItem('nari.migrated')") == '1' and J(pg, "localStorage.getItem('nari.chat.ask')") is None)
   ok('NT-9 pure merge keeps every message once', len(J(pg, "__plat.migrateThreads([{who:'me',text:'a',t:2}],[{who:'n',text:'b',t:1},{who:'me',text:'a',t:2}])")) == 3)
   pg.close()
   # NT-11 / NT-18 / NT-19 / NT-24 / NT-27 / R-3 crisis gating
@@ -272,7 +272,7 @@ with sync_playwright() as p:
   pg.close()
   pg = page('', 'ko'); J(pg, "openBookings('past')"); cap = J(pg, "__plat.B.find(b=>b.past&&b.store==='capsule'&&b.status==='attended').id"); inbox0 = J(pg, "__plat.INBOX.length")
   pg.click(f'#bk-{cap} [data-act=rate]'); pg.click('.sheet [data-act=rstar][data-v="1"]'); pg.fill('#rnote', '요즘 너무 힘들어서 죽고 싶어요'); pg.click('.sheet [data-act=ratesave]'); pg.wait_for_timeout(60)
-  ok('NT-22 crisis note: not sent to the store, Nari shows the crisis reply', J(pg, f"__plat.RATINGS[{cap}].note") == '' and J(pg, "__plat.storeRatings('capsule').every(r=>!r.note)") and J(pg, "ST.tab") == 'nari' and '이야기해 주셔서' in view(pg) and '죽고 싶어요' not in view(pg) and J(pg, "__plat.INBOX.length") == inbox0 and not any(k for k in J(pg, "__plat.SAFETY_LOG") if '죽고' in json.dumps(k, ensure_ascii=False)))
+  ok('NT-22 crisis note: not sent to the store, Nari shows the crisis reply', J(pg, f"!__plat.RATINGS[{cap}] || __plat.RATINGS[{cap}].note===''") and J(pg, "__plat.storeRatings('capsule').every(r=>!r.note)") and J(pg, "ST.tab") == 'nari' and '이야기해 주셔서' in view(pg) and '죽고 싶어요' not in view(pg) and J(pg, "__plat.INBOX.length") == inbox0 and not any(k for k in J(pg, "__plat.SAFETY_LOG") if '죽고' in json.dumps(k, ensure_ascii=False)))
   ok('NT-22 → gated (no chips / Call in that turn)', pg.locator('#view .chips.slim, #view [data-act=callstore], #view [data-act=mybk]').count() == 0)
   pg.close()
   pg = page('', 'en'); d = J(pg, CAP); J(pg, f"__plat.setNow({(d - 1) * 1440 + 1000})"); J(pg, "openBookings('up')"); i0 = J(pg, "__plat.INBOX.length")
