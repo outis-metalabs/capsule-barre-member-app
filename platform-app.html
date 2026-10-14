@@ -203,8 +203,15 @@ h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .scene{border-radius:24px;background:linear-gradient(135deg,#FFD9DF 0%,#FFE4D3 100%);box-shadow:0 10px 30px rgba(233,133,151,.25)}
 .scene .pic{background:transparent;width:48%;max-width:190px;min-height:230px}
 html{min-height:100%;background:#FFF6F3}
-.scene .pic img,.nari-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
-.scene .pic img{animation:nfloat 4s ease-in-out infinite}
+.scene .pic img:not(.cut),.nari-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
+.scene .pic img:not(.cut){animation:nfloat 4s ease-in-out infinite}
+.cut{display:block;background:transparent}
+.scene .pic .cut{position:absolute;inset:auto 0 0 0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none}
+.nempty .cut{width:auto;height:96px;max-width:96px;object-fit:contain;flex:none}
+.nthink .cut{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 20%;background:#FFE4E8;flex:none}
+.nthink.big{flex-wrap:wrap}.nthink.big .cut{width:120px;height:120px;margin-right:calc(100% - 120px);border-radius:0;background:transparent;object-fit:contain;-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)}
+.cheerpop .cut{width:140px;height:auto}.pop-voucher .cut{width:120px}
+.cut-note{width:72px;height:auto;flex:none}
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
@@ -274,6 +281,29 @@ const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collap
 /* ===== platform prototype: sample data only, nothing is sent anywhere ===== */
 const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const A = "assets/mascot3d/";
+/* real alpha Nari cut-outs (assets/nari-cut): VP9-alpha WebM with the WebP still as poster + fallback.
+   Safari / iOS (any iOS browser is WebKit) has no VP9 alpha, so they get the still; so does prefers-reduced-motion. Videos load lazily when on screen. */
+const CUT = "assets/nari-cut/";
+const CUT_SZ = { wave: [270, 480], cheer: [400, 400], jump: [346, 480], thinking: [240, 240], voucher: [270, 480], ribbon: [500, 400], shy: [74, 360], idle: [222, 360], surprised: [307, 360] };
+const CUT_ANIM = { wave: 1, cheer: 1, jump: 1, thinking: 1, voucher: 1, ribbon: 1 };
+const noAlphaVideo = () => { const u = navigator.userAgent || ""; return /iP(hone|ad|od)/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1) || (/Safari\//.test(u) && !/(Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS|Android)\//.test(u)); };
+const reducedMotion = () => !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const cutMode = () => (reducedMotion() || noAlphaVideo() || !document.createElement("video").canPlayType('video/webm; codecs="vp9"')) ? "still" : "video";
+function cut(name, o) {
+  o = o || {}; const [w, h] = CUT_SZ[name], cls = "cut cut-" + name + (o.cls ? " " + o.cls : ""), al = o.alt ? `role="img" aria-label="${esc(o.alt)}"` : 'aria-hidden="true"', still = CUT + name + ".webp";
+  const img = `<img class="${cls}" src="${still}" alt="${o.alt ? esc(o.alt) : ""}" width="${w}" height="${h}" loading="${o.eager ? "eager" : "lazy"}" decoding="async"${o.alt ? "" : ' aria-hidden="true"'}>`;
+  if (!CUT_ANIM[name] || cutMode() === "still") return img;
+  return `<video class="${cls}" ${al} width="${w}" height="${h}" poster="${still}" muted playsinline ${o.once ? "" : "loop "}preload="none" data-cut="${CUT + name}.webm" disablepictureinpicture>${img}</video>`;
+}
+let cutIO = null;
+function hydrateCuts(root) {
+  const vs = (root || document).querySelectorAll("video[data-cut]:not([data-on])"); if (!vs.length) return;
+  const start = v => { if (v.dataset.on) return; v.dataset.on = "1"; const s = document.createElement("source"); s.src = v.dataset.cut; s.type = 'video/webm; codecs="vp9"'; v.appendChild(s); v.load(); const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  if (!("IntersectionObserver" in window)) return vs.forEach(start);
+  if (!cutIO) cutIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { cutIO.unobserve(e.target); start(e.target); } }), { rootMargin: "120px" });
+  vs.forEach(v => cutIO.observe(v));
+}
+if (window.matchMedia) { const mq = matchMedia("(prefers-reduced-motion: reduce)"); const f = () => { try { render(); } catch (e) {} }; mq.addEventListener ? mq.addEventListener("change", f) : mq.addListener && mq.addListener(f); }
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").normalize("NFC");
@@ -1103,16 +1133,16 @@ function draftRows(x) {
   let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${x.len} ${L3("min","phút","분")} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
   const priceTxt = pass ? `${vnd(0)} <span class="sub sm">· ${esc(L3(`1 from your ${pass.t} (${pass.left} left)`, `1 buổi từ ${tr(pass.t)} (còn ${pass.left})`, `${tr(pass.t)}에서 1회 차감 (${pass.left}회 남음)`))}, ${esc(t("storeOnly", { s: s.name }))}</span>`
     : (v.from ? L3("from ", "từ ", "") + vnd(x.price) + L3("", "", "부터") + ` <span class="sub sm">(${esc(L3(v.why, "tùy độ dài tóc; thợ sẽ xác nhận", "머리 길이에 따라 달라요. 디자이너가 확인해요"))})</span>` : vnd(x.price));
-  const free = freeNow(x.store, x.d, x.m);
+  const P = x.pol || s.policy, free = freeNow(x.store, x.d, x.m, x.pol); /* a booked card shows the policy saved with the booking; a draft shows the store's current rule */
   return `<dl class="conf">
     <dt>${tr("Service")}</dt><dd>${what}</dd>
     <dt>${tr("When")}</dt><dd>${fWhen(x.d, x.m)}–${fTime(x.m + x.len)} <span class="sub sm">${tr("(store time)")}</span></dd>
     <dt>${s.kind === "rental" ? tr("Court") : tr("With")}</dt><dd>${esc(who)}</dd>
     <dt>${t("total")}</dt><dd class="tot">${priceTxt}</dd>
-    <dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + tr(" now, taken off the total") : t("none") + " · " + t("payAt")}</dd>
-    <dt>${t("freeCancel")}</dt><dd>${free ? fDeadline(x.store, x.d, x.m) : `<span class='tag warn'>${tr("Past the free window")}</span>`}</dd>
-    <dt>${t("lateCancel")}</dt><dd>${esc(tr(s.policy.late))}</dd>
-    <dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd>
+    <dt>${t("deposit")}</dt><dd>${P.dep ? vnd(P.dep) + tr(" now, taken off the total") : t("none") + " · " + t("payAt")}</dd>
+    <dt>${t("freeCancel")}</dt><dd>${free ? fDeadline(x.store, x.d, x.m, x.pol) : `<span class='tag warn'>${tr("Past the free window")}</span>`}</dd>
+    <dt>${t("lateCancel")}</dt><dd>${esc(tr(P.late))}</dd>
+    <dt>${t("noShow")}</dt><dd>${esc(tr(P.noshow))}</dd>
   </dl>`;
 }
 function storeBar(sid) { return `<div class="storebar" style="background:${S[sid].color}">${logo(sid)}<div class="grow"><div class="sn">${esc(S[sid].name)} <span class="sm">${tr("(sample)")}</span></div><div class="sa">${esc(N(S[sid].area))}</div></div></div>`; }
@@ -1166,7 +1196,7 @@ const lateLine = b => tr(bkPol(b).late) + (b.lateFee ? " (" + vnd(b.lateFee) + "
 let succUndo = null;
 function success(b, undo) {
   const cheerAlt = L3("Nari cheering", "Nari reo mừng", "응원하는 나리");
-  const media = `<img src="${A}cheer.webp" alt="${cheerAlt}">`; /* still, no boxed video background */ setTimeout(() => celebrate(false), 50);
+  const media = cut("cheer", { alt: cheerAlt, eager: 1 }); setTimeout(() => celebrate(false), 50);
   openSheet(sheetHd(t("booked")) + `<div class="card scene" style="margin-bottom:12px"><div class="pic">${media}</div><div class="txt"><div class="who">${L3("Nari", "Nari", "나리")}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(pvT("howEarn"))}</p></div></div>` +
     `<div class="stack"><button class="btn full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
   succUndo = undo;
@@ -1665,7 +1695,7 @@ function heroScene() {
   const [img, g, line, alt] = h < 11 ? ["greet", "gm", L3("Coffee first. ", "Cà phê trước đã. ", "커피 먼저요. ") + nxt, L3("Nari waving good morning", "Nari vẫy tay chào buổi sáng", "아침 인사로 손 흔드는 나리")]
     : h < 17 ? ["warmup", "ga", L3("A 2-minute stretch counts as a mission. ", "Giãn cơ 2 phút cũng là một nhiệm vụ. ", "2분 스트레칭도 미션이에요. ") + nxt, L3("Nari warming up", "Nari đang khởi động", "몸을 푸는 나리")]
     : h < 22 ? ["calm", "ge", nxt, L3("Nari relaxing", "Nari đang thư giãn", "쉬고 있는 나리")] : ["sleep", "gn", L3("Rest is training too. ", "Nghỉ ngơi cũng là tập luyện. ", "쉬는 것도 훈련이에요. ") + nxt, L3("Nari yawning", "Nari đang ngáp", "하품하는 나리")];
-  return `<section class="card scene" aria-label="Nari"><div class="pic"><img src="${A}${img}.webp" alt="${alt}" width="200" height="283"><svg class="bow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#E98597" opacity=".8"/></svg></div>
+  return `<section class="card scene" aria-label="Nari"><div class="pic">${cut("wave", { alt: L3("Nari waving hello", "Nari vẫy tay chào", "손 흔들며 인사하는 나리"), eager: 1 })}<svg class="bow" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#E98597" opacity=".8"/></svg></div>
   <div class="txt"><div class="who">Nari</div><h1 style="margin:0;font-size:20px">${t(g)}</h1><p class="sub sm">${esc(line)}</p><div><button class="btn sec" data-act="tab" data-v="book">${t("book")}</button></div></div></section>`;
 }
 function upRow(b) {
@@ -1721,7 +1751,7 @@ function chatUI(cid, placeholder, above) {
     return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Nari: </span>${body}${sos}</div></div>${chips}`;
   }).join("");
   return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
-  <div class="nthink" id="nthink-${cid}" aria-hidden="true"><img src="${A}thinking.webp" alt=""><span>${L3("Nari is listening", "Nari đang nghe", "나리가 듣고 있어요")}</span><i></i><i></i><i></i></div>
+  <div class="nthink${c.msgs.length ? "" : " big"}" id="nthink-${cid}" aria-hidden="true">${cut("thinking")}<span>${L3("Nari is listening", "Nari đang nghe", "나리가 듣고 있어요")}</span><i></i><i></i><i></i></div>
   ${above || ""}<form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
   <div class="helpft"><button type="button" class="helplink" data-act="helpsheet" data-c="${cid}">${esc(HELP_LINK())}</button></div>`;
 }
@@ -1791,7 +1821,7 @@ function vYou() {
   return h;
 }
 function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -2678,7 +2708,8 @@ function noteText(n) {
 function notesCard() {
   if (!ME) return ""; pvTick(ME); const ns = ME.notices.filter(n => !n.seen && (n.k !== "milestone" || PV.flag));
   if (!ns.length) return "";
-  return `<section class="card row" id="pv-notes" style="margin:12px 0;border-color:var(--rasp);gap:8px" aria-live="polite"><div class="grow">${ns.map(n => `<p class="sm" style="margin:0"><b>${esc(noteText(n))}</b></p>`).join("")}</div><button class="btn sec" data-act="pvseen">OK</button></section>`;
+  const ms = PV.flag && ns.some(n => n.k === "milestone");
+  return `<section class="card row" id="pv-notes" style="margin:12px 0;border-color:var(--rasp);gap:8px" aria-live="polite">${ms ? cut("ribbon", { cls: "cut-note", alt: L3("Nari twirling a ribbon", "Nari múa dải ruy băng", "리본을 돌리는 나리") }) : ""}<div class="grow">${ns.map(n => `<p class="sm" style="margin:0"><b>${esc(noteText(n))}</b></p>`).join("")}</div><button class="btn sec" data-act="pvseen">OK</button></section>`;
 }
 function pendingCard() {
   if (!ME) return ""; const p = pendingFor(ME, PV.now()); if (!p.length) return "";
@@ -2773,7 +2804,7 @@ function pvAct(a, d, el) {
     case "pvquest": questSheet(); return;
     case "pvwardrobe": wardrobeSheet(); return;
     case "pvclaim": claimSheet(d.v); return;
-    case "pvclaimok": { const r = claim(ME, d.v); closeSheet(); render(); toast(r.ok ? pvT("myVouchers") + ": " + pvTx(r.c.terms.title) : reasonTx(r)); return; }
+    case "pvclaimok": { const r = claim(ME, d.v); closeSheet(); render(); toast(r.ok ? pvT("myVouchers") + ": " + pvTx(r.c.terms.title) : reasonTx(r)); if (r.ok && !reducedMotion()) popCut("voucher"); return; }
     case "pvuse": useSheet(d.c); return;
     case "pvrefresh": useSheet(d.c, true); return;
     case "pvmoff": PV.online = !el.checked; return;
@@ -2797,15 +2828,16 @@ document.addEventListener("input", e => { const k = e.target.dataset && e.target
 
 
 /* ===== micro-motion: confetti + Nari cheer pop on wins (skipped with prefers-reduced-motion) ===== */
+function popCut(name) { const d = document.createElement("div"); d.className = "cheerpop pop-" + name; d.setAttribute("aria-hidden", "true"); d.innerHTML = cut(name, { once: 1, eager: 1 }); document.body.appendChild(d); hydrateCuts(d); setTimeout(() => d.remove(), 1800); }
 function celebrate(pop) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const c = document.createElement("div"); c.className = "confetti"; c.setAttribute("aria-hidden", "true");
   const col = ["#E98597", "#FFB38A", "#B04A5E", "#FFD36E", "#A8D5C2"];
   for (let i = 0; i < 36; i++) { const b = document.createElement("b"); b.style.left = Math.random() * 100 + "%"; b.style.background = col[i % 5]; b.style.animationDelay = Math.random() * .4 + "s"; c.appendChild(b); }
   document.body.appendChild(c); setTimeout(() => c.remove(), 2000);
-  if (pop !== false) { const im = document.createElement("img"); im.src = A + "cleared.webp"; im.alt = ""; im.className = "cheerpop nari-blend"; document.body.appendChild(im); setTimeout(() => im.remove(), 1700); }
+  if (pop !== false) popCut("jump");
 }
-const nEmpty = (txt, pose) => `<div class="nempty"><img class="nari-blend" src="${A}${pose || "shy"}.webp" alt="${esc(L3("Nari", "Nari", "나리"))}"><p class="sub" style="margin:0">${txt}</p></div>`;
+const nEmpty = (txt, pose) => `<div class="nempty">${cut(pose || "shy")}<p class="sub" style="margin:0">${txt}</p></div>`;
 document.addEventListener("input", e => { const ta = e.target; if (ta.tagName === "TEXTAREA" && /^in-/.test(ta.id)) { const th = $("#nthink-" + ta.id.slice(3)); if (th) th.classList.toggle("on", !!ta.value.trim()); } });
 ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
