@@ -190,7 +190,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 :root{--cream:#FFF6F3;--card:#FFFFFF;--line:#F3DCD8;--tint:#FDE7EA}
 html,body{background:linear-gradient(180deg,#FFE9E6 0%,#FFF1E8 45%,#FFF6F3 100%) fixed}
 #app{background:transparent}
-header.top{background:rgba(255,244,241,.92);backdrop-filter:blur(8px);border-bottom:0}
+header.top{background:#FFF4F1;border-bottom:1px solid #F6DDE1;z-index:15}
 h1{font-weight:850;letter-spacing:-.3px;font-size:24px}
 h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .card{border-radius:22px;border:0;box-shadow:0 6px 22px rgba(176,74,94,.08),0 1px 0 rgba(176,74,94,.04);padding:16px}
@@ -210,14 +210,27 @@ html{min-height:100%;background:#FFF6F3}
 .nempty .cut{width:auto;height:96px;max-width:96px;object-fit:contain;flex:none}
 .nthink .cut{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 20%;background:#FFE4E8;flex:none}
 .nthink.big{flex-wrap:wrap}.nthink.big .cut{width:120px;height:120px;margin-right:calc(100% - 120px);border-radius:0;background:transparent;object-fit:contain;-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)}
-.cheerpop .cut{width:140px;height:auto}.pop-voucher .cut{width:120px}
+.toast.win{padding-left:8px;background:#fff;color:var(--ink);border:1.5px solid #F3C9D2;box-shadow:0 8px 24px rgba(176,74,94,.22)}.toast.win .tx{font-weight:650}.toast.win button{color:var(--raspd)}.tcut{flex:none;width:56px;height:76px;margin:-30px 0 -4px;display:block}.tcut .cut{width:56px;height:76px;object-fit:contain;object-position:50% 100%}
+html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .cut-note{width:72px;height:auto;flex:none}
+/* polish: Nari tab like a chat app (input pinned above the tab bar), store action row */
+#view.nari-v{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - 72px - env(safe-area-inset-bottom));padding-bottom:0}
+#view.nari-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FFF4F1;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
+.nhero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0 14px;text-align:center}
+.nhero-cut{width:auto;height:200px;max-width:60%;object-fit:contain}
+.nhero .msg.n{max-width:100%;text-align:center;font-size:16px;line-height:1.45;padding:12px 16px}
+.chip.sug{background:#FFF8F9;border:1.5px dashed #E9B3BF;color:#8E3346;font-size:14px;box-shadow:none}
+.sacts{display:flex;flex-direction:column;gap:10px}.sact3{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px}
+.btn.sact{flex-direction:column;gap:2px;min-height:60px;padding:8px 4px;border-radius:16px;font-size:13px;white-space:nowrap;box-shadow:none;border-color:#F0D3D9;background:#fff;color:var(--ink)}
+.btn.sact svg{color:var(--rasp)}
+.btn,.chip{white-space:nowrap}
+body:has(#view.nari-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} /* on the Nari tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
 .sheet-bg{animation:fadein .2s ease}
 #view{animation:viewin .25s ease}
-nav.tabs{border-top:0;box-shadow:0 -6px 24px rgba(176,74,94,.10);border-radius:22px 22px 0 0}
+nav.tabs{z-index:15;border-top:0;box-shadow:0 -6px 24px rgba(176,74,94,.10);border-radius:22px 22px 0 0}
 nav.tabs button[aria-current=page] svg{transform:translateY(-2px) scale(1.12);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 button{transition:transform .15s cubic-bezier(.3,1.6,.5,1)}
 button:active:not([disabled]){transform:scale(.94)}
@@ -226,7 +239,7 @@ button:active:not([disabled]){transform:scale(.94)}
 .nthink img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 12%;background:#FFE4E8}
 .nthink i{width:6px;height:6px;border-radius:50%;background:#E98597;display:inline-block;animation:dot 1s infinite}.nthink i:nth-child(3){animation-delay:.15s}.nthink i:nth-child(4){animation-delay:.3s}
 .cheerpop{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);width:140px;z-index:31;pointer-events:none;animation:pop 1.6s cubic-bezier(.3,1.6,.5,1) forwards}
-.confetti{position:fixed;inset:0;pointer-events:none;z-index:32;overflow:hidden}.confetti b{position:absolute;top:-12px;width:9px;height:14px;border-radius:3px;animation:fall 1.4s ease-in forwards}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:12;overflow:hidden}.confetti b{position:absolute;top:-12px;width:9px;height:14px;border-radius:3px;animation:fall 1.4s ease-in forwards}
 @keyframes nfloat{50%{transform:translateY(-5px)}}@keyframes sheetup{from{transform:translateY(40px);opacity:.4}}@keyframes fadein{from{opacity:0}}@keyframes viewin{from{opacity:.4;transform:translateY(6px)}}
 @keyframes dot{50%{transform:translateY(-4px);opacity:.5}}@keyframes pop{0%{transform:translate(-50%,40px) scale(.6);opacity:0}20%{transform:translate(-50%,0) scale(1.05);opacity:1}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-10px)}}
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
@@ -1123,7 +1136,8 @@ let toastT = null, toastUndo = null;
 function toast(msg, undo) {
   const el = $("#toast"); clearTimeout(toastT); toastUndo = undo || null;
   el.innerHTML = `<span class="tx">${esc(trS(msg))}</span>` + (undo ? `<button data-act="toastundo">${t("undo")}</button>` : "");
-  el.hidden = false; toastT = setTimeout(() => { el.hidden = true; toastUndo = null; }, undo ? 7000 : 3500);
+  el.classList.remove("win"); if (toastCut) { putToastCut(el, toastCut); toastCut = null; }
+  el.hidden = false; toastT = setTimeout(() => { el.hidden = true; toastUndo = null; el.classList.remove("win"); }, undo ? 7000 : 3500);
 }
 
 /* ===== booking core ===== */
@@ -1743,17 +1757,17 @@ function chatUI(cid, placeholder, above) {
     let body = (m.note ? esc(m.note.split(/(?<=\.) /).map(trS).join(" ")) + " " : "") + esc(trS(m.text)).replace(/\n/g, "<br>");
     if (m.card) body += `<div class="mcard${m.care ? " care" : ""}"><div class="sub sm"><b>${esc(trS(m.card.kicker))}</b></div><b>${esc(trS(m.card.title))}</b><div class="sm">${esc(L === "en" ? m.card.body : m.card.body.split("\n").map(l => { const q = l.match(/^(.+?) \((.+?)\): (.+)$/); return q ? N(q[1]) + " (" + q[2] + "): " + tr(q[3]) : trS(l); }).join("\n")).replace(/\n/g, "<br>")}</div>${m.card.src ? `<div class="src">${esc(trS(m.card.src))}</div>` : ""}</div>`;
     if (m.src) body += `<div class="src">${esc(L === "en" ? m.src : m.src.replace(/^From (.+?)'s (info|price list)$/, (q, a, b) => L === "vi" ? "Theo " + (b === "info" ? "thông tin" : "bảng giá") + " của " + a : a + " " + (b === "info" ? "정보" : "가격표") + " 기준"))}</div>`;
-    if (m.confirm && !(g && m.done !== true)) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>${m.bookedId && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${m.bookedId}">${t("manage")}</button>${callBtn(x.store)}</div>` : ""}` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>${callBtn(x.store)}`}</div>`; }
+    if (m.confirm && !(g && m.done !== true)) { const x = m.confirm, s = S[x.store]; body += `<div class="mcard">${storeBar(x.store)}${draftRows(x)}${m.done === true ? `<span class="tag ok">${t("booked")}</span>${m.bookedId && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${m.bookedId}">${t("manage")}</button>${callBtn(x.store, "", true)}</div>` : ""}` : m.done ? `<span class="tag warn">${L3("No longer open", "Không còn trống", "더 이상 예약 불가")}</span>` : `<button class="btn full" data-act="chatbook" data-c="${cid}" data-i="${i}">${x.move ? t("move") : s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm")}</button>${callBtn(x.store, "", true)}`}</div>`; }
     if (m.bk) { const b = B.find(z => z.id === m.bk); if (b) body += `<div class="mcard">${storeBar(b.store)}${draftRows(b)}${b.status === "confirmed" && !bkStarted(b) && !g ? `<div class="acts wrap"><button class="btn ghost" data-act="managebk" data-id="${b.id}">${t("manage")}</button></div>` : ""}</div>`; }
     const av = `<span class="av" aria-hidden="true"><img src="${A}${m.care ? "calm" : "greet"}.webp" alt=""></span>`;
-    const chips = m.chips && i === c.msgs.length - 1 && !(g && !m.care) ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
+    const chips = m.chips && i === c.msgs.length - 1 && !(g && !m.care) ? `<div class="mchips">${m.chips.map((ch, j) => `<button class="chip${ch.val && ch.val.say ? " sug" : ""}" data-act="cchip" data-c="${cid}" data-i="${i}" data-j="${j}">${esc(trS(ch.label))}</button>`).join("")}</div>` : "";
     const sos = ""; /* the safety note shows once per screen, in the bar above the input */
     return `<div class="nrow"${m.fb ? ' data-fb="1"' : ""}>${av}<div class="msg n"><span class="vh">Nari: </span>${body}${sos}</div></div>${chips}`;
   }).join("");
   return `<div class="thread" id="th-${cid}" aria-live="polite" aria-label="${L3("Conversation", "Cuộc trò chuyện", "대화")}">${th}</div>
   <div class="nthink${c.msgs.length ? "" : " big"}" id="nthink-${cid}" aria-hidden="true">${cut("thinking")}<span>${L3("Nari is listening", "Nari đang nghe", "나리가 듣고 있어요")}</span><i></i><i></i><i></i></div>
-  ${above || ""}<form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
-  <div class="helpft"><button type="button" class="helplink" data-act="helpsheet" data-c="${cid}">${esc(HELP_LINK())}</button></div>`;
+  <div class="dock">${above || ""}<form class="chatbox" data-form="chat" data-c="${cid}"><label class="vh" for="in-${cid}">${esc(placeholder)}</label><textarea id="in-${cid}" rows="1" placeholder="${esc(placeholder)}" enterkeyhint="send"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>
+  <div class="helpft"><button type="button" class="helplink" data-act="helpsheet" data-c="${cid}">${esc(HELP_LINK())}</button></div></div>`;
 }
 /* PR11-H1/H2: a small neutral "Need help?" link under the chat (not above the input). Safety replies still trigger from message content (H3/H4). No phone or emergency number. */
 const HELP_LINK = () => L3("Need help?", "Cần hỗ trợ?", "도움이 필요하세요?");
@@ -1780,7 +1794,7 @@ function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card"><div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div><div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
-  <div class="row" style="margin-top:10px">${s.joined ? `<button class="btn grow" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button>${callBtn(sid, "grow")}<button class="btn ghost grow" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost grow" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
+  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="nari:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
   if (s.kind === "class") {
@@ -1820,7 +1834,7 @@ function vYou() {
   h += `<h2>${t("language")}</h2><div class="chips" role="group" aria-label="${t("language")}">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div><p class="sub sm" style="margin-top:8px">${tr("Prices always show in the store's currency:")} ${vnd(1250000)}.</p><h2>${L3("Notifications","Thông báo","알림")}</h2><div class="stack"><button class="svc" data-act="nfeed">${ic("bell")}<span class="grow"><b>${L3("Notifications","Thông báo","알림")}</b><br><span class="sub sm">${L3("Inbox and push previews","Hộp thư và xem trước","받은 알림과 미리보기")}</span></span>${ic("chev")}</button><button class="svc" data-act="nset">${ic("info")}<span class="grow"><b>${L3("Notification settings","Cài đặt thông báo","알림 설정")}</b><br><span class="sub sm">${L3("Quiet hours 21:00–08:00 · caps · mute by type or place","Giờ yên tĩnh 21:00–08:00 · giới hạn · tắt theo loại hoặc nơi","방해 금지 21:00–08:00 · 횟수 제한 · 유형·매장별 끄기")}</span></span>${ic("chev")}</button></div><h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Nari's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Nari dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.","나리의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
+function renderView() { if (ST.tab === "book" || ST.tab === "ask") ST.tab = "nari"; /* NT-7: old tabs land on Nari */ $("#view").classList.toggle("nari-v", ST.tab === "nari" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, nari: vNari, you: vYou }[ST.tab] || vHome)(); }
 function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); const cl = $("#call"); if (cl) cl.setAttribute("aria-label", L3("Demo call with Nari", "Cuộc gọi demo với Nari", "나리와 데모 통화")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
@@ -2096,9 +2110,9 @@ const isEmergencyNum = n => { const d = phoneDigits(n); return !d || d.length <=
 function setStorePhone(sid, num) { if (!S[sid]) return { ok: false, err: "no_store" }; if (isEmergencyNum(num)) { delete S[sid].phone; return { ok: false, err: "emergency_number" }; } S[sid].phone = String(num); return { ok: true }; }
 for (const [sid, kr, vn] of [["capsule", "02-6953-1201", "028 3744 1201"], ["salon", "02-332-1804", "028 3822 1804"], ["skin", "02-512-3307", "028 3930 3307"], ["spa", "02-797-4410", "028 3829 4410"], ["pickle", "02-455-2290", "028 3740 2290"], ["yoga", "02-3443-0611", "028 3744 0611"], ["barber", "02-336-7015", "028 3910 7015"]]) if (S[sid]) setStorePhone(sid, MARKET === "kr" ? kr : vn);
 /* nails, moc, rally: no published number saved → no Call button (OQ-8) */
-function callBtn(sid, cls) {
+function callBtn(sid, cls, short) {
   const s = S[sid]; if (!s || !s.phone || isEmergencyNum(s.phone) || gated()) return "";
-  return `<button class="btn ghost ${cls || ""}" data-act="callstore" data-v="${sid}" aria-label="${esc(t("callStoreAria", { store: s.name }))}">${ic("phone", "s")} ${esc(t("callStore", { store: s.name }))}</button>`;
+  return `<button class="btn ghost ${cls || ""}" data-act="callstore" data-v="${sid}" aria-label="${esc(t("callStoreAria", { store: s.name }))}">${ic("phone", "s")} ${esc(short ? L3("Call", "Gọi", "전화") : t("callStore", { store: s.name }))}</button>`;
 }
 function callStoreSheet(sid) {
   const s = S[sid]; if (!s || !s.phone || gated()) return;
@@ -2198,7 +2212,7 @@ function bkActs(b) {
   if (b.req) h += `<span class="tag warn">${t("bkRequested")}</span>`;
   else if (!bkFree(b) && P.studio) h += `<p class="sub sm" style="margin:6px 0 0">${esc(t("askStudioHint"))}</p><button class="btn sec" data-act="askstudio" data-id="${b.id}" aria-label="${t("askStudio")}: ${lbl}">${t("askStudio")}</button>`;
   else h += `<button class="btn sec" data-act="resched" data-id="${b.id}" aria-label="${t("reschedule")}: ${lbl}">${t("reschedule")}</button><button class="btn ghost" data-act="cancelask" data-id="${b.id}" aria-label="${t("cancel")}: ${lbl}">${t("cancel")}${bkFree(b) ? " · " + tr("free") : " · " + esc(tr(P.late))}</button>`;
-  h += `<div class="contact"><button class="btn ghost" data-act="msgfrom" data-id="${b.id}" aria-label="${esc(t("msgStore", { s: s.name }))}: ${esc(v)}">${esc(t("msgStore", { s: s.name }))}</button>` + callBtn(b.store) + `</div>`;
+  h += `<div class="contact"><button class="btn ghost" data-act="msgfrom" data-id="${b.id}" aria-label="${esc(t("msgStore", { s: s.name }))}: ${esc(v)}">${ic("chat", "s")} ${esc(L3("Message", "Nhắn tin", "메시지"))}</button>` + callBtn(b.store, "", true) + `</div>`;
   return h;
 }
 const bkPrice = b => { const p = b.usePass ? (WALLET[b.store] || []).find(q => q.id === b.usePass) : null; return p ? vnd(0) + " · " + esc(tr(p.t)) : vnd(b.price); };
@@ -2249,8 +2263,8 @@ function vNari() {
   const head = `<div class="row" style="margin:4px 0 6px"><span class="av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt=""></span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("nari")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
   ${g ? "" : `<button class="icb" data-act="mybk" data-from="nari" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}<button class="icb" data-act="nmore" aria-haspopup="dialog" aria-label="${t("more")}">${ic("more")}</button></div>`;
   const empty = !c.msgs.length;
-  const hello = empty ? `<div class="nrow"><span class="av" aria-hidden="true"><img src="${A}greet.webp" alt=""></span><div class="msg n"><span class="vh">Nari: </span>${esc(t("nariHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${nariAgainChips()}` : "";
-  return head + scope + hello + chatUI("nari", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "무엇이든 물어보세요"), !empty && !g ? qchipRow(true) : "");
+  const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Nari waving hello", "Nari vẫy tay chào", "손 흔들며 인사하는 나리"), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">Nari: </span>${esc(t("nariHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${nariAgainChips()}` : "";
+  return head + scope + hello + chatUI("nari", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "무엇이든 물어보세요"), ""); /* the 3 quick chips show once, on the empty state */
 }
 function setTab(v) { if (v === "book" || v === "ask") v = "nari"; if (v !== ST.tab) ST.prevTab = ST.tab; ST.tab = v; ST.page = null; ST.store = null; track("tab_open", { tab: v }); }
 function nariBookPrompt() {
@@ -2828,7 +2842,10 @@ document.addEventListener("input", e => { const k = e.target.dataset && e.target
 
 
 /* ===== micro-motion: confetti + Nari cheer pop on wins (skipped with prefers-reduced-motion) ===== */
-function popCut(name) { const d = document.createElement("div"); d.className = "cheerpop pop-" + name; d.setAttribute("aria-hidden", "true"); d.innerHTML = cut(name, { once: 1, eager: 1 }); document.body.appendChild(d); hydrateCuts(d); setTimeout(() => d.remove(), 1800); }
+/* the win cut-out sits inside the small toast near the bottom (never over content) and leaves with it */
+let toastCut = null;
+function popCut(name) { const el = $("#toast"); if (el && !el.hidden) { putToastCut(el, name); } else toastCut = name; }
+function putToastCut(el, name) { const o = el.querySelector(".tcut"); if (o) o.remove(); const d = document.createElement("span"); d.className = "tcut tcut-" + name; d.setAttribute("aria-hidden", "true"); d.innerHTML = cut(name, { once: 1, eager: 1 }); el.insertBefore(d, el.firstChild); el.classList.add("win"); hydrateCuts(el); }
 function celebrate(pop) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const c = document.createElement("div"); c.className = "confetti"; c.setAttribute("aria-hidden", "true");

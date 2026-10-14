@@ -53,10 +53,11 @@ with sync_playwright() as p:
   J(pg, "()=>{ST.page=null;setTab('home');render()}"); es2 = J(pg, "()=>document.querySelector('.nempty .cut')?.getAttribute('src')")
   ok('Home empty next class uses 05 idle', (es2 or '').endswith('idle.webp'), es2)
   # points win pop: 03 jump; voucher claimed: 06
-  J(pg, "()=>celebrate()"); pg.wait_for_timeout(100)
-  ok('points/streak win pop = 03 jump (padded)', J(pg, "()=>!!document.querySelector('.cheerpop.pop-jump video.cut-jump')"))
+  J(pg, "()=>{celebrate();toast('+10')}"); pg.wait_for_timeout(100)
+  ok('points/streak win toast carries 03 jump', J(pg, "()=>!!document.querySelector('#toast:not([hidden]).win .tcut-jump .cut-jump')"))
+  pg.wait_for_timeout(3700); ok('win toast auto-dismisses', J(pg, "()=>document.getElementById('toast').hidden && !document.querySelector('.cheerpop')"))
   J(pg, """()=>{window.claim=()=>({ok:true,c:{terms:{title:['Voucher','Voucher','바우처']}}}); document.body.insertAdjacentHTML('beforeend','<button id=tclaim data-act=pvclaimok data-v=x>c</button>'); document.getElementById('tclaim').click()}"""); pg.wait_for_timeout(100)
-  ok('voucher claimed pop = 06 voucher', J(pg, "()=>!!document.querySelector('.cheerpop.pop-voucher .cut-voucher')"))
+  ok('voucher claimed toast carries 06 voucher', J(pg, "()=>!!document.querySelector('#toast:not([hidden]).win .tcut-voucher .cut-voucher')"))
   pg.close()
   # ribbon: realRewards only
   for q, want in [('', False), ('?realRewards=1', True)]:
