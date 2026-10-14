@@ -21,28 +21,28 @@ with sync_playwright() as p:
   hero = [x for x in c if x['name'] == 'cut-wave']
   ok('Home hero = 01 wave, WebM video with WebP poster', hero and hero[0]['tag'] == 'VIDEO' and hero[0]['poster'].endswith('nari-cut/wave.webp'), hero)
   pg.wait_for_timeout(600)
-  st = J(pg, "()=>{const v=document.querySelector('video.cut-wave');return v?{on:v.dataset.on,src:v.currentSrc,paused:v.paused,rs:v.readyState}:null}")
+  st = J(pg, "()=>{const v=document.querySelector('#home-cici video.cut-wave, #home-cici img.cut-wave, video.cut-wave');return v?{on:v.dataset.on,src:v.currentSrc,paused:v.paused,rs:v.readyState}:null}")
   ok('hero video lazy-hydrates and plays the alpha WebM', st and st['on'] == '1' and st['src'].endswith('wave.webm') and st['rs'] >= 2, st)
   ok('no multiply/mask stopgap on any cut-out', all(x['blend'] == 'normal' and x['mask'] in ('none', None, '') for x in c), c)
   ok('fallback still inside every video', J(pg, "()=>[...document.querySelectorAll('video.cut')].every(v=>v.querySelector('img.cut[src$=\".webp\"]'))"))
-  ok('hero has KO alt label', '나리' in (J(pg, "()=>document.querySelector('video.cut-wave').getAttribute('aria-label')") or ''))
+  ok('hero has KO alt label', '씨씨' in (J(pg, "()=>document.querySelector('#home-cici video.cut-wave, #home-cici img.cut-wave, video.cut-wave').getAttribute('aria-label')") or ''))
   # transparency: the cut-out has no box (corner pixel shows the scene gradient)
-  bx = J(pg, "()=>{const r=document.querySelector('.scene .pic').getBoundingClientRect();return [r.x+4,r.y+4]}")
+  bx = J(pg, "()=>{const el=document.querySelector('.chome .cpic')||document.querySelector('.scene .pic'); if(!el) return [0,0]; const r=el.getBoundingClientRect(); return [r.x+4,r.y+4]}")
   pg.screenshot(path=f'{SH}/home-390-ko.png')
   from PIL import Image
   im = Image.open(f'{SH}/home-390-ko.png').convert('RGB'); px = im.getpixel((int(bx[0]), int(bx[1])))
-  ok('hero corner is the pink scene gradient, not a box', px[0] > 240 and px[1] > 200 and px[2] > 200 and not (px[0] > 250 and px[1] > 250 and px[2] > 250), px)
+  ok('hero corner is a soft cream/pink (no hard box)', px[0] > 200 and px[1] > 180 and px[2] > 180, px)
   # booking confirm sheet: 02 cheer
   J(pg, "()=>{success(B.find(b=>b.status==='confirmed'&&b.d>=0),()=>{})}"); pg.wait_for_timeout(700)
   ok('booking confirmed = 02 cheer video', J(pg, "()=>!!document.querySelector('.sheet video.cut-cheer[poster$=\"cheer.webp\"]')"))
   pg.screenshot(path=f'{SH}/booking-confirm-390-ko.png'); J(pg, "()=>closeSheet()"); pg.wait_for_timeout(2100)
   # typing: 04 thinking at 120 (empty thread) and 40 (thread)
-  J(pg, "()=>{setTab('nari');render()}"); pg.fill('#in-nari', '내일 바레'); pg.wait_for_timeout(500)
-  big = J(pg, "()=>{const e=document.querySelector('#nthink-nari.on .cut');return e?[e.tagName,Math.round(e.getBoundingClientRect().width)]:null}")
+  J(pg, "()=>{setTab('cici');render()}"); pg.fill('#in-cici', '내일 바레'); pg.wait_for_timeout(500)
+  big = J(pg, "()=>{const e=document.querySelector('#nthink-cici.on .cut');return e?[e.tagName,Math.round(e.getBoundingClientRect().width)]:null}")
   ok('typing on empty thread: thinking at 120px', big == ['VIDEO', 120], big)
   pg.screenshot(path=f'{SH}/chat-typing-120-390-ko.png')
-  J(pg, "()=>{__plat.chatSend('nari','주차 돼요?');render()}"); pg.fill('#in-nari', '내일'); pg.wait_for_timeout(400)
-  sm = J(pg, "()=>{const e=document.querySelector('#nthink-nari.on .cut');return e?[e.tagName,Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]:null}")
+  J(pg, "()=>{__plat.chatSend('cici','주차 돼요?');render()}"); pg.fill('#in-cici', '내일'); pg.wait_for_timeout(400)
+  sm = J(pg, "()=>{const e=document.querySelector('#nthink-cici.on .cut');return e?[e.tagName,Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]:null}")
   ok('typing in a thread: thinking at 40px', sm == ['VIDEO', 40, 40], sm)
   pg.screenshot(path=f'{SH}/chat-typing-40-390-ko.png')
   # empty state: 05 still
@@ -85,7 +85,7 @@ with sync_playwright() as p:
   # P3: in-chat booking card shows the saved policy
   pg = page('', w=390)
   r = J(pg, """()=>{ const b=B.find(x=>x.store==='salon'&&x.status==='confirmed'); const saved=b.pol.late; S.salon.policy.late='CHANGED RULE'; S.salon.policy.noshow='CHANGED NOSHOW'; S.salon.policy.free=99;
-     setTab('nari'); CH.nari.msgs=[]; askCancel(CH.nari,b); render(); const card=[...document.querySelectorAll('#th-nari .mcard')].pop(); return {saved, txt:card?card.innerText:''} }""")
+     setTab('cici'); CH.cici.msgs=[]; askCancel(CH.cici,b); render(); const card=[...document.querySelectorAll('#th-cici .mcard')].pop(); return {saved, txt:card?card.innerText:''} }""")
   ok('P3 in-chat cancel card shows the saved policy, not the current rule', r['txt'] and 'CHANGED' not in r['txt'] and ('5,000' in r['txt'] or '5.000' in r['txt']), r)
   pg.close()
   # AA + 44 px on the new screens

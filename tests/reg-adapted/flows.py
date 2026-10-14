@@ -7,13 +7,15 @@ with sync_playwright() as p:
     pg=b.new_page(viewport={'width':vw[0],'height':vw[1]});pg.on('console',lambda m:E.append(m.text) if m.type in('error','warning') else None);pg.on('pageerror',lambda e:E.append(str(e)))
     pg.goto(U);pg.evaluate(f"()=>{{localStorage.clear();setLang('{lang}');render()}}");return pg
   for lang in ['en','vi','ko']:
-    for ans in ['callyes','callno']:
-      pg=new(lang);pg.evaluate("()=>{ST.tab='nari';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nmore]').first.click();pg.locator('[data-act=calldemo]').first.click()
+    O['call|skipped']={'why':'A7/OQ5 voice demo cut from MVP'}; ans=None
+  if False:
+   for ans in ['callyes','callno']:
+      pg=new(lang);pg.evaluate("()=>{ST.tab='cici';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nmore]').first.click();pg.locator('[data-act=calldemo]').first.click()
       pg.wait_for_selector('[data-act=callpick]',timeout=30000);pg.locator('[data-act=callpick][data-v=court]').click();pg.wait_for_selector('[data-act=callyes]',timeout=30000);cap1=pg.inner_text('#caps');foc=pg.evaluate("document.activeElement.dataset.act")
       pg.screenshot(path=f'call-{lang}-readback.png');pg.locator(f'[data-act={ans}]').click();pg.wait_for_timeout(6000)
       O[f'call|{lang}|{ans}']={'caps':cap1,'focusOnAsk':foc,'booked':pg.evaluate("__plat.B.length")-n0,'callOpen':pg.evaluate("!document.getElementById('call').hidden"),'toast':pg.evaluate("document.getElementById('toast').innerText"),'src':pg.evaluate("__plat.B.slice(-1)[0].source")}
       pg.close()
-  pg=new();pg.evaluate("()=>{ST.tab='nari';render()}");pg.locator('[data-act=nmore]').first.click();pg.locator('[data-act=calldemo]').first.click();pg.wait_for_timeout(800);pg.keyboard.press('Escape');pg.wait_for_timeout(300);O['call-esc']=[pg.evaluate("document.getElementById('call').hidden"),pg.evaluate("document.activeElement.dataset.act||document.activeElement.id")]
+  O['call-esc']=['skipped','A7']
   # notifications
   pg=new();O['nset-defaults']=pg.evaluate("JSON.stringify(NSET)");pg.evaluate("()=>{ST.page='notif';render()}");O['notif']=pg.inner_text('#view')[:3000]
   # joins
@@ -29,7 +31,7 @@ with sync_playwright() as p:
   att=pg.locator('[data-act=attend]');a2=None
   if att.count(): att.first.click();pg.wait_for_timeout(300);a2=pg.evaluate("[ST.xp,ST.coins,ST.steps,JSON.stringify(ST.miss)]")
   O['game']={'start':x0,'checkinSheet':s1[:400],'afterCheckin':x1,'afterAttend':a2,'toast':pg.evaluate("document.getElementById('toast').innerText")}
-  pg=new();pg.evaluate("()=>{ST.tab='nari';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nagain][data-i="0"]').click();pg.locator('[data-act=chatbook]').last.click();O['xpOnBook']=pg.evaluate("ST.xp")
+  pg=new();pg.evaluate("()=>{ST.tab='cici';render()}");n0=pg.evaluate("__plat.B.length");pg.locator('[data-act=nagain][data-i="0"]').click();pg.locator('[data-act=chatbook]').last.click();O['xpOnBook']=pg.evaluate("ST.xp")
   # shop
   pg=new();pg.evaluate("()=>{ST.tab='you';render()}");O['you']=pg.inner_text('#view')[:2500];btn=pg.locator('[data-act=buy]')
   O['shop']=[btn.count(),pg.evaluate("[...document.querySelectorAll('[data-act=buy]')].map(b=>b.dataset.c+':'+b.getAttribute('aria-label'))")]
@@ -38,7 +40,7 @@ with sync_playwright() as p:
   # coin shop removed (spec §10): explicit check that no buy control exists in any language
   O['shop-gone']={l:new(l).evaluate("(()=>{ST.tab='you';render();return document.querySelectorAll('[data-act=buy]').length})()") for l in ['en','vi','ko']}
   assert all(v==0 for v in O['shop-gone'].values()), O['shop-gone']
-  pg=new('ko');pg.evaluate("()=>{ST.tab='home';render()}");pg.locator('[data-act=rest]').click();pg.wait_for_timeout(200);O['rest-ko-toast']=pg.evaluate("document.getElementById('toast').innerText")
+  O['rest-ko-toast']='SKIP: rest-day action removed from Home (MVP scope)'
   O['err']=E
 json.dump(O,open('flows.json','w'),ensure_ascii=False,indent=1)
 for k,v in O.items(): print('##',k,str(v)[:900])

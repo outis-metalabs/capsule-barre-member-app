@@ -11,12 +11,12 @@ with sync_playwright() as p:
     for i in range(14): pg.keyboard.press('Tab');seq.append(pg.evaluate(A))
     pg.screenshot(path=f'kb-skip-{vw[0]}.png',clip={'x':0,'y':0,'width':vw[0],'height':200}) 
     # open book again via keyboard
-    pg.evaluate("()=>{ST.tab='nari';render()}");pg.locator('[data-act=nagain][data-i="1"]').focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pg.locator('#th-nari ~ .mchips .chip, #th-nari .mchips .chip').last.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);inSheet=pg.evaluate("!!document.activeElement.closest('.sheet')")
+    pg.evaluate("()=>{ST.tab='cici';render()}");pg.locator('[data-act=nagain][data-i="1"]').focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pg.locator('#th-cici ~ .mchips .chip, #th-cici .mchips .chip').last.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);inSheet=pg.evaluate("!!document.activeElement.closest('.sheet')")
     trap=[]
     for i in range(40): pg.keyboard.press('Tab');trap.append(pg.evaluate("!!document.activeElement.closest('.sheet')"))
     pg.keyboard.press('Escape');pg.wait_for_timeout(200);esc=[pg.evaluate("!!document.querySelector('.sheet')"),pg.evaluate(A)]
     # chat by keyboard
-    pg.evaluate("()=>{ST.tab='nari';render()}");pg.locator('#in-nari').focus();pg.keyboard.type('haircut with Sora Saturday afternoon');pg.keyboard.press('Enter');pg.wait_for_timeout(200);chat=pg.evaluate(A)
+    pg.evaluate("()=>{ST.tab='cici';render()}");pg.locator('#in-cici').focus();pg.keyboard.type('haircut with Sora Saturday afternoon');pg.keyboard.press('Enter');pg.wait_for_timeout(200);chat=pg.evaluate(A)
     # discover chips arrow / enter
     pg.evaluate("()=>{ST.tab='discover';render()}");pg.locator('[data-act=dview][data-v=map]').focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pg.locator('[data-act=pin]').first.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pin=[pg.evaluate("DF.pin"),pg.evaluate(A)]
     O[vw[0]]={'skip':sk,'tabseq':seq,'sheetFocus':inSheet,'trap':all(trap),'esc':esc,'chatFocus':chat,'pin':pin}

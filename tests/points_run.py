@@ -3,7 +3,7 @@ import sys, json, re, os
 from playwright.sync_api import sync_playwright
 # You is now a hub: points info + tools live on Settings, vouchers on Vouchers (Mine / Get more)
 YP = lambda pg, p, seg=None: pg.evaluate("()=>{ST.tab='you';ST.store=null;ST.page=%s;%srender()}" % (json.dumps(p), "ST.vseg=%s;" % json.dumps(seg) if seg else ''))
-YALL = lambda pg, f: ''.join((YP(pg, p, sg), f())[1] for p, sg in [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('settings', None)])
+YALL = lambda pg, f: ''.join((YP(pg, p, sg), f())[1] for p, sg in [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('points', None), ('settings', None)])
 BASE = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8851/platform-app.html'
 SHOTS = sys.argv[2] if len(sys.argv) > 2 else '/workspace/hana-shots/points'
 os.makedirs(SHOTS, exist_ok=True)
@@ -36,8 +36,8 @@ with sync_playwright() as p:
   pg.click('[data-act=pvseen]'); pg.evaluate("()=>{ST.tab='you';render()}"); banner2 = 'Your XP is now' in pg.inner_text('#view')
   pg.evaluate("()=>{__plat.pv.pvMigrate(__plat.pv.ME(),{xp:640,coins:120,weeks:3})}"); again = pg.evaluate("__plat.pv.ME().ledger.length")
   # wardrobe: owned lantern (above level) selectable
-  YP(pg, 'settings'); pg.click('[data-act=pvwardrobe]'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear"); pg.evaluate("closeSheet()")
-  pg.click('#pv-flag'); on = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
+  YP(pg, 'look'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear")
+  YP(pg, 'settings'); pg.click('#pv-flag'); on = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   pg.click('#pv-flag'); pg.click('#pv-flag'); on2 = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 3 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 600 and on['rows'] == 1 and on2 == on, [st, on, on2])
   ok('AC-P54a', st['mig'] == 1 and st['legacy'] == 120 and st['bal'] == 0 and wear == 'lan', [st, wear])
@@ -46,20 +46,20 @@ with sync_playwright() as p:
   # --- AC-P44 UI with flag off; AC-P2 booking via UI
   pg = page(); pg.click('[data-act=pvseen]'); you = YALL(pg, lambda: pg.inner_html('#view')); YP(pg, 'settings')
   pg.click('[data-act=pvstore]'); st_off = pg.inner_text('.sheet'); pg.evaluate("closeSheet()")
-  hidden = not any(x in you for x in ['pv-rewards', 'data-act="pvclaim"', 'pv-mine']) and 'Validate' not in st_off and 'Points earned' in pg.inner_text('#view')
+  hidden = not any(x in you for x in ['pv-rewards', 'data-act="pvclaim"', 'pv-mine']) and 'Validate' not in st_off and 'Points earned' in (YP(pg,'points') or pg.inner_text('#view'))
   b0 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())"); pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}")
   pg.locator('[data-act=checkin]').first.click(); pg.locator('[data-act=attend]').first.click(); b1 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())")
   ok('AC-P44', hidden and b1 - b0 == 60 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
-  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='nari';ST.page=null;render()}"); pg.locator('[data-act=nagain][data-i="1"]').click(); pg.locator('[data-act=chatbook]').last.click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")  # Nari tab: Book again = chip + Book (the Book tab and its sheet-only row are gone)
+  n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='cici';ST.page=null;render()}"); pg.locator('[data-act=nagain][data-i="1"]').click(); pg.locator('[data-act=chatbook]').last.click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")  # Nari tab: Book again = chip + Book (the Book tab and its sheet-only row are gone)
   n1 = pg.evaluate("__plat.pv.ME().ledger.length"); nb = pg.evaluate("__plat.B.length")
   ok('AC-P2', R['AC-P2'][0] and n1 == n0, R['AC-P2'][1] + [n0, n1, nb])
   # AC-P3 UI: pending card shown on Home, gone after store scan
-  pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}"); pend1 = pg.locator('#pv-pending').count()
+  YP(pg, 'points'); pend1 = pg.locator('#pv-pending').count()
   YP(pg, 'settings'); pg.click('[data-act=pvstore]'); pg.click('[data-act=pvscan][data-v=demo-past]'); msg = pg.inner_text('#pv-smsg'); pg.evaluate("closeSheet()")
-  pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}"); pend2 = pg.locator('#pv-pending').count()
+  YP(pg, 'points'); pend2 = pg.locator('#pv-pending').count()
   ok('AC-P3', R['AC-P3'][0] and pend1 == 1 and pend2 == 0, [R['AC-P3'][1], pend1, pend2, msg])
   # AC-P12 UI: streakReset shows on next open
-  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.weekVisits={};render()}"); ok('AC-P12', R['AC-P12'][0] and 'New week, fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
+  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.weekVisits={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'New week, fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
   pg.close()
   # --- flag ON: claim, use, validate, redeem through the UI
   pg = page('?realRewards=1'); pg.click('[data-act=pvseen]'); YP(pg, 'vouchers', 'more')
@@ -94,7 +94,7 @@ with sync_playwright() as p:
   pg.evaluate("()=>{__plat.pv.publish({funder:'advertiser',brand:'Lumi Skin',stores:['skin'],title:['Free sheet mask','Tặng mặt nạ giấy','시트 마스크 무료'],type:'addon',value:'mask',cost:200,terms:'Test only (U3 default: none at launch)'});render()}"); YP(pg, 'vouchers', 'more')
   ok('AC-P33', R['AC-P33'][0] and 'Offered by Lumi Skin' in pg.inner_text('#view'), '')
   # AC-P37 UI: history lists every row
-  YP(pg, 'settings'); pg.click('[data-act=pvhist]'); rows = pg.locator('#pv-hist .pv-row').count(); led = pg.evaluate("__plat.pv.ME().ledger.length"); pg.screenshot(path=f'{SHOTS}/history-390-en.png'); pg.evaluate("closeSheet()")
+  pg.evaluate('closeSheet()'); YP(pg, 'points'); pg.click('[data-act=pvhist]'); rows = pg.locator('#pv-hist .pv-row').count(); led = pg.evaluate("__plat.pv.ME().ledger.length"); pg.screenshot(path=f'{SHOTS}/history-390-en.png'); pg.evaluate("closeSheet()")
   ok('AC-P37', R['AC-P37'][0] and rows == led, [rows, led])
   # AC-P40: no buy / transfer / cash-out controls; noCash shown
   txt = YALL(pg, lambda: pg.inner_text('#view')); acts = YALL(pg, lambda: ' '.join(pg.evaluate("[...document.querySelectorAll('[data-act]')].map(e=>e.dataset.act)"))).split()
@@ -106,9 +106,9 @@ with sync_playwright() as p:
   bad36 = []
   for lang, q in [('en', 'i want to end my life'), ('vi', 'tôi muốn tự tử'), ('ko', '죽고 싶어요')]:
     for qq in ['', '?realRewards=1']:
-      pg = page(qq); pg.evaluate(f"()=>{{setLang('{lang}');ST.tab='ask';ST.page=null;render()}}"); n = pg.evaluate("document.getElementById('th-nari').children.length")
+      pg = page(qq); pg.evaluate(f"()=>{{setLang('{lang}');ST.tab='ask';ST.page=null;render()}}"); n = pg.evaluate("document.getElementById('th-cici').children.length")
       pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(q)})"); pg.wait_for_timeout(80)
-      r = pg.evaluate(f"[...document.getElementById('th-nari').children].slice({n+1}).map(x=>x.innerText).join(' ')")
+      r = pg.evaluate(f"[...document.getElementById('th-cici').children].slice({n+1}).map(x=>x.innerText).join(' ')")
       if re.search(r'point|điểm|포인트|voucher|ưu đãi|쿠폰|reward|리워드|Claim', r, re.I) or not re.search(r'glad you told me|mừng vì bạn|이야기해 주셔서', r): bad36.append([lang, qq, r[:120]])
       pg.close()
   ok('AC-P36', not bad36, bad36)
@@ -124,7 +124,7 @@ with sync_playwright() as p:
         if not FORBID.search(bt): bad35.append([w, lang, fl, 'banner-missing-words', bt[:60]])
         for m_ in FORBID.findall(rest): bad35.append([w, lang, fl, 'outside-banner', m_])
         if fl == 'off' and not re.search(r'pending|đang chờ|대기 중', bt): bad35.append([w, lang, fl, 'banner-not-pending', bt[:80]])
-        if fl == 'off' and not pg.evaluate("(()=>{ST.tab='you';ST.page='settings';render();const ok=!!document.querySelector('#pv-legacy');ST.tab='home';ST.page=null;render();return ok})()"): bad35.append([w, lang, fl, 'no-pending-balance'])
+        if fl == 'off' and not pg.evaluate("(()=>{ST.tab='you';ST.page='points';render();const ok=!!document.querySelector('#pv-legacy');ST.tab='home';ST.page=null;render();return ok})()"): bad35.append([w, lang, fl, 'no-pending-balance'])
         pg.click('[data-act=pvseen]')
         # state 2: dismissed -> never shows again, even after reload
         pg.reload(); pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
@@ -134,14 +134,14 @@ with sync_playwright() as p:
           for m_ in FORBID.findall(t_): bad35.append([w, lang, fl, tab, m_])
         pg.evaluate("()=>{ST.tab='ask';ST.page=null;render()}")
         for qq in ['how do points work', 'what are coins for', 'điểm dùng để làm gì', '포인트는 어떻게 써요?']:
-          n = pg.evaluate("document.getElementById('th-nari').children.length"); pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(qq)})"); pg.wait_for_timeout(40)
-          r = pg.evaluate(f"[...document.getElementById('th-nari').children].slice({n+1}).map(x=>x.innerText).join(' ')")
+          n = pg.evaluate("document.getElementById('th-cici').children.length"); pg.evaluate(f"()=>__plat.chatSend('ask',{json.dumps(qq)})"); pg.wait_for_timeout(40)
+          r = pg.evaluate(f"[...document.getElementById('th-cici').children].slice({n+1}).map(x=>x.innerText).join(' ')")
           for m_ in FORBID.findall(r): bad35.append([w, lang, fl, 'nari:' + qq, m_])
         c = {'bad': [], 'small': [], 'hscroll': False}
-        for sp, sg in [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('settings', None)]:
+        for sp, sg in [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('points', None), ('settings', None)]:
           YP(pg, sp, sg); cs = pg.evaluate(CONTRAST); c['bad'] += cs['bad']; c['small'] += cs['small']; c['hscroll'] = c['hscroll'] or cs['hscroll']; pg.screenshot(path=f'{SHOTS}/you{"-" + sp if sp else ""}{"-" + sg if sg else ""}-{w}-{lang}-{fl}.png', full_page=True)
-        for sh in ['pvhist', 'pvstore', 'pvwardrobe', 'pvquest'] + (['pvclaim'] if fl == 'on' else []):
-          YP(pg, 'vouchers', 'more') if sh == 'pvclaim' else YP(pg, 'settings'); sel = f'[data-act={sh}]' + (':not([disabled])' if sh == 'pvclaim' else '')
+        for sh in ['pvhist', 'pvstore', 'pvconfirm'] + (['pvclaim'] if fl == 'on' else []):
+          YP(pg, 'vouchers', 'more') if sh == 'pvclaim' else YP(pg, 'points' if sh in ('pvhist','pvstore','pvconfirm') else 'settings'); sel = f'[data-act={sh}]' + (':not([disabled])' if sh == 'pvclaim' else '')
           pg.click(sel); t_ = pg.inner_text('.sheet'); cs = pg.evaluate(CONTRAST)
           if sh == 'pvhist' and fl == 'off' and not re.search(r'pending|đang chờ|대기 중', t_): bad35.append([w, lang, fl, 'history-not-pending'])
           if sh != 'pvstore':

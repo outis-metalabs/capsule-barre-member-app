@@ -39,12 +39,12 @@ with sync_playwright() as p:
   def run(i):
     pg.evaluate("()=>{setTab('you');ST.page='wallet';render()}"); pg.evaluate(f"()=>document.querySelectorAll('.wrow')[{i}].click()"); pg.wait_for_timeout(100)
     pg.evaluate("()=>document.querySelector('.sheet .btn:not(.ghost)').click()"); pg.wait_for_timeout(200)
-    return pg.evaluate("()=>({tab:ST.tab,store:ST.store,page:ST.page,scope:CH.nari.scope,sheet:!!document.querySelector('.sheet'),last:(document.querySelector('#view').innerText||'').slice(-200)})")
+    return pg.evaluate("()=>({tab:ST.tab,store:ST.store,page:ST.page,scope:CH.cici.scope,sheet:!!document.querySelector('.sheet'),last:(document.querySelector('#view').innerText||'').slice(-200)})")
   res = [run(i) for i in range(len(acts))]
   for a, r in zip(acts, res):
     if a.startswith('Store credit'): ok('credit → Use at {store} opens the store page', r['store'] == 'pickle', r)
     elif a.startswith('Deposit'): ok('deposit → View booking opens My bookings', r['page'] == 'bookings', r)
-    else: ok(f'{a.split(",")[0]} → Book with this starts booking at that store', r['tab'] == 'nari' and r['scope'] in ('capsule', 'spa'), r)
+    else: ok(f'{a.split(",")[0]} → Book with this starts booking at that store', r['tab'] == 'cici' and r['scope'] in ('capsule', 'spa'), r)
   pg.evaluate("()=>{setTab('you');ST.page='wallet';render();document.querySelector('[data-act=walletdep]').click()}"); pg.wait_for_timeout(100)
   ok('deposit sheet shows the refund rule', 'Refund rule' in pg.evaluate("()=>document.querySelector('.sheet').innerText"))
   pg.evaluate("()=>closeSheet()"); pg.keyboard.press('Tab')
@@ -78,16 +78,16 @@ with sync_playwright() as p:
     for q in ['', '?demo=1']:
       pg.goto(U + q); pg.evaluate("()=>localStorage.clear()"); pg.goto(U + q); pg.evaluate(f"()=>{{setLang('{lang}');ME.notices.forEach(n=>n.seen=true);setTab('you');render()}}")
       st = pg.evaluate("""()=>{const v=document.getElementById('view');return {kids:[...v.children].map(c=>c.id||c.className),tiles:[...v.querySelectorAll('.ytile')].map(b=>({v:b.dataset.v,h:b.getBoundingClientRect().height,txt:b.innerText})),btns:[...v.querySelectorAll('button')].map(b=>b.dataset.act+':'+(b.dataset.v||'')),bar:!!v.querySelector('#you-next [role=progressbar]'),pts:(v.querySelector('#you-pts')||{}).innerText||''}}""")
-      ok(f'You {lang}{q}: only profile, next reward, 3 tiles, Settings', st['kids'] == ['you-prof', 'you-next', 'you-tiles', 'stack'] and st['bar'] and sorted(st['btns']) == sorted(['youpage:wallet', 'youpage:vouchers', 'youpage:bookings', 'youpage:settings', 'youpage:points']), st)
-      ok(f'You {lang}{q}: tiles with counts, >=44px', len(st['tiles']) == 3 and all(x['h'] >= 44 and any(ch.isdigit() for ch in x['txt']) for x in st['tiles']), st['tiles'])
+      ok(f'You {lang}{q}: MVP-Y1 profile + tiles (Wallet/Bookings/Look[+Vouchers]), Settings', st['kids'][:3] == ['you-prof', 'you-tiles', 'stack'] and 'youpage:look' in st['btns'] and ('youpage:vouchers' in st['btns']) == ('realRewards' in q), st)
+      ok(f'You {lang}{q}: tiles >=44px', len(st['tiles']) >= 3 and all(x['h'] >= 44 for x in st['tiles']), st['tiles'])
       ok(f'You {lang}{q}: one points + streak line', st['pts'].count('\n') == 0 and '·' in st['pts'], st['pts'])
-      for sp in ['wallet', 'vouchers', 'settings', 'bookings', 'points']:
+      for sp in (['wallet', 'bookings', 'look', 'settings', 'points'] + (['vouchers'] if 'realRewards' in q else [])):
         pg.evaluate("()=>{setTab('you');render()}"); pg.click(f'[data-act=youpage][data-v={sp}]'); pg.wait_for_timeout(80)
         at = pg.evaluate("()=>ST.page"); pg.evaluate("()=>sysBack()"); back = pg.evaluate("()=>[ST.tab,ST.page]")
         pg.evaluate("()=>{setTab('you');render()}"); pg.click(f'[data-act=youpage][data-v={sp}]'); pg.click('[data-act=back]'); back2 = pg.evaluate("()=>[ST.tab,ST.page]")
         ok(f'{lang}{q}: tile {sp} opens its page; system back + header back return to You', at == sp and back == ['you', None] and back2 == ['you', None], [at, back, back2])
       pg.evaluate("()=>{setTab('you');ST.page='settings';render()}"); sh = pg.inner_html('#view')
-      ok(f'Settings {lang}{q}: language, notifications, points info' + (', demo tools' if q else ', no demo tools'), all(x in sh for x in ['data-act="setlang"', 'data-act="nset"', 'pv-level']) and (('pvstore' in sh) == bool(q)), '')
+      ok(f'Settings {lang}{q}: language, notifications, points info' + (', demo tools' if q else ', no demo tools'), all(x in sh for x in ['data-act="setlang"', 'data-act="nset"']) and (('pvstore' in sh) == bool(q)), '')
     pg.close()
   # --- Vouchers: Mine / Get more + Ready card layout ---
   for lang, w in [('en', 390), ('ko', 390), ('vi', 320), ('en', 320)]:
