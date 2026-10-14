@@ -35,6 +35,9 @@ with sync_playwright() as p:
   O['shop']=[btn.count(),pg.evaluate("[...document.querySelectorAll('[data-act=buy]')].map(b=>b.dataset.c+':'+b.getAttribute('aria-label'))")]
   if btn.count(): btn.first.click();pg.wait_for_timeout(200);O['buy']=[pg.evaluate("[ST.coins,JSON.stringify(ST.owned)]"),pg.evaluate("document.getElementById('toast').innerText")]
   pg=new('vi');pg.evaluate("()=>{ST.tab='you';render()}");btn=pg.locator('[data-act=buy]');O['buy-vi']=None if not btn.count() else [pg.evaluate("document.getElementById('toast').innerText"),pg.evaluate("[...document.querySelectorAll('.tag.ok')].map(e=>e.innerText)")]
+  # coin shop removed (spec §10): explicit check that no buy control exists in any language
+  O['shop-gone']={l:new(l).evaluate("(()=>{ST.tab='you';render();return document.querySelectorAll('[data-act=buy]').length})()") for l in ['en','vi','ko']}
+  assert all(v==0 for v in O['shop-gone'].values()), O['shop-gone']
   pg=new('ko');pg.evaluate("()=>{ST.tab='home';render()}");pg.locator('[data-act=rest]').click();pg.wait_for_timeout(200);O['rest-ko-toast']=pg.evaluate("document.getElementById('toast').innerText")
   O['err']=E
 json.dump(O,open('flows.json','w'),ensure_ascii=False,indent=1)

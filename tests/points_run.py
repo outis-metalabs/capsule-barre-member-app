@@ -20,6 +20,7 @@ with sync_playwright() as p:
   def page(q='', w=390):
     pg = b.new_page(viewport={'width': w, 'height': 844})
     pg.on('pageerror', lambda e: E.append(str(e))); pg.on('console', lambda m: E.append(m.text) if m.type == 'error' else None)
+    q = q + ('&' if q else '?') + 'demo=1&lang=en'  # PR11-P5: staff tools need demo mode; KO is the default locale, these checks read EN copy
     pg.goto(BASE + q); pg.evaluate("()=>localStorage.clear()"); pg.goto(BASE + q); pg.wait_for_timeout(150); return pg
   def ok(k, c, d=''): R[k] = [bool(c), d]
   # --- engine-level ACs
@@ -28,8 +29,8 @@ with sync_playwright() as p:
   # --- AC-P34 / AC-P54a migration on first load, flag off and on
   pg = page()
   st = pg.evaluate("(()=>{const m=__plat.pv.ME();return {life:__plat.pv.life(m),lvl:__plat.pv.lvlOf(m),streak:m.streak,bal:__plat.pv.bal(m),legacy:(m.ledger.find(r=>r.reason==='legacy_coins')||{}).legacy,mig:m.ledger.filter(r=>r.reason==='migration').length,note:m.notices.filter(n=>n.k==='migrated').length}})()")
-  home = pg.inner_text('#view'); banner1 = 'Your XP and coins are now points' in home
-  pg.click('[data-act=pvseen]'); pg.evaluate("()=>{ST.tab='you';render()}"); banner2 = 'Your XP and coins are now points' in pg.inner_text('#view')
+  home = pg.inner_text('#view'); banner1 = 'Your XP is now' in home
+  pg.click('[data-act=pvseen]'); pg.evaluate("()=>{ST.tab='you';render()}"); banner2 = 'Your XP is now' in pg.inner_text('#view')
   pg.evaluate("()=>{__plat.pv.pvMigrate(__plat.pv.ME(),{xp:640,coins:120,weeks:3})}"); again = pg.evaluate("__plat.pv.ME().ledger.length")
   # wardrobe: owned lantern (above level) selectable
   pg.click('[data-act=pvwardrobe]'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear"); pg.evaluate("closeSheet()")
@@ -42,7 +43,7 @@ with sync_playwright() as p:
   # --- AC-P44 UI with flag off; AC-P2 booking via UI
   pg = page(); pg.click('[data-act=pvseen]'); pg.evaluate("()=>{ST.tab='you';render()}"); you = pg.inner_html('#view')
   pg.click('[data-act=pvstore]'); st_off = pg.inner_text('.sheet'); pg.evaluate("closeSheet()")
-  hidden = not any(x in you for x in ['pv-rewards', 'data-act="pvclaim"', 'pv-mine']) and 'Validate' not in st_off and 'Your points' in pg.inner_text('#view')
+  hidden = not any(x in you for x in ['pv-rewards', 'data-act="pvclaim"', 'pv-mine']) and 'Validate' not in st_off and 'Points earned' in pg.inner_text('#view')
   b0 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())"); pg.evaluate("()=>{ST.tab='home';render()}")
   pg.locator('[data-act=checkin]').first.click(); pg.locator('[data-act=attend]').first.click(); b1 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())")
   ok('AC-P44', hidden and b1 - b0 == 60 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
