@@ -16,7 +16,7 @@ with sync_playwright() as p:
     for i in range(40): pg.keyboard.press('Tab');trap.append(pg.evaluate("!!document.activeElement.closest('.sheet')"))
     pg.keyboard.press('Escape');pg.wait_for_timeout(200);esc=[pg.evaluate("!!document.querySelector('.sheet')"),pg.evaluate(A)]
     # chat by keyboard
-    pg.evaluate("()=>{ST.tab='book';render()}");pg.locator('#in-book').focus();pg.keyboard.type('haircut with Linh Saturday afternoon');pg.keyboard.press('Enter');pg.wait_for_timeout(200);chat=pg.evaluate(A)
+    pg.evaluate("()=>{ST.tab='book';render()}");pg.locator('#in-book').focus();pg.keyboard.type('haircut with Sora Saturday afternoon');pg.keyboard.press('Enter');pg.wait_for_timeout(200);chat=pg.evaluate(A)
     # discover chips arrow / enter
     pg.evaluate("()=>{ST.tab='discover';render()}");pg.locator('[data-act=dview][data-v=map]').focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pg.locator('[data-act=pin]').first.focus();pg.keyboard.press('Enter');pg.wait_for_timeout(200);pin=[pg.evaluate("DF.pin"),pg.evaluate(A)]
     O[vw[0]]={'skip':sk,'tabseq':seq,'sheetFocus':inSheet,'trap':all(trap),'esc':esc,'chatFocus':chat,'pin':pin}

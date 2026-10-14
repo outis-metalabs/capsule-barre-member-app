@@ -49,6 +49,24 @@ with sync_playwright() as p:
   st = pg.evaluate("__plat.selfTest()"); ok('PR11-H6 selfTest', st['passed'] == st['total'], [st['total'], st['fail'][:3]])
   pg.close()
   pg = page('?demo=1', 'en'); pg.evaluate("()=>{ST.tab='you';render()}"); ok('PR11-P5 demo mode shows tools', pg.locator('#pv-flag').count() == 1 and pg.locator('[data-act=pvstore]').count() == 1); pg.close()
+  # round 3: Korean staff/store names everywhere in KR, decimal-point km, staff store check, Ask title
+  OLD = re.compile(r'(?<![\w])(Linh|Khôi|Ngân|Hoa|Phương|Ngọc|Trâm|Tuấn|Lành|Vy|Sen Spa|센 ?스파|마이 ?헤어|District|Quận|1군|3군|호아|응언|코이)(?![\w])')
+  for lang in ['en', 'vi', 'ko']:
+    pg = page('', lang); hits = set()
+    for q in ['pregnancy massage', '임산부 마사지', 'massage bầu', 'beard trim saturday', '수염 정리', 'tỉa râu']:
+      for m_ in OLD.finditer(' '.join(x['text'] for x in send(pg, 'ask', q))): hits.add(m_.group(0))
+    for js in ["ST.page='notif'", "ST.tab='home'", "ST.tab='book'", "ST.tab='ask'", "ST.store='salon'", "ST.store='skin'", "ST.store='spa'"]:
+      pg.evaluate(f"()=>{{ST.page=null;ST.store=null;{js};render()}}"); [hits.add(m_.group(0)) for m_ in OLD.finditer(pg.inner_text('body'))]
+    ok(f'R3-names {lang}', not hits, sorted(hits))
+    pg.evaluate("()=>{ST.page=null;ST.store=null;ST.tab='discover';render()}"); ok(f'R3-km {lang}', not re.search(r'\d,\d km', pg.inner_text('body')) and re.search(r'0\.6 km', pg.inner_text('body')))
+    pg.close()
+  pg = page('', 'ko'); m = send(pg, 'book', '토요일 오후 소라 커트'); ok('R3-book-by-KO-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh', [x['text'] for x in m])
+  pg.evaluate("()=>setLang('en')"); send(pg, 'book', 'haircut with Sora Saturday afternoon'); ok('R3-book-by-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh')
+  r = pg.evaluate("(()=>{const P=__plat.pv,m=P.ME(),n=__plat.PV.now();P.pvBook('x1',{store:'capsule',member:m.id,start:n-60*6e4,end:n-10*6e4});return [P.confirmVisit(m,'x1','staff:salon-desk'),P.confirmVisit(m,'x1','staff:a',n,'salon'),P.confirmVisit(m,'x1','staff:capsule-desk').ok]})()")
+  ok('R3-staff-store', r[0]['err'] == 'wrong_store' and r[1]['err'] == 'wrong_store' and r[2] is True, r)
+  h = pg.evaluate("(()=>{setLang('ko');ST.tab='ask';render();const e=document.querySelector('#view h1');return Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight))})()"); ok('R3-ask-title-one-line-ko', h == 1, h)
+  pg.close()
+  pg = page('?market=vn', 'en'); ok('R3-vn-keeps-names', pg.evaluate("__plat.S.salon.staff[0].n") == 'Linh'); pg.close()
   # screenshots 390 EN + KO
   for lang in ['en', 'ko']:
     for tab in ['home', 'discover', 'book', 'ask', 'you']:
