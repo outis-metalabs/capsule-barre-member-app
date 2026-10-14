@@ -79,7 +79,7 @@ with sync_playwright() as p:
   n1 = J(pg, "()=>CH.nari.msgs.length"); pg.reload(); pg.wait_for_timeout(150)
   n2 = J(pg, "()=>CH.nari.msgs.length"); J(pg, "()=>{setTab('nari');render()}")
   ok('P3-6 merged thread restored after reload', n1 >= 2 and n2 == n1 and 'what time do you open' in pg.inner_text('#th-nari'), [n1, n2])
-  ok('P3-6 returning thread shows slim chips, not the empty hello', pg.locator('#view .chips.slim').count() == 1 and pg.locator('#view [data-act=nagain]').count() == 0)
+  ok('P3-6 returning thread: no empty hello, no repeated chips', pg.locator('#view .nhero').count() == 0 and pg.locator('#view .chips.slim').count() == 0 and pg.locator('#view [data-act=nagain]').count() == 0)
   J(pg, "()=>{__plat.chatSend('nari','i want to end my life')}"); pg.reload(); pg.wait_for_timeout(150)
   ok('P3-6 safety gate survives reload', J(pg, "()=>__plat.gated()") is True)
   J(pg, "()=>{__plat.chatSend('nari','my friend fainted and is not breathing')}"); pg.wait_for_timeout(80)

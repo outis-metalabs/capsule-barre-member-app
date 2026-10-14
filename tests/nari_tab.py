@@ -46,7 +46,7 @@ with sync_playwright() as p:
   ok('NT-23 Ask a question → askPrompt, input focused, no booking chip', m[-1]['t'] == '네, 무엇이 궁금하세요?' and not m[-1]['chips'] and not m[-1]['confirm'] and J(pg, "document.activeElement.id") == 'in-nari', m[-1])
   send(pg, '처음인데 바레 혼자 가도 괜찮아요?'); m = nmsgs(pg)
   ok('NT-23/R-1 first-timer question answered first', m[-1]['t'].startswith('네') and not m[-1]['confirm'] and J(pg, "CH.nari.msgs[CH.nari.msgs.length-1].faq") == 1, m[-1])
-  ok('NT-14 returning thread: slim chip row above input', J(pg, "(()=>{const r=document.querySelector('#view .chips.slim'),f=document.querySelector('#view form.chatbox');return !!r&&!!f&&!!(r.compareDocumentPosition(f)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))
+  ok('NT-14 returning thread (polish r2: quick chips only on the empty state): no repeated chip row, input docked', J(pg, "(()=>!document.querySelector('#view .chips.slim') && !document.querySelector('#view [data-act=qbook]') && !!document.querySelector('#view .dock form.chatbox'))()"))
   ok('NT-24 calendar icon "내 예약" in header', J(pg, "document.querySelector('#view [data-act=mybk][data-from=nari]').getAttribute('aria-label')") == '내 예약')
   pg.click('#view > .row [data-act=mybk]'); ok('NT-24 icon opens My bookings', J(pg, "ST.page") == 'bookings' and '내 예약' in pg.inner_text('#top'))
   ok('NT-12 no aria-current while a page overlay is open', J(pg, "document.querySelectorAll('#tabs [aria-current]').length") == 0)
@@ -63,7 +63,7 @@ with sync_playwright() as p:
   n0 = J(pg, "__plat.B.length"); pg.locator('#th-nari .mchips .chip').first.click(); pg.wait_for_timeout(60)
   card = pg.inner_text('#th-nari .mcard')
   ok('NT-4 confirm card: ₩ price + store cancel policy', '₩' in card and ('무료 취소' in card or '스튜디오' in card) and '늦은 취소' in card, card)
-  ok('NT-25 Call {store} on the confirm card (KO)', 'Capsule Barre에 전화' in card)
+  ok('NT-25 Call {store} on the confirm card (KO; short label, full aria)', 'Capsule Barre에 전화' in J(pg, "document.querySelector('#th-nari .mcard [data-act=callstore]')?.getAttribute('aria-label')||''") and J(pg, "document.querySelector('#th-nari .mcard [data-act=callstore]').innerText.trim()") == '전화')
   pg.locator('#th-nari [data-act=chatbook]').last.click(); pg.wait_for_timeout(60)
   ok('NT-15 typed: slot chip + Book = 2 taps → booked', J(pg, "__plat.B.length") == n0 + 1)
   nb = J(pg, "__plat.B[__plat.B.length-1].id")
@@ -127,7 +127,7 @@ with sync_playwright() as p:
     hidden2 = J(pg, "['.chips.slim','[data-act=mybk]','[data-act=callstore]'].filter(s=>document.querySelector('#view '+s))")
     ok(f'NT-18/NT-19 AC5: still hidden after ok + redirects, no booking prompt ({lang})', not hidden2 and not any(m['kind'] == 'bookPrompt' for m in nmsgs(pg)), hidden2)
     send(pg, {'en': 'barre tomorrow morning', 'vi': 'barre sáng mai', 'ko': '바레 내일 오전'}[lang])
-    ok(f'NT-18 chips return when the member asks for a booking ({lang})', pg.locator('#view .chips.slim').count() == 1 and pg.locator('#view > .row [data-act=mybk]').count() == 1)
+    ok(f'NT-18 chips return when the member asks for a booking ({lang})', pg.locator('#view .chips.slim').count() == 0 and pg.locator('#view > .row [data-act=mybk]').count() == 1)
     pg.close()
   pg = page('', 'ko'); J(pg, "go('tab:nari')"); send(pg, '수업 중에 가슴이 아프고 어지러워요'); v = view(pg); last = nmsgs(pg)[-1]
   ok('R-2/NT-27 urgent: stop + doctor/instructor, no number/tel/booking/points', ('멈추' in v or '중단' in v) and not re.search(r'\d{3}', last['t']) and pg.locator('#view [href^=tel], #view [data-act=callstore], #view .chips.slim, #view [data-act=mybk]').count() == 0 and not last['chips'] and not re.search(r'포인트|예약', last['t']), last)
@@ -163,7 +163,7 @@ with sync_playwright() as p:
   J(pg, "openBookings()"); J(pg, "ST.bkFrom=null"); pg.click('#top [data-act=back]'); ok('NT-20 default You', J(pg, "ST.tab") == 'you')
   pg.close()
   # NT-25 / NT-26 Call {store}
-  pg = page('', 'en'); J(pg, "go('store:capsule')"); ok('NT-25 store page: "Call Capsule Barre"', 'Call Capsule Barre' in view(pg))
+  pg = page('', 'en'); J(pg, "go('store:capsule')"); ok('NT-25 store page: Call button (short label, aria "Call Capsule Barre")', J(pg, "document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')||''").startswith('Call Capsule Barre') and J(pg, "document.querySelector('.sact[data-act=callstore]').innerText.trim()") == 'Call')
   pg.click('#view [data-act=callstore]'); cs = pg.inner_text('.sheet'); ok('NT-25 dials the store\'s own number (demo dialog)', J(pg, "__plat.S.capsule.phone") in cs and 'Demo' in cs and pg.locator('.sheet [href^=tel]').count() == 0, cs[:160]); pg.evaluate("closeSheet()")
   J(pg, "openBookings('up')"); ok('NT-25 My bookings row has Call {store}', pg.locator('#view .bkrow [data-act=callstore][data-v=capsule]').count() >= 1)
   pg.locator('#view [data-act=managebk]').count(); J(pg, "manage(__plat.bkUpcoming()[0])"); ok('NT-25 Manage sheet has Call {store}', pg.locator('.sheet [data-act=callstore]').count() == 1 and 'studio phone' in J(pg, "document.querySelector('.sheet [data-act=callstore]').getAttribute('aria-label')")); pg.evaluate("closeSheet()")
@@ -173,7 +173,7 @@ with sync_playwright() as p:
   ok('OQ-8 store with no saved number (nails) → no Call button', (J(pg, "(()=>{__plat.S.nails.joined=true;go('store:nails');return document.querySelectorAll('#view [data-act=callstore]').length})()")) == 0)
   J(pg, "()=>{__plat.setStorePhone('capsule','02-6953-1201');go('store:capsule')}"); ok('NT-26 valid store number accepted', pg.locator('#view [data-act=callstore]').count() == 1)
   pg.close()
-  pg = page('', 'ko'); J(pg, "go('store:capsule')"); ok('NT-25 KO label "Capsule Barre에 전화"', 'Capsule Barre에 전화' in view(pg)); pg.close()
+  pg = page('', 'ko'); J(pg, "go('store:capsule')"); ok('NT-25 KO label 전화 (aria "Capsule Barre에 전화")', 'Capsule Barre에 전화' in J(pg, "document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')||''") and J(pg, "document.querySelector('.sact[data-act=callstore]').innerText.trim()") == '전화'); pg.close()
   # NT-21 strings
   for lang in ['en', 'vi', 'ko']:
     pg = page('', lang); txts = []
