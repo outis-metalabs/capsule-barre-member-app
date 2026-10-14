@@ -159,7 +159,7 @@ with sync_playwright() as p:
   pg = page(); J(pg, "go('tab:discover')"); J(pg, "go('tab:nari')"); send(pg, 'what should I bring to pickleball?'); n = J(pg, "CH.nari.msgs.length")
   r1 = J(pg, "__plat.sysBack()"); ok('NT-20 system Back in Nari → previous tab, thread kept', r1 == 'tab:discover' and J(pg, "CH.nari.msgs.length") == n, r1)
   J(pg, "go('tab:nari')"); J(pg, "ST.prevTab=null"); r2 = J(pg, "__plat.sysBack()"); ok('NT-20 … else Home', r2 == 'tab:home' and J(pg, "ST.tab") == 'home', r2)
-  J(pg, "go('tab:you')"); pg.click('#view [data-act=mybk]'); pg.click('#top [data-act=back]'); ok('NT-20 Back from My bookings → You', J(pg, "ST.tab") == 'you')
+  J(pg, "go('tab:you')"); pg.click('#view [data-act=youpage][data-v=bookings]'); pg.click('#top [data-act=back]'); ok('NT-20 Back from My bookings → You', J(pg, "ST.tab") == 'you')
   J(pg, "openBookings()"); J(pg, "ST.bkFrom=null"); pg.click('#top [data-act=back]'); ok('NT-20 default You', J(pg, "ST.tab") == 'you')
   pg.close()
   # NT-25 / NT-26 Call {store}
@@ -186,7 +186,7 @@ with sync_playwright() as p:
     ok(f'NT-21 §8 copy renders, no raw keys / EN fallback ({lang})', not raw and not leak, [raw[:5], leak])
     pg.close()
   # ---------------- 9.2 My bookings: Upcoming ----------------
-  pg = page('', 'en'); J(pg, "go('tab:you')"); pg.click('#view [data-act=mybk]'); v = view(pg)
+  pg = page('', 'en'); J(pg, "go('tab:you')"); pg.click('#view [data-act=youpage][data-v=bookings]'); v = view(pg)
   ups = J(pg, "__plat.bkUpcoming().map(b=>b.d*1440+b.m)")
   ok('MB-1 Upcoming | Past, soonest first, KST time, ₩ price, status', 'Upcoming' in v and 'Past' in v and ups == sorted(ups) and 'KST' in v and '₩' in v and 'Confirmed' in v)
   ok('MB-9 realRewards off: no voucher / Claim / reward content', not re.search(r'voucher|Claim|Reward|Validate', v))

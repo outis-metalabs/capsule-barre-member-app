@@ -54,10 +54,10 @@ with sync_playwright() as p:
   ok('Home empty next class uses 05 idle', (es2 or '').endswith('idle.webp'), es2)
   # points win pop: 03 jump; voucher claimed: 06
   J(pg, "()=>{celebrate();toast('+10')}"); pg.wait_for_timeout(100)
-  ok('points/streak win toast carries 03 jump', J(pg, "()=>!!document.querySelector('#toast:not([hidden]).win .tcut-jump .cut-jump')"))
-  pg.wait_for_timeout(3700); ok('win toast auto-dismisses', J(pg, "()=>document.getElementById('toast').hidden && !document.querySelector('.cheerpop')"))
+  ok('points/streak win pill (header free space) carries 03 jump', J(pg, "()=>!!document.querySelector('#winpill:not([hidden]) .cut-jump')"))
+  pg.wait_for_timeout(3700); ok('win pill auto-dismisses', J(pg, "()=>document.getElementById('winpill').hidden && !document.querySelector('.cheerpop')"))
   J(pg, """()=>{window.claim=()=>({ok:true,c:{terms:{title:['Voucher','Voucher','바우처']}}}); document.body.insertAdjacentHTML('beforeend','<button id=tclaim data-act=pvclaimok data-v=x>c</button>'); document.getElementById('tclaim').click()}"""); pg.wait_for_timeout(100)
-  ok('voucher claimed toast carries 06 voucher', J(pg, "()=>!!document.querySelector('#toast:not([hidden]).win .tcut-voucher .cut-voucher')"))
+  ok('voucher claimed pill carries 06 voucher', J(pg, "()=>!!document.querySelector('#winpill:not([hidden]) .cut-voucher')"))
   pg.close()
   # ribbon: realRewards only
   for q, want in [('', False), ('?realRewards=1', True)]:
@@ -77,7 +77,7 @@ with sync_playwright() as p:
   ok('only on-screen WebMs are fetched (lazy)', set(n) <= {'wave.webm'}, n)
   pg.close()
   # file sizes
-  d = 'assets/nari-cut'; sz = {f: os.path.getsize(os.path.join(d, f)) for f in os.listdir(d)}
+  d = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'assets', 'nari-cut'); sz = {f: os.path.getsize(os.path.join(d, f)) for f in os.listdir(d)}
   ok('every WebM <= 200 KB, every WebP <= 25 KB, total < 1 MB', all(v <= 200_000 for k, v in sz.items() if k.endswith('.webm')) and all(v <= 25_000 for k, v in sz.items() if k.endswith('.webp')) and sum(sz.values()) < 1_000_000, sz)
   from PIL import Image as I
   a = I.open(f'{d}/jump.webp').getchannel('A').point(lambda v: 255 if v > 16 else 0).getbbox()

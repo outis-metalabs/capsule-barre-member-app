@@ -1,7 +1,7 @@
 import json,re
 from playwright.sync_api import sync_playwright
 U='http://localhost:8851/platform-app.html'
-SCR=[('home',"ST.tab='home'"),('discover',"ST.tab='discover'"),('discover-map',"ST.tab='discover';discAct('dview',{v:'map'})"),('discover-hair',"ST.tab='discover';discAct('dtype',{v:'hair'})"),('nari',"ST.tab='nari'"),('you',"ST.tab='you'"),('notif',"ST.page='notif'"),('nset',"ST.page='nset'")]
+SCR=[('home',"ST.tab='home'"),('discover',"ST.tab='discover'"),('discover-map',"ST.tab='discover';discAct('dview',{v:'map'})"),('discover-hair',"ST.tab='discover';discAct('dtype',{v:'hair'})"),('nari',"ST.tab='nari'"),('you',"ST.tab='you'"),('you-wallet',"ST.tab='you';ST.page='wallet'"),('you-vouchers',"ST.tab='you';ST.page='vouchers';ST.vseg='mine'"),('you-vouchers-more',"ST.tab='you';ST.page='vouchers';ST.vseg='more'"),('you-settings',"ST.tab='you';ST.page='settings'"),('notif',"ST.page='notif'"),('nset',"ST.page='nset'")]
 for s in ['capsule','salon','skin','spa','pickle','nails','yoga','barber','moc','rally']: SCR.append(('store-'+s,f"ST.store='{s}'"))
 CLK=[('sheet-join','home','joinsheet'),('sheet-qr','discover','joinsheet+qr'),('sheet-link','home','joinsheet+linkjoin'),('sheet-stretch','home','stretch'),('sheet-manage','home','managebk'),('call','nari','nmore+calldemo'),('slots-again0','nari','nagain'),('confirm','nari','nagain'),('success','nari','nagain+chatbook'),('bookings','home','mybk'),('rate','home','mybk+bkpast+rate'),('cancel','home','mybk+cancelask'),('sheet-lang','home','lang')]
 AUD=r"""(()=>{

@@ -17,18 +17,20 @@ with sync_playwright() as p:
     return pg.evaluate(f"CH['{cid}'].msgs.filter(x=>x.who!=='me')")
   pg = page()
   ok('KR-default-locale', pg.evaluate("L") == 'ko')
-  home = pg.inner_text('#view'); ok('KR-currency', '₫' not in pg.inner_text('body') and '₩' in pg.evaluate("(()=>{ST.tab='you';render();return document.body.innerText})()"))
-  ok('KR-stores', 'Seongsu' in pg.evaluate("__plat.S.capsule.area") and not re.search(r'Quận|Thảo Điền|Mây Hair|Sen Spa', pg.evaluate("(()=>{ST.tab='discover';render();return document.body.innerText})()")))
+  home = pg.inner_text('#view'); ok('KR-currency', '₫' not in pg.inner_text('body') and '₩' in pg.evaluate("(()=>{ST.tab='you';ST.page='settings';render();return document.body.innerText})()"))
+  ok('KR-stores', 'Seongsu' in pg.evaluate("__plat.S.capsule.area") and not re.search(r'Quận|Thảo Điền|Mây Hair|Sen Spa', pg.evaluate("(()=>{ST.tab='discover';ST.page=null;render();return document.body.innerText})()")))
   pg.close()
   for lang in ['en', 'vi', 'ko']:
-    pg = page('', lang); pg.evaluate("()=>{ST.tab='you';render()}"); you = pg.inner_text('#view'); html = pg.inner_html('#view')
+    pg = page('', lang); PAGES = [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('settings', None)]  # You hub + its subpages (ends on Settings)
+    you = html = ''
+    for sp, sg in PAGES: pg.evaluate("([p,s])=>{ST.tab='you';ST.page=p;ST.vseg=s;render()}", [sp, sg]); you += pg.inner_text('#view'); html += pg.inner_html('#view')
     life = pg.evaluate("__plat.pv.life(__plat.pv.ME())")
     ok(f'PR11-P1 {lang}', 'pv-earned' in html and 'pv-how' in html and pg.inner_text('#pv-how').count('+') >= 3)
     ok(f'PR11-P2 {lang}', pg.locator('#pv-legacy').count() == 1 and '×' not in pg.inner_text('#pv-legacy'))
     nocash = {'en': 'no cash value', 'vi': 'giá trị quy đổi', 'ko': '현금 가치'}[lang]
     ok(f'PR11-P3 {lang}', nocash not in you and 'pv-bal' not in html and 'pvclaim' not in html)
     ok(f'PR11-P5 {lang}', 'pv-flag' not in html and 'pvstore' not in html)
-    pg.evaluate("()=>{ST.tab='home';render()}"); order = pg.evaluate("(()=>{const v=document.getElementById('view');const n=v.querySelector('#pv-notes'),h=v.querySelector('.hero,[class*=hero]');return n&&h?!!(h.compareDocumentPosition(n)&Node.DOCUMENT_POSITION_FOLLOWING):null})()")
+    pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}"); order = pg.evaluate("(()=>{const v=document.getElementById('view');const n=v.querySelector('#pv-notes'),h=v.querySelector('.hero,[class*=hero]');return n&&h?!!(h.compareDocumentPosition(n)&Node.DOCUMENT_POSITION_FOLLOWING):null})()")
     bt = pg.inner_text('#pv-notes p'); ok(f'PR11-P4 {lang}', order is not False and bt.count('\n') <= 1 and '120' in bt and re.sub(r'\D', '', bt).find(str(life)) >= 0, bt)
     for cid in ['book', 'ask']:
       pg.evaluate(f"()=>{{ST.tab='{cid}';render()}}"); h = pg.inner_html('#view')
@@ -48,7 +50,7 @@ with sync_playwright() as p:
     pg.evaluate(f"()=>setLang('{lang}')"); send(pg, 'book', q); ok(f'PR11-H5 {lang}', not re.search(r'danger|nguy hiểm|위험|hurt|bị thương|다쳤', pg.inner_text('#view')))
   st = pg.evaluate("__plat.selfTest()"); ok('PR11-H6 selfTest', st['passed'] == st['total'], [st['total'], st['fail'][:3]])
   pg.close()
-  pg = page('?demo=1', 'en'); pg.evaluate("()=>{ST.tab='you';render()}"); ok('PR11-P5 demo mode shows tools', pg.locator('#pv-flag').count() == 1 and pg.locator('[data-act=pvstore]').count() == 1); pg.close()
+  pg = page('?demo=1', 'en'); pg.evaluate("()=>{ST.tab='you';ST.page='settings';render()}"); ok('PR11-P5 demo mode shows tools', pg.locator('#pv-flag').count() == 1 and pg.locator('[data-act=pvstore]').count() == 1); pg.close()
   # round 3: Korean staff/store names everywhere in KR, decimal-point km, staff store check, Ask title
   OLD = re.compile(r'(?<![\w])(Linh|Khôi|Ngân|Hoa|Phương|Ngọc|Trâm|Tuấn|Lành|Vy|Sen Spa|센 ?스파|마이 ?헤어|District|Quận|1군|3군|호아|응언|코이)(?![\w])')
   for lang in ['en', 'vi', 'ko']:
@@ -58,7 +60,7 @@ with sync_playwright() as p:
     for js in ["ST.page='notif'", "ST.tab='home'", "ST.tab='book'", "ST.tab='ask'", "ST.store='salon'", "ST.store='skin'", "ST.store='spa'"]:
       pg.evaluate(f"()=>{{ST.page=null;ST.store=null;{js};render()}}"); [hits.add(m_.group(0)) for m_ in OLD.finditer(pg.inner_text('body'))]
     ok(f'R3-names {lang}', not hits, sorted(hits))
-    pg.evaluate("()=>{ST.page=null;ST.store=null;ST.tab='discover';render()}"); ok(f'R3-km {lang}', not re.search(r'\d,\d km', pg.inner_text('body')) and re.search(r'0\.6 km', pg.inner_text('body')))
+    pg.evaluate("()=>{ST.page=null;ST.store=null;ST.tab='discover';ST.page=null;render()}"); ok(f'R3-km {lang}', not re.search(r'\d,\d km', pg.inner_text('body')) and re.search(r'0\.6 km', pg.inner_text('body')))
     pg.close()
   pg = page('', 'ko'); m = send(pg, 'book', '토요일 오후 소라 커트'); ok('R3-book-by-KO-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh', [x['text'] for x in m])
   pg.evaluate("()=>setLang('en')"); send(pg, 'book', 'haircut with Sora Saturday afternoon'); ok('R3-book-by-name', pg.evaluate("(CH.book.draft||{}).staff") == 'linh')
@@ -69,7 +71,7 @@ with sync_playwright() as p:
   pg.evaluate("()=>{setLang('ko');CH.book.draft=null}"); send(pg, 'book', '수분 크림 뭐 써요?'); ok('R4-no-false-service', (pg.evaluate("CH.book.draft||{}")).get('svc') != 'hydra')
   r = pg.evaluate("(()=>{const P=__plat.pv,m=P.ME(),n=__plat.PV.now();P.pvBook('x1',{store:'capsule',member:m.id,start:n-60*6e4,end:n-10*6e4});return [P.confirmVisit(m,'x1','staff:salon-desk'),P.confirmVisit(m,'x1','staff:a',n,'salon'),P.confirmVisit(m,'x1','staff:capsule-desk').ok]})()")
   ok('R3-staff-store', r[0]['err'] == 'wrong_store' and r[1]['err'] == 'wrong_store' and r[2] is True, r)
-  h = pg.evaluate("(()=>{setLang('ko');ST.tab='ask';render();const e=document.querySelector('#view h1');return Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight))})()"); ok('R3-ask-title-one-line-ko', h == 1, h)
+  h = pg.evaluate("(()=>{setLang('ko');ST.tab='ask';ST.page=null;render();const e=document.querySelector('#view h1');return Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight))})()"); ok('R3-ask-title-one-line-ko', h == 1, h)
   pg.close()
   # R5
   pg = page('', 'en')
@@ -92,7 +94,7 @@ with sync_playwright() as p:
       pg = page('', lang); pg.evaluate(f"()=>{{ST.tab='{tab}';render();scrollTo(0,0)}}"); pg.wait_for_timeout(200)
       if tab == 'ask': pg.evaluate("([q])=>__plat.chatSend('ask',q)", [{'en': 'first time at barre, can I come alone?', 'ko': '처음인데 바레 혼자 가도 괜찮아요?'}[lang]]); pg.wait_for_timeout(150)
       pg.screenshot(path=f'{SH}/{tab}-390-{lang}.png', full_page=True); pg.close()
-    pg = page('', lang); pg.evaluate("()=>{ST.tab='book';render()}"); pg.click('.helplink'); pg.wait_for_timeout(300); pg.screenshot(path=f'{SH}/help-sheet-390-{lang}.png'); pg.close()
+    pg = page('', lang); pg.evaluate("()=>{ST.tab='book';ST.page=null;render()}"); pg.click('.helplink'); pg.wait_for_timeout(300); pg.screenshot(path=f'{SH}/help-sheet-390-{lang}.png'); pg.close()
   b.close()
 for k, v in R.items(): print('PASS' if v[0] else 'FAIL', k, '' if v[0] else json.dumps(v[1], ensure_ascii=False)[:300])
 print('errors', E); print('TOTAL', sum(v[0] for v in R.values()), '/', len(R))
