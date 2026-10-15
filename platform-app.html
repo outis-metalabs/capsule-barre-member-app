@@ -406,7 +406,7 @@ const p2Nm = it => L3(...it.n);
 const funIc = '<svg class="p2funic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
 const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
 /* PR19-1: the saved skin tone applies everywhere Cici appears (same soft backdrop as the builder/room portrait) */
-function p2SkinAttr(look) { if (!P2() || gated()) return ""; const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1]; return ` data-skin="${l.skin}" style="--sk:${sk};background:radial-gradient(circle at 50% 40%,#fff 0 35%,${sk} 36%)"`; }
+function p2SkinAttr(look, soft) { if (!P2() || gated()) return ""; const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1], bg = soft ? `color-mix(in srgb,${sk} 30%,transparent)` : sk; return ` data-skin="${l.skin}" style="--sk:${sk};background:radial-gradient(circle at 50% 40%,#fff 0 35%,${bg} 36%)"`; } /* soft on the large Home hero */
 function p2Acc(look) { if (!P2()) return ""; const l = look || p2Look(), hr = (P2_HAIR.find(x => x[0] === l.hair) || P2_HAIR[2])[1]; return `<span class="p2hair" data-hair="${l.hair}" style="background:${hr}" aria-hidden="true"></span>`; } /* acc-fix: tint chip only */
 function p2Char(size, look) { const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1];
   return `<span class="p2wrap" id="p2-preview" data-skin="${l.skin}" data-hair="${l.hair}" style="width:${size}px;height:${size}px"><span class="p2char" style="--sk:${sk};width:${size}px;height:${size}px">${cut("idle", { alt: p2t("builder") })}</span>${p2Acc(l)}${outfitBadge(l.outfit)}</span>`; } /* acc-fix: chips sit at the frame corners, outside the round portrait */
@@ -1965,7 +1965,7 @@ function heroScene() {
     : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
   const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
   const wn = wearNm();
-  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic${P2() && !calm ? " p2sk" : ""}"${calm ? "" : p2SkinAttr()}>${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${P2() ? p2Acc() : ""}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic${P2() && !calm ? " p2sk" : ""}"${calm ? "" : p2SkinAttr(null, 1)}>${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${P2() ? p2Acc() : ""}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
 }
 /* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
 function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
