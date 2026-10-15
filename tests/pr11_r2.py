@@ -32,7 +32,7 @@ with sync_playwright() as p:
     ok(f'PR11-P3 {lang}', nocash not in you and 'pv-bal' not in html and 'pvclaim' not in html)
     ok(f'PR11-P5 {lang}', 'pv-flag' not in html and 'pvstore' not in html)
     pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}"); order = pg.evaluate("(()=>{const v=document.getElementById('view');const n=v.querySelector('#pv-notes'),h=v.querySelector('.hero,[class*=hero]');return n&&h?!!(h.compareDocumentPosition(n)&Node.DOCUMENT_POSITION_FOLLOWING):null})()")
-    bt = pg.inner_text('#pv-notes p'); ok(f'PR11-P4 {lang}', order is not False and bt.count('\n') <= 1 and '120' in bt and re.sub(r'\D', '', bt).find(str(life)) >= 0, bt)
+    bt = pg.inner_text('#pv-notes p'); ok(f'PR11-P4 {lang}', order is not False and bt.count('\n') <= 1 and not re.search(r'pending|đang chờ|대기 중', bt) and re.sub(r'\D', '', bt).find(str(life)) >= 0, bt)
     for cid in ['book', 'ask']:
       pg.evaluate(f"()=>{{ST.tab='{cid}';render()}}"); h = pg.inner_html('#view')
       ok(f'PR11-H1 {lang} {cid}', 'sosbar' not in h and 'helplink' in h and pg.evaluate("(()=>{const l=document.querySelector('.helplink'),f=document.querySelector('.chatbox');return !!(f.compareDocumentPosition(l)&Node.DOCUMENT_POSITION_FOLLOWING)})()"))

@@ -13,7 +13,7 @@ def snap(b, url, lang):
   g.goto(url); g.wait_for_timeout(300); g.evaluate(f"()=>{{setLang('{lang}');render()}}"); out = {}
   for r, pgn in SCREENS:
     g.evaluate(f"()=>{{go('{r}');{f'ST.page={json.dumps(pgn)};render();' if pgn else ''}}}"); g.wait_for_timeout(80)
-    g.evaluate("document.querySelectorAll('#view .nbook').forEach(e=>e.remove())")  # booking-sheet PR: notification Book links are not Phase 2
+    g.evaluate("document.querySelectorAll('#view .nbook, #pv-notes, #view .bkmap, #bk-map').forEach(e=>e.remove())")  # bookings-map PR: migration copy + map links changed on purpose  # booking-sheet PR: notification Book links are not Phase 2
     out[f'{r}/{pgn}'] = norm(g.inner_text('#view')) + '|TABS|' + norm(g.inner_text('#tabs'))
   keys = sorted(g.evaluate('Object.keys(localStorage)')); c.close(); return out, keys, sorted(set(net))
 with sync_playwright() as p:

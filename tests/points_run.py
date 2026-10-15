@@ -121,9 +121,9 @@ with sync_playwright() as p:
         pg.screenshot(path=f'{SHOTS}/home-banner-{w}-{lang}-{fl}.png')
         # state 1: banner showing -> XP/coins only inside the banner
         bt = pg.inner_text('#pv-notes'); rest = pg.evaluate("(()=>{const n=document.querySelector('#pv-notes');n.style.display='none';const t=document.body.innerText;n.style.display='';return t})()")
-        if not FORBID.search(bt): bad35.append([w, lang, fl, 'banner-missing-words', bt[:60]])
+        if not re.search(r'XP', bt): bad35.append([w, lang, fl, 'banner-missing-words', bt[:60]])
         for m_ in FORBID.findall(rest): bad35.append([w, lang, fl, 'outside-banner', m_])
-        if fl == 'off' and not re.search(r'pending|đang chờ|대기 중', bt): bad35.append([w, lang, fl, 'banner-not-pending', bt[:80]])
+        if fl == 'off' and re.search(r'pending|đang chờ|대기 중|coins?|xu |코인', bt): bad35.append([w, lang, fl, 'banner-claims-pending-coins', bt[:80]])  # bookings-map PR: legacy coins are dropped
         if fl == 'off' and not pg.evaluate("(()=>{ST.tab='you';ST.page='points';render();const ok=!!document.querySelector('#pv-legacy');ST.tab='home';ST.page=null;render();return ok})()"): bad35.append([w, lang, fl, 'no-pending-balance'])
         pg.click('[data-act=pvseen]')
         # state 2: dismissed -> never shows again, even after reload
