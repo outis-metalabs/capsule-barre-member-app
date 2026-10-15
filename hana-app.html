@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Capsule Barre — Hana member app</title>
+<title>Capsule Barre — Cici member app</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
@@ -119,13 +119,13 @@
   .sayrow .say { position:relative; border-radius:22px; text-align:center; }
   .sayrow .say::after, .say.up::after { content:""; position:absolute; left:50%; bottom:-8px; width:12px; height:12px; background:#fff; border-right:2px solid var(--line); border-bottom:2px solid var(--line); transform:translateX(-50%) rotate(45deg); }
   .say.up { position:relative; border-radius:22px; text-align:center; margin-bottom:18px; }
-  .hana-stage { display:flex; flex-direction:column; align-items:center; margin: 0 0 8px; }
-  .hana-bubble {
+  .cici-stage { display:flex; flex-direction:column; align-items:center; margin: 0 0 8px; }
+  .cici-bubble {
     position: relative; background:#fff; border:2px solid var(--line); border-radius:28px;
     padding:14px 18px; margin-bottom:26px; width:100%; text-align:center;
     font-weight:800; font-size:16px; line-height:1.4; box-shadow:0 5px 0 #F3E6D3;
   }
-  .hana-bubble::after {
+  .cici-bubble::after {
     content:""; position:absolute; left:50%; bottom:-8px; width:14px; height:14px;
     background:#fff; border-right:2px solid var(--line); border-bottom:2px solid var(--line);
     transform:translateX(-50%) rotate(45deg);
@@ -145,12 +145,81 @@
   .passpill.lowlink img { height:22px; width:auto; }
   .passpill { display:inline-block; background:#fff; border-radius:999px; padding:4px 10px; font-size:12px; color:#7d6454; }
   button.friend { width:100%; cursor:pointer; font:inherit; text-align:left; color:inherit; }
-  .dock { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
+  .dock { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:8px 0; }
   .dock button { min-height:56px; border-radius:16px; border:0; text-align:left; padding:8px 12px; font-weight:800; width:100%; }
   .dock .streak-btn { background:#fff; color:var(--ink); border:2px solid var(--line) !important; display:flex; gap:10px; align-items:center; }
   .dock .friends-btn { background:var(--pink-l); color:var(--ink); display:flex; gap:10px; align-items:center; }
+  .dock .xp-btn { background:linear-gradient(135deg,#fff9e6,#fff3c8); color:#7a5c00; border:2px solid #f5c842 !important; display:flex; flex-direction:column; justify-content:center; gap:2px; }
+  .dock .xp-btn .xp-mini-bar { height:4px; border-radius:99px; background:#f5e8a0; overflow:hidden; margin-top:2px; }
+  .dock .xp-btn .xp-mini-fill { height:100%; background:#f5c842; border-radius:99px; transition:width .4s ease; }
   .dock svg { width:24px; height:24px; stroke:var(--ink); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:none; }
   .dock small { display:block; font-size:11px; letter-spacing:.08em; opacity:.85; }
+  /* XP bar on You screen */
+  .xp-section { margin:0 0 16px; }
+  .xp-meta { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .xp-meta .lv { font-size:13px; font-weight:800; color:var(--ok); }
+  .xp-meta .xp-num { font-size:12px; color:var(--mute); font-weight:700; }
+  .xp-track { height:8px; border-radius:99px; background:#f0e8dc; overflow:hidden; }
+  .xp-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#f5c842,#e8a820); transition:width .6s cubic-bezier(.4,0,.2,1); }
+  .coin-row { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .coin-chip { display:inline-flex; align-items:center; gap:5px; background:#fff9e6; border:1.5px solid #f5c842; border-radius:99px; padding:4px 12px; font-size:14px; font-weight:800; color:#7a5c00; }
+  .coin-chip .coin-icon { font-size:16px; }
+  .xp-reward-chip { display:inline-flex; align-items:center; gap:5px; background:var(--ok-bg); border-radius:99px; padding:4px 12px; font-size:13px; font-weight:800; color:var(--ok); margin-left:auto; }
+  /* Gain float — pops up above bottom tabs */
+  .gain-float { position:absolute; left:0; right:0; bottom:100px; z-index:10; pointer-events:none; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .gain-pill { background:#4A3B36ee; color:#fff; border-radius:99px; padding:6px 14px; font-size:13px; font-weight:800; animation:gainPop .5s cubic-bezier(.2,1.6,.4,1) both, gainFade 1.6s .6s ease forwards; white-space:nowrap; }
+  .gain-pill.gold { background:#c98b00ee; }
+  @keyframes gainPop { from { transform:scale(.6) translateY(12px); opacity:0; } to { transform:scale(1) translateY(0); opacity:1; } }
+  @keyframes gainFade { to { opacity:0; transform:translateY(-16px); } }
+  /* Level-up banner */
+  .levelup-banner { background:linear-gradient(135deg,#f5c842,#e8a820); color:#4a3000; border-radius:20px; padding:16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; animation:rise .4s ease; }
+  .levelup-banner .lv-badge { width:52px; height:52px; border-radius:50%; background:#fff8; display:grid; place-items:center; font-size:18px; font-weight:900; flex:none; }
+  .levelup-banner h2 { margin:0 0 2px; font-size:17px; }
+  .levelup-banner p { margin:0; font-size:13px; opacity:.8; font-weight:600; }
+  /* Stats card on streak screen */
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
+  .stat-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+  .stat-card .sv { font-size:28px; font-weight:900; color:var(--ink); }
+  .stat-card .sk { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--mute); margin-top:2px; font-weight:700; }
+  .stat-card.gold { background:#fff9e6; border-color:#f5c842; }
+  .stat-card.gold .sv { color:#c98b00; }
+  /* ===== SHOP ===== */
+  .shop-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .shop-head h1 { margin:0; }
+  .shop-balance { display:inline-flex; align-items:center; gap:5px; background:#fff9e6; border:1.5px solid #f5c842; border-radius:99px; padding:4px 12px; font-size:14px; font-weight:800; color:#7a5c00; }
+  .shop-cats { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; scrollbar-width:none; }
+  .shop-cats::-webkit-scrollbar { display:none; }
+  .shop-cats button { flex:none; border:1.5px solid var(--line); background:#fff; border-radius:99px; padding:5px 14px; font-size:13px; font-weight:700; color:var(--mute); white-space:nowrap; }
+  .shop-cats button.on { background:var(--ink); border-color:var(--ink); color:#fff; }
+  .shop-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .shop-item { background:#fff; border:1.5px solid var(--line); border-radius:18px; padding:14px 12px; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; transition:border-color .15s; }
+  .shop-item.owned { border-color:var(--ok); }
+  .shop-item.equipped-item { border-color:#f5c842; background:#fffdf0; }
+  .shop-item .item-icon { font-size:36px; line-height:1; margin-bottom:2px; }
+  .shop-item .item-name { font-size:14px; font-weight:800; color:var(--ink); text-align:center; }
+  .shop-item .item-desc { font-size:11px; color:var(--mute); font-weight:500; text-align:center; line-height:1.3; }
+  .rarity { font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; border-radius:99px; padding:2px 8px; }
+  .rarity.common { background:#e8f4ec; color:#2e6b52; }
+  .rarity.rare { background:#e8eeff; color:#2244aa; }
+  .rarity.epic { background:#f5e8ff; color:#7700cc; }
+  .item-price { font-size:13px; font-weight:800; color:#c98b00; display:flex; align-items:center; gap:3px; }
+  .item-btns { display:flex; gap:6px; margin-top:4px; width:100%; }
+  .item-btns button { flex:1; border-radius:99px; border:0; padding:6px 4px; font-size:12px; font-weight:800; cursor:pointer; }
+  .item-btns .buy-btn { background:var(--ox); color:#fff; }
+  .item-btns .buy-btn:disabled { background:#ddd; color:#999; cursor:default; }
+  .item-btns .equip-btn { background:var(--ink); color:#fff; }
+  .item-btns .unequip-btn { background:#fff; color:var(--ink); border:1.5px solid var(--line) !important; }
+  .item-btns .equipped-tag { background:var(--ok-bg); color:var(--ok); text-align:center; border-radius:99px; padding:6px 4px; font-size:11px; font-weight:800; flex:1; }
+  .boost-active { background:#fff9e6; border:1.5px solid #f5c842; border-radius:14px; padding:10px 14px; margin-bottom:10px; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; }
+  .boost-active span { font-size:20px; }
+  /* companion badge next to Cici on today */
+  .companion-badge { position:absolute; right:-8px; bottom:-4px; font-size:22px; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.2)); pointer-events:none; }
+  .cici-stage { position:relative; display:inline-block; }
+  /* avatar frame variants */
+  .avatar.frame-silver { border:3px solid #a8a8b8; box-shadow:0 0 0 2px #e0e0ea; }
+  .avatar.frame-gold { border:3px solid #f5c842; box-shadow:0 0 0 2px #fff3a0; }
+  .avatar.frame-rainbow { border:3px solid transparent; background-image:linear-gradient(white,white),linear-gradient(135deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00); background-origin:border-box; background-clip:padding-box,border-box; }
+  .avatar.frame-fire { border:3px solid #e85c20; box-shadow:0 0 8px #f5a04088; }
   .friend { display:flex; gap:12px; align-items:center; background:#fff; border:1px solid #e4dfd4; border-radius:16px; padding:12px; margin-top:8px; }
   .friend i { width:36px; height:36px; border-radius:50%; background:var(--paper); border:1.5px solid var(--ink); color:var(--ink); display:grid; place-items:center; font-style:normal; font-weight:800; flex:none; }
   .friend b { display:block; font-size:14px; }
@@ -293,7 +362,7 @@
   @media (max-height: 640px) {
     .ask-stage .hw, .ask-stage.grow .hw { width:96px; height:76px; }
     .ask-stage { margin:0 0 4px; }
-    .ask-stage .hana-bubble { font-size:13px; padding:8px 12px; }
+    .ask-stage .cici-bubble { font-size:13px; padding:8px 12px; }
     .ask-k { margin:0 0 6px; font-size:11px; }
     .askhead { margin:0; }
     .ask-dock .ask-chips .chip-btn { min-height:44px; padding:6px 10px; }
@@ -419,14 +488,27 @@
   .bell .dot { position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; background: var(--ox); border-radius: 50%; }
   .who { display: flex; align-items: center; gap: 16px; margin: 8px 0 24px; }
   .who h1, .who .sub { margin: 0; }
+  .who-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .who-edit { font-size: 13px; color: var(--ox); font-weight: 700; background: none; border: none; padding: 0; cursor: pointer; text-align: left; }
+  .level-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--ok-bg); color: var(--ok); border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 800; margin-top: 4px; }
+  .milestone-bar { background: linear-gradient(135deg, var(--ox), #d97b8a); color: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; text-align: center; animation: rise .4s ease; }
+  .milestone-bar h2 { margin: 0 0 4px; font-size: 22px; }
+  .milestone-bar p { margin: 0; font-size: 14px; opacity: .88; font-weight: 500; }
+  .onboard-hero { text-align: center; padding: 24px 0 16px; }
+  .onboard-hero .hw { margin: 0 auto 16px; }
+  .onboard-steps { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 24px; }
+  .onboard-step { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  .onboard-step .num { width: 28px; height: 28px; border-radius: 50%; background: var(--ox); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 800; flex: none; }
+  .onboard-step p { margin: 0; font-size: 14px; font-weight: 500; color: var(--soft); }
+  .profile-edit-form { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
   .tiny { font-size: 15px; color: var(--mute); margin: 0 0 8px; }
 
-  /* Hana: the member's real artwork + layered motion.
+  /* Cici: the member's real artwork + layered motion.
      .fig  = travel (hop / sway / tilt), .sq = squash & stretch from the feet, .prop = ?/trophy layer,
      .fx   = ambient palette shapes (hearts, sparkles, zzz, drops, rings, leaves, cloud, check, stars, notes).
      Transform/opacity only. One-shot entrance/exit between poses, looping idle, random 'life' micro-actions, per-pose tap. */
   .hw { position:relative; width:96px; height:120px; flex:none; }
-  .hero .hw, .hana-stage .hw { width:220px; height:172px; margin:0 auto 8px; }
+  .hero .hw, .cici-stage .hw { width:220px; height:172px; margin:0 auto 8px; }
   .sayrow .hw { width:80px; height:96px; }
   .hw .fig, .hw .sq { position:absolute; inset:0; transform-origin:50% 100%; }
   .hw img { position:absolute; bottom:0; left:50%; max-width:100%; max-height:100%; width:auto; height:auto; translate:-50% 0; -webkit-user-drag:none; user-select:none; pointer-events:none; }
@@ -435,10 +517,10 @@
   .hw .fx svg { overflow:visible; }
   .hw .shadow { position:absolute; left:26%; right:26%; bottom:-3px; height:9px; border-radius:50%; background:rgba(74,59,54,.12); transform-origin:50% 50%; }
   .hw .veil { position:absolute; inset:-6px; border-radius:40%; background:radial-gradient(closest-side, rgba(201,194,188,.35), rgba(201,194,188,0)); opacity:0; pointer-events:none; }
-  .hana-stage .hw, .hero .hw { cursor:pointer; }
+  .cici-stage .hw, .hero .hw { cursor:pointer; }
   .sayrow .hw .fx { display:none; }
   /* Rive canvas fills the same 220x172 stage box under the bubble; the WebP figure hides only while Rive is live */
-  .hw .hana-rive { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .hw .cici-rive { position:absolute; inset:0; width:100%; height:100%; display:block; }
   .hw.rive .life, .hw.rive .fx, .hw.rive .shadow { display:none; }
   .hw.rive { animation:none !important; }
 
@@ -587,7 +669,7 @@
   .hw.anim[data-s] .shadow { animation:none; }
   .hw.anim[data-s=cheer] .shadow { display:none; }
   .hw.anim.l-hop .life { animation:none; }
-  /* cheer loop canvas is 402px tall (346 art + 40 hop headroom + 16 shadow): keep Hana the same size and feet on the same line */
+  /* cheer loop canvas is 402px tall (346 art + 40 hop headroom + 16 shadow): keep Cici the same size and feet on the same line */
   .hw img.body.tall { max-height:calc(100% * 402 / 346); bottom:calc(-100% * 16 / 346); }
   @media (prefers-reduced-motion:reduce){
     .hw *, .hw, .hw .fig.enter, .hw .fig.prevfig, .hw .sq, .hw .prop { animation:none !important; transition:none !important; }
@@ -640,12 +722,13 @@
       <div class="scroll" id="view"></div>
       <nav class="tabs" id="tabs" hidden></nav>
       <div class="toast" id="toast"></div>
+      <div class="gain-float" id="gainFloat"></div>
       <div class="sheet" id="sheet"><div class="box" id="sheetBox"></div></div>
     </div>
   </div>
   <aside class="note" id="note"></aside>
 </div>
-<script src="assets/hana/hana-renderer.js"></script>
+<script src="assets/cici/cici-renderer.js"></script>
 <script>
 const TAKEN = new Set([2, 5]);
 const HISTORY = [
@@ -696,7 +779,11 @@ const state = {
   otpError: "", formError: "", rail: "screens", feature: null, jump: null, late: false, lateCancel: false, offer: false, booking: null, streak: 3, sharedIn: false, sharedDone: false, myCode: "MINA-1842", friendCode: "", friends: [{ n:"Jiwoo", d:"Went to the gym · Geumho · today" }, { n:"Soo", d:"Finished class · Cheongdam · yesterday · day 12" }], incoming: [{ n:"Alex", code:"ALEX-4402" }], outgoing: [], wait: false, arrived: false, arrivedVia: null, location: "off", nudge: false, ask: false,
   alerts: SEED_ALERTS(), notify: NOTIFY(),
   askType: "extend", askText: "", askDraft: "", aiSim: null, fallbacks: 0, inboxFilter: "all", inboxNew: [], inboxOrigin: null, reqDetail: 0, moved: false, smallTalk: 0, tipIdx: 0, chat: [], requests: SEED_REQUESTS(),
-  attended: false, spotPick: 3, share: null, shareBack: null, formField: ""
+  attended: false, spotPick: 3, share: null, shareBack: null, formField: "",
+  firstRun: true, editNameVal: "", milestoneSeen: false,
+  xp: 150, coins: 35, levelUp: null,
+  inventory: [], equipped: { bg: null, frame: null, companion: null },
+  xpBoostLeft: 0, coinRushLeft: 0, shopFilter: "all"
 };
 /* One clean starting point. Every rail jump and clock change restores from this, so nothing stale leaks between screens. */
 const INITIAL = JSON.parse(JSON.stringify(state));
@@ -708,11 +795,88 @@ function restore(keep) {
 }
 function alert(k, t, d) { state.alerts.unshift({ k, t, d, when: "Just now", unread: true }); }
 function studioName(s) { return s === "geumho" ? "Geumho" : "Cheongdam"; }
+function initials(name) { return (name || "").split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase()).slice(0, 2).join("") || "?"; }
+function ciciLevel() { return Math.floor((state.streak || 0) / 7) + 1; }
+const MILESTONES = { 7: "Week 1 done", 14: "Two weeks strong", 21: "Three weeks in", 30: "30-day legend" };
+
+/* ===== SHOP ITEMS ===== */
+const SHOP_ITEMS = [
+  /* Backgrounds */
+  { id:"bg-sakura",   cat:"bg",        icon:"🌸", name:"Sakura",       desc:"Soft pink blossom backdrop",   price:80,  rarity:"common" },
+  { id:"bg-ocean",    cat:"bg",        icon:"🌊", name:"Ocean Calm",   desc:"Deep blue wave gradient",       price:120, rarity:"rare"   },
+  { id:"bg-aurora",   cat:"bg",        icon:"🌌", name:"Aurora",       desc:"Northern lights gradient",      price:200, rarity:"epic"   },
+  { id:"bg-forest",   cat:"bg",        icon:"🌿", name:"Forest",       desc:"Mossy green studio vibes",      price:80,  rarity:"common" },
+  /* Avatar frames */
+  { id:"frame-silver",cat:"frame",     icon:"🪙", name:"Silver Ring",  desc:"Shining silver border",         price:60,  rarity:"common" },
+  { id:"frame-gold",  cat:"frame",     icon:"🏅", name:"Gold Ring",    desc:"Warm gold champion border",     price:150, rarity:"rare"   },
+  { id:"frame-rainbow",cat:"frame",    icon:"🌈", name:"Rainbow",      desc:"Full-spectrum animated border", price:250, rarity:"epic"   },
+  { id:"frame-fire",  cat:"frame",     icon:"🔥", name:"Fire Ring",    desc:"Blazing streak border",         price:180, rarity:"rare"   },
+  /* Companions */
+  { id:"comp-cat",    cat:"companion", icon:"🐱", name:"Lucky Cat",    desc:"Waves away bad classes",        price:100, rarity:"common" },
+  { id:"comp-axolotl",cat:"companion", icon:"🦎", name:"Axolotl",      desc:"Rare pink study buddy",         price:220, rarity:"epic"   },
+  { id:"comp-bunny",  cat:"companion", icon:"🐰", name:"Bunny",        desc:"Hops beside you at class",      price:90,  rarity:"common" },
+  { id:"comp-fox",    cat:"companion", icon:"🦊", name:"Fox",          desc:"Clever streak protector",       price:160, rarity:"rare"   },
+  /* Boosts */
+  { id:"boost-xp",    cat:"boost",     icon:"⚡", name:"XP Rush ×2",   desc:"Double XP for next 3 boards",  price:50,  rarity:"common" },
+  { id:"boost-coin",  cat:"boost",     icon:"💰", name:"Coin Rain ×2", desc:"Double coins for next 3 boards",price:50, rarity:"common" },
+  /* Music */
+  { id:"music-lofi",  cat:"music",     icon:"🎵", name:"Lo-fi Study",  desc:"Chill beats while you train",   price:70,  rarity:"common" },
+  { id:"music-pop",   cat:"music",     icon:"🎶", name:"K-Pop Energy", desc:"Energising K-pop mix",          price:70,  rarity:"common" },
+  { id:"music-jazz",  cat:"music",     icon:"🎷", name:"Jazz Barre",   desc:"Smooth jazz for pilates mood",  price:120, rarity:"rare"   },
+];
+
+/* ===== XP & COINS SYSTEM ===== */
+const XP_LEVELS = [0, 100, 250, 500, 900, 1500, 2500, 4000, 6000, 9000];
+const LEVEL_NAMES = ["Beginner","Regular","Dedicated","Committed","Strong","Expert","Elite","Master","Legend","Champion"];
+function xpLevel(xp) { for (let i = XP_LEVELS.length - 1; i >= 0; i--) if (xp >= XP_LEVELS[i]) return i + 1; return 1; }
+function xpLevelName(xp) { return LEVEL_NAMES[xpLevel(xp) - 1] || "Champion"; }
+function xpInLevel(xp) { const lv = xpLevel(xp); return xp - (XP_LEVELS[lv - 1] || 0); }
+function xpLevelSpan(xp) { const lv = xpLevel(xp); const next = XP_LEVELS[lv]; return (next != null ? next : XP_LEVELS[XP_LEVELS.length - 1] + 1000) - (XP_LEVELS[lv - 1] || 0); }
+function xpPct(xp) { return Math.min(100, Math.round(xpInLevel(xp) / xpLevelSpan(xp) * 100)); }
+function xpNext(xp) { const lv = xpLevel(xp); return XP_LEVELS[lv] != null ? XP_LEVELS[lv] : null; }
+
+function gainReward(xpAmt, coinAmt) {
+  const lvBefore = xpLevel(state.xp);
+  state.xp += xpAmt; state.coins += coinAmt;
+  const lvAfter = xpLevel(state.xp);
+  if (lvAfter > lvBefore) { state.levelUp = { lv: lvAfter, name: xpLevelName(state.xp) }; }
+  showGain(xpAmt, coinAmt);
+}
+function showGain(xpAmt, coinAmt) {
+  const wrap = document.getElementById("gainFloat"); if (!wrap) return;
+  wrap.innerHTML = "";
+  if (xpAmt) { const p = document.createElement("span"); p.className = "gain-pill"; p.textContent = "+" + xpAmt + " XP"; wrap.appendChild(p); }
+  if (coinAmt) { const p = document.createElement("span"); p.className = "gain-pill gold"; p.textContent = "+" + coinAmt + " \uD83E\uDE99"; wrap.appendChild(p); }
+  clearTimeout(showGain.t); showGain.t = setTimeout(() => { if (wrap) wrap.innerHTML = ""; }, 2200);
+}
+function applyEquipped() {
+  const screen = document.querySelector(".screen"); if (!screen) return;
+  const bgMap = { "bg-sakura":"#fde8f0", "bg-ocean":"#e0eeff", "bg-aurora":"linear-gradient(135deg,#1a0038,#00204a,#003a1a)", "bg-forest":"#e6f5ec" };
+  const bg = state.equipped.bg;
+  screen.style.background = bg && bgMap[bg] ? bgMap[bg] : "";
+  /* avatar frame: applied to .avatar element if present */
+  const av = document.querySelector(".avatar");
+  if (av) {
+    av.classList.remove("frame-silver","frame-gold","frame-rainbow","frame-fire");
+    if (state.equipped.frame) av.classList.add(state.equipped.frame);
+  }
+  /* companion: injected into .cici-stage if present */
+  document.querySelectorAll(".cici-stage .companion-badge").forEach(el => el.remove());
+  const compMap = { "comp-cat":"🐱", "comp-axolotl":"🦎", "comp-bunny":"🐰", "comp-fox":"🦊" };
+  const comp = state.equipped.companion;
+  if (comp && compMap[comp]) {
+    document.querySelectorAll(".cici-stage").forEach(stage => {
+      const badge = document.createElement("span");
+      badge.className = "companion-badge"; badge.textContent = compMap[comp];
+      stage.appendChild(badge);
+    });
+  }
+}
 function resetSession() { restore(["name", "phone", "password", "mode", "otpFor"]); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
-const HANA_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"calm", front:"front" };
-/* thinking (Ask Hana typing) uses the calm art (interim, FX-04) until dedicated thinking art ships as WebP; moment numbers live in assets/hana/hana-renderer.js */
-const HANA_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
+const CICI_ART = { greet:"greet", warmup:"warmup", cheer:"cheer", calm:"calm", paused:"paused", cleared:"cleared", low:"low", nobook:"nobook", sleep:"nobook", book:"book", wink:"wink", thinking:"calm", front:"front" };
+/* thinking (Ask Cici typing) uses the calm art (interim, FX-04) until dedicated thinking art ships as WebP; moment numbers live in assets/cici/cici-renderer.js */
+const CICI_PROP = { paused:"paused-q", nobook:"nobook-q", cleared:"cleared-trophy" };
 /* Ambient props: small palette shapes in the guide's brown line. Positions are % of the stage box. */
 const HSHAPE = {
   heart: '<svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 15C4 11 1 8.5 1 5.2 1 2.8 2.9 1 5.1 1 6.7 1 8.2 2 9 3.4 9.8 2 11.3 1 12.9 1 15.1 1 17 2.8 17 5.2 17 8.5 14 11 9 15Z" fill="#F4AEB8" stroke="#3B2E29" stroke-width="1.6" stroke-linejoin="round"/></svg>',
@@ -746,53 +910,53 @@ const HFX = {
   front:  []
 };
 const HTAP_WINK = { greet:1, book:1, front:1, wink:1 };
-/* Animated WebP loops (real art, baked motion) in assets/hana/anim/; stills stay as the reduced-motion fallback. */
-const HANA_REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
-function hanaAnimOn() { return !HANA_REDUCED.matches && !window.__hanaStill; }
+/* Animated WebP loops (real art, baked motion) in assets/cici/anim/; stills stay as the reduced-motion fallback. */
+const CICI_REDUCED = matchMedia("(prefers-reduced-motion: reduce)");
+function ciciAnimOn() { return !CICI_REDUCED.matches && !window.__ciciStill; }
 /* Lazy loops: a pose shows its small still at once and swaps to its loop as soon as that loop has loaded.
    Only loops that are actually shown get fetched; the wink loop (tap reaction) is prefetched when idle. */
-const HANA_LOOP = new Set(), HANA_LOOP_REQ = {};
-function hanaWant(art) {
-  if (HANA_LOOP.has(art) || HANA_LOOP_REQ[art]) return;
-  const i = new Image(); HANA_LOOP_REQ[art] = i;
-  i.onload = () => { HANA_LOOP.add(art); if (!hanaAnimOn()) return;
-    document.querySelectorAll(`.hw img[data-art="${art}"]`).forEach(el => { if (el.closest(".hw.tap") && el.classList.contains("body")) return; el.src = hanaFile(art); el.classList.toggle("tall", art === "cheer"); }); };
-  i.src = "assets/hana/anim/" + art + ".webp";
+const CICI_LOOP = new Set(), CICI_LOOP_REQ = {};
+function ciciWant(art) {
+  if (CICI_LOOP.has(art) || CICI_LOOP_REQ[art]) return;
+  const i = new Image(); CICI_LOOP_REQ[art] = i;
+  i.onload = () => { CICI_LOOP.add(art); if (!ciciAnimOn()) return;
+    document.querySelectorAll(`.hw img[data-art="${art}"]`).forEach(el => { if (el.closest(".hw.tap") && el.classList.contains("body")) return; el.src = ciciFile(art); el.classList.toggle("tall", art === "cheer"); }); };
+  i.src = "assets/cici/anim/" + art + ".webp";
 }
-function hanaFile(art) {
-  if (!hanaAnimOn()) return "assets/hana/" + art + ".webp";
-  if (HANA_LOOP.has(art)) return "assets/hana/anim/" + art + ".webp";
-  hanaWant(art); return "assets/hana/" + art + ".webp";
+function ciciFile(art) {
+  if (!ciciAnimOn()) return "assets/cici/" + art + ".webp";
+  if (CICI_LOOP.has(art)) return "assets/cici/anim/" + art + ".webp";
+  ciciWant(art); return "assets/cici/" + art + ".webp";
 }
-function hanaSrc(st) { return hanaFile(HANA_ART[st] || "front"); }
-function hanaFig(st, cls) {
-  const art = HANA_ART[st] || "front", prop = HANA_PROP[art];
-  return `<div class="fig ${cls}"><div class="sq"><img class="body${art === "cheer" && hanaAnimOn() && HANA_LOOP.has(art) ? " tall" : ""}" data-art="${art}" src="${hanaFile(art)}" alt="${cls === "prevfig" ? "" : "Hana"}" draggable="false">${prop ? `<img class="prop" data-art="${prop}" src="${hanaFile(prop)}" alt="">` : ""}</div></div>`;
+function ciciSrc(st) { return ciciFile(CICI_ART[st] || "front"); }
+function ciciFig(st, cls) {
+  const art = CICI_ART[st] || "front", prop = CICI_PROP[art];
+  return `<div class="fig ${cls}"><div class="sq"><img class="body${art === "cheer" && ciciAnimOn() && CICI_LOOP.has(art) ? " tall" : ""}" data-art="${art}" src="${ciciFile(art)}" alt="${cls === "prevfig" ? "" : "Cici"}" draggable="false">${prop ? `<img class="prop" data-art="${prop}" src="${ciciFile(prop)}" alt="">` : ""}</div></div>`;
 }
-function hanaFx(st) {
+function ciciFx(st) {
   const items = (HFX[st] || []).map(([k, pos]) => `<i class="x${k}" style="${pos}">${HSHAPE[k.split(" ")[0]]}</i>`).join("");
   return `<div class="fx" aria-hidden="true">${items}<i class="xtb" style="left:44%;top:-4%">${HSHAPE.spark}</i></div>`;
 }
 /* Entrance/exit when the state changed since the last render; otherwise the pose's idle loop continues. */
-function hana(st) {
-  st = (window.__hanaForce) || (HANA_ART[st] ? st : "front");
-  const changed = hana.last !== st;
-  /* FX-01: thinking never crossfades: the previous pose is dropped at once so only one Hana shows */
-  const prev = hana.last && changed && st !== "thinking" ? hanaFig(hana.last, "prevfig") : "";
-  hana.last = st;
-  return `<div class="hw${hanaAnimOn() ? " anim" : ""}" data-s="${st}" data-hana><i class="veil"></i><div class="life">${prev}${hanaFig(st, changed ? "enter" : "")}</div>${hanaFx(st)}<i class="shadow"></i></div>`;
+function cici(st) {
+  st = (window.__ciciForce) || (CICI_ART[st] ? st : "front");
+  const changed = cici.last !== st;
+  /* FX-01: thinking never crossfades: the previous pose is dropped at once so only one Cici shows */
+  const prev = cici.last && changed && st !== "thinking" ? ciciFig(cici.last, "prevfig") : "";
+  cici.last = st;
+  return `<div class="hw${ciciAnimOn() ? " anim" : ""}" data-s="${st}" data-cici><i class="veil"></i><div class="life">${prev}${ciciFig(st, changed ? "enter" : "")}</div>${ciciFx(st)}<i class="shadow"></i></div>`;
 }
-/* Idle 'life': every few seconds the stage Hana does one small random thing. */
+/* Idle 'life': every few seconds the stage Cici does one small random thing. */
 setInterval(() => {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || window.__hanaNoLife) return;
-  const h = document.querySelector(".hana-stage .hw, .hero .hw"); if (!h || h.classList.contains("tap")) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || window.__ciciNoLife) return;
+  const h = document.querySelector(".cici-stage .hw, .hero .hw"); if (!h || h.classList.contains("tap")) return;
   if (Math.random() < .45) return;
   const c = ["l-twitch", "l-look", "l-hop"][Math.floor(Math.random() * 3)];
   h.classList.add(c); setTimeout(() => h.classList.remove(c), 900);
 }, 2600);
-(window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => { if (hanaAnimOn()) hanaWant("wink"); });
-/* Hana reacts to what the member is doing; derived from state, never chosen by hand. */
-function hanaState() {
+(window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => { if (ciciAnimOn()) ciciWant("wink"); });
+/* Cici reacts to what the member is doing; derived from state, never chosen by hand. */
+function ciciState() {
   const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
   if (!b) {
     const other = state.booking && state.booking.studio !== state.studio;   /* F8: tonight is at the other studio */
@@ -808,7 +972,7 @@ function hanaState() {
   return "greet";
 }
 function isPaused() { const b = state.booking && state.booking.studio === state.studio; return !!b && state.clock === "night" && !state.arrived; }
-function hanaLine(s) { return `<div class="sayrow">${hana("greet")}<div class="say">${s}</div></div>`; }
+function ciciLine(s) { return `<div class="sayrow">${cici("greet")}<div class="say">${s}</div></div>`; }
 function noteFor() {
   if (state.auth !== "app") return ["Account", "Two screens: form, then code. Header has menu and alerts."];
   if (state.view === "streak") return ["Streak", "Its own screen. The number grows when today's board is cleared, not when a session is spent."];
@@ -864,9 +1028,10 @@ function canHere() {
 }
 function arrive(via) {
   if (state.arrived || !canHere()) return;
-  state.arrived = true; state.arrivedVia = via; HanaRenderer.success();
+  state.arrived = true; state.arrivedVia = via; CiciRenderer.success();
   alert("pin", "You’re here", (via === "nudge" ? "From the notification. " : "") + "The desk knows · still " + remainingLine());
   toast("You’re here · still " + remainingLine());
+  gainReward(20, 5);
 }
 function tick() { state.nudge = state.location === "on" && canHere() && !state.arrived; }
 function closeSheet() {
@@ -920,7 +1085,7 @@ function fe(f) { return state.formField === f ? "bad" : ""; }
 function em(f) { return state.formField === f && state.formError ? `<p class="err">${state.formError}</p>` : ""; }
 function welcome() {
   const create = state.mode === "create", forgot = state.mode === "forgot";
-  return `<div class="say up">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Hana."}</div><div class="hero">${hana("greet")}</div>
+  return `<div class="say up">${create ? "New here? Use the phone on your contract." : forgot ? "I’ll send a code." : "Hi. I’m Cici."}</div><div class="hero">${cici("greet")}</div>
     <h1>${create ? "Create account" : forgot ? "Reset password" : "Log in"}</h1>
     <form id="authForm">
     ${!forgot ? `<div class="seg">
@@ -938,7 +1103,7 @@ function welcome() {
 }
 function otp() {
   const boxes = state.otp.map((d,i) => `<input maxlength="1" inputmode="numeric" data-otp="${i}" value="${d}" />`).join("");
-  return `<div class="hero">${hana("greet")}</div><button class="link backhit" type="button" data-act="back-auth">Back</button>
+  return `<div class="hero">${cici("greet")}</div><button class="link backhit" type="button" data-act="back-auth">Back</button>
     <p class="kicker" style="margin-top:12px">Code</p><h1>Enter the 6 digits</h1>
     <p class="sub">Sent to ${esc(state.phone)}.</p>
     ${state.otpError ? `<p class="err">${state.otpError}</p>` : ""}
@@ -961,7 +1126,7 @@ function slot(act, time, title, meta, tag, kind, foot) {
   if (!act) return `<div class="slot ${kind || ""}">${inner}</div>`;
   return `<button class="slot press ${kind || ""}" type="button" data-act="${act}">${inner}</button>`;
 }
-function hanaNow() {
+function ciciNow() {
   const b = state.booking && state.booking.studio === state.studio ? state.booking : null;
   const p = pass();
   if (!b) return "No class on this studio. Want 7:00 Barre? Still " + p.left + " left.";
@@ -970,7 +1135,7 @@ function hanaNow() {
   if (canHere()) return "You're at the studio. Check in? The pass stays at " + p.left + ".";
   return "You're in for " + b.time + " " + b.className + ". Check-in opens at " + classTimes(b).open + ". Still " + p.left + " left.";
 }
-function hanaChips() {
+function ciciChips() {
   const b = state.booking && state.booking.studio === state.studio;
   const chips = [];
   if (!b) chips.push(["pick-7", "Book 7:00"]);
@@ -982,7 +1147,7 @@ function hanaChips() {
   }
   if (state.arrived && !state.sharedIn) chips.push(["share-in", "Share check-in"]);
   if (state.arrived && state.sharedIn) chips.push(["share-done", "Share result"]);
-  chips.push(["hana-left", "How many left?"]);
+  chips.push(["cici-left", "How many left?"]);
   return `<div class="replies">${chips.map(([a,l]) => `<button type="button" data-act="${a}">${l}</button>`).join("")}</div>`;
 }
 function missionStep() {
@@ -1046,7 +1211,7 @@ function momentCard(m) {
 function lowScreen() {
   const p = pass();
   return `<button class="link" type="button" data-act="tab-today">‹ Back</button><p class="kicker" style="margin-top:12px">Today · ${MOMENTS.low.k}</p>
-    <div class="hana-stage"><div class="hana-bubble">${momentLine("low")}</div>${hana("low")}</div>
+    <div class="cici-stage"><div class="cici-bubble">${momentLine("low")}</div>${cici("low")}</div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
     <div class="actions"><button class="btn" type="button" data-act="ai-extend-ask">Ask about extending</button><button class="btn ghost" type="button" data-act="pass">See the pass</button></div>`;
 }
@@ -1069,17 +1234,19 @@ function today() {
   ];
   const doneSteps = [step > 0, step > 1, step > 2, step > 4];
   const labels = ["Pick", "Arrive", "Share here", "Clear"];
-  const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}</span>`).join("");
+  const dotRewards = ["+10 XP", "+20 XP", "", "+50 XP"];
+  const dots = labels.map((l, i) => `<span class="dot4 ${doneSteps[i] ? "on" : ""}"><i></i>${l}${!doneSteps[i] && dotRewards[i] ? `<small style="font-size:9px;color:var(--mute);letter-spacing:0">${dotRewards[i]}</small>` : ""}</span>`).join("");
   const other = state.booking && state.booking.studio !== state.studio ? state.booking : null;
   const thread = (state.chat || []).filter(m => m.me || m.her).slice(-3).map(m => `<div class="bubble ${m.me ? "me" : "her"}">${m.me || m.her}</div>`).join("");
   const line = other ? "Tonight is at " + studioName(other.studio) + "." : momentLine(mom);
   return `${topbar()}
     <p class="kicker moment-k">Today · ${MOMENTS[mom].k}</p>
-    <div class="hana-stage"><div class="hana-bubble">${line}</div>${hana(mom)}</div>
+    <div class="cici-stage"><div class="cici-bubble">${line}</div>${cici(mom)}</div>
     ${momentCard(mom)}
     ${other ? `<button class="card press otherrow" type="button" data-act="open-other-class"><strong>You have class at ${studioName(other.studio)} · ${other.time}</strong><span class="what-sub">${other.className} · ${other.teacher} · open it ›</span></button>` : ""}
     <div class="dock">
       <button class="streak-btn" type="button" data-act="streak">${ICONS.flame}<span><small>STREAK</small>Day ${state.streak}</span></button>
+      <button class="xp-btn" type="button" data-act="tab-you"><small>LV.${xpLevel(state.xp)} · ${xpLevelName(state.xp)}</small><span style="font-size:13px">${state.coins} 🪙 · ${state.xp} XP</span><div class="xp-mini-bar"><div class="xp-mini-fill" style="width:${xpPct(state.xp)}%"></div></div></button>
       <button class="friends-btn" type="button" data-act="friends">${ICONS.people}<span><small>FRIENDS</small>Jiwoo went today</span></button>
     </div>
     <div class="mission">
@@ -1089,7 +1256,7 @@ function today() {
       ${paused ? `<p class="sub" style="margin:8px 0 0">Check-in closed at ${T.closePm}. Streak unchanged.</p><button class="btn ghost" type="button" data-act="late-ask">Ask the studio</button>` : buttons[step]}
       ${boardMsg()}
     </div>
-    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="low"><img src="assets/hana/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
+    ${p.left <= 3 ? `<button class="passpill lowlink" type="button" data-act="low"><img src="assets/cici/low.webp" alt="">${studioName(state.studio)} · ${p.left} left ›</button>` : `<p class="passpill">${studioName(state.studio)} · ${p.left} left</p>`}
     <div class="thread">${thread}</div>`;
 }
 function streakScreen() {
@@ -1099,7 +1266,14 @@ function streakScreen() {
     const label = done ? "Cleared" : now ? "Today" : "Ahead";
     return `<div class="streakday ${done ? "done" : now ? "now" : ""}"><i></i><b>${d}</b><span>${label}</span></div>`;
   }).join("");
-  return `<button class="back backhit" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${hana(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
+  return `<button class="back backhit" type="button" data-act="tab-today">‹ Back</button><p class="kicker">Streak</p><div class="hero">${cici(state.attended && state.sharedDone ? "cleared" : "wink")}</div><div class="streakhead"><p class="bigcount">${state.streak}</p><p>It grows when today's board is cleared.</p></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="sv">${state.xp}</div><div class="sk">Total XP</div></div>
+    <div class="stat-card gold"><div class="sv">${state.coins} 🪙</div><div class="sk">Coins</div></div>
+    <div class="stat-card"><div class="sv">Lv.${xpLevel(state.xp)}</div><div class="sk">${xpLevelName(state.xp)}</div></div>
+    <div class="stat-card"><div class="sv">${xpNext(state.xp) ? xpNext(state.xp) - state.xp : "MAX"}</div><div class="sk">XP to next level</div></div>
+  </div>
+  ${days}<button class="btn" type="button" data-act="share-streak">Share my streak</button>`;
 }
 function friendRow(n, d) {
   const letter = (n || "?").slice(0, 1).toUpperCase();
@@ -1130,7 +1304,23 @@ function closeShare(sent, via) {
   state.tab = "today";
   render();
 }
-function clearBoard() { if (state.sharedDone) return; state.sharedDone = true; HanaRenderer.success(); state.streak += 1; alert("check", "Board cleared", "Day " + state.streak); }
+function clearBoard() {
+  if (state.sharedDone) return;
+  state.sharedDone = true; CiciRenderer.success(); state.streak += 1;
+  alert("check", "Board cleared", "Day " + state.streak);
+  const xpMul = state.xpBoostLeft > 0 ? 2 : 1;
+  const coinMul = state.coinRushLeft > 0 ? 2 : 1;
+  if (state.xpBoostLeft > 0) state.xpBoostLeft = Math.max(0, state.xpBoostLeft - 1);
+  if (state.coinRushLeft > 0) state.coinRushLeft = Math.max(0, state.coinRushLeft - 1);
+  gainReward(50 * xpMul, 10 * coinMul);
+  const MILESTONE_REWARDS = { 7: [100, 30], 14: [150, 50], 21: [200, 70], 30: [300, 100] };
+  if (MILESTONE_REWARDS[state.streak]) {
+    state.milestoneSeen = false;
+    const [mxp, mc] = MILESTONE_REWARDS[state.streak];
+    setTimeout(() => gainReward(mxp, mc), 600);
+    toast("🎉 " + MILESTONES[state.streak]);
+  }
+}
 function sharePayload() {
   const [k, title, sub, foot] = shareCard();
   return { k, title, sub, foot, text: title + "\n" + sub + "\n" + foot };
@@ -1160,7 +1350,7 @@ function shareCard() {
 function shareScreen() {
   const [k, title, sub, foot] = shareCard();
   return `<button class="back backhit" type="button" data-act="share-close">‹ Back</button>
-    <p class="kicker">Share</p><div class="sayrow">${hana(state.share==="in"?"cheer":state.share==="done"?"calm":"wink")}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
+    <p class="kicker">Share</p><div class="sayrow">${cici(state.share==="in"?"cheer":state.share==="done"?"calm":"wink")}<div class="say">${state.share === "in" ? "You're here. Share it?" : state.share === "done" ? "Done · Barre. Share or skip." : "Share it your way."}</div></div><h1>${k === "Add me" ? "Your code" : k === "Streak" ? "Your streak" : "This card"}</h1>
     <p class="sub">Share uses the phone's sheet. Not a friend in this app. No pass on the card.</p>
     <div class="postcard"><p class="kicker">${k}</p><b>${title}</b><span>${sub}</span><em>${foot}</em></div>
     <button class="btn push" type="button" data-act="share-send">Share</button>
@@ -1242,13 +1432,95 @@ function schedule() {
 }
 function you() {
   const p = pass();
-  return `<div class="who"><div class="avatar">MP</div><div><h1>${esc(state.name)}</h1><p class="sub">${esc(state.phone)}</p></div></div>
+  const lv = xpLevel(state.xp), lvName = xpLevelName(state.xp), pct = xpPct(state.xp);
+  const next = xpNext(state.xp);
+  const mil = MILESTONES[state.streak];
+  const lu = state.levelUp;
+  return `${lu ? `<div class="levelup-banner"><div class="lv-badge">Lv.${lu.lv}</div><div><h2>Level up! ${lu.name}</h2><p>Keep clearing the board to grow further.</p></div><button class="link" style="margin-left:auto;color:#7a5c00" data-act="dismiss-levelup">✕</button></div>` : ""}
+    ${mil && !state.milestoneSeen ? `<div class="milestone-bar"><h2>🎉 ${MILESTONES[state.streak]}</h2><p>Day ${state.streak} streak · +100 XP +30 🪙</p><button class="link" style="color:#fff;margin-top:8px" data-act="dismiss-milestone">Got it</button></div>` : ""}
+    <div class="who"><div class="avatar">${initials(state.name)}</div><div class="who-info"><h1>${esc(state.name)}</h1><p class="sub">${esc(state.phone)}</p></div></div>
+    <button class="link" type="button" data-act="edit-profile" style="margin:0 0 12px;font-size:14px">Edit profile name ›</button>
+    <div class="xp-section">
+      <div class="xp-meta"><span class="lv">Lv.${lv} · ${lvName}</span><span class="xp-num">${state.xp} XP${next ? " · " + (next - state.xp) + " to next" : " · MAX"}</span></div>
+      <div class="xp-track"><div class="xp-fill" style="width:${pct}%"></div></div>
+      <div class="coin-row"><div class="coin-chip"><span class="coin-icon">🪙</span>${state.coins} coins</div><div class="xp-reward-chip">🔥 ${state.streak} day streak</div></div>
+    </div>
     <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>${p.left} left</strong><span>${p.name} · ${p.until}</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="inbox">${ICONS.inbox}<div><strong>Inbox</strong><span>${inboxUnseen() ? inboxUnseen() + " new · " : ""}Studio replies and alerts</span></div><span class="go">›</span></button>
-    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Hana</strong><span>Book, check, extend or hold — by typing</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Cici</strong><span>Book, check, extend or hold — by typing</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Studios</strong><span>Geumho 8/20 · Cheongdam 2/10</span></div><span class="go">›</span></button>
     <button class="menu-row" type="button" data-act="${state.location === "on" ? "location-off" : "location-ask"}">${ICONS.pin}<div><strong>Arrival</strong><span>${state.location === "on" ? "Nudge when close · location on" : "Tap I’m here · location off"}</span></div><span class="go">›</span></button>
+    <button class="menu-row" type="button" data-act="open-shop">${ICONS.spark}<div><strong>Shop</strong><span>🪙 ${state.coins} coins · backgrounds, frames, companions</span></div><span class="go">›</span></button>
     <div class="actions"><button class="btn ghost" type="button" data-act="logout">Log out</button></div>`;
+}
+function profileEditScreen() {
+  return `<button class="link backhit" type="button" data-act="tab-you">‹ Back</button>
+    <p class="kicker" style="margin-top:12px">Profile</p><h1>Your name</h1>
+    <div class="profile-edit-form">
+      <div class="field"><label>Name</label><input id="fEditName" value="${esc(state.editNameVal || state.name)}" autocomplete="name" /></div>
+      <button class="btn" type="button" data-act="save-profile">Save</button>
+    </div>
+    <p class="sub" style="margin-top:8px">Phone number can only be changed at the studio.</p>`;
+}
+function onboardScreen() {
+  return `<div class="onboard-hero">
+    <div class="hero">${cici("greet")}</div>
+    <h1>Hi, I'm Cici.</h1>
+    <p class="sub">I'll help you keep your barre streak going.</p>
+  </div>
+  <div class="onboard-steps">
+    <div class="onboard-step"><span class="num">1</span><p><strong>Book a class</strong> — pick a time that works for you</p></div>
+    <div class="onboard-step"><span class="num">2</span><p><strong>Say you're here</strong> — tap I'm here when you arrive</p></div>
+    <div class="onboard-step"><span class="num">3</span><p><strong>Clear the board</strong> — share the result and grow your streak</p></div>
+  </div>
+  <p class="sub" style="text-align:center;margin:0 0 8px">Complete your first board to earn <strong>+50 XP +10 🪙</strong></p>
+  <button class="btn" type="button" data-act="onboard-done">Let's go · +50 XP +10 🪙</button>`;
+}
+function shopScreen() {
+  const f = state.shopFilter || "all";
+  const cats = [
+    { k:"all",       l:"All" },
+    { k:"bg",        l:"🖼 Background" },
+    { k:"frame",     l:"🪙 Frames" },
+    { k:"companion", l:"🐱 Companions" },
+    { k:"music",     l:"🎵 Music" },
+    { k:"boost",     l:"⚡ Boosts" },
+  ];
+  const items = SHOP_ITEMS.filter(x => f === "all" || x.cat === f);
+  const eq = state.equipped;
+  const isEquipped = it => eq.bg === it.id || eq.frame === it.id || eq.companion === it.id || eq.bg === it.id || (it.cat === "music" && eq.music === it.id);
+  const owned = id => state.inventory.includes(id);
+  const boostActive = state.xpBoostLeft > 0 || state.coinRushLeft > 0;
+  const catChips = cats.map(c => `<button type="button" class="${f === c.k ? "on" : ""}" data-act="shop-filter" data-k="${c.k}">${c.l}</button>`).join("");
+  const grid = items.map(it => {
+    const own = owned(it.id), eq2 = isEquipped(it);
+    const canBuy = !own && state.coins >= it.price;
+    const isBoost = it.cat === "boost";
+    let btns = "";
+    if (isBoost) {
+      const active = (it.id === "boost-xp" && state.xpBoostLeft > 0) || (it.id === "boost-coin" && state.coinRushLeft > 0);
+      if (active) btns = `<div class="item-btns"><span class="equipped-tag">Active!</span></div>`;
+      else btns = `<div class="item-btns"><button class="buy-btn" ${!canBuy ? "disabled" : ""} data-act="buy-item" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+    } else if (own) {
+      if (eq2) btns = `<div class="item-btns"><span class="equipped-tag">✓ Equipped</span><button class="unequip-btn" data-act="equip-item" data-id="${it.id}" data-unequip="1">Remove</button></div>`;
+      else      btns = `<div class="item-btns"><button class="equip-btn" data-act="equip-item" data-id="${it.id}">Equip</button></div>`;
+    } else {
+      btns = `<div class="item-btns"><button class="buy-btn" ${!canBuy ? "disabled" : ""} data-act="buy-item" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+    }
+    return `<div class="shop-item ${own ? "owned" : ""} ${eq2 ? "equipped-item" : ""}">
+      <div class="item-icon">${it.icon}</div>
+      <div class="item-name">${it.name}</div>
+      <div class="item-desc">${it.desc}</div>
+      <span class="rarity ${it.rarity}">${it.rarity}</span>
+      ${!own ? `<div class="item-price">🪙 ${it.price}</div>` : ""}
+      ${btns}
+    </div>`;
+  }).join("");
+  return `<button class="link backhit" type="button" data-act="tab-you">‹ Back</button>
+    <div class="shop-head"><h1>Shop</h1><span class="shop-balance">🪙 ${state.coins}</span></div>
+    ${boostActive ? `<div class="boost-active"><span>⚡</span><div>${state.xpBoostLeft > 0 ? `XP ×2 active — ${state.xpBoostLeft} boards left` : ""}${state.xpBoostLeft > 0 && state.coinRushLeft > 0 ? " · " : ""}${state.coinRushLeft > 0 ? `Coin ×2 active — ${state.coinRushLeft} boards left` : ""}</div></div>` : ""}
+    <div class="shop-cats">${catChips}</div>
+    <div class="shop-grid">${grid || `<p class="sub" style="grid-column:span 2">Nothing here yet.</p>`}</div>`;
 }
 function passScreen() {
   const p = pass();
@@ -1256,7 +1528,7 @@ function passScreen() {
     `<div class="card"><strong>${h.when} · ${h.time}</strong><p class="sub" style="margin:4px 0 0">${h.teacher} · attended</p></div>`).join("");
   return `<button class="link backhit" type="button" data-act="tab-you">Back</button>
     <p class="kicker" style="margin-top:12px">${state.studio==="geumho"?"Geumho":"Cheongdam"}</p><h1>Pass</h1>
-    <div class="sayrow">${hana(p.left <= 3 ? "low" : "greet")}<div class="say">${p.left <= 3 ? p.left + " left, until " + p.until + ". Want to ask about extending?" : p.left + " left, until " + p.until + "."}</div></div>
+    <div class="sayrow">${cici(p.left <= 3 ? "low" : "greet")}<div class="say">${p.left <= 3 ? p.left + " left, until " + p.until + ". Want to ask about extending?" : p.left + " left, until " + p.until + "."}</div></div>
     <div class="card balance"><div class="lbl">${p.name}</div><p class="count">${p.left}<small> / ${p.total}</small></p><p class="sub">Until ${p.until}</p>${meter()}</div>
     <div class="card"><div class="lbl">Previous</div><strong>10-session intro</strong><p class="sub" style="margin:0">Finished 2 Aug 2026 · 0 left</p></div>
     <p class="kicker">Usage</p>${used || `<div class="card"><p class="sub" style="margin:0">No visits yet.</p></div>`}
@@ -1329,7 +1601,7 @@ function askDefault() {
   const s = studioName(state.studio);
   return { extend: `Can I extend my ${s} pass? I’m away next week.`, hold: `Can you hold my ${s} pass for two weeks?`, question: `` }[state.askType];
 }
-/* ===== Ask Hana (ask-hana-spec v1) =====
+/* ===== Ask Cici (ask-cici-spec v1) =====
    One short line + at most one card; the card names its source; nothing happens until a tap.
    Card actions reuse the existing flows (reformer pick, change time, cancel sheet, F30 request form, pass, streak). */
 const TIPS = [
@@ -1341,7 +1613,7 @@ const TIPS = [
 ];
 function tipCard(i) {
   const t = TIPS[i % TIPS.length];
-  return { k: "tip", kicker: "Hana's basics", title: t.t, body: t.s.map((x, n) => (n + 1) + ". " + x).join("\n") + "\nAsk your instructor in class.", acts: [["ai-next-tip", "Next tip"], ["ai-save-tip", "Save"]] };
+  return { k: "tip", kicker: "Cici's basics", title: t.t, body: t.s.map((x, n) => (n + 1) + ". " + x).join("\n") + "\nAsk your instructor in class.", acts: [["ai-next-tip", "Next tip"], ["ai-save-tip", "Save"]] };
 }
 function canFreeCancel() { return !!state.booking && state.clock === "am" && !state.late && !state.lateCancel; }
 function askChips() {
@@ -1349,9 +1621,9 @@ function askChips() {
   if (state.attended) return ["My streak", "Book next", "Cool-down tip", "I feel…"];
   if (b) return ["Tonight's class", "What to bring", "How many left?", "Quick stretch"];
   if (p.left <= 3) return ["How many left?", "Ask to extend", "Book next", "Breathing tip"];
-  return ["Book tonight", "What's on tomorrow?", "How many left?", "How are you, Hana?"];
+  return ["Book tonight", "What's on tomorrow?", "How many left?", "How are you, Cici?"];
 }
-function setMood(m) { try { localStorage.setItem("hana.mood", JSON.stringify({ m, at: Date.now() })); } catch (e) {} }   /* device only, never sent */
+function setMood(m) { try { localStorage.setItem("cici.mood", JSON.stringify({ m, at: Date.now() })); } catch (e) {} }   /* device only, never sent */
 /* Health words always win: before mood, tips, booking. Word boundaries so "fellow" is not "fell". */
 const HEALTH_RE = new RegExp("\\b(" + [
   "aches?", "aching", "achei?ng", "akes?", "acheing", "achy", "head ?ach\\w*", "hed?d?ache\\w*", "backache", "stomach ?aches?", "tummy ?aches?", "sick", "unwell", "nauseo?us", "nausi?ous", "nausea",
@@ -1390,11 +1662,11 @@ const SCHED = {
   geumho:    { thu: [["10:00am","Barre","Soo Kim","open","pick-geumho-10"],["6:00pm","Barre","Jiwon Park","open","pick-geumho-6"]], sat: [] }
 };
 const schedBody = (rows) => rows.map(c => c[0] + " " + c[1] + (c[2] ? " · " + c[2] : "") + " · " + c[3]).join("\n");
-/* canonical safety wording (ask-hana-spec §3) */
+/* canonical safety wording (ask-cici-spec §3) */
 const SAFE_LINE = "Please see a doctor or your instructor before class.";
 const SAFE_URGENT = "Please stop exercising now and get medical help right away.";
 const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collaps\w*|chest (pain|hurts?|tight\w*|pressure)|heart attack|seizures?|convulsi\w*|heavy bleeding|bleeding (a lot|heavily|badly|won.?t stop)|bleeding heavily|(can.?t|cannot|can not|trouble|hard to|difficulty|struggling to) breath(e|ing)?|short(ness)? of breath|emergency|ambulances?|sos|call (a|the|my) (doctor|dr\.?|gp)|(need|get|see|want) (a|the|my) (doctor|dr\.?) (now|right now|right away|asap|urgently|immediately)|urgent(ly)? (need )?(a )?doctor)(?![\w-])/;
-function hanaReply(q) {
+function ciciReply(q) {
   const s = q.toLowerCase().trim(), sn = studioName(state.studio), p = pass(), b = state.booking, T = classTimes(b);
   const R = (line, pose, card, chips) => ({ line, pose, card: card || null, chips: chips || [] });
   const studioQ = (line) => { state.askDraft = q; return R(line || "Good question for the studio. Want me to send it?", "greet",
@@ -1517,8 +1789,8 @@ function hanaReply(q) {
   }
   return null;
 }
-function hanaAnswer(q) {
-  let r = hanaReply(q);
+function ciciAnswer(q) {
+  let r = ciciReply(q);
   if (r) { state.fallbacks = 0; if (!/^(hi|hey|hello|hiya)\b|\bhow are you\b|\b(fish|tuna|cute|love you|thanks?|thank you)\b/.test(q.toLowerCase())) state.smallTalk = 0; return r; }
   state.fallbacks = (state.fallbacks || 0) + 1;
   const ask = { k: "request", kicker: "Ask the studio", title: "Send it to " + studioName(state.studio) + "?", body: "“" + q + "”", foot: "About your health? Please see a doctor or your instructor.", acts: [["ai-question", "Ask the studio"]] };
@@ -1529,11 +1801,11 @@ function hanaAnswer(q) {
 function aiAsk(q, instant) {
   q = String(q || "").trim(); if (!q) return;
   state.chat.push({ role: "me", text: q });
-  if (instant) { state.chat.push({ role: "ai", ...hanaAnswer(q) }); return; }
-  state.chat.push({ role: "think" }); render(); scrollAsk(); askSay("Hana is typing");
-  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...hanaAnswer(q) }); render(); scrollAsk(); const lr = state.chat[state.chat.length - 1] || {}; askSay("Hana: " + (lr.line || "") + (lr.card ? " " + lr.card.title : "")); if (/signal/.test(lr.line || "")) HanaRenderer.error(); else HanaRenderer.talk(); }, 650);
+  if (instant) { state.chat.push({ role: "ai", ...ciciAnswer(q) }); return; }
+  state.chat.push({ role: "think" }); render(); scrollAsk(); askSay("Cici is typing");
+  clearTimeout(aiAsk.t); aiAsk.t = setTimeout(() => { state.chat = state.chat.filter(m => m.role !== "think"); state.chat.push({ role: "ai", ...ciciAnswer(q) }); render(); scrollAsk(); const lr = state.chat[state.chat.length - 1] || {}; askSay("Cici: " + (lr.line || "") + (lr.card ? " " + lr.card.title : "")); if (/signal/.test(lr.line || "")) CiciRenderer.error(); else CiciRenderer.talk(); }, 650);
 }
-/* FX-03: scroll so the latest Hana line (and the card under it) starts at the top of the view; while thinking, show the dots */
+/* FX-03: scroll so the latest Cici line (and the card under it) starts at the top of the view; while thinking, show the dots */
 function scrollAsk() {
   const sc = document.getElementById("view"); if (!sc) return;
   const hs = sc.querySelectorAll(".ask-thread .bubble.her, .ask-thread .ask-nosig"), her = hs[hs.length - 1];
@@ -1564,7 +1836,7 @@ function assistant() {
   const waiting = state.requests.filter(r => r.status === "waiting").length, replied = state.requests.filter(r => r.status === "replied").length;
   return `<div class="askhead"><button class="link backhit" type="button" data-act="ai-back">Back</button>
     ${inboxBtn("reqbtn")}</div>
-    <div class="hana-stage ask-stage${state.chat.length ? "" : " grow"}">${line ? `<div class="hana-bubble">${line}</div>` : ""}${hana(pose)}</div>
+    <div class="cici-stage ask-stage${state.chat.length ? "" : " grow"}">${line ? `<div class="cici-bubble">${line}</div>` : ""}${cici(pose)}</div>
     <p class="ask-k">Asking about ${studioName(state.studio)} · I only act when you tap</p>
     <div class="thread ask-thread">${thread}</div>
     <div class="ask-dock">${chips.length ? `<div class="chips wrap ask-chips">${chips.map(chipHtml).join("")}</div>` : ""}
@@ -1610,7 +1882,7 @@ const JUMPS = [
   { key: "code",     label: "Code", note: "Six boxes. Paste fills all. 000000 is wrong on purpose.", go: () => { state.auth = "otp"; state.otpFor = state.mode === "forgot" ? "forgot" : "login"; state.otp = ["","","","","",""]; state.otpError = ""; } },
   { key: "today",    label: "Today", note: "Class card when booked; one suggestion when not. Bell and menu in the header.", go: () => { inApp(); state.tab = "today"; } },
   { g: "Today moments" },
-  { key: "m-greet",   label: "Morning greet", note: "Booked tonight, 9:41am. Hana waves.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; } },
+  { key: "m-greet",   label: "Morning greet", note: "Booked tonight, 9:41am. Cici waves.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; } },
   { key: "m-book",    label: "Just booked", note: "Right after booking. Check pops, nothing spent.", go: () => { inApp(); ensureBooked(); state.justBooked = true; state.clock = "am"; state.tab = "today"; } },
   { key: "m-nobook",  label: "No booking", note: "Nothing booked. One suggestion.", go: () => { inApp(); state.booking = null; state.studio = "geumho"; state.tab = "today"; } },
   { key: "m-sleep",   label: "Welcome back", note: "15 days since the last visit, nothing booked. No pressure.", go: () => { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; } },
@@ -1620,13 +1892,13 @@ const JUMPS = [
   { key: "m-cleared", label: "Board cleared", note: "Shared or skipped after class. Streak grows.", go: () => { inApp(); ensureBooked(); state.clock = "pm"; state.arrived = true; state.arrivedVia = "tap"; state.sharedIn = true; state.attended = true; state.sharedDone = true; state.streak = (INITIAL.streak || 3) + 1; state.tab = "today"; } },
   { key: "m-paused",  label: "Missed check-in", get note() { return clockLabel.at("night") + "pm, no check-in. Board paused, streak unchanged."; }, go: () => { inApp(); ensureBooked(); state.clock = "night"; state.tab = "today"; } },
   { key: "m-low",     label: "Low sessions", note: "2 left. From the pass pill on Today.", go: () => { inApp(); ensureBooked(); state.tab = "today"; state.view = "low"; } },
-  { g: "Ask Hana" },
+  { g: "Ask Cici" },
   ...[["ask-empty", "Empty thread", null, null], ["ask-book", "Booking", "Book me tonight at 7", null], ["ask-pass", "Pass", "How many left?", null], ["ask-info", "Class info", "What should I bring?", null],
       ["ask-streak", "Streak", "What's my streak?", null], ["ask-studio", "Studio question", "I left my towel", null], ["ask-talk", "Small talk", "Do you like fish?", null], ["ask-mood", "Mood", "I'm tired", null],
       ["ask-tip", "Tips", "How do I breathe in Pilates?", null], ["ask-care", "Pain guardrail", "My knee hurts", null], ["ask-fallback", "Not sure", "What's the meaning of life?", null],
       ["ask-offline", "Offline", "How many left?", "offline"], ["ask-seat", "Seat taken", "Book me tonight at 7", "seatTaken"], ["ask-sendfail", "Send failed", "Can I extend?", "sendFail"],
       ["ask-nopass", "Pass ended", "How many left?", "noPass"], ["ask-noclass", "No matching class", "Any barre at 10 tomorrow morning?", null], ["ask-long", "Too long", "x".repeat(150), null]]
-    .map(([key, label, q, sim]) => ({ key, label, note: "Ask Hana · " + label + (q && q.length < 60 ? ": “" + q + "”" : "") + ". One line, at most one card, nothing happens until a tap.",
+    .map(([key, label, q, sim]) => ({ key, label, note: "Ask Cici · " + label + (q && q.length < 60 ? ": “" + q + "”" : "") + ". One line, at most one card, nothing happens until a tap.",
       go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; state.aiSim = sim; if (key === "ask-book" || key === "ask-seat") state.booking = null; if (sim === "noPass") state.studio = "cheongdam"; if (q) aiAsk(q, true); if (sim === "offline") { state.aiSim = null; aiAsk("What should I bring?", true); state.aiSim = "offline"; aiAsk("How many left?", true); } } })),
   { g: "Screens" },
   { key: "streak",   label: "Streak", note: "The week. It grows when today's board is cleared. Not the pass.", go: () => { inApp(); ensureBooked(); state.clock = "am"; state.tab = "today"; state.view = "streak"; } },
@@ -1645,7 +1917,7 @@ const JUMPS = [
   { key: "wait",     label: "Waitlist", note: "8:00 is full. You’d be 2nd. Nothing is held.", go: () => { inApp(); state.tab = "book"; state.view = "wait"; state.studio = "cheongdam"; } },
   { key: "alerts",   label: "Inbox", note: "One inbox: studio replies and alerts, newest first. Filters: All, Studio replies, Alerts. One dot for unseen items.", go: () => { inApp(); state.tab = "you"; state.view = "inbox"; state.inboxFilter = "all"; state.inboxNew = ["a0", "r0"]; } },
   { key: "inbox-detail", label: "Inbox · request detail", note: "A studio reply opens its request: what you asked, the reply, the status.", go: () => { inApp(); state.tab = "you"; state.view = "reqdetail"; state.reqDetail = 0; } },
-  { key: "ai",       label: "Ask Hana", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; state.aiFrom = null; } },
+  { key: "ai",       label: "Ask Cici", note: "Type it. The assistant answers with a card from the real schedule; the tap on the card is the action. It never books or edits a pass by itself.", go: () => { inApp(); state.studio = "cheongdam"; state.tab = "you"; state.view = "ai"; state.chat = []; state.aiFrom = null; } },
   { key: "pass",     label: "Pass", note: "2 / 10 until 14 Oct, as the server returns it. Previous pass and visits.", go: () => { inApp(); state.tab = "you"; state.view = "pass"; } },
   { key: "you",      label: "You", note: "Pass, alerts, ask, studios, arrival, log out.", go: () => { inApp(); state.tab = "you"; } }
 ];
@@ -1774,7 +2046,7 @@ function _render() {
   document.getElementById("clkPm").classList.toggle("on", state.clock === "pm");
   document.getElementById("clkNight").classList.toggle("on", state.clock === "night");
   const tabs = document.getElementById("tabs");
-  tabs.hidden = state.auth !== "app" || ["streak","friends","add-friend","share"].includes(state.view);
+  tabs.hidden = state.auth !== "app" || ["streak","friends","add-friend","share","onboard","shop"].includes(state.view);
   if (state.auth === "app") {
     /* FX-10: a cross-tab view (inbox, request detail, request form) keeps its opener's tab lit */
     const io = state.inboxOrigin, inInbox = ["inbox", "alerts", "requests", "reqdetail"].includes(state.view);
@@ -1811,6 +2083,9 @@ function _render() {
   else if (state.view === "friends") view.innerHTML = friendsScreen();
   else if (state.view === "add-friend") view.innerHTML = addFriendScreen();
   else if (state.view === "share") view.innerHTML = shareScreen();
+  else if (state.view === "onboard") view.innerHTML = onboardScreen();
+  else if (state.view === "profile-edit") view.innerHTML = profileEditScreen();
+  else if (state.view === "shop") view.innerHTML = shopScreen();
   else if (state.tab === "today") view.innerHTML = today();
   else if (state.tab === "book") view.innerHTML = book();
   else if (state.tab === "schedule") view.innerHTML = schedule();
@@ -1827,6 +2102,7 @@ function _render() {
   const jmp = state.jump && JUMPS.find(j => j.key && j.key === state.jump);
   const n = feat ? [feat.f + " · " + feat.label, feat.note] : jmp ? [jmp.label, jmp.note] : noteFor();
   document.getElementById("note").innerHTML = `<p class="kicker">${n[0]}</p><h2>${n[0]}</h2><p>${n[1]}</p>`;
+  applyEquipped();
   wire();
 }
 function readForm() {
@@ -1869,16 +2145,20 @@ function saveNewPass() {
   state.password = a; enterApp();
 }
 function enterApp() {
-  if (state.otpFor === "create") { resetSession(); state.alerts = [{ k: "pass", t: "Welcome, " + state.name.split(" ")[0], d: "Geumho · 8 of 20 · until 12 Nov", when: "Just now", unread: true }]; }
-  state.auth = "app"; state.tab = "today"; state.view = null; state.studio = "geumho";
-  toast("Welcome in"); render();
+  const isNew = state.otpFor === "create";
+  if (isNew) { resetSession(); state.alerts = [{ k: "pass", t: "Welcome, " + state.name.split(" ")[0], d: "Geumho · 8 of 20 · until 12 Nov", when: "Just now", unread: true }]; }
+  state.auth = "app"; state.studio = "geumho";
+  if (isNew && state.firstRun) { state.tab = "today"; state.view = "onboard"; }
+  else { state.tab = "today"; state.view = null; toast("Welcome back"); }
+  render();
 }
 function bookClass(spec) {
   state.moved = false;
   state.justBooked = true; state.booking = spec; if (spec.studio) state.studio = spec.studio; state.arrived = false; state.arrivedVia = null; state.sharedIn = false; state.sharedDone = false;
   alert("today", "Booked · " + spec.className, spec.when + " · " + spec.time + " · " + spec.teacher + " · still " + remainingLine());
   state.tab = "today"; state.view = null;
-  toast("Booked · still " + remainingLine()); render(); HanaRenderer.success();
+  gainReward(10, 2);
+  toast("Booked · still " + remainingLine()); render(); CiciRenderer.success();
 }
 function sheetBox(html) {
   const box = document.getElementById("sheetBox"), sh = document.getElementById("sheet");
@@ -1901,7 +2181,7 @@ function openMenu() {
   sheetBox(`<p class="kicker">Menu</p><h1>More</h1>
     <button class="menu-row" type="button" data-act="pass">${ICONS.pass}<div><strong>Pass</strong><span>History and remaining</span></div></button>
     <button class="menu-row" type="button" data-act="inbox">${ICONS.inbox}<div><strong>Inbox</strong><span>Studio replies and alerts</span></div></button>
-    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Hana</strong></div></button>
+    <button class="menu-row" type="button" data-act="ai">${ICONS.spark}<div><strong>Ask Cici</strong></div></button>
     <button class="menu-row" type="button" data-act="studios">${ICONS.studio}<div><strong>Switch studio</strong></div></button>
     <button class="btn ghost" type="button" data-act="close">Close</button>`);
   document.getElementById("sheetBox").onclick = (e) => {
@@ -1943,21 +2223,21 @@ function openCancel() {
 function openLegal(title, body) {
   sheetBox(`<p class="kicker">Legal</p><h1>${title}</h1><p class="sub">${body}</p><button class="btn ghost" type="button" data-act="close">Close</button>`);
 }
-/* Long press on Hana asks "How many left?" */
+/* Long press on Cici asks "How many left?" */
 document.getElementById("view").addEventListener("pointerdown", (e) => {
-  const h = e.target.closest("[data-hana]"); if (!h || state.auth !== "app") return;
-  clearTimeout(hana.t); hana.long = false;
-  hana.t = setTimeout(() => { hana.long = true; state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); state.tab = "today"; state.view = null; render(); }, 550);
+  const h = e.target.closest("[data-cici]"); if (!h || state.auth !== "app") return;
+  clearTimeout(cici.t); cici.long = false;
+  cici.t = setTimeout(() => { cici.long = true; state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); state.tab = "today"; state.view = null; render(); }, 550);
 });
-["pointerup", "pointerleave", "pointercancel"].forEach(t => document.getElementById("view").addEventListener(t, () => clearTimeout(hana.t)));
+["pointerup", "pointerleave", "pointercancel"].forEach(t => document.getElementById("view").addEventListener(t, () => clearTimeout(cici.t)));
 function wire() {
   document.getElementById("view").onclick = (e) => {
-    const h = e.target.closest("[data-hana]");
-    if (h) { if (hana.long) { hana.long = false; return; }
-      if (HanaRenderer.active && h.classList.contains("rive")) { HanaRenderer.tap(); return; }
+    const h = e.target.closest("[data-cici]");
+    if (h) { if (cici.long) { cici.long = false; return; }
+      if (CiciRenderer.active && h.classList.contains("rive")) { CiciRenderer.tap(); return; }
       clearTimeout(h.wt); h.querySelector(".prevfig")?.remove(); h.classList.remove("tap", "l-twitch", "l-look", "l-hop"); void h.offsetWidth; h.classList.add("tap");
-      const img = h.querySelector(".fig .body"), back = hanaSrc(h.dataset.s), swap = HTAP_WINK[h.dataset.s];
-      if (swap) { img.src = hanaSrc("wink"); h.querySelector(".prop")?.classList.add("hide-on-tap"); }
+      const img = h.querySelector(".fig .body"), back = ciciSrc(h.dataset.s), swap = HTAP_WINK[h.dataset.s];
+      if (swap) { img.src = ciciSrc("wink"); h.querySelector(".prop")?.classList.add("hide-on-tap"); }
       h.wt = setTimeout(() => { if (swap && img.isConnected) img.src = back; h.querySelector(".prop")?.classList.remove("hide-on-tap"); h.classList.remove("tap"); }, swap ? 1200 : 750); return; }
     const btn = e.target.closest("[data-act]"); if (!btn) return;
     state.feature = null; state.jump = null;
@@ -2022,7 +2302,7 @@ function wire() {
     }
     if (act === "decline-friend") { state.incoming.splice(Number(btn.dataset.i), 1); toast("Not added"); return render(); }
     if (act === "share-streak") return openShare("streak");
-    if (act === "hana-left") { state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); render(); }
+    if (act === "cici-left") { state.chat = state.chat || []; state.chat.push({ me: "How many left?" }); state.chat.push({ her: pass().left + " of " + pass().total + ", until " + pass().until + "." }); render(); }
     if (act === "nudge-here") { arrive("nudge"); state.nudge = false; render(); }
     if (act === "nudge-close") { state.nudge = false; render(); }
     if (act === "clock-pm") { state.clock = "pm"; tick(); render(); }
@@ -2074,6 +2354,42 @@ function wire() {
       state.requests.unshift({ type: state.askType, text: state.askText, studio: state.studio, when: "Today", status: "waiting" });
       state.chat.push({ role: "ai", card: { k: "sent", kicker: "Sent to " + studioName(state.studio), title: askLabel() + " · waiting for reply", body: state.askText, acts: [["ai-requests", "Open inbox"]] } }); alert("send", "Sent to " + studioName(state.studio), askLabel() + " · the studio will reply here"); toast("Sent · replies land up top"); render(); }
     if (act === "logout") { resetSession(); state.auth = "welcome"; state.mode = "login"; state.view = null; state.password = ""; render(); }
+    if (act === "edit-profile") { state.editNameVal = state.name; state.view = "profile-edit"; state.tab = "you"; render(); }
+    if (act === "save-profile") {
+      const v = (document.getElementById("fEditName")?.value || "").trim();
+      if (!v) { toast("Name can't be empty."); return; }
+      state.name = v; state.editNameVal = v; state.view = null; state.tab = "you"; toast("Name saved."); render();
+    }
+    if (act === "onboard-done") { state.firstRun = false; state.view = null; state.tab = "today"; gainReward(50, 10); toast("Welcome, " + state.name.split(" ")[0] + "! +50 XP +10 🪙"); render(); }
+    if (act === "dismiss-milestone") { state.milestoneSeen = true; render(); }
+    if (act === "dismiss-levelup") { state.levelUp = null; render(); }
+    if (act === "open-shop") { state.view = "shop"; state.tab = "you"; state.shopFilter = "all"; render(); }
+    if (act === "shop-filter") { state.shopFilter = el.dataset.k || "all"; render(); }
+    if (act === "buy-item") {
+      const id = el.dataset.id; const it = SHOP_ITEMS.find(x => x.id === id); if (!it) return;
+      if (state.coins < it.price) { toast("Not enough coins 🪙"); return; }
+      state.coins -= it.price;
+      if (it.cat === "boost") {
+        if (id === "boost-xp") state.xpBoostLeft = 3;
+        if (id === "boost-coin") state.coinRushLeft = 3;
+        toast(it.icon + " " + it.name + " activated for 3 boards!");
+      } else {
+        if (!state.inventory.includes(id)) state.inventory.push(id);
+        toast(it.icon + " " + it.name + " unlocked!");
+      }
+      render();
+    }
+    if (act === "equip-item") {
+      const id = el.dataset.id; const it = SHOP_ITEMS.find(x => x.id === id); if (!it) return;
+      const unequip = el.dataset.unequip === "1";
+      const catMap = { bg:"bg", frame:"frame", companion:"companion", music:"music" };
+      const key = catMap[it.cat];
+      if (key) { state.equipped[key] = unequip ? null : id; }
+      toast(unequip ? it.icon + " Removed." : it.icon + " " + it.name + " equipped!");
+      /* apply background immediately */
+      applyEquipped();
+      render();
+    }
   };
   const aiT = document.getElementById("aiText"), aiB = document.querySelector(".pawsend");
   if (aiT && aiB) { aiT.addEventListener("input", () => { aiB.disabled = !aiT.value.trim(); }); aiB.addEventListener("pointerdown", () => { if (aiB.disabled) return; aiB.classList.remove("squish"); void aiB.offsetWidth; aiB.classList.add("squish"); }); }
@@ -2181,8 +2497,8 @@ document.getElementById("view").addEventListener("cancel-yes", () => {
 document.getElementById("view").addEventListener("submit", (e) => {
   e.preventDefault();
   if (e.target.id === "authForm") sendCode();
-  if (e.target.id === "hanaTalk") {
-    const q = (document.getElementById("hanaText")?.value || "").trim();
+  if (e.target.id === "ciciTalk") {
+    const q = (document.getElementById("ciciText")?.value || "").trim();
     if (!q) return;
     state.chat = state.chat || [];
     state.chat.push({ me: q });
@@ -2214,7 +2530,7 @@ render();
 if (new URLSearchParams(location.search).has("dev")) checkJumps();
 /* ?state=sleep: member away 14+ days with nothing booked */
 if (new URLSearchParams(location.search).get("state") === "sleep") { inApp(); state.booking = null; state.daysSinceVisit = 15; state.tab = "today"; state.view = null; render(); }
-{ const _render = render; render = function () { const out = _render.apply(this, arguments); try { HanaRenderer.sync(); } catch (e) {} return out; }; HanaRenderer.sync(); }
+{ const _render = render; render = function () { const out = _render.apply(this, arguments); try { CiciRenderer.sync(); } catch (e) {} return out; }; CiciRenderer.sync(); }
 </script>
 </body>
 </html>
