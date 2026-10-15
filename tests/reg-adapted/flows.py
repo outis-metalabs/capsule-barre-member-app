@@ -1,6 +1,7 @@
 import json
 from playwright.sync_api import sync_playwright
-U='http://localhost:8851/platform-app.html';O={}
+import sys,os
+U=sys.argv[1] if len(sys.argv)>1 else os.environ.get('BASE_URL','http://localhost:%s/platform-app.html'%os.environ.get('PORT','8851'));O={}
 with sync_playwright() as p:
   b=p.chromium.launch();E=[]
   def new(lang='en',vw=(390,844)):
