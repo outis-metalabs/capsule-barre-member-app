@@ -44,7 +44,7 @@ with sync_playwright() as p:
           g.evaluate(f"()=>{{ST.wear='{o}';{'P2S.char.hair=%r;' % h if h else ''}closeSheet();document.querySelectorAll('.munlock').forEach(e=>e.remove());go('tab:home')}}")
           shots = [('home', '#home-cici .cpic')]
           g.evaluate("()=>{ST.tab='you';ST.page='look';render()}"); 
-          r1 = g.evaluate("(" + JS + ")().then(k=>{k.check('look','#view .cpic, #p2-preview');k.avatar('you','.cav-h');return k.out})")
+          r1 = g.evaluate("(" + JS + ")().then(k=>{k.check('look','#view .cpic, #p2-preview');k.check('room','#p2-room #p2-preview, #p2-room .p2wrap');k.avatar('you','.cav-h');return k.out})")
           g.evaluate("()=>{ST.page=null;go('tab:you')}"); r2 = g.evaluate("(" + JS + ")().then(k=>{k.avatar('you-prof','.cav-h');return k.out})")
           g.evaluate("()=>go('tab:cici')"); r3 = g.evaluate("(" + JS + ")().then(k=>{k.avatar('cici-tab','.cav-h');k.check('cici-tab','.nhero, .chome .cpic');return k.out})")
           g.evaluate("()=>go('tab:home')"); r4 = g.evaluate("(" + JS + ")().then(k=>{k.check('home','#home-cici .cpic');k.check('notes','#home-notes, .notes');return k.out})")
