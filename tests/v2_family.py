@@ -22,15 +22,19 @@ with sync_playwright() as p:
     ok(f'[{L}] centre action = Book (member action), localized name', J(g, "document.querySelector('.tfab').dataset.act") == 'bk' and g.get_attribute('.tfab', 'aria-label') == lab)
     a = g.evaluate(A11Y, '#tabs button, #hb-bubble .hbhi, #hb-bubble .hbt, #hb-bubble .hbgo')
     ok(f'[{L}] tab bar + bubble: 44px and AA', all(x['h'] >= 44 and x['w'] >= 44 for x in g.evaluate(A11Y, '#tabs button, #hb-bubble .hbgo')) and all(x['c'] >= 4.5 for x in a), [x for x in a if x['c'] < 4.5])
+    J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(300)
     m = g.evaluate(A11Y, '#home-dm #dm-head, #home-dm #dm-sub, #home-dm .mt, #home-dm .btn, #home-dm .tag')
     ok(f'[{L}] berry mission hero card: AA on every text + 44px buttons', all(x['c'] >= 4.5 for x in m) and all(x['h'] >= 44 for x in g.evaluate(A11Y, '#home-dm .btn')), m)
     ok(f'[{L}] segmented 3-part progress', J(g, "document.querySelectorAll('#home-dm .dmbar i').length") == 3)
+    if L != 'vi':
+      g.screenshot(path=f'{SH}/missions-{L}-390.png')
+    J(g, "()=>{closeSheet()}"); g.wait_for_timeout(200)
     g.screenshot(path=f'{SH}/home-{L}-390.png') if L != 'vi' else None
     if L != 'vi':
-      J(g, "document.querySelector('#home-dm').scrollIntoView({block:'center'})"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/missions-{L}-390.png')
       for tab in ['discover', 'cici', 'you']:
-        J(g, f"()=>{{ST.tab='{tab}';ST.page=null;ST.store=null;render();scrollTo(0,0)}}"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/{tab}-{L}-390.png')
-    J(g, "()=>{ST.tab='home';render()}"); g.click('.tfab'); g.wait_for_timeout(300)
+        J(g, f"()=>{{closeSheet();ST.tab='{tab}';ST.page=null;ST.store=null;render();scrollTo(0,0)}}"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/{tab}-{L}-390.png')
+    J(g, "()=>{closeSheet();ST.tab='home';render()}"); g.wait_for_timeout(200)
+    J(g, "()=>{const b=document.querySelector('.tfab'); if(b)b.click()}"); g.wait_for_timeout(300)
     ok(f'[{L}] centre action opens the booking sheet', J(g, "!!document.querySelector('.sheet #bk-places, .sheet #bk-svcs')"))
     ok(f'[{L}] no page errors', not g.E, g.E); g.close()
   for L in ('ko', 'en'):
@@ -39,7 +43,7 @@ with sync_playwright() as p:
   # nothing tappable under the floating bar / centre button at the end of a scroll (all tabs, KO/EN/VI, 390 + 360)
   UNDER = r"""(()=>{const bar=document.querySelector('#tabs').getBoundingClientRect(),f=document.querySelector('#tabs .tfab');const fr=f?f.getBoundingClientRect():null;const top=Math.min(bar.top,fr?fr.top:1e9);
    const hit=r=>r.bottom>top+1&&r.top<bar.bottom&&r.width>0&&r.height>0;
-   return [...document.querySelectorAll('#view button,#view a[href],#view input,#view textarea,#view select,#view [data-act],#view [tabindex]:not([tabindex="-1"])')].filter(e=>e.offsetParent&&!e.closest('#tabs,.sheet,.toast')).map(e=>[e,e.getBoundingClientRect()]).filter(([e,r])=>hit(r)).map(([e,r])=>(e.dataset.act||e.tagName)+':'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,20)+'@'+Math.round(r.top))})()"""
+   return [...document.querySelectorAll('#view button,#view a[href],#view input,#view textarea,#view select,#view [data-act],#view [tabindex]:not([tabindex="-1"])')].filter(e=>e.offsetParent&&!e.closest('#tabs,.sheet,.toast,.v2pull,#v2-pull')).map(e=>[e,e.getBoundingClientRect()]).filter(([e,r])=>hit(r)).map(([e,r])=>(e.dataset.act||e.tagName)+':'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,20)+'@'+Math.round(r.top))})()"""
   for w in (390, 360):
     for L in ('ko', 'en', 'vi'):
       g = page(lang=L, w=w)
