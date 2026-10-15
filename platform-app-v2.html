@@ -333,7 +333,7 @@ nav.tabs .tfab .ico{width:26px;height:26px}
 .hbub .hbgo{background:#F7DFE3;color:#963A4D}
 .creal{border-radius:28px}
 .dmc{background-color:#A3435A;background-image:linear-gradient(135deg,#B04A5E 0%,#963A4D 100%);color:#fff;position:relative;overflow:hidden}
-.dmc #dm-head{font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff}.dmc #dm-sub{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:rgba(60,10,25,.18);color:#fff;font-weight:700}
+.dmc #dm-head{font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff}.dmc #dm-sub{display:table;margin-top:8px;padding:4px 10px;border-radius:999px;background:rgba(60,10,25,.18);color:#fff;font-weight:700}
 .dmc .dmbar{display:flex;gap:6px;background:none;height:6px}.dmc .dmbar i{flex:1;border-radius:6px;background:rgba(255,255,255,.35)}.dmc .dmbar i.on{background:#fff}.dmc .dmbar span{display:none}
 .dmc .mis{border-top:1px solid rgba(255,255,255,.22);color:#fff}.dmc .mis .ck{border-color:#fff;background:rgba(255,255,255,.15);color:#fff}.dmc .mis.done .mt{opacity:1;text-decoration:line-through}
 .dmc .mis .btn.sec{background:#fff;color:#963A4D;border-color:#fff}
@@ -343,6 +343,35 @@ main{padding-bottom:calc(140px + env(safe-area-inset-bottom))} /* last content s
 #view.cici-v{min-height:calc(100dvh - 64px - env(safe-area-inset-bottom));padding-bottom:calc(122px + env(safe-area-inset-bottom));box-sizing:border-box}#view.cici-v .dock{bottom:calc(122px + env(safe-area-inset-bottom))}
 .toast{bottom:calc(124px + env(safe-area-inset-bottom))}body:has(#view.cici-v) .toast{bottom:calc(250px + env(safe-area-inset-bottom))}
 html{scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom))}html:has(#view.cici-v){scroll-padding-bottom:calc(270px + env(safe-area-inset-bottom))} /* focus/scrollIntoView keeps targets clear of the floating bar (and the Cici dock) */
+
+/* ===== v2 Home: full-screen Cici (owner-app layout). Portrait render 1280x720, face box x560-830 y75-325 (centre x695). ===== */
+body.v2home header.top{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:transparent;box-shadow:none;transition:background .2s}
+body.v2home.v2scr header.top{background:#F7F2EF}
+body.v2home header.top .brand .nm{display:none}body.v2home header.top .brand span.t{font-size:15px;font-weight:800;color:#2B2324}
+body.v2home header.top .icb{background:rgba(255,255,255,.85);border-radius:999px}
+body.v2home main{padding-top:0}
+.v2hero{position:relative;margin:0 -16px;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;padding-top:64px;box-sizing:border-box;background:linear-gradient(#F3E6DC,#EEDFD3)}
+.v2hero .v2card{position:relative;z-index:2;margin:8px 0 0 16px;width:min(272px,calc(100% - 32px));padding:14px 12px 12px 16px;display:block;border-radius:22px}
+.v2hero .v2card::after{display:none}
+.v2card .hbhi{margin:0 0 4px;font-size:13px;font-weight:700;color:#6B5E62}
+.v2card .v2row{display:flex;align-items:center;gap:8px}.v2card .hbt{flex:1;margin:0;font-size:18px;font-weight:800;line-height:1.3;color:#2B2324}
+.v2card .hbt em{font-style:normal;color:#963A4D}
+.v2card .hbsec{margin:10px 0 0;padding-top:10px;border-top:1px solid rgba(43,35,36,.10);font-size:14px;font-weight:700;color:#2B2324}
+/* full-bleed official image: object-fit cover, object-position from CICI_HOME (50% 35%); the glass card sits on the plain wall top-left above her head */
+.v2bg{position:absolute;inset:0;margin:0;z-index:0}
+.v2bg img{display:block;width:100%;height:100%;object-fit:cover}
+@media (max-height:760px){.v2hero .v2card{padding:10px 10px 10px 14px}.v2card .hbt{font-size:16px}.v2card .hbsec{display:none}} /* short phones: keep the card clear of her head */
+.v2sheet{position:relative;z-index:3;margin:-30px -16px 0;padding:10px 16px 8px;background:#F7F2EF;border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(60,30,30,.10)}
+.v2handle{display:block;width:40px;height:5px;border-radius:5px;background:#D9CCC6;margin:0 auto 6px}
+.v2sheet .ghero .gfig{display:none}.v2sheet .ghero{padding:0}
+.gcomp{align-self:stretch;margin:4px 0 0;padding:14px 16px;text-align:left}
+.gcomp .gstage{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;align-items:center}.gcomp .gstage .tag,.gcomp .wear-tag{min-height:28px;display:inline-flex;align-items:center;font-size:12.5px;font-weight:700}
+.gcomp .gbars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:none;margin:0}
+.gcomp .gbar{grid-template-columns:1fr auto;grid-template-areas:"l n" "t t";gap:4px 6px;font-size:12.5px;font-weight:700;color:#6B5E62}
+.gcomp .gbl{grid-area:l}.gcomp .gbn{grid-area:n;color:#2B2324}.gcomp .gtrack{grid-area:t;height:6px}
+.gcomp .ghint{margin:10px 0 0;font-size:13px;color:#6B5E62;text-align:left}
+#p2-room .p2char{background:url(assets/cici-real/cici-sitting.webp) center bottom/contain no-repeat}#p2-room .p2char>*{opacity:0} /* v2: official sitting cut-out in the room */
+body.v2home{scroll-padding-top:72px}html:has(body.v2home){scroll-padding-top:72px}
 </style>
 </head>
 <body>
@@ -554,12 +583,12 @@ function gHero() { /* Home in phase2 (P2-G7): Cici large (stage art + mood pose)
   const alt = L3(`Cici, ${nm} stage, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, giai đoạn ${nm}, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, ${nm} 단계, ${L3(...G_TX["mood_" + g.mood])}`);
   const up = P2S.gSeen != null && P2S.gSeen < g.stage;
   const bars = ["str", "calm", "glow"].map(k => `<div class="gbar" data-k="${k}"><span class="gbl">${esc(L3(...G_STAT[k]))}</span><span class="gtrack" role="progressbar" aria-label="${esc(L3(...G_STAT[k]))}" aria-valuemin="0" aria-valuemax="${G_MAX}" aria-valuenow="${Math.min(G_MAX, g.st[k])}"><i style="width:${Math.min(100, g.st[k] / G_MAX * 100)}%"></i></span><b class="gbn">${g.st[k]}</b></div>`).join("");
-  return `<section class="chome ghero${CICI_REAL ? " isreal" : ""}" id="home-cici" aria-label="${esc(ciciNm())}" data-stage="${g.stage}" data-mood="${g.mood}" data-pose="${pose}">${CICI_REAL ? realHero(hbBubble(g)) : hbBubble(g)}
+  return `<section class="chome ghero${CICI_REAL ? " isreal" : ""}" id="home-cici" aria-label="${esc(ciciNm())}" data-stage="${g.stage}" data-mood="${g.mood}" data-pose="${pose}">${CICI_REAL ? "" : hbBubble(g)}
   <div class="gfig${g.mood === "rested" ? " cozy" : ""}${up ? " gup" : ""}" style="--ga1:${L0.a1};--ga2:${L0.a2};--gsc:${L0.sc}"><span class="gaura" aria-hidden="true"></span>${gSparks(L0.sp)}${g.mood === "rested" ? `<span class="gzz" aria-hidden="true">z<small>z</small></span>` : ""}<div class="cpic p2sk"${p2SkinAttr(null, 1)}>${cut(pose, { alt, eager: 1, loop: 1 })}</div></div>
   ${up ? `<div class="card gstageup" id="g-stageup" role="status"><b>${esc(gT("grew", { s: nm }))}</b><br><span class="sub sm">${esc(gT("grewSub"))}</span></div>` : ""}
-  <p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="sub sm" id="g-mood">${esc(gT("line_" + g.mood))}</span></p>
-  ${(() => { const wn = wearNm(); return wn ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${p2Acc()}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""; })()}
-  <div class="gbars" id="g-bars">${bars}</div><p class="sm ghint" id="g-hint"${!gated() && hbPick(g).k === "hint" ? " hidden" : ""}>${esc(gHint(g))}</p>
+  ${CICI_REAL ? `<div class="card gcomp" id="g-comp">` : ""}<p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="${CICI_REAL ? "vh" : "sub sm"}" id="g-mood">${esc(gT("line_" + g.mood))}</span>${CICI_REAL ? gWear() : ""}</p>
+  ${CICI_REAL ? "" : gWear()}
+  <div class="gbars" id="g-bars">${bars}</div><p class="sm ghint" id="g-hint">${esc(gHint(g))}</p>${CICI_REAL ? "</div>" : ""}
   ${gDemo()}</section>`; /* v2: no full-width Book CTA here; the raised centre button in the tab bar books */
 }
 /* ===== Home bubble + daily missions (phase2 only; crisis: neither renders, P2-X3/X4) ===== */
@@ -596,9 +625,24 @@ function dmCard() {
   ${DM_KEYS.map(k => `<div class="mis${d.done[k] ? " done" : ""}" data-m="${k}"><span class="ck" aria-hidden="true">${d.done[k] ? ic("check", "s") : ""}</span><span class="grow mt">${esc(M[k][0])}<span class="vh">${d.done[k] ? ", " + tr("done") : ""}</span></span>${d.done[k] ? "" : M[k][1]}</div>`).join("")}
   <div class="row sm sub" style="margin-top:6px"><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span></div></section>`;
 }
-function realHero(bub) { /* v2 Home figure only: Cici centred (object-position), bubble on the wall band above her head; falls back to the standard hero if the render is missing */
-  return `<figure class="creal" id="cici-real">${bub || ""}<img src="assets/cici-real/cici-real-studio.webp" width="1280" height="720" alt="${esc(L3("Cici in a bright Seoul studio with a city-tower view", "Cici trong studio sáng ở Seoul, nhìn ra tháp thành phố", "서울 타워가 보이는 밝은 스튜디오의 " + CICI_KO))}" onerror="const f=this.closest('figure'),b=f.querySelector('.hbub');if(b)f.before(b);f.hidden=true;document.body.classList.add('noreal')"></figure>`;
+function gWear() { const wn = wearNm(); return wn ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${p2Acc()}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""; }
+const V2HOME = () => P2() && CICI_REAL && ST.tab === "home" && !ST.page && !ST.store && !gated();
+function v2Card() { /* ONE glass card: name greeting, one bold line with a berry highlight, a chevron, at most one secondary row */
+  const nm = HB_NM(), hi = L3(`Hi ${nm}!`, `Chào ${nm}!`, `${nm}님~`), tb = upcoming().find(b => b.d === todayIdx()), d = dmDay(), n = DM_KEYS.filter(k => d.done[k]).length, st = ME ? ME.streak : 0;
+  let k, line, act, id = "", cta;
+  if (tb) { const v = svcOf(tb.store, tb.svc), tm = fWhen(tb.d, tb.m).split(" · ").pop(); k = "class"; act = "managebk"; id = tb.id; cta = L3("See booking", "Xem lịch", "예약 보기");
+    line = L3(`Today <em>${esc(tm)}</em> ${esc(N(v.n))}`, `Hôm nay <em>${esc(tm)}</em> ${esc(N(v.n))}`, `오늘 <em>${esc(tm)}</em> ${esc(N(v.n))}`); }
+  else { k = "missions"; act = "hbsheet"; cta = L3("Today's missions", "Nhiệm vụ hôm nay", "오늘의 미션"); line = L3(`Today's missions <em>${n}/3</em>`, `Nhiệm vụ hôm nay <em>${n}/3</em>`, `오늘의 미션 <em>${n}/3</em>`); }
+  const sec = st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) : "";
+  return `<div class="hbub v2card" id="hb-bubble" data-k="${k}" role="status"><p class="hbhi">${esc(hi)}</p><div class="v2row"><p class="hbt" id="hb-line">${line}</p><button class="hbgo" data-act="${act}"${id ? ` data-id="${esc(id)}"` : ""} data-from="bubble" aria-label="${esc(cta)}">${ic("chev", "s")}</button></div>${sec ? `<p class="hbsec" id="hb-sec">${esc(sec)}</p>` : ""}</div>`;
 }
+/* v2 Home image slot: SWAP HERE. The tall official Cici image from the 3D Designer replaces assets/cici-real/cici-home.webp; set its size and face box (image px). */
+const CICI_HOME = { src: "assets/cici-real/cici-home.webp", w: 1080, h: 1920, face: [354, 540, 720, 975], pos: [0.5, 0.35] }; /* official tall image (3D Designer); head box in image px; object-position */
+function v2Hero() {
+  return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg" id="cici-real"><img src="${CICI_HOME.src}" width="${CICI_HOME.w}" height="${CICI_HOME.h}" style="object-position:${CICI_HOME.pos[0] * 100}% ${CICI_HOME.pos[1] * 100}%" alt="${esc(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}"></figure></section>`;
+}
+function v2Scroll() { document.body.classList.toggle("v2scr", document.body.classList.contains("v2home") && scrollY > innerHeight * .45); }
+addEventListener("scroll", () => v2Scroll(), { passive: true });
 function gAfterHome() { const g = gState(); if ((P2S.gSeen || 0) < g.stage) { P2S.gSeen = g.stage; p2Save(); try { celebrate(false); } catch (e) {} } } /* one-time stage-up moment (P2-G1/G2: never re-awarded) */
 const gDemoOn = () => { try { return !!DEMO_MODE; } catch (e) { return false; } };
 function gDemo() { if (!gDemoOn()) return ""; const cs = ["barre", "yoga", "pickleball", "spa", "hair", "nails", "skincare"];
@@ -2239,6 +2283,10 @@ function importCard() {
 }
 function vHome() {
   /* MVP-H1 order: Cici + greeting, level bar, 2–3 missions, Next class card (+ "All bookings"). Allowed extras: the one-line migration banner (A3) and the header bell. */
+  if (V2HOME()) { track("home_open"); const up = upcoming(); /* v2: full-screen Cici + one glass card; everything else in a light sheet below the first screen */
+    return v2Hero() + `<section class="v2sheet" id="home-sheet" aria-label="${esc(L3("Today", "Hôm nay", "오늘"))}"><span class="v2handle" aria-hidden="true"></span>` + gHero() + notesCard() +
+      `<h2>${t("missions")}</h2>${dmCard()}<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>` +
+      `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + `</section>`; }
   const up = upcoming(); track("home_open");
   return (P2() && !gated() ? gHero() : heroScene()) + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${P2() && !gated() ? dmCard() : missionsCard()}` +
@@ -2400,7 +2448,7 @@ function maybeUnlock() {
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); if (P2() && ST.tab === "home" && !ST.page && !ST.store && !gated() && typeof gAfterHome === "function") setTimeout(gAfterHome, 0); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); { const on = V2HOME(); document.body.classList.toggle("v2home", on); if (on) { const t0 = $("#top .brand span.t"); if (t0) { try { t0.textContent = new Intl.DateTimeFormat(L === "ko" ? "ko-KR" : L === "vi" ? "vi-VN" : "en-US", { month: "long", day: "numeric", weekday: "long", timeZone: MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon" }).format(new Date()); } catch (e) {} } } v2Scroll(); } saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); if (P2() && ST.tab === "home" && !ST.page && !ST.store && !gated() && typeof gAfterHome === "function") setTimeout(gAfterHome, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -2996,6 +3044,7 @@ document.addEventListener("click", e => {
     case "attend": attend(bk(d.id)); break;
     case "stretch": stretchSheet(); break;
     case "dmwater": { if (!P2() || gated()) break; const r = pvMission(ME, "water"), dm = dmMark("water"); render(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm)); break; }
+    case "hbsheet": { const el = $("#home-sheet"); if (el) { el.scrollIntoView({ block: "start", behavior: "smooth" }); const m = $("#home-dm"); if (m) m.focus({ preventScroll: true }); } break; }
     case "hbmis": { const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }
     case "stretchdone": finishStretch(); break;
     case "rest": { const r = pvMission(ME, "rest"); ST.miss.rest = true; render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("restDay") }) : pvT(r.msg)); break; }
