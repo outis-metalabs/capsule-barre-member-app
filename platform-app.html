@@ -217,7 +217,7 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 #wintoast.in{transform:translate(-50%,0);opacity:1}#wintoast[hidden]{display:none}
 #wintoast .wthumb{flex:none;width:40px;height:48px}#wintoast .wthumb .cut{width:40px;height:48px;object-fit:contain;object-position:50% 100%}
 #wintoast .wtx{display:flex;flex-direction:column;min-width:0}#wintoast .wamt{font-size:17px;color:#B04A5E;line-height:1.2}#wintoast .wwhy{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#wintoast.fun{border-color:#B8DDD7;box-shadow:0 8px 24px rgba(23,107,98,.2)}#wintoast.fun .wamt{color:#176B62} /* fun points: teal, AA on white */
+
 @media (prefers-reduced-motion: reduce){#wintoast{transition:none;transform:translate(-50%,0)}}
 /* MVP character-first Home + unlock */
 .chome{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 0}
@@ -283,7 +283,7 @@ button:active:not([disabled]){transform:scale(.94)}
 .p2items{display:flex;flex-wrap:wrap;gap:6px;flex:1;align-items:flex-end}.p2it{display:inline-grid;place-items:center}
 .p2char{position:relative;display:inline-block;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff 0 35%,var(--sk) 36%);overflow:hidden;flex:none}.p2char .cut{width:100%;height:100%;object-fit:contain}
 .p2sw{display:inline-block;width:16px;height:16px;border-radius:50%;margin-right:6px;border:1px solid var(--line);vertical-align:-3px}
-.p2brand{color:#74283A;font-weight:650}.p2two .btn{min-width:0;white-space:normal}.p2two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}.p2fun{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}.p2funic{flex:none}.chip.p2lock{color:var(--sub);background:#F6F0EA}
+.p2brand{color:#74283A;font-weight:650}.p2two .btn{min-width:0;white-space:normal}.p2two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}.p2pts{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}.p2ptsic{flex:none}.chip.p2lock{color:var(--sub);background:#F6F0EA}
 /* acc-fix: hair is a tint chip, never a shape on the face */ .p2hair{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(142,51,70,.35);margin-right:4px;vertical-align:-2px;flex:none}
 #cici-hd-av .p2hair{position:absolute;left:-6px;bottom:-4px;margin:0}
 .chome .cpic.p2sk{border-radius:50% 50% 24px 24px}
@@ -344,20 +344,20 @@ const CICI = { en: "Cici", vi: "Cici", ko: CICI_KO };
 const ciciNm = () => CICI[L] || CICI.en;
 /* legacy (pre-rename) name, only used to recognise threads saved by older builds (NT-9); never displayed */
 /* ===== Phase 2 (PO plan + BA phase2-ba-ac.md): behind FLAGS.phase2, off by default, ?phase2=1 turns it on.
-   P2-B builder (preset IDs only) · P2-R room + fun points (own counter, no points-ledger rows, never converts) · P2-P premium demo checkout (no payment fields/calls, demo items only)
+   P2-B builder (preset IDs only) · P2-R room items bought with regular points (one balance, ledger rows reason "room", life 0; works with realRewards off since cosmetic) · P2-P premium demo checkout (no payment fields/calls, demo items only)
    P2-F photo demo (consent first, mock, auto-delete, Delete/withdraw wipes derived data). ⚠ PIPA: facial images may be sensitive/biometric data; wording, retention, age rule and processing location need legal review (OQ-F1). */
 function P2() { try { return !!FLAGS.phase2; } catch (e) { return false; } } /* hoisted; false before FLAGS exists */
 const P2T = {
-  roomT: ["Cici's room", "Phòng của Cici", "{c}의 방"], funL: ["Fun points", "Điểm vui", "펀 포인트"], fun: ["{n} fun points", "{n} điểm vui", "펀 포인트 {n}"],
-  funNote: ["Fun points come with store-confirmed visits and missions. They're only for decorating Cici's room: no cash value, can't be bought, transferred, used at stores or swapped for voucher points, and they don't expire.", "Điểm vui đến cùng lượt đến được cửa hàng xác nhận và nhiệm vụ. Chỉ để trang trí phòng Cici: không có giá trị tiền mặt, không mua, chuyển, dùng tại cửa hàng hay đổi sang điểm ưu đãi, và không hết hạn.", "펀 포인트는 매장 확인 방문과 미션으로 모여요. {c}의 방 꾸미기 전용이라 현금 가치가 없고, 구매·양도·매장 사용·쿠폰 포인트 전환이 안 되며, 만료되지 않아요."],
+  roomT: ["Cici's room", "Phòng của Cici", "{c}의 방"], ptsL: ["Points", "Điểm", "포인트"],
+  ptsNote: ["Room items use your points, the same single balance as on the Points page. They're just for looks: buying one never changes your level, streak or bookings.", "Vật phẩm phòng dùng điểm của bạn, chung một số dư với trang Điểm. Chỉ để trang trí: mua không làm thay đổi cấp, chuỗi hay lịch đặt.", "방 아이템은 포인트 페이지와 같은 하나의 포인트로 사요. 꾸미기용이라 레벨, 연속 기록, 예약에는 영향이 없어요."],
   decorate: ["Decorate", "Trang trí", "꾸미기"], shop: ["Item shop", "Cửa hàng vật phẩm", "아이템 샵"], empty: ["Your room is empty. Add something cosy.", "Phòng còn trống. Thêm chút gì ấm cúng nhé.", "방이 비어 있어요. 아늑한 걸 놓아 보세요."],
-  buyFun: ["Get · {n} fun points", "Lấy · {n} điểm vui", "받기 · 펀 포인트 {n}"], place: ["Place", "Đặt vào", "놓기"], remove: ["Take out", "Cất đi", "빼기"], owned: ["Owned", "Đã có", "보유"],
-  needMore: ["You need {n} more fun points", "Bạn cần thêm {n} điểm vui", "펀 포인트가 {n} 더 필요해요"],
+  buyPts: ["Get · {n} points", "Lấy · {n} điểm", "받기 · {n}포인트"], place: ["Place", "Đặt vào", "놓기"], remove: ["Take out", "Cất đi", "빼기"], owned: ["Owned", "Đã có", "보유"],
+  needMore: ["You need {n} more points", "Bạn cần thêm {n} điểm", "포인트가 {n} 더 필요해요"],
   demo: ["Demo", "Demo", "데모"], buyDemo: ["Buy · {p}", "Mua · {p}", "구매 · {p}"],
   checkout: ["Demo checkout", "Thanh toán demo", "데모 결제"], payNote: ["Demo checkout. No payment is taken and nothing is charged.", "Thanh toán demo. Không thu tiền và không tính phí gì.", "데모 결제예요. 결제되지 않고 아무것도 청구되지 않아요."],
   confirmDemo: ["Confirm demo", "Xác nhận demo", "데모 확인"], cancel: ["Cancel", "Hủy", "취소"], demoItem: ["Demo item", "Vật phẩm demo", "데모 아이템"], resetDemo: ["Reset demo items", "Đặt lại vật phẩm demo", "데모 아이템 초기화"],
   free: ["Free", "Miễn phí", "무료"], pendingPriv: ["Demo – pending privacy review", "Demo – đang chờ rà soát quyền riêng tư", "데모 – 개인정보 검토 대기 중"],
-  offered: ["Offered by {b}", "Do {b} cung cấp", "{b} 제공"], limited: ["Limited", "Giới hạn", "한정"], noWin: ["Items are just for looks. They never change points, fun points, levels, streaks, bookings or vouchers.", "Vật phẩm chỉ để trang trí, không ảnh hưởng điểm, điểm vui, cấp, chuỗi, lịch đặt hay ưu đãi.", "아이템은 꾸미기용이에요. 포인트, 펀 포인트, 레벨, 연속 기록, 예약, 쿠폰에 영향이 없어요."],
+  offered: ["Offered by {b}", "Do {b} cung cấp", "{b} 제공"], limited: ["Limited", "Giới hạn", "한정"], noWin: ["Items are just for looks. They never grant points or change levels, streaks, bookings or vouchers.", "Vật phẩm chỉ để trang trí, không cộng điểm, không ảnh hưởng cấp, chuỗi, lịch đặt hay ưu đãi.", "아이템은 꾸미기용이에요. 포인트 적립, 레벨, 연속 기록, 예약, 쿠폰에 영향이 없어요."],
   gotIt: ["Added to your room items", "Đã thêm vào vật phẩm", "방 아이템에 추가됐어요"],
   customise: ["Customise", "Tùy chỉnh", "꾸미기"], builder: ["Customise Cici", "Tùy chỉnh Cici", "{c} 꾸미기"], hair: ["Hair", "Tóc", "헤어"], skin: ["Skin tone", "Màu da", "피부 톤"], outfit: ["Outfit", "Trang phục", "의상"],
   builderNote: ["Choose from presets. Only your choices are saved, never a photo or face.", "Chọn từ mẫu có sẵn. Chỉ lưu lựa chọn, không bao giờ lưu ảnh hay khuôn mặt.", "프리셋에서 골라요. 선택한 항목만 저장되고 사진이나 얼굴은 저장하지 않아요."],
@@ -388,32 +388,37 @@ const P2_SKIN = [["s1", "#F6DCC8", ["Tone 1", "Tông 1", "톤 1"]], ["s2", "#E5B
 const P2_DEF = { hair: "bun", skin: "s2", outfit: "o1" };
 const p2AgeOk = () => typeof ME.age === "number" && ME.age >= P2_AGE_MIN; /* PR19-2: unknown age = no photo mode until known */
 const P2_AGE_MIN = 14; /* PROPOSED placeholder, OQ-F1 (legal): age threshold and source pending */
-const P2_EARN = { visit: 10, mission: 5, streak: 20 }; /* PO 2026-10-15: +10 store-confirmed visit, +5 completed mission, +20 streak milestone. No real money ever buys fun points. */
+const P2_MS_BONUS = 50; /* PO 2026-10-15 (one-points): fun points removed. Visits/missions earn the existing ledger amounts only; a streak milestone (7/14/30 days) adds +50 points in Phase 2 (= one base visit, spec v4.1 scale). Proposed value, pending PO/BA confirm. */
 const P2_ITEMS = [
-  { id: "plant", fun: 40, n: ["Little plant", "Chậu cây nhỏ", "작은 화분"], svg: '<path d="M12 20v-7" stroke="#4E7A4A" stroke-width="2"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6zm0 0c4 0 6-3 6-6-3 0-6 2-6 6z" fill="#6E9E68"/><path d="M8 20h8l-1 3H9z" fill="#B87A56"/>' },
-  { id: "rug", fun: 60, n: ["Round rug", "Thảm tròn", "동그란 러그"], svg: '<ellipse cx="12" cy="17" rx="10" ry="4" fill="#E98597"/><ellipse cx="12" cy="17" rx="6" ry="2.2" fill="#F7F1EA"/>' },
-  { id: "lamp", fun: 80, n: ["Paper lamp", "Đèn giấy", "종이 조명"], svg: '<path d="M12 2v4" stroke="#6B5E62" stroke-width="1.5"/><circle cx="12" cy="11" r="6" fill="#F4D58D"/><path d="M8 20h8" stroke="#6B5E62" stroke-width="2"/>' },
-  { id: "mat", fun: 100, n: ["Barre mat", "Thảm tập barre", "바레 매트"], svg: '<rect x="3" y="14" width="18" height="5" rx="2.5" fill="#B04A5E"/><rect x="3" y="14" width="18" height="2" rx="1" fill="#8E3346"/>' },
+  { id: "plant", pts: 300, n: ["Little plant", "Chậu cây nhỏ", "작은 화분"], svg: '<path d="M12 20v-7" stroke="#4E7A4A" stroke-width="2"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6zm0 0c4 0 6-3 6-6-3 0-6 2-6 6z" fill="#6E9E68"/><path d="M8 20h8l-1 3H9z" fill="#B87A56"/>' },
+  { id: "rug", pts: 600, n: ["Round rug", "Thảm tròn", "동그란 러그"], svg: '<ellipse cx="12" cy="17" rx="10" ry="4" fill="#E98597"/><ellipse cx="12" cy="17" rx="6" ry="2.2" fill="#F7F1EA"/>' },
+  { id: "lamp", pts: 900, n: ["Paper lamp", "Đèn giấy", "종이 조명"], svg: '<path d="M12 2v4" stroke="#6B5E62" stroke-width="1.5"/><circle cx="12" cy="11" r="6" fill="#F4D58D"/><path d="M8 20h8" stroke="#6B5E62" stroke-width="2"/>' },
+  { id: "mat", pts: 1500, n: ["Barre mat", "Thảm tập barre", "바레 매트"], svg: '<rect x="3" y="14" width="18" height="5" rx="2.5" fill="#B04A5E"/><rect x="3" y="14" width="18" height="2" rx="1" fill="#8E3346"/>' },
   { id: "lantern", krw: 1100, cat: "decor", n: ["Autumn lantern set", "Bộ đèn lồng mùa thu", "가을 등불 세트"], svg: '<circle cx="8" cy="10" r="4" fill="#E9B44C"/><circle cx="16" cy="12" r="4" fill="#E98597"/><path d="M8 3v3M16 5v3" stroke="#6B5E62"/>' },
   { id: "wrapset", krw: 2200, cat: "outfit", n: ["Rose wrap outfit", "Bộ đồ wrap hồng", "로즈 랩 의상"], svg: '<path d="M7 4l5 3 5-3 3 5-3 2v9H7v-9L4 9z" fill="#E98597"/><path d="M12 7l-3 6h6z" fill="#B04A5E"/>' },
   { id: "sofa", krw: 4400, cat: "theme", n: ["Velvet lounge theme", "Chủ đề phòng nhung", "벨벳 라운지 테마"], svg: '<rect x="3" y="10" width="18" height="7" rx="3" fill="#8E3346"/><rect x="5" y="7" width="14" height="5" rx="2" fill="#B04A5E"/><path d="M5 17v3M19 17v3" stroke="#2B2326" stroke-width="2"/>' },
   { id: "lumi", free: 1, cat: "decor", brand: "Lumi Skin", limited: 1, n: ["Lumi Skin vanity", "Bàn trang điểm Lumi Skin", "루미 스킨 화장대"], svg: '<rect x="5" y="12" width="14" height="8" rx="1.5" fill="#F7F1EA" stroke="#6B5E62"/><circle cx="12" cy="7" r="4.5" fill="#DDEFF2" stroke="#6B5E62"/>' }
 ];
 /* state: preset IDs only (P2-B4); fun = own counter (P2-R3); demo = demo-bought items, kept apart from owned (P2-P3/P4); photo = derived look + consent (P2-F) */
-const P2S = { fun: 0, owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
+const P2S = { owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
 let P2D = null; /* builder draft (Cancel leaves Cici unchanged) */
-function p2Load() { if (!P2()) return; try { const x = JSON.parse(localStorage.getItem("cici.p2") || "null"); if (x) Object.assign(P2S, x); } catch (e) {} }
+function p2Load() { if (!P2()) return; try { const x = JSON.parse(localStorage.getItem("cici.p2") || "null"); if (x) { delete x.fun; Object.assign(P2S, x); } } catch (e) {} }
 function p2Save() { if (!P2()) return; try { localStorage.setItem("cici.p2", JSON.stringify(P2S)); } catch (e) {} }
-const P2_WHY = { visit: ["Visit confirmed", "Đã xác nhận lượt đến", "방문 확인"], mission: ["Mission done", "Hoàn thành nhiệm vụ", "미션 완료"], streak: ["Streak milestone", "Cột mốc chuỗi ngày", "연속 기록 달성"] };
-function p2Earn(kind) { if (!P2()) return 0; const n = P2_EARN[kind] || 0; P2S.fun = Math.max(0, P2S.fun + n); p2Save();
-  if (n > 0 && P2_WHY[kind] && !gated() && typeof showWin === "function") { try { showWin("+" + n, "cheer", { kind: "fun", reason: L3(...P2_WHY[kind]) }); } catch (e) {} } /* fun-points win toast: own teal colour */
-  return n; } /* never touches the points ledger; not clawed back on reversal (OQ-R2 placeholder) */
+/* Migration (one-points): a saved cici.p2 "fun" balance is DROPPED, not converted. Fun points had no cash value and were never store-ledger events, so converting would mint ledger points without a confirmed visit/mission. */
+const p2M = () => (typeof ME === "object" && ME && ME.ledger) ? ME : PV.members.mina;
+const p2Bal = () => { const m = p2M(); return m ? bal(m) : 0; };
+function p2MsBonus(m, ms, now) { if (!P2()) return 0; row(m, { reason: "streak_bonus", src: "MS" + ms, delta: P2_MS_BONUS, life: P2_MS_BONUS }, now);
+  if (!gated() && typeof showWin === "function") { try { showWin("+" + P2_MS_BONUS, "cheer", { reason: L3(`${ms}-day streak bonus`, `Thưởng chuỗi ${ms} ngày`, `${ms}일 연속 보너스`) }); } catch (e) {} }
+  return P2_MS_BONUS; }
+function p2BuyRoom(id, now) { const it = p2Item(id), m = p2M(); if (!it || !it.pts || !m || p2Has(id)) return { ok: false };
+  const b = bal(m); if (b < it.pts) return { ok: false, need: it.pts - b };
+  row(m, { reason: "room", src: id, delta: -it.pts, life: 0, actor: "member" }, now); P2S.owned.push(id); P2S.placed.push(id); p2Save(); return { ok: true }; } /* cosmetic: allowed with realRewards off; life 0 so levels never drop */
 const p2Item = id => P2_ITEMS.find(x => x.id === id);
 const p2Has = id => P2S.owned.includes(id) || P2S.demo.includes(id);
 const p2Svg = (it, s) => `<svg viewBox="0 0 24 24" width="${s || 40}" height="${s || 40}" aria-hidden="true">${it.svg}</svg>`;
 const p2Price = it => it.free ? p2t("free") : vnd(it.krw * 10); /* PO prices: decor ₩1,100 · outfit ₩2,200 · room theme ₩4,400; sponsored = free */ /* store-currency formatter (KRW display = seed / 10) */
 const p2Nm = it => L3(...it.n);
-const funIc = '<svg class="p2funic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
+const ptsIc = '<svg class="p2ptsic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
 const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
 /* PR19-1: the saved skin tone applies everywhere Cici appears (same soft backdrop as the builder/room portrait) */
 function p2SkinAttr(look, soft) { if (!P2() || gated()) return ""; const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1], bg = soft ? `color-mix(in srgb,${sk} 30%,transparent)` : sk; return ` data-skin="${l.skin}" style="--sk:${sk};background:radial-gradient(circle at 50% 40%,#fff 0 35%,${bg} 36%)"`; } /* soft on the large Home hero */
@@ -424,14 +429,14 @@ function p2Room() {
   if (!P2() || gated()) return ""; /* P2-X3/X4: nothing from Phase 2 in a crisis/urgent turn */
   const pl = P2S.placed.map(p2Item).filter(Boolean);
   return `<h2>${esc(p2t("roomT"))}</h2><section class="card p2room" id="p2-room"><div class="p2floor">${p2Char(96)}<div class="p2items">${pl.length ? pl.map(it => `<span class="p2it" data-v="${it.id}" role="img" aria-label="${esc(p2Nm(it))}">${p2Svg(it, 44)}</span>`).join("") : `<p class="sub sm" style="margin:0">${esc(p2t("empty"))}</p>`}</div></div>
-  <div class="row wrap" style="gap:8px;margin-top:10px"><span class="grow sm p2fun" id="p2-fun">${funIc} <b>${esc(p2t("funL"))}</b> · ${esc(fmtN(P2S.fun))}</span><button class="btn sec" data-act="p2deco">${esc(p2t("decorate"))}</button><button class="btn sec" data-act="p2shop">${esc(p2t("shop"))}</button></div></section>`;
+  <div class="row wrap" style="gap:8px;margin-top:10px"><span class="grow sm p2pts" id="p2-pts">${ptsIc} <b>${esc(p2t("ptsL"))}</b> · ${esc(fmtN(p2Bal()))}</span><button class="btn sec" data-act="p2deco">${esc(p2t("decorate"))}</button><button class="btn sec" data-act="p2shop">${esc(p2t("shop"))}</button></div></section>`;
 }
 function p2DecoSheet(msg) {
   if (!P2() || gated()) return;
-  const own = P2_ITEMS.filter(it => p2Has(it.id)), fun = P2_ITEMS.filter(it => it.fun && !p2Has(it.id));
-  openSheet(sheetHd(p2t("decorate")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sm p2fun">${funIc} <b>${esc(p2t("funL"))}</b> · <b id="p2-bal">${esc(fmtN(P2S.fun))}</b></p><p class="sub sm" id="p2-funnote">${esc(p2t("funNote"))}</p>
+  const own = P2_ITEMS.filter(it => p2Has(it.id)), buy = P2_ITEMS.filter(it => it.pts && !p2Has(it.id));
+  openSheet(sheetHd(p2t("decorate")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sm p2pts">${ptsIc} <b>${esc(p2t("ptsL"))}</b> · <b id="p2-bal">${esc(fmtN(p2Bal()))}</b></p><p class="sub sm" id="p2-ptsnote">${esc(p2t("ptsNote"))}</p>
   ${own.length ? `<h2>${esc(p2t("owned"))}</h2><div class="stack">${own.map(it => { const on = P2S.placed.includes(it.id); return `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b>${P2S.demo.includes(it.id) ? ` <span class="tag">${esc(p2t("demoItem"))}</span>` : ""}</span><button class="btn sec" data-act="p2place" data-v="${it.id}" aria-pressed="${on}">${esc(p2t(on ? "remove" : "place"))}</button></div>`; }).join("")}</div>` : ""}
-  <h2>${esc(p2t("decorate"))}</h2><div class="stack">${fun.map(it => `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b></span><button class="btn" data-act="p2buyfun" data-v="${it.id}">${esc(p2t("buyFun", { n: it.fun }))}</button></div>`).join("") || `<p class="sub sm">—</p>`}</div>`, p2t("decorate"));
+  <h2>${esc(p2t("decorate"))}</h2><div class="stack">${buy.map(it => `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b></span><button class="btn" data-act="p2buypts" data-v="${it.id}">${esc(p2t("buyPts", { n: fmtN(it.pts) }))}</button></div>`).join("") || `<p class="sub sm">—</p>`}</div>`, p2t("decorate"));
 }
 function p2ShopSheet(msg) {
   if (!P2() || gated()) return;
@@ -493,7 +498,7 @@ document.addEventListener("click", e => {
   if (a === "p2checkout") return p2Checkout(v);
   if (a === "p2pay") { const it = p2Item(v); if (!it || !(it.krw || it.free) || p2Has(v)) return; P2S.demo.push(v); p2Save(); render(); return p2ShopSheet(p2t("gotIt")); } /* demo only: no provider call, no receipt */
   if (a === "p2demoreset") { P2S.placed = P2S.placed.filter(x => !P2S.demo.includes(x)); P2S.demo = []; p2Save(); render(); return p2ShopSheet(); }
-  if (a === "p2buyfun") { const it = p2Item(v); if (!it || p2Has(v)) return; if (P2S.fun < it.fun) return p2DecoSheet(p2t("needMore", { n: it.fun - P2S.fun })); P2S.fun = Math.max(0, P2S.fun - it.fun); P2S.owned.push(v); P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(p2t("gotIt")); }
+  if (a === "p2buypts") { const r = p2BuyRoom(v); if (r.need) return p2DecoSheet(p2t("needMore", { n: fmtN(r.need) })); if (!r.ok) return; render(); return p2DecoSheet(p2t("gotIt")); }
   if (a === "p2place") { const i = P2S.placed.indexOf(v); if (i >= 0) P2S.placed.splice(i, 1); else if (p2Has(v)) P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(); }
   if (a === "p2look") { P2D = null; ST.page = "p2char"; render(); window.scrollTo(0, 0); return; }
   if (a === "p2set") { P2D = P2D || Object.assign({}, p2Look()); P2D[el.dataset.k] = v; render(); return; }
@@ -2127,8 +2132,7 @@ function vYou() {
   const m = ME, lv = lvlOf(m), pts = fmtPts(life(m));
   let h = notesCard() + `<section class="card row" id="you-prof"><span class="av cav-h" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt="">${outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm" id="you-lvl">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</div><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
   const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)], ["look", "shirt", t("wardrobe"), wearNm() || "—"]];
-  if (P2() && !gated()) tiles.push(["p2char", "star", p2t("funL"), fmtN(P2S.fun)]);
-  if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
+    if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
   h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
   h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
   return h;
@@ -2864,14 +2868,14 @@ const life = m => m.ledger.reduce((a, r) => a + (r.life || 0), 0);
 const lvlOf = m => { const l = life(m); let n = 1; LVL.forEach((x, i) => { if (l >= x) n = i + 1; }); return n; };
 /* STREAK IN DAYS (PO/user 2026-10-15, prototype-only change to points spec v4.1 §2 streak rules, pending a BA AC update):
    a day counts if it has a store-confirmed visit OR a completed self-care mission (home time zone, dayKey); 1 free rest day per week keeps it alive;
-   milestones 7 / 14 / 30 days -> visits earn x1.1 / x1.2 / x1.3 (and the fun-points +20 bonus in Phase 2). */
+   milestones 7 / 14 / 30 days -> visits earn x1.1 / x1.2 / x1.3 (and a +50 points streak bonus in Phase 2). */
 const MS_DAYS = [7, 14, 30];
 const mult = m => m.streak >= 30 ? 1.3 : m.streak >= 14 ? 1.2 : m.streak >= 7 ? 1.1 : 1;
 function dayStart(m, t) { const d = loc(t, homeTz(m)); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - TZOFF[homeTz(m)] * MIN; }
 function streakHit(m, now, why) { /* mark today active; counts once per day */
   const dk = dayKey(m, now); m.days = m.days || {}; if (m.days[dk]) { if (why === "v") m.days[dk] = "v"; return false; }
   m.days[dk] = why; m.streak++; m.run++;
-  for (const ms of MS_DAYS) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msDay = Object.assign(m.msDay || {}, { [ms]: dk }); note(m, "milestone", { n: ms }); if (typeof P2 === "function" && P2() && typeof p2Earn === "function") p2Earn("streak"); }
+  for (const ms of MS_DAYS) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msDay = Object.assign(m.msDay || {}, { [ms]: dk }); note(m, "milestone", { n: ms }); if (typeof P2 === "function" && P2() && typeof p2MsBonus === "function") p2MsBonus(m, ms, now); }
   return true;
 }
 function row(m, o, t) { /* append-only ledger (A8, AC-P37) */
@@ -2937,7 +2941,7 @@ function confirmVisit(m, bid, actor, now, store) {
   if (!m.visited[s]) { m.visited[s] = true; const mk = monKey(m, now);
     if ((m.npMonth[mk] || 0) < 4) { m.npMonth[mk] = (m.npMonth[mk] || 0) + 1; m.att[bid].np = mk; out.bonus = 80; m.att[bid].rows.push(row(m, { store: s, src: bid, delta: 80, life: 80, reason: "newplace", actor }, now).id); }
     else { row(m, { store: s, src: bid, reason: "newplace_cap", actor }, now); out.npCap = true; } }
-  checkLevel(m); if (out.pts > 0 && P2()) out.fun = p2Earn("visit"); return out;
+  checkLevel(m); return out;
 }
 function markNoShow(m, bid) { const bk = BKREG[bid]; if (bk) bk.status = "noshow"; return { pts: 0 }; }
 const pendingFor = (m, now) => Object.entries(BKREG).filter(([id, b]) => b.member === m.id && b.status === "booked" && now >= b.start && now < b.end + DAY && !m.att[id]).map(([id, b]) => Object.assign({ id }, b));
@@ -2948,7 +2952,7 @@ function pvMission(m, kind, now) {
   if ((m.misDay[dk] || 0) >= 2) { row(m, { reason: "mission_cap", src: kind }, now); return { pts: 0, msg: "missionCap" }; }
   if ((m.misWeek[wk] || 0) >= 60) { row(m, { reason: "mission_week_cap", src: kind }, now); return { pts: 0, msg: "missionWeekCap" }; }
   m.misDay[dk] = (m.misDay[dk] || 0) + 1; m.misWeek[wk] = (m.misWeek[wk] || 0) + 10;
-  row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); if (P2()) p2Earn("mission"); return { pts: 10 };
+  row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); return { pts: 10 };
 }
 /* MVP-S1..S8: store confirm (scan check-in code / Mark attended). Staff strings in EN, VI, KO; VI and KO need native review before launch (S8). */
 const STAFF_TX = {
@@ -3261,7 +3265,7 @@ function scDone(r) { render(); if (r.ok) maybeUnlock(); confirmSheet(sT(r.key, {
 function questSheet() { if (!FLAGS.quest) return go("tab:home"); openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
-  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
   openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
 }
 function claimSheet(id) {
@@ -3342,14 +3346,14 @@ document.addEventListener("input", e => { const k = e.target.dataset && e.target
 /* the win cut-out sits inside the small toast near the bottom (never over content) and leaves with it */
 let toastCut = null;
 function popCut(name) { const el = $("#toast"); if (el && !el.hidden && !toastUndo) { const msg = el.querySelector(".tx") ? el.querySelector(".tx").textContent : ""; clearTimeout(toastT); el.hidden = true; showWin(msg, name); } else toastCut = name; }
-/* Win toast (PO 2026-10-15): bottom toast above the tab bar, never in the header. Cici thumb + "+N points" / "+N fun points" + one-line reason.
+/* Win toast (PO 2026-10-15): bottom toast above the tab bar, never in the header. Cici thumb + "+N points" + one-line reason.
    Slides up + fades in, auto-dismiss ~2.5s, tap to dismiss, aria-live polite, no motion with reduced motion. Never covers chips, buttons, the input or banner OK buttons:
    it is lifted above them, or waits until they're clear. */
-const WIN_TX = { pts: ["+{n} points", "+{n} điểm", "+{n}포인트"], fun: ["+{n} fun points", "+{n} điểm vui", "+{n} 펀 포인트"], vouch: ["Voucher saved", "Đã lưu ưu đãi", "바우처 받음"], nice: ["Nice!", "Tuyệt!", "좋아요!"] };
+const WIN_TX = { pts: ["+{n} points", "+{n} điểm", "+{n}포인트"], vouch: ["Voucher saved", "Đã lưu ưu đãi", "바우처 받음"], nice: ["Nice!", "Tuyệt!", "좋아요!"] };
 let WINQ = [], winBusy = false;
 function winParse(msg, name, o) {
   const full = trS(String(msg || "")), m = full.match(/[+＋]\s?([\d.,]+)/), kind = (o && o.kind) || "pts";
-  let why = full.replace(/^\s*[+＋]\s?[\d.,]+\s*(fun points?|points?|pts|điểm vui|điểm|펀 ?포인트|포인트|P)?\s*(for|cho|·|:|-|—)?\s*/i, "").trim();
+  let why = full.replace(/^\s*[+＋]\s?[\d.,]+\s*(points?|pts|điểm|포인트|P)?\s*(for|cho|·|:|-|—)?\s*/i, "").trim();
   if (o && o.reason) why = o.reason;
   const amt = m ? L3(...WIN_TX[kind]).replace("{n}", m[1]) : L3(...(name === "voucher" ? WIN_TX.vouch : WIN_TX.nice));
   if (!m && why === full && name === "voucher") why = full;
@@ -3360,7 +3364,7 @@ function winNext() {
   const n = WINQ.shift(); if (!n) { winBusy = false; return; } winBusy = true;
   const [msg, name, o] = n, w = winParse(msg, name, o);
   let p = $("#wintoast"); if (!p) { p = document.createElement("div"); p.id = "wintoast"; p.setAttribute("role", "status"); p.setAttribute("aria-live", "polite"); document.body.appendChild(p); p.addEventListener("click", () => winHide()); }
-  p.className = "wtoast" + (w.kind === "fun" ? " fun" : "");
+  p.className = "wtoast";
   p.innerHTML = `<span class="vh">${esc(w.amt + (w.why ? ". " + w.why : ""))}${w.full && w.full !== w.why ? `<span class="wfull"> ${esc(w.full)}</span>` : ""}</span><span class="wthumb" aria-hidden="true">${cut(name, { once: 1, eager: 1 })}</span><span class="wtx" aria-hidden="true"><b class="wamt">${esc(w.amt)}</b>${w.why ? `<span class="wwhy">${esc(w.why)}</span>` : ""}</span>`;
   winPlace(p, 0);
 }
@@ -3426,7 +3430,7 @@ function checkJumps() {
 }
 window.checkJumps = checkJumps;
 p2Load(); if (P2()) render();
-window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, p2Earn, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
