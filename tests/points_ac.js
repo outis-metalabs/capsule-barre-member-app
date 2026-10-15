@@ -122,7 +122,7 @@ window.__pointsAC = function () {
     ok("AC-P44e", m.claims.length === 0 && !m.ledger.some(r => r.reason === "expired") && P.bal(m) > 0 && !c.ok, [m.claims.length, P.bal(m)]); });
   T("AC-P54", () => { const m = mk(); P.pvMigrate(m, { xp: 640, coins: 120, weeks: 3 }); const off = [P.bal(m), m.ledger.filter(r => r.reason === "migration").length, (m.ledger.find(r => r.reason === "legacy_coins") || {}).legacy];
     P.setFlag(true, T0); const on1 = P.bal(m); P.setFlag(false, T0); P.setFlag(true, T0); P.pvMigrate(m, { xp: 640, coins: 120, weeks: 3 });
-    ok("AC-P54", off[0] === 0 && off[1] === 1 && off[2] === 120 && on1 === 600 && P.bal(m) === 600 && m.ledger.filter(r => r.reason === "migration" && r.delta === 600).length === 1 && m.legacyClosed && P.life(m) === 640, [off, on1, P.bal(m)]); });
+    ok("AC-P54", off[0] === 0 && off[1] === 1 && off[2] === 120 && on1 === 0 && P.bal(m) === 0 && !m.ledger.some(r => r.src === "legacy_coins" && r.delta) && !m.legacyOpen && P.life(m) === 640, [off, on1, P.bal(m)]); });
   P.setFlag(flagWas, T0);
   return R;
 };

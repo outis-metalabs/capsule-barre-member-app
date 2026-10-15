@@ -1568,7 +1568,7 @@ function success(b, undo) {
   const cheerAlt = L3("Cici cheering", "Cici reo mừng", "응원하는 " + CICI_KO);
   const calm = gated(); /* MVP-B7/A6: no cheer in a crisis/urgent turn */ const media = calm ? "" : cut("cheer", { alt: cheerAlt, eager: 1, once: 1 }); if (!calm) setTimeout(() => celebrate(false), 50);
   openSheet(sheetHd(t("booked")) + `<div class="card scene" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(bkT("saved"))}</p><p class="sm" id="bk-earn"><b>${esc(bkT("earnDone", { n: earnEst(), s: S[b.store].name }))}</b></p></div></div>` +
-    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button><button class="btn sec full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="addcal" data-id="${b.id}">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
+    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm"); return m ? `<div class="contact" id="bk-map">${m}</div>` : ""; })()}<button class="btn sec full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="addcal" data-id="${b.id}">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
   succUndo = undo;
 }
 
@@ -2334,6 +2334,20 @@ ORDER0.push("barber", "moc", "rally"); WALLET.barber = []; WALLET.moc = []; WALL
 Object.assign(NAMES, { "Men's cut": ["Cắt tóc nam", "남성 커트"], "Thai massage 60 min": ["Massage Thái 60 phút", "타이 마사지 60분"], "Room 1": ["Phòng 1", "1번 룸"], "Court A": ["Sân A", "A 코트"], "Court B": ["Sân B", "B 코트"] });
 Object.assign(TRD, { "Cut, wash and a hot towel.": ["Cắt, gội và khăn nóng.", "커트, 샴푸, 핫타월."], "Stretch-based massage, light clothing provided.": ["Massage kết hợp kéo giãn, có sẵn đồ mặc.", "스트레칭 위주 마사지, 편한 옷 제공."], "Indoor courts, air-conditioned.": ["Sân trong nhà, có máy lạnh.", "실내 코트, 에어컨 완비."] });
 /* Korea-first demo seed (default): Seoul neighbourhoods, ₩ prices; staff names unchanged for now */
+/* VN market sample addresses (demo); KR ones are set in the Korea seed below */
+const ADDR_VN = { capsule: ["12 Thảo Điền, Thủ Đức, TP.HCM", 10.8031, 106.7384], salon: ["45 Lê Lợi, Quận 1, TP.HCM", 10.7738, 106.7008], skin: ["88 Võ Văn Tần, Quận 3, TP.HCM", 10.7770, 106.6900],
+  spa: ["20 Đồng Khởi, Quận 1, TP.HCM", 10.7760, 106.7040], pickle: ["5 Nguyễn Văn Hưởng, Thủ Đức, TP.HCM", 10.8070, 106.7330], nails: ["150 Xô Viết Nghệ Tĩnh, Bình Thạnh, TP.HCM", 10.8010, 106.7110], yoga: ["30 Song Hành, An Phú, Thủ Đức, TP.HCM", 10.8020, 106.7500],
+  barber: ["9 Nguyễn Huệ, Quận 1, TP.HCM", 10.7740, 106.7030], rally: ["70 Lương Định Của, An Phú, Thủ Đức, TP.HCM", 10.7900, 106.7450] };
+if (MARKET !== "kr") for (const sid in ADDR_VN) if (S[sid]) { S[sid].addr = ADDR_VN[sid][0]; S[sid].geo = [ADDR_VN[sid][1], ADDR_VN[sid][2]]; }
+/* Open map (PO 2026-10-15): KR -> Naver Map (+ KakaoMap option), other markets -> Google Maps; new tab / app link; hidden without an address */
+function mapUrls(sid) { const s = S[sid]; if (!s || !s.addr) return null; const q = encodeURIComponent(s.addr), nm = encodeURIComponent(s.name), g = s.geo;
+  if (MARKET === "kr") return { main: ["naver", `https://map.naver.com/p/search/${q}`], alt: ["kakao", g ? `https://map.kakao.com/link/map/${nm},${g[0]},${g[1]}` : `https://map.kakao.com/link/search/${q}`] };
+  return { main: ["google", g ? `https://www.google.com/maps/search/?api=1&query=${g[0]},${g[1]}` : `https://www.google.com/maps/search/?api=1&query=${q}`] }; }
+function mapLinks(sid, where) { const u = mapUrls(sid); if (!u) return ""; const nm = S[sid].name;
+  const lab = u.main[0] === "naver" ? L3("Open map · Naver", "Mở bản đồ · Naver", "지도 열기 · 네이버") : L3("Open map", "Mở bản đồ", "지도 열기");
+  const aria = L3(`Open map: ${nm}, ${S[sid].addr} (opens in a new tab)`, `Mở bản đồ: ${nm}, ${S[sid].addr} (mở tab mới)`, `지도 열기: ${nm}, ${S[sid].addr} (새 탭에서 열림)`);
+  return `<a class="btn sec bkmap" data-map="${u.main[0]}" data-where="${where || ""}" href="${esc(u.main[1])}" target="_blank" rel="noopener noreferrer" aria-label="${esc(aria)}">${ic("dir", "s")} ${esc(lab)}</a>` +
+    (u.alt ? `<a class="btn ghost bkmap" data-map="kakao" data-where="${where || ""}" href="${esc(u.alt[1])}" target="_blank" rel="noopener noreferrer" aria-label="${esc(L3(`KakaoMap: ${nm} (opens in a new tab)`, `KakaoMap: ${nm} (mở tab mới)`, `카카오맵: ${nm} (새 탭에서 열림)`))}">${esc(L3("KakaoMap", "KakaoMap", "카카오맵"))}</a>` : ""); }
 const AREAQ = {}; /* neighbourhood search aliases (EN + KO), e.g. "한남", "Hannam dong" */
 if (MARKET === "kr") {
   /* Seoul neighbourhoods, consistent with the distances in DISC (measured from Seongsu-dong) */
@@ -2344,6 +2358,11 @@ if (MARKET === "kr") {
   for (const sid in AREA) if (S[sid]) { const ko = AREA[sid][2].replace(/^서울 /, ""), en = AREA[sid][0].replace(/, Seoul$/, ""); AREAQ[sid] = [en, en.replace(/-/g, " "), en.replace(/-dong$/, ""), ko, ko.replace(/동$/, ""), "서울 Seoul"].join(" ");
     S[sid].area = AREA[sid][0]; NAMES[AREA[sid][0]] = [AREA[sid][1], AREA[sid][2]]; }
   for (const k of Object.keys(TRD)) if (/₫/.test(k)) TRD[fxMoneyTxt(k)] = TRD[k].map(fxMoneyTxt);
+  /* sample street addresses + coordinates (demo data); a store without addr gets no Open map button */
+  const ADDR = { capsule: ["서울 성동구 연무장길 12", 37.5446, 127.0557], pickle: ["서울 광진구 자양로 50", 37.5311, 127.0670], yoga: ["서울 성동구 서울숲2길 8", 37.5470, 127.0410],
+    rally: ["서울 광진구 능동로 120", 37.5440, 127.0740], nails: ["서울 용산구 이태원로 245", 37.5370, 127.0010], spa: ["서울 강남구 도산대로 450", 37.5250, 127.0450],
+    skin: ["서울 강남구 강남대로 390", 37.4979, 127.0276], salon: ["서울 마포구 동교로 230", 37.5620, 126.9250], barber: ["서울 마포구 망원로 70", 37.5560, 126.9010] };
+  for (const sid in ADDR) if (S[sid]) { S[sid].addr = ADDR[sid][0]; S[sid].geo = [ADDR[sid][1], ADDR[sid][2]]; }
   /* Korean staff names: data, Hangul aliases for the parser, and every text that names them */
   for (const sid in S) for (const st of S[sid].staff || []) if (KRN[st.id]) { const [, en, ko] = KRN[st.id]; st.n = en; NAMES[en] = [en, ko]; KOAL[st.id] = [ko + " ", ko + "님", ko + " 님", ko + " 선생님", ko + " 디자이너", ko + "한테", ko + "이랑", ko + "랑", ko + "에게", ko + "으로", ko + "쌤"]; }
   for (const k of Object.keys(TRD)) { const k2 = rn(k); if (k2 !== k || TRD[k].some(v => rn(v) !== v)) TRD[k2] = TRD[k].map(rn); }
@@ -2693,7 +2712,7 @@ function bkRowUp(b) {
   const st = b.req ? "" : b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} <span class="sub">${tzTag()}</span>${res ? " · " + esc(res) : ""}</div><div class="sm">${bkPrice(b)} · <span class="sub">${esc(fCancelB(b))}</span></div>
-  <div class="acts wrap">${bkActs(b)}</div></div></div>`;
+  <div class="acts wrap">${bkActs(b)}${mapLinks(b.store, "up")}</div></div></div>`;
 }
 const fCancelB = b => { const P = bkPol(b); if (bkFree(b)) return t("freeCancel") + " " + fDeadline(b.store, b.d, b.m, P); return P.studio ? t("askStudio") : tr("Free cancel ended"); };
 function bkRowPast(b) {
@@ -2703,7 +2722,7 @@ function bkRowPast(b) {
   const rateB = canRate(b) ? `<button class="btn sec" data-act="rate" data-id="${b.id}" aria-label="${r ? t("rateEdit") : t("rate")}: ${esc(N(v.n))}, ${esc(s.name)}">${r ? t("rateEdit") + " · " + "★".repeat(r.stars) : t("rate")}</button>` : r && !r.hidden ? `<button class="btn ghost" data-act="rate" data-id="${b.id}">${"★".repeat(r.stars)} · ${t("rateDelete")}</button>` : "";
   const again = o.k === "attended" ? `<button class="btn ghost" data-act="pastagain" data-id="${b.id}" aria-label="${t("bookAgain")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("bookAgain")}</button>` : "";
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${tag}${ptsTxt}</div>
-  <div class="sm"><b>${esc(s.name)}</b> · ${fDayAbs(b.d)} ${fTime(b.m)} <span class="sub">${tzTag()}</span></div>${r && r.held ? `<div class="sm sub">${esc(t("rateHeld"))}</div>` : ""}<div class="acts wrap">${rateB}${again}</div></div></div>`;
+  <div class="sm"><b>${esc(s.name)}</b> · ${fDayAbs(b.d)} ${fTime(b.m)} <span class="sub">${tzTag()}</span></div>${r && r.held ? `<div class="sm sub">${esc(t("rateHeld"))}</div>` : ""}<div class="acts wrap">${rateB}${again}${mapLinks(b.store, "past")}</div></div></div>`;
 }
 const fDayAbs = d => d >= 0 ? fDay(d) : new Intl.DateTimeFormat(LOC[L], { weekday: "short", day: "numeric", month: "short" }).format(dDate(d));
 function vBookings() {
@@ -2974,8 +2993,8 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   reversed: ["{n} points were reversed: {s} updated your visit.", "Đã trừ {n} điểm: {s} đã cập nhật lần đến của bạn.", "{s}에서 방문 기록을 수정해 {n}포인트가 차감됐어요."],
   history: ["Points history", "Lịch sử điểm", "포인트 내역"], outfitUnlocked: ["New outfit for Cici unlocked!", "Đã mở khóa trang phục mới cho Cici!", CICI_KO + "의 새 의상이 열렸어요!"],
   migrated: ["Your XP and coins are now points. Your level is kept.", "XP và xu của bạn đã chuyển thành điểm. Cấp độ của bạn được giữ nguyên.", "XP와 코인이 포인트로 바뀌었어요. 레벨은 그대로예요."],
+  migratedXp: ["Your XP is now {p}. Earn more with visits and missions.", "XP của bạn giờ là {p}. Tích thêm qua lượt đến và nhiệm vụ.", "XP가 {p}로 바뀌었어요. 방문과 미션으로 더 모아 보세요."],
   migratedLine: ["Your XP is now {p}. Your {n} coins are pending and unlock with rewards.", "XP của bạn giờ là {p}. {n} xu của bạn đang chờ và sẽ mở khi có ưu đãi.", "XP가 {p}로 바뀌었어요. 코인 {n}개는 대기 중이며 리워드가 열리면 사용할 수 있어요."],
-  legacyPending: ["{n} pending · unlocks with rewards", "{n} đang chờ · mở khi có ưu đãi", "{n} 대기 중 · 리워드가 열리면 사용 가능"],
   earned: ["Points earned", "Điểm đã tích", "적립한 포인트"], howEarnT: ["How to earn", "Cách tích điểm", "적립 방법"],
   eVisit: ["Visit a place: +{n} (1 per place a day, {d} a day)", "Đến một nơi: +{n} (1 lần/nơi/ngày, tối đa {d}/ngày)", "매장 방문: +{n} (매장당 하루 1회, 하루 {d}회)"],
   eNew: ["First visit to a new place: +{n} more (up to {m} a month)", "Lần đầu đến nơi mới: thêm +{n} (tối đa {m}/tháng)", "새 매장 첫 방문: +{n} 추가 (한 달 {m}곳까지)"],
@@ -3053,7 +3072,7 @@ function streakSeed(m) { /* demo seed: back-fill the streak's past active days s
 function pvMigrate(m, old) {
   if (m.migrated) return false; m.migrated = true;
   row(m, { reason: "migration", life: old.xp, src: "xp", note: "lifetime" });
-  row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins" }); m.legacyOpen = true; m.legacyCoins = old.coins;
+  row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins", note: "dropped (single points balance)" }); /* PO: old coins are dropped, not converted; audit record only, delta 0 */
   m.streak = old.days != null ? old.days : (old.weeks || 0) * 4; streakSeed(m); m.lvlSeen = lvlOf(m); note(m, "migrated"); return true;
 }
 /* weekly roll (§2): runs at each Sun 23:59 home time that has passed */
@@ -3267,7 +3286,7 @@ function setFlag(on, now) { /* U1. Turning on: one-time coin conversion at U8 ×
   now = now == null ? PV.now() : now; PV.flag = !!on;
   for (const m of Object.values(PV.members)) { if (!on) continue;
     if (m.enabledAt == null) m.enabledAt = now;
-    if (m.legacyOpen) { m.legacyOpen = false; row(m, { reason: "migration", src: "legacy_coins", delta: m.legacyCoins * 5, note: "coins ×5 (U8 demo rate)" }, now); m.legacyClosed = true; }
+    if (m.legacyOpen) m.legacyOpen = false; /* older saves: legacy coins are dropped, never converted */
     pvTick(m, now); }
 }
 /* ---- demo seed: Mina migrates from xp 640 / coins 120 / 3 weeks -> seeded as a 12-day streak (days rule); demo vouchers use U2–U8 recommended defaults ---- */
@@ -3297,7 +3316,7 @@ function noteText(n) {
   if (n.k === "milestone") return pvT("milestone", { n: v.n });
   if (n.k === "reversed") return pvT("reversed", { n: fmtN(v.n), s: storeNm(v.s) });
   if (n.k === "outfitUnlocked") return pvT("outfitUnlocked") + " " + v.outfit + " · " + pvT("level", { n: v.lvl, name: lvlName(v.lvl) });
-  if (n.k === "migrated" && ME) return ME.legacyOpen ? pvT("migratedLine", { p: fmtPts(life(ME)), n: fmtN(ME.legacyCoins) }) : pvT("migrated"); /* PR11-P4: one line, same numbers as You */
+  if (n.k === "migrated" && ME) return pvT("migratedXp", { p: fmtPts(life(ME)) }); /* PO 2026-10-15: legacy coins are not in the points balance and are not coming back as points; the Home card no longer says they are pending */ /* PR11-P4: one line, same numbers as You */
   return pvT(n.k);
 }
 function notesCard() {
@@ -3363,7 +3382,7 @@ function pointsBlock() {
   ${PV.flag ? `<div class="row"><span class="grow"><span class="sub sm">${esc(pvT("balance"))}</span><br><b id="pv-bal" style="font-size:22px">${esc(fmtPts(b))}</b></span></div>` : `<div class="row"><span class="grow"><span class="sub sm">${esc(pvT("earned"))}</span><br><b id="pv-earned" style="font-size:22px">${esc(fmtPts(lf))}</b></span></div>`}
   <div class="sm" style="margin-top:8px">${nx ? esc(pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 })) : esc(lvlName(5))}</div><div class="bar" role="progressbar" aria-label="${esc(pvT("level", { n: lv, name: lvlName(lv) }))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>
 ${!PV.flag ? `<div id="pv-how" style="margin-top:10px"><b class="sm">${esc(pvT("howEarnT"))}</b><ul class="sm" style="margin:4px 0 0;padding-left:18px"><li>${esc(pvT("eVisit", { n: EARN.visit, d: EARN.perDay }))}</li><li>${esc(pvT("eNew", { n: EARN.newplace, m: EARN.newPerMonth }))}</li><li>${esc(pvT("eMission", { n: EARN.mission, d: EARN.misDay, w: EARN.misWeek }))}</li></ul></div>` : ""}
-${m.legacyOpen ? `<p class="sub sm" id="pv-legacy" style="margin:6px 0 0">${esc(pvT("legacyPending", { n: fmtN(m.legacyCoins) }))}</p>` : ""}`;
+`;
   const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
   h += pendingCard();
   h += `<button class="link" data-act="pvhist" style="min-height:44px">${esc(pvT("history"))}</button></div>`;
@@ -3427,7 +3446,7 @@ function scDone(r) { render(); if (r.ok) maybeUnlock(); confirmSheet(sT(r.key, {
 function questSheet() { if (!FLAGS.quest) return go("tab:home"); openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
-  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: L3("Earlier balance · not carried over", "Số dư cũ · không chuyển sang", "이전 잔액 · 이월되지 않음"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
   openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
 }
 function claimSheet(id) {
