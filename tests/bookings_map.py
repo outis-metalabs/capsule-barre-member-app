@@ -60,4 +60,11 @@ with sync_playwright() as p:
     ok(f'[{L}] Home migration card no longer says coins are pending', not re.search(r'coins? (are|is) pending|xu của bạn đang chờ|코인 \d+개는 대기', v, re.I) and ('XP' in v), re.findall(r'.{0,40}(?:coin|xu |코인).{0,40}', v)[:3])
     if L in ('en', 'ko'): g.wait_for_timeout(400); g.screenshot(path=f'{SH}/home-migration-{L}-390.png')
     g.close()
+  # PO single points balance: old coins dropped, not converted
+  for q in ['', '?realRewards=1']:
+    for L in ['en', 'ko', 'vi']:
+      g = page(q, L); J(g, "()=>{ST.tab='you';ST.page='points';render()}"); v = g.inner_text('#view')
+      ok(f'[{L}{q}] Points page shows no pending legacy-coin balance', g.locator('#pv-legacy').count() == 0 and not re.search(r'pending|đang chờ|대기 중', v), v[:200]); g.close()
+  g = page(); r = J(g, "(()=>{const P=__plat.pv,m=P.ME(),b0=P.bal(m),l0=P.life(m);P.setFlag(true,__plat.PV.now());const b1=P.bal(m);P.setFlag(false,__plat.PV.now());P.setFlag(true,__plat.PV.now());return {b0,b1,b2:P.bal(m),l0,l1:P.life(m),conv:m.ledger.filter(x=>x.src==='legacy_coins'&&x.delta).length}})()")
+  ok('realRewards on: no ×5 coin conversion (balance and XP unchanged, no conversion row)', r['b0'] == r['b1'] == r['b2'] and r['l0'] == r['l1'] and r['conv'] == 0, r); g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)

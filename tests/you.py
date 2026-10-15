@@ -93,7 +93,7 @@ with sync_playwright() as p:
   for lang, w in [('en', 390), ('ko', 390), ('vi', 320), ('en', 320)]:
     pg = br.new_page(viewport={'width': w, 'height': 844}); pg.on('pageerror', lambda e: E.append(str(e)))
     pg.goto(U + '?realRewards=1'); pg.evaluate("()=>localStorage.clear()"); pg.goto(U + '?realRewards=1')
-    pg.evaluate(f"()=>{{setLang('{lang}');ME.notices.forEach(n=>n.seen=true);for(const v of PV.defs)claim(ME,v.id);setTab('you');ST.page='vouchers';ST.vseg=null;render()}}")
+    pg.evaluate(f"()=>{{setLang('{lang}');ME.notices.forEach(n=>n.seen=true);ME.ledger.push({{id:'Ltest',member:ME.id,store:null,src:'test',delta:600,life:0,reason:'test_grant',actor:'test',t:PV.now()}});/* old coins are dropped (no ×5): fixture balance */for(const v of PV.defs)claim(ME,v.id);setTab('you');ST.page='vouchers';ST.vseg=null;render()}}")
     segs = pg.evaluate("()=>[...document.querySelectorAll('[data-act=vseg]')].map(b=>b.dataset.v+':'+b.getAttribute('aria-selected'))")
     ok(f'Vouchers {lang} {w}: Mine/Get more segments, Mine first', segs == ['mine:true', 'more:false'], segs)
     L = pg.evaluate("""()=>[...document.querySelectorAll('.pv-c.vready')].map(c=>{const r=c.getBoundingClientRect(),x=c.querySelector('.vtx').getBoundingClientRect(),u=c.querySelector('.vuse').getBoundingClientRect(),k=c.querySelector('.vcan');const q=k&&k.getBoundingClientRect();

@@ -39,9 +39,9 @@ with sync_playwright() as p:
   YP(pg, 'look'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear")
   YP(pg, 'settings'); pg.click('#pv-flag'); on = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   pg.click('#pv-flag'); pg.click('#pv-flag'); on2 = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
-  ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 12 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 600 and on['rows'] == 1 and on2 == on, [st, on, on2])
+  ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 12 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 0 and on['rows'] == 0 and on2 == on, [st, on, on2])  # PO: old coins dropped, no ×5 on realRewards
   ok('AC-P54a', st['mig'] == 1 and st['legacy'] == 120 and st['bal'] == 0 and wear == 'lan', [st, wear])
-  ok('AC-P54b', on['rows'] == 1 and on2['rows'] == 1 and on2['bal'] == 600, [on, on2])
+  ok('AC-P54b', on['rows'] == 0 and on2['rows'] == 0 and on2['bal'] == 0, [on, on2])  # no coin conversion, ever
   pg.close()
   # --- AC-P44 UI with flag off; AC-P2 booking via UI
   pg = page(); pg.click('[data-act=pvseen]'); you = YALL(pg, lambda: pg.inner_html('#view')); YP(pg, 'settings')
@@ -62,7 +62,7 @@ with sync_playwright() as p:
   pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.days={[__plat.pv.dayKey(m,m.closedTo)]:'v'};m.rest={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'Fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
   pg.close()
   # --- flag ON: claim, use, validate, redeem through the UI
-  pg = page('?realRewards=1'); pg.click('[data-act=pvseen]'); YP(pg, 'vouchers', 'more')
+  pg = page('?realRewards=1'); pg.click('[data-act=pvseen]'); pg.evaluate("()=>{const P=__plat.pv,m=P.ME();m.ledger.push({id:'Ltest',member:m.id,store:null,src:'test',delta:600,life:0,reason:'test_grant',actor:'test',t:__plat.PV.now()});render()}"); YP(pg, 'vouchers', 'more')  # old coins dropped (no ×5): fixture balance
   claimBtns = pg.locator('[data-act=pvclaim]').count()
   pg.click('[data-act=pvclaim]:not([disabled])'); sheet = pg.inner_text('.sheet'); pg.click('[data-act=pvclaimok]'); you = YALL(pg, lambda: pg.inner_text('#view'))
   ok('AC-P17', R['AC-P17'][0] and 'Valid until' in sheet and 'Terms' in sheet and 'Ready' in you and '100 points' in you, [R['AC-P17'][1], sheet[:120]])
@@ -124,7 +124,7 @@ with sync_playwright() as p:
         if not re.search(r'XP', bt): bad35.append([w, lang, fl, 'banner-missing-words', bt[:60]])
         for m_ in FORBID.findall(rest): bad35.append([w, lang, fl, 'outside-banner', m_])
         if fl == 'off' and re.search(r'pending|đang chờ|대기 중|coins?|xu |코인', bt): bad35.append([w, lang, fl, 'banner-claims-pending-coins', bt[:80]])  # bookings-map PR: legacy coins are dropped
-        if fl == 'off' and not pg.evaluate("(()=>{ST.tab='you';ST.page='points';render();const ok=!!document.querySelector('#pv-legacy');ST.tab='home';ST.page=null;render();return ok})()"): bad35.append([w, lang, fl, 'no-pending-balance'])
+        if pg.evaluate("(()=>{ST.tab='you';ST.page='points';render();const t=document.querySelector('#view').innerText;const bad=!!document.querySelector('#pv-legacy')||/pending|đang chờ|대기 중/.test(t);ST.tab='home';ST.page=null;render();return bad})()"): bad35.append([w, lang, fl, 'legacy-balance-shown'])  # coins dropped
         pg.click('[data-act=pvseen]')
         # state 2: dismissed -> never shows again, even after reload
         pg.reload(); pg.evaluate(f"()=>{{setLang('{lang}');render()}}")
@@ -140,10 +140,11 @@ with sync_playwright() as p:
         c = {'bad': [], 'small': [], 'hscroll': False}
         for sp, sg in [(None, None), ('wallet', None), ('vouchers', 'mine'), ('vouchers', 'more'), ('points', None), ('settings', None)]:
           YP(pg, sp, sg); cs = pg.evaluate(CONTRAST); c['bad'] += cs['bad']; c['small'] += cs['small']; c['hscroll'] = c['hscroll'] or cs['hscroll']; pg.screenshot(path=f'{SHOTS}/you{"-" + sp if sp else ""}{"-" + sg if sg else ""}-{w}-{lang}-{fl}.png', full_page=True)
+        if fl == 'on': pg.evaluate("()=>{const m=__plat.pv.ME();if(!m.ledger.some(r=>r.reason==='test_grant'))m.ledger.push({id:'Ltest',member:m.id,store:null,src:'test',delta:600,life:0,reason:'test_grant',actor:'test',t:__plat.PV.now()})}")  # coins dropped (no ×5): fixture balance for the claim sheet
         for sh in ['pvhist', 'pvstore', 'pvconfirm'] + (['pvclaim'] if fl == 'on' else []):
           YP(pg, 'vouchers', 'more') if sh == 'pvclaim' else YP(pg, 'points' if sh in ('pvhist','pvstore','pvconfirm') else 'settings'); sel = f'[data-act={sh}]' + (':not([disabled])' if sh == 'pvclaim' else '')
           pg.click(sel); t_ = pg.inner_text('.sheet'); cs = pg.evaluate(CONTRAST)
-          if sh == 'pvhist' and fl == 'off' and not re.search(r'pending|đang chờ|대기 중', t_): bad35.append([w, lang, fl, 'history-not-pending'])
+          if sh == 'pvhist' and (re.search(r'pending|đang chờ|대기 중|convert|chuyển đổi|전환 완료|전환 안 됨', t_) or not re.search(r'not carried over|không chuyển sang|이월되지 않음', t_)): bad35.append([w, lang, fl, 'history-legacy-not-dropped'])  # coins dropped
           if sh != 'pvstore':
             for m_ in FORBID.findall(t_): bad35.append([w, lang, fl, sh, m_])
           c['bad'] += cs['bad']; c['small'] += cs['small']; pg.screenshot(path=f'{SHOTS}/{sh}-{w}-{lang}-{fl}.png'); pg.evaluate("closeSheet()")

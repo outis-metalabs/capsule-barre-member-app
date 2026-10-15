@@ -27,7 +27,7 @@ with sync_playwright() as p:
     life = pg.evaluate("__plat.pv.life(__plat.pv.ME())")
     pg.evaluate("()=>{ST.tab='you';ST.page='points';render()}")
     ok(f'PR11-P1 {lang}', 'pv-earned' in html and 'pv-how' in html and pg.inner_text('#pv-how').count('+') >= 3)
-    ok(f'PR11-P2 {lang}', pg.locator('#pv-legacy').count() == 1 and '×' not in pg.inner_text('#pv-legacy'))
+    ok(f'PR11-P2 {lang}', pg.locator('#pv-legacy').count() == 0 and not re.search(r'pending|đang chờ|대기 중', pg.inner_text('#view')))
     nocash = {'en': 'no cash value', 'vi': 'giá trị quy đổi', 'ko': '현금 가치'}[lang]
     ok(f'PR11-P3 {lang}', nocash not in you and 'pv-bal' not in html and 'pvclaim' not in html)
     ok(f'PR11-P5 {lang}', 'pv-flag' not in html and 'pvstore' not in html)

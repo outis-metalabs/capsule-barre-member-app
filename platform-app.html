@@ -2995,7 +2995,6 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   migrated: ["Your XP and coins are now points. Your level is kept.", "XP và xu của bạn đã chuyển thành điểm. Cấp độ của bạn được giữ nguyên.", "XP와 코인이 포인트로 바뀌었어요. 레벨은 그대로예요."],
   migratedXp: ["Your XP is now {p}. Earn more with visits and missions.", "XP của bạn giờ là {p}. Tích thêm qua lượt đến và nhiệm vụ.", "XP가 {p}로 바뀌었어요. 방문과 미션으로 더 모아 보세요."],
   migratedLine: ["Your XP is now {p}. Your {n} coins are pending and unlock with rewards.", "XP của bạn giờ là {p}. {n} xu của bạn đang chờ và sẽ mở khi có ưu đãi.", "XP가 {p}로 바뀌었어요. 코인 {n}개는 대기 중이며 리워드가 열리면 사용할 수 있어요."],
-  legacyPending: ["{n} pending · unlocks with rewards", "{n} đang chờ · mở khi có ưu đãi", "{n} 대기 중 · 리워드가 열리면 사용 가능"],
   earned: ["Points earned", "Điểm đã tích", "적립한 포인트"], howEarnT: ["How to earn", "Cách tích điểm", "적립 방법"],
   eVisit: ["Visit a place: +{n} (1 per place a day, {d} a day)", "Đến một nơi: +{n} (1 lần/nơi/ngày, tối đa {d}/ngày)", "매장 방문: +{n} (매장당 하루 1회, 하루 {d}회)"],
   eNew: ["First visit to a new place: +{n} more (up to {m} a month)", "Lần đầu đến nơi mới: thêm +{n} (tối đa {m}/tháng)", "새 매장 첫 방문: +{n} 추가 (한 달 {m}곳까지)"],
@@ -3073,7 +3072,7 @@ function streakSeed(m) { /* demo seed: back-fill the streak's past active days s
 function pvMigrate(m, old) {
   if (m.migrated) return false; m.migrated = true;
   row(m, { reason: "migration", life: old.xp, src: "xp", note: "lifetime" });
-  row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins" }); m.legacyOpen = true; m.legacyCoins = old.coins;
+  row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins", note: "dropped (single points balance)" }); /* PO: old coins are dropped, not converted; audit record only, delta 0 */
   m.streak = old.days != null ? old.days : (old.weeks || 0) * 4; streakSeed(m); m.lvlSeen = lvlOf(m); note(m, "migrated"); return true;
 }
 /* weekly roll (§2): runs at each Sun 23:59 home time that has passed */
@@ -3287,7 +3286,7 @@ function setFlag(on, now) { /* U1. Turning on: one-time coin conversion at U8 ×
   now = now == null ? PV.now() : now; PV.flag = !!on;
   for (const m of Object.values(PV.members)) { if (!on) continue;
     if (m.enabledAt == null) m.enabledAt = now;
-    if (m.legacyOpen) { m.legacyOpen = false; row(m, { reason: "migration", src: "legacy_coins", delta: m.legacyCoins * 5, note: "coins ×5 (U8 demo rate)" }, now); m.legacyClosed = true; }
+    if (m.legacyOpen) m.legacyOpen = false; /* older saves: legacy coins are dropped, never converted */
     pvTick(m, now); }
 }
 /* ---- demo seed: Mina migrates from xp 640 / coins 120 / 3 weeks -> seeded as a 12-day streak (days rule); demo vouchers use U2–U8 recommended defaults ---- */
@@ -3383,7 +3382,7 @@ function pointsBlock() {
   ${PV.flag ? `<div class="row"><span class="grow"><span class="sub sm">${esc(pvT("balance"))}</span><br><b id="pv-bal" style="font-size:22px">${esc(fmtPts(b))}</b></span></div>` : `<div class="row"><span class="grow"><span class="sub sm">${esc(pvT("earned"))}</span><br><b id="pv-earned" style="font-size:22px">${esc(fmtPts(lf))}</b></span></div>`}
   <div class="sm" style="margin-top:8px">${nx ? esc(pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 })) : esc(lvlName(5))}</div><div class="bar" role="progressbar" aria-label="${esc(pvT("level", { n: lv, name: lvlName(lv) }))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>
 ${!PV.flag ? `<div id="pv-how" style="margin-top:10px"><b class="sm">${esc(pvT("howEarnT"))}</b><ul class="sm" style="margin:4px 0 0;padding-left:18px"><li>${esc(pvT("eVisit", { n: EARN.visit, d: EARN.perDay }))}</li><li>${esc(pvT("eNew", { n: EARN.newplace, m: EARN.newPerMonth }))}</li><li>${esc(pvT("eMission", { n: EARN.mission, d: EARN.misDay, w: EARN.misWeek }))}</li></ul></div>` : ""}
-${m.legacyOpen ? `<p class="sub sm" id="pv-legacy" style="margin:6px 0 0">${esc(pvT("legacyPending", { n: fmtN(m.legacyCoins) }))}</p>` : ""}`;
+`;
   const w = pointsWarn(m, PV.now()); if (w) h += `<p class="sm" style="margin:6px 0 0"><b>${esc(pvT("pointsExpireWarn", { n: fmtN(w.n), date: fDateP(w.date) }))}</b></p>`;
   h += pendingCard();
   h += `<button class="link" data-act="pvhist" style="min-height:44px">${esc(pvT("history"))}</button></div>`;
@@ -3447,7 +3446,7 @@ function scDone(r) { render(); if (r.ok) maybeUnlock(); confirmSheet(sT(r.key, {
 function questSheet() { if (!FLAGS.quest) return go("tab:home"); openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
-  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: L3("Earlier balance · not carried over", "Số dư cũ · không chuyển sang", "이전 잔액 · 이월되지 않음"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
   openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
 }
 function claimSheet(id) {
