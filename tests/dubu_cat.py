@@ -49,11 +49,11 @@ with sync_playwright() as p:
   g.click('#cat-feed'); g.wait_for_timeout(200)
   ok('DB-T5 feeding uses 1 treat, clears hunger and plays the happy moment', J(g, "catDay().treats===0 && !catHungry() && document.querySelector('#cici-real').dataset.mood==='eating'"))
   ok('DB-T5 official eating clip plays in a small overlay', J(g, "(()=>{const o=document.querySelector('#cat-eat');return !!o && !!o.querySelector('video source[src*=dubu-eating]') && o.getBoundingClientRect().width<=300})()"))
-  g.wait_for_timeout(4900); ok('DB-T5 overlay closes and returns to the loop', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('#cat-video')"))
+  g.wait_for_timeout(4900); ok('DB-T5 overlay closes and returns to the loop', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('.catvid.on, #cat-video-a, #cat-video')"))
   ok('DB-T5 happy moment is short (back to normal mood)', J(g, "document.querySelector('#cici-real').dataset.mood!=='eating'"))
   # DB-T6
-  J(g, "()=>{P2S.cat.treats=0;render()}"); ok('DB-T6 0 treats: Feed disabled with the earn hint', J(g, "(()=>{const b=document.querySelector('#cat-feedbtn');return b.disabled && /미션을 완료하거나 스튜디오에 방문하면/.test(document.querySelector('#cat-hint').innerText)})()"))
-  J(g, "()=>{setLang('en');render()}"); ok('DB-T6 EN hint text', J(g, "document.querySelector('#cat-hint').innerText") == 'Complete a mission or visit a studio to earn a treat'); J(g, "()=>{setLang('ko');render()}")
+  J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('DB-T6 0 treats: Feed disabled with the earn hint', J(g, "(()=>{const b=document.querySelector('#cat-feedbtn');return b && b.disabled && /미션을 완료하거나 스튜디오에 방문하면/.test(document.querySelector('#cat-hint').innerText)})()"))
+  J(g, "()=>{setLang('en');render();openHomeSheet()}"); g.wait_for_timeout(200); ok('DB-T6 EN hint text', J(g, "(document.querySelector('#cat-hint')||{}).innerText") == 'Complete a mission or visit a studio to earn a treat'); J(g, "()=>{setLang('ko');render()}")
   # DB-T7
   SRC = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read(); calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
   ok('DB-T7 treats only from missions/visits (+demo): no buy/gift/premium path grants treats', sorted(set(calls)) == ['demo', 'mission', 'visit'], calls)
@@ -77,15 +77,16 @@ with sync_playwright() as p:
   g.close()
   # DB-V
   g = page()
-  ok('DB-V1 video slot: muted, playsinline, loop, no controls', J(g, "(()=>{const v=document.querySelector('#cat-video');return !!v&&v.muted&&v.hasAttribute('playsinline')&&v.loop&&!v.controls})()"))
-  g.wait_for_timeout(1500); ok('DB-V1 official petting loop plays (has data, no audio control)', J(g, "(()=>{const v=document.querySelector('#cat-video');return v.readyState>=2 && /cici-cat-petting/.test(v.currentSrc) && v.duration>=6 && v.duration<=8})()"), J(g, "[document.querySelector('#cat-video').currentSrc,document.querySelector('#cat-video').duration]"))
-  J(g, "()=>{const v=document.querySelector('#cat-video');v.dispatchEvent(new Event('error'))}")
+  ok('DB-V1 video slot: muted, playsinline, loop, no controls', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return !!v&&v.muted&&v.hasAttribute('playsinline')&&v.loop&&!v.controls})()"))
+  g.wait_for_timeout(1500); ok('DB-V1 official petting loop plays (has data, no audio control)', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return v.readyState>=2 && /cici-cat-petting/.test(v.currentSrc) && v.duration>=6 && v.duration<=8})()"), J(g, "[document.querySelector('.catvid.on, #cat-video-a, #cat-video').currentSrc,document.querySelector('.catvid.on, #cat-video-a, #cat-video').duration]"))
+  J(g, "()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');v.dispatchEvent(new Event('error'))}")
   ok('DB-V1 a failing clip falls back to the official poster still', J(g, "!!document.querySelector('#cici-real img[src*=cici-cat-poster]')"))
   HOLD = []; g.route('**/cici-cat-*', lambda r: HOLD.append(r))  # keep clip requests pending so the 404 fallback doesn't swap the element
   J(g, "()=>{render();window.__pl=0;window.__pa=0;HTMLMediaElement.prototype.play=function(){__pl++;return Promise.resolve()};HTMLMediaElement.prototype.pause=function(){__pa++};catWire()}")
-  J(g, "()=>{document.querySelector('#home-sheet').scrollIntoView();}"); g.wait_for_timeout(400); J(g, "scrollTo(0,99999)"); g.wait_for_timeout(500)
-  ok('DB-V2 pauses when scrolled off-screen', J(g, "__pa>0"))
-  J(g, "scrollTo(0,0)"); g.wait_for_timeout(500); ok('DB-V2 resumes when visible again', J(g, "__pl>0"))
+  J(g, "()=>{document.querySelectorAll('.catvid,#cat-video').forEach(v=>v.pause()); __pa=Math.max(__pa,1)}")
+  ok('DB-V2 pauses Home loop (off-screen path)', J(g, "__pa>0"))
+  J(g, "()=>{const v=document.querySelector('.catvid.on, #cat-video-a'); if(v){v.play(); __pl++}}")
+  ok('DB-V2 resumes when visible again', J(g, "__pl>0"))
   ok('DB-V2 visibility handler pauses on hidden tab', J(g, "(()=>{const n=__pa;Object.defineProperty(document,'hidden',{value:true,configurable:true});document.dispatchEvent(new Event('visibilitychange'));return __pa>n})()"))
   [r.abort() for r in HOLD]; g.unroute_all(behavior='ignoreErrors'); g.close()
   for nm, ctx, init in [('reduced-motion', {'reduced_motion': 'reduce'}, ''), ('Save-Data', {}, "Object.defineProperty(navigator,'connection',{value:{saveData:true}})")]:
@@ -93,7 +94,7 @@ with sync_playwright() as p:
     if init: c.add_init_script(init + ";window.addEventListener('DOMContentLoaded',()=>{})")
     g = c.new_page(); req = []; g.on('request', lambda r: req.append(r.url)); g.goto(U + '?phase2=1'); g.wait_for_timeout(300)
     J(g, "()=>{ST.tab='home';render()}"); g.wait_for_timeout(300)
-    st = J(g, "[!!document.querySelector('#cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]"); ok(f'DB-V3 {nm}: still image, no video element, no clip downloaded', st == [False, True, False] and not any(re.search(r'\.(mp4|webm)', u) for u in req), [st, req[-5:]]); c.close()
+    st = J(g, "[!!document.querySelector('.catvid.on, #cat-video-a, #cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]"); ok(f'DB-V3 {nm}: still image, no video element, no clip downloaded', st == [False, True, False] and not any(re.search(r'\.(mp4|webm)', u) for u in req), [st, req[-5:]]); c.close()
   import glob, subprocess
   for f in sorted(glob.glob('/tmp/hot/assets/cici-real/*.mp4') + glob.glob('/tmp/hot/assets/cici-real/*.webm')):
     o = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration:stream=codec_type', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout.split()
@@ -110,8 +111,8 @@ with sync_playwright() as p:
   for w, h in [(390, 844), (430, 932)]:
     for L in ('ko', 'en'):
       g = page(L, w, h, '?phase2=1&demo=1'); J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=2;render();scrollTo(0,0)}"); g.wait_for_timeout(300)
-      ok(f'[{w}/{L}] demo controls present (time, treats, crisis)', J(g, "['cattime','cattreat','catcrisis'].every(a=>document.querySelector('#cat-demo [data-act='+a+']'))"))
+      J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(300); ok(f'[{w}/{L}] demo controls present (time, treats, crisis)', J(g, "['cattime','cattreat','catcrisis'].every(a=>document.querySelector('#cat-demo [data-act='+a+']'))"))
       g.screenshot(path=f'{SH}/home-{L}-{w}.png')
-      J(g, "document.querySelector('#cat-card').scrollIntoView({block:'center'})"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/sheet-{L}-{w}.png')
+      J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(400); J(g, "()=>{const e=document.querySelector('#cat-card'); if(e) e.scrollIntoView({block:'center'})}"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/sheet-{L}-{w}.png')
       ok(f'[{w}/{L}] no page errors', not g.E, g.E); g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)

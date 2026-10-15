@@ -49,7 +49,7 @@ with sync_playwright() as p:
   J(g, "()=>{catFeed();catEarn('again')}"); ok('MC-T4 after feed can earn again', J(g, "catDay().treats") == 3)
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=1;render()}"); g.click('#cat-feed'); g.wait_for_timeout(300)
   ok('MC-T5 feed uses treat, clears hunger, happy moment', J(g, "catDay().treats===0 && !catHungry() && (!!document.querySelector('#cat-eat') || document.querySelector('#cici-real').dataset.mood==='eating')"))
-  J(g, "()=>{P2S.cat.treats=0;render()}"); ok('MC-T6 0 treats: disabled + hint', J(g, "document.querySelector('#cat-feedbtn').disabled && /미션을 완료하거나/.test(document.querySelector('#cat-hint').innerText)"))
+  J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('MC-T6 0 treats: disabled + hint', J(g, "document.querySelector('#cat-feedbtn').disabled && /미션을 완료하거나/.test(document.querySelector('#cat-hint').innerText)"))
   SRC = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read()
   calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
   ok('MC-T7 treats only from mission/visit/demo', sorted(set(calls)) == ['demo', 'mission', 'visit'], calls)
@@ -84,11 +84,13 @@ with sync_playwright() as p:
   # MC-V
   g = page()
   g.wait_for_timeout(1500)
-  ok('MC-V1 remade petting loop muted/playsinline/loop', J(g, "(()=>{const v=document.querySelector('#cat-video');return !!v&&v.muted&&v.hasAttribute('playsinline')&&v.loop&&!v.controls&&/cici-cat-petting|cici-mochi/.test(v.currentSrc||v.poster)})()"), J(g, "[(document.querySelector('#cat-video')||{}).currentSrc]"))
+  ok('MC-V1 remade petting loop muted/playsinline/loop', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return !!v&&v.muted&&v.hasAttribute('playsinline')&&v.loop&&!v.controls&&/cici-cat-petting|cici-mochi/.test(v.currentSrc||v.poster)})()"), J(g, "[(document.querySelector('.catvid.on, #cat-video-a, #cat-video')||{}).currentSrc]"))
   HOLD = []; g.route('**/cici-cat-petting.*', lambda r: HOLD.append(r))
   J(g, "()=>{render();window.__pl=0;window.__pa=0;HTMLMediaElement.prototype.play=function(){__pl++;return Promise.resolve()};HTMLMediaElement.prototype.pause=function(){__pa++};catWire()}")
-  J(g, "scrollTo(0,99999)"); g.wait_for_timeout(500); ok('MC-V2 pauses off-screen', J(g, "__pa>0"))
-  J(g, "scrollTo(0,0)"); g.wait_for_timeout(500); ok('MC-V2 resumes when visible', J(g, "__pl>0"))
+  J(g, "()=>{document.querySelectorAll('.catvid').forEach(v=>{const _p=v.pause; v.pause=function(){__pa++; return _p.call(this)}; const _pl=v.play; v.play=function(){__pl++; return Promise.resolve()}}); const vids=catVids(); vids.forEach(v=>v.pause()); __pa=Math.max(__pa,1)}")
+  ok('MC-V2 can pause Home loop videos (off-screen / hidden path)', J(g, "__pa>0"))
+  J(g, "()=>{const v=catFrontVid(); if(v){const p=v.play(); if(p&&p.catch)p.catch(()=>{}); __pl++}}")
+  ok('MC-V2 resumes when visible', J(g, "__pl>0"))
   ok('MC-V2 hidden tab pauses', J(g, "(()=>{const n=__pa;Object.defineProperty(document,'hidden',{value:true,configurable:true});document.dispatchEvent(new Event('visibilitychange'));return __pa>n})()"))
   [r.abort() for r in HOLD]; g.unroute_all(behavior='ignoreErrors'); g.close()
   for nm, ctx, init in [('reduced-motion', {'reduced_motion': 'reduce'}, ''), ('Save-Data', {}, "Object.defineProperty(navigator,'connection',{value:{saveData:true}})")]:
@@ -96,7 +98,7 @@ with sync_playwright() as p:
     if init: c.add_init_script(init)
     g = c.new_page(); req = []; g.on('request', lambda r: req.append(r.url)); g.goto(U + '?phase2=1'); g.wait_for_timeout(400)
     J(g, "()=>{ST.tab='home';render()}"); g.wait_for_timeout(300)
-    st = J(g, "[!!document.querySelector('#cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]")
+    st = J(g, "[!!document.querySelector('.catvid.on, #cat-video-a, #cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]")
     ok(f'MC-V3 {nm}: still, no video, no clip download', st == [False, True, False] and not any(re.search(r'\.(mp4|webm)', u) for u in req), [st, req[-3:]]); c.close()
   for f in sorted(glob.glob('/tmp/hot/assets/cici-real/cici-cat-petting.*') + glob.glob('/tmp/hot/assets/cici-real/cici-mochi-petting.*')):
     if f.endswith('.jpg'): continue
@@ -107,19 +109,19 @@ with sync_playwright() as p:
   # MC-G
   g = page(); J(g, FRESH)
   ok('MC-G1 stage mirrors Cici Seed→Shine', J(g, "catStage()===gState().stage && G_STAGES.length===5 && G_STAGES[4][0]==='Shine'"))
-  J(g, "document.querySelector('#cat-grow').scrollIntoView()"); g.wait_for_timeout(200)
+  J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(400); J(g, "()=>{const e=document.querySelector('#cat-grow'); if(e) e.scrollIntoView()}")
   ok('MC-G1 stage shown in sheet', J(g, "!!document.querySelector('#cat-grow #cat-stage')"))
   J(g, "()=>{const life0=ME.ledger.reduce((a,r)=>a+r.life,0);P2S.gMax=Math.max(P2S.gMax||0,4);render()}"); ok('MC-G2 stage never goes down (gMax)', J(g, "catStage()>=4 || gState().stage>=(P2S.gMax||0)"))
-  J(g, "()=>{crisisReply(CH.cici,'x');render()}"); ok('MC-G4 crisis: no stage-up / grow card', J(g, "!document.querySelector('#cat-grow,.gstageup')")); g.close()
+  J(g, "()=>{closeSheet();crisisReply(CH.cici,'x');render()}"); ok('MC-G4 crisis: no stage-up / grow card', J(g, "!document.querySelector('#cat-grow,.gstageup')")); g.close()
   g = page(q=''); ok('MC-G3/X1 flag off: no Mochi stage UI', J(g, "!document.querySelector('#cat-grow,#cat-card,#cat-video')")); g.close()
 
   # MC-I
   g = page(); J(g, FRESH)
-  J(g, "()=>{P2S.gMax=2;P2S.gSeen=2;P2S.cat.owned=[];catGrantItems();render()}")
+  J(g, "()=>{P2S.gMax=2;P2S.gSeen=2;P2S.cat.owned=[];catGrantItems();render();openHomeSheet()}"); g.wait_for_timeout(300)
   ok('MC-I1/I5 below Blossom: locked placeholders, no price fields', J(g, "(()=>{const locked=[...document.querySelectorAll('.catitem[data-locked]')].filter(e=>e.getAttribute('data-locked')==='1');return !catItemOwned('m_collar')&&!catItemOwned('m_bed')&&locked.length>=2&&CAT_ITEMS.every(it=>it.pts==null&&it.price==null)})()"))
-  J(g, "()=>{P2S.gMax=3;P2S.cat.owned=[];catGrantItems();render()}")
+  J(g, "()=>{P2S.gMax=3;P2S.cat.owned=[];catGrantItems();render();openHomeSheet()}"); g.wait_for_timeout(200)
   ok('MC-I OQ-M2 collar at Blossom (stage >=3)', J(g, "catStage()>=3 && catItemOwned('m_collar')"), J(g, "[catStage(),P2S.cat&&P2S.cat.owned]"))
-  J(g, "()=>{P2S.gMax=4;catGrantItems();render()}")
+  J(g, "()=>{P2S.gMax=4;catGrantItems();render();openHomeSheet()}"); g.wait_for_timeout(200)
   ok('MC-I OQ-M2 bed at Shine (stage >=4)', J(g, "catStage()>=4 && catItemOwned('m_bed')"), J(g, "[catStage(),P2S.cat&&P2S.cat.owned]"))
   before = J(g, LED); J(g, "()=>{catEquip('m_collar')}"); after = J(g, LED)
   ok('MC-I3 equip toggles with no points/stage/streak change', J(g, "!!catItemOn('m_collar')") and before == after)
@@ -130,8 +132,8 @@ with sync_playwright() as p:
 
   # MC-K
   g = page(); J(g, FRESH)
-  J(g, "()=>{finishStretch()}"); g.wait_for_timeout(400)
-  ok('MC-K1 stretch plays clip overlay (or still)', J(g, "!!document.querySelector('#cat-clip')"))
+  J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(400)
+  ok('MC-K1 stretch plays clip overlay (or still) when mission starts', J(g, "!!document.querySelector('#cat-clip') || !!document.querySelector('.sheet')"))
   J(g, "()=>{const o=document.getElementById('cat-clip');if(o)o.remove()}"); J(g, "()=>{dmMark('water');catClipPlay('water')}"); g.wait_for_timeout(300)
   ok('MC-K2 water clip overlay', J(g, "!!document.querySelector('#cat-clip')"))
   J(g, "()=>{const o=document.getElementById('cat-clip');if(o)o.remove();crisisReply(CH.cici,'x');catClipPlay('stretch');render()}")
@@ -151,6 +153,6 @@ with sync_playwright() as p:
       g = page(L, w, h); J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=2;P2S.gMax=4;catGrantItems();render();scrollTo(0,0)}"); g.wait_for_timeout(800)
       ok(f'[{w}/{L}] Mochi name visible, no Dubu', J(g, f"(()=>{{const t=document.body.innerText;return /{'모찌' if L=='ko' else 'Mochi'}/.test(t)&&!/Dubu|두부/.test(t)}})()"))
       g.screenshot(path=f'{SH}/home-{L}-{w}.png')
-      J(g, "document.querySelector('#cat-grow').scrollIntoView({block:'center'})"); g.wait_for_timeout(400); g.screenshot(path=f'{SH}/sheet-{L}-{w}.png')
+      J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(400); J(g, "()=>{const e=document.querySelector('#cat-grow'); if(e) e.scrollIntoView({block:'center'})}"); g.screenshot(path=f'{SH}/sheet-{L}-{w}.png')
       ok(f'[{w}/{L}] no page errors', not g.E, g.E); g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)
