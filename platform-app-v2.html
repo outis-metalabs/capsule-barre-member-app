@@ -311,6 +311,35 @@ button:active:not([disabled]){transform:scale(.94)}
 #cici-hd-av .p2hair{position:absolute;left:-6px;bottom:-4px;margin:0}
 .chome .cpic.p2sk{border-radius:50% 50% 24px 24px}
 .p2wrap{position:relative;display:inline-block;flex:none}.p2wrap .p2hair{position:absolute;left:0;bottom:0;margin:0;width:16px;height:16px}.p2wrap .wear-acc{position:absolute;right:0;bottom:0;margin:0;width:22px;height:22px;padding:3px;box-sizing:border-box;border-radius:50%;background:#fff}
+
+/* ===== v2 family style (owner-app design language, adapted for the member app; see PR notes). AA: muted text #6B5E62 (owner #857A78 fails AA on #F7F2EF). ===== */
+:root{--cream:#F7F2EF;--card:#FFFFFF;--line:#EFE5E1;--ink:#2B2324;--sub:#6B5E62;--rasp:#B04A5E;--raspd:#963A4D;--tint:#F7DFE3;--blush:#FDF1EC}
+html,body{background:#F7F2EF;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",system-ui,sans-serif}
+header.top{background:#F7F2EF;border-bottom:0} /* opaque (confetti stays beneath) */
+h1{font-weight:800;letter-spacing:-.03em}h2{font-weight:800;font-size:16.5px;letter-spacing:-.01em}
+.card{border-radius:22px;border:0;box-shadow:0 2px 12px rgba(120,60,50,.06)}
+.btn{font-weight:800;box-shadow:none}.btn.sec{border-width:2px;border-color:var(--rasp);color:#963A4D}
+.chip{border:0;background:#fff;box-shadow:0 1px 4px rgba(120,60,50,.06);font-weight:700}
+.chip[aria-pressed=true]{background:#2B2324;color:#fff;border:0}.chip[aria-pressed=true] .sub{color:#EDE3E5}
+main{padding-bottom:112px}
+nav.tabs{left:12px;right:12px;bottom:max(14px,env(safe-area-inset-bottom));transform:none;width:auto;max-width:406px;margin:0 auto;height:72px;padding:0 4px;border-radius:30px;border:1px solid rgba(255,255,255,.6);align-items:center;
+  background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);box-shadow:0 10px 30px rgba(60,30,30,.12)}
+nav.tabs button{min-height:56px;font-size:11px;font-weight:700;color:#6B5E62}
+nav.tabs button[aria-current=page]{color:#B04A5E}
+nav.tabs button[aria-current=page]::after{content:"";position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:#B04A5E}
+nav.tabs .tfab{flex:none;background-color:#A3435A;width:62px;height:62px;min-height:62px;margin:-26px 4px 0;border-radius:50%;color:#fff;background-image:radial-gradient(circle at 32% 26%,#C25B70 0%,#B04A5E 45%,#963A4D 100%);box-shadow:0 0 0 5px rgba(255,255,255,.95),0 8px 20px rgba(150,58,77,.35)}
+nav.tabs .tfab .ico{width:26px;height:26px}
+.hbub{background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.6);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);box-shadow:0 10px 30px rgba(60,30,30,.12);border-radius:22px}
+.hbub .hbhi{display:block;font-size:13px;font-weight:700;color:#6B5E62}.hbub .hbt{font-weight:800;font-size:16px;letter-spacing:-.01em}
+.hbub .hbgo{background:#F7DFE3;color:#963A4D}
+.creal{border-radius:28px}
+.dmc{background-color:#A3435A;background-image:linear-gradient(135deg,#B04A5E 0%,#963A4D 100%);color:#fff;position:relative;overflow:hidden}
+.dmc #dm-head{font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff}.dmc #dm-sub{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:rgba(60,10,25,.18);color:#fff;font-weight:700}
+.dmc .dmbar{display:flex;gap:6px;background:none;height:6px}.dmc .dmbar i{flex:1;border-radius:6px;background:rgba(255,255,255,.35)}.dmc .dmbar i.on{background:#fff}.dmc .dmbar span{display:none}
+.dmc .mis{border-top:1px solid rgba(255,255,255,.22);color:#fff}.dmc .mis .ck{border-color:#fff;background:rgba(255,255,255,.15);color:#fff}.dmc .mis.done .mt{opacity:1;text-decoration:line-through}
+.dmc .mis .btn.sec{background:#fff;color:#963A4D;border-color:#fff}
+.dmc .tag{background:rgba(60,10,25,.18);color:#fff}.dmc .sub{color:#fff}
+.dmc .dmcici{width:72px;height:72px;background:rgba(255,255,255,.2)}
 </style>
 </head>
 <body>
@@ -560,7 +589,7 @@ function dmCard() {
   const head = L3(`Today's missions ${n}/3 done`, `Nhiệm vụ hôm nay ${n}/3 xong`, `오늘의 미션 ${n}/3 완료`);
   const sub = d.bonus ? L3(`All done! +${DM_BONUS} bonus earned.`, `Xong hết! Đã nhận +${DM_BONUS} thưởng.`, `모두 완료! 보너스 +${DM_BONUS} 받았어요.`) : L3(`Finish all 3 for +${DM_BONUS} bonus`, `Hoàn thành cả 3 để nhận +${DM_BONUS}`, `3개 모두 하면 보너스 +${DM_BONUS}`);
   return `<section class="card dmc" id="home-dm" tabindex="-1" aria-label="${esc(head)}"><div class="row" style="gap:10px"><div class="grow"><b id="dm-head">${esc(head)}</b><div class="sub sm" id="dm-sub">${esc(sub)}</div>
-  <div class="dmbar" role="progressbar" aria-label="${esc(head)}" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${n}"><span style="width:${Math.round(n / 3 * 100)}%"></span></div></div>${calm ? "" : `<span class="dmcici" aria-hidden="true">${cut("cheer", { alt: "" })}</span>`}</div>
+  <div class="dmbar" role="progressbar" aria-label="${esc(head)}" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${n}"><span style="width:${Math.round(n / 3 * 100)}%"></span>${[0, 1, 2].map(i => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</div></div>${calm ? "" : `<span class="dmcici" aria-hidden="true">${cut("cheer", { alt: "" })}</span>`}</div>
   ${DM_KEYS.map(k => `<div class="mis${d.done[k] ? " done" : ""}" data-m="${k}"><span class="ck" aria-hidden="true">${d.done[k] ? ic("check", "s") : ""}</span><span class="grow mt">${esc(M[k][0])}<span class="vh">${d.done[k] ? ", " + tr("done") : ""}</span></span>${d.done[k] ? "" : M[k][1]}</div>`).join("")}
   <div class="row sm sub" style="margin-top:6px"><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span></div></section>`;
 }
@@ -2145,8 +2174,9 @@ function header() {
 }
 function tabs() {
   /* 4 tabs, Cici in position 3 (nari-tab §1 IDs kept); the Cici tab shows a dot (never a number) for an unread Cici reply */
-  return [["home", "home"], ["discover", "compass"], ["cici", "cici"], ["you", "user"]].map(([k, i]) => { const dot = k === "cici" && CH.cici.unread && !(ST.tab === "cici" && !ST.page && !ST.store);
-    return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "cici" ? ` aria-label="${esc(t("ciciAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; }).join("");
+  const fab = gated() ? "" : `<button class="tfab" data-act="bk" data-from="tabbar" aria-label="${esc(L3("Book a visit", "Đặt lịch", "예약하기"))}">${ic("cal")}</button>`; /* v2 family style: raised centre action = Book (member action); none in a crisis */
+  return [["home", "home"], ["discover", "compass"], ["cici", "cici"], ["you", "user"]].map(([k, i], j) => (j === 2 ? fab : "") + (() => { const dot = k === "cici" && CH.cici.unread && !(ST.tab === "cici" && !ST.page && !ST.store);
+    return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "cici" ? ` aria-label="${esc(t("ciciAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; })()).join("");
 }
 /* ===== MVP character-first Home (MVP-H1..H8) ===== */
 const outfitIdx = id => { const n = +String(id || "").replace(/^o/, ""); return n >= 1 && n <= 5 ? n : 0; };

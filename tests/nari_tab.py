@@ -33,14 +33,16 @@ with sync_playwright() as p:
   def nmsgs(pg): return J(pg, "CH.cici.msgs.filter(m=>m.who==='n').map(m=>({t:m.text,chips:(m.chips||[]).map(c=>c.label),confirm:!!m.confirm,care:!!m.care,kind:m.kind||null}))")
   # ---------------- 9.1 Nari tab ----------------
   pg = page()
-  tabs = J(pg, "[...document.querySelectorAll('#tabs button')].map(b=>[b.dataset.v,b.innerText.trim(),b.querySelector('svg').innerHTML.includes('M12 9.5')])")
+  tabs = J(pg, "[...document.querySelectorAll('#tabs [data-act=tab]')].map(b=>[b.dataset.v,b.innerText.trim(),b.querySelector('svg').innerHTML.includes('M12 9.5')])")
+  fab = J(pg, "[...document.querySelectorAll('#tabs button:not([data-act=tab])')].map(b=>b.className+':'+b.dataset.act)")
+  ok('NT-1b tab bar extras: v2 only a centre Book action (family style), v1 none', fab == (['tfab:bk'] if 'platform-app-v2' in U else []), fab)
   ok('NT-1 4 tabs, Nari 3rd with nari icon, no Book/Ask', [t[0] for t in tabs] == ['home', 'discover', 'cici', 'you'] and tabs[2][2] and not any(t[0] in ('book', 'ask') for t in tabs), tabs)
   ok('R-6 no pre-seeded thread', J(pg, "CH.cici.msgs.length") == 0)
   ok('R-5 KO default in KR', J(pg, "L") == 'ko')
   pg.click('[data-act=tab][data-v=cici]'); v = view(pg)
   ok('NT-10 empty: nariHello + 3 chips + Book again, no time chips', '미나님, 안녕하세요. Cici예요.' in v and pg.locator('#view [data-act=qbook]').count() == 1 and pg.locator('#view [data-act=nagain]').count() >= 3 and not re.search(r'\b\d\d:\d\d\b', v), v[:200])
   ok('NT-13 KO chip copy exact', J(pg, "[...document.querySelectorAll('#view .chips:not(.slim) [data-from=cici]')].map(x=>x.innerText)") == ['수업 예약', '질문하기', '내 예약'] and 'First time' not in v)
-  ok('NT-12 KO tab labels + Nari aria-label + one aria-current', [t[1] for t in J(pg, "[...document.querySelectorAll('#tabs button')].map(b=>[0,b.innerText.trim()])")] == ['홈', '둘러보기', 'Cici', '나'] and J(pg, "document.querySelector('#tabs [data-v=cici]').getAttribute('aria-label')") == 'Cici, 예약하거나 물어보기' and J(pg, "[...document.querySelectorAll('#tabs [aria-current=page]')].map(b=>b.dataset.v)") == ['cici'])
+  ok('NT-12 KO tab labels + Nari aria-label + one aria-current', [t[1] for t in J(pg, "[...document.querySelectorAll('#tabs [data-act=tab]')].map(b=>[0,b.innerText.trim()])")] == ['홈', '둘러보기', 'Cici', '나'] and J(pg, "document.querySelector('#tabs [data-v=cici]').getAttribute('aria-label')") == 'Cici, 예약하거나 물어보기' and J(pg, "[...document.querySelectorAll('#tabs [aria-current=page]')].map(b=>b.dataset.v)") == ['cici'])
   ok('NT-28 no top-level phone icon in Nari header', J(pg, "!document.querySelector('#view > .row [data-act=call], #top [data-act=call], #view > .row [data-act=callstore]')"))
   ok('NT-28 / A7 voice demo cut from MVP (no overflow call entry)', J(pg, "!document.querySelector('[data-act=nmore],[data-act=calldemo],[data-act=call]')"))
   # NT-23 ask chip
