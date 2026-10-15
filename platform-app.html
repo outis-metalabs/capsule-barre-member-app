@@ -237,14 +237,15 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .chome .cpic{position:relative;width:200px;height:240px;margin:0 auto}
 .chome .cpic .cut,.chome .cpic video,.chome .cpic img{width:100%;height:100%;object-fit:contain;object-position:50% 100%}
 .chome .cg{font-size:21px;margin:8px 0 6px}
-.wear-acc{position:absolute;top:18px;right:34px;width:34px;height:34px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.wear-acc{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-right:4px;flex:none} /* acc-fix: never drawn over Cici's body/face */
+.wear-acc.frame{position:absolute;right:0;bottom:0;width:34px;height:34px;margin:0;padding:6px;box-sizing:border-box;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(176,74,94,.25)}
 .wear-tag{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:#F6E3E7;color:#8E3346;font-size:13px;font-weight:650}
 .lvlbar{margin-top:14px}.lvlbar .bar{margin-top:8px}
 .munlock{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(43,35,38,.5);padding:24px}
 .munlock .box{background:#FFFDF9;border-radius:20px;padding:18px 16px;max-width:330px;width:100%;text-align:center}
 .munlock .cpic{position:relative;width:150px;height:180px;margin:0 auto 6px}.munlock .cpic .cut,.munlock .cpic video,.munlock .cpic img{width:100%;height:100%;object-fit:contain}
-.munlock .wear-acc{top:10px;right:22px}
-.cav-h{position:relative;display:inline-block}.cav-h .wear-acc{top:-6px;right:-8px;width:20px;height:20px} 
+.munlock .wear-acc.frame{right:0;bottom:0}
+.cav-h{position:relative;display:inline-block}.cav-h .wear-acc{position:absolute;bottom:-4px;right:-6px;top:auto;width:18px;height:18px;margin:0;padding:2px;box-sizing:border-box;border-radius:50%;background:#fff} 
 /* post-merge polish */ .ptsbtn{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:44px;padding:0;margin:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.ptsbtn svg{width:16px;height:16px;flex:none;color:#B04A5E} input.cb44{-webkit-appearance:none;appearance:none;width:44px;height:44px;margin:0 0 0 -10px;flex:none;cursor:pointer;border:0;background:center/22px 22px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='1' y='1' width='20' height='20' rx='5' fill='%23fff' stroke='%23767676' stroke-width='2'/%3E%3C/svg%3E")} input.cb44:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='0' y='0' width='22' height='22' rx='5' fill='%23B04A5E'/%3E%3Cpath d='M5.5 11.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")} input.cb44:focus-visible{outline:3px solid #B04A5E;outline-offset:-6px;border-radius:10px}input.cb44:disabled{opacity:.5;cursor:default} .pv-v{flex-wrap:wrap;row-gap:8px}.pv-v>.grow{flex:1 1 170px;min-width:0}.pv-v>.btn{flex:none;white-space:nowrap;margin-left:auto} 
 #winpill.go{animation:wpin .35s cubic-bezier(.3,1.5,.5,1)}
 #winpill .wcut{display:block;width:30px;height:40px;flex:none}#winpill .wcut .cut{width:30px;height:40px;object-fit:contain;object-position:50% 100%}
@@ -1801,9 +1802,10 @@ const OUTFIT_KO = ["기본", "스튜디오", "글로우", "블룸", "아이콘"]
 const outfitNm = n => L === "ko" ? OUTFIT_KO[n - 1] : L === "vi" ? OUTFIT_VI[n - 1] : OUTFIT[n - 1];
 const wearNm = () => { const n = outfitIdx(ST.wear); if (n) return outfitNm(n); return ST.wear === "wrap" ? tr("Studio wrap top") : ST.wear === "lan" ? tr("Mid-Autumn lantern") : ""; };
 /* decorative accessory drawn over the same Cici art (no new art needed): Studio ribbon, Glow sparkle, Bloom flower, Icon star clip */
-function outfitBadge(id) {
+/* acc-fix: mode "pill" = inline icon (inside the Wearing pill), "frame" = round badge at the bottom-right corner of a full-body frame, default = tiny corner badge on small avatars (.cav-h) */
+function outfitBadge(id, mode) {
   const n = outfitIdx(id), d = { 2: '<path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#B04A5E"/>', 3: '<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#E9B44C"/>', 4: '<g fill="#E98597"><circle cx="12" cy="6" r="4"/><circle cx="6" cy="12" r="4"/><circle cx="18" cy="12" r="4"/><circle cx="12" cy="18" r="4"/></g><circle cx="12" cy="12" r="3.2" fill="#FFD36E"/>', 5: '<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8z" fill="#8E3346"/>' }[n];
-  if (!d) return ""; return `<svg class="wear-acc" data-wear="${esc(id)}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  if (!d) return ""; return `<svg class="wear-acc${mode === "frame" ? " frame" : mode === "pill" ? " pill" : ""}" data-wear="${esc(id)}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
 }
 function heroScene() {
   const h = homeHour(), nm = L3("Mina", "Mina", "미나"), calm = gated(); /* MVP-H7: the last Cici turn was a crisis/urgent turn (AC5 still in force) -> calm pose, neutral greeting */
@@ -1813,7 +1815,7 @@ function heroScene() {
     : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
   const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
   const wn = wearNm();
-  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}${calm ? "" : outfitBadge(ST.wear)}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
 }
 /* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
 function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
@@ -1975,7 +1977,7 @@ function vLook() {
   const lv = lvlOf(ME), OF = [1, 2, 3, 4, 5], CO = [["wrap", tr("Studio wrap top")], ["lan", tr("Mid-Autumn lantern")]].filter(([id]) => ST.owned.includes(id));
   const tile = (id, nm, sub, ok) => `<button class="tile${ok ? "" : " lock"}" data-act="pvwear" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : 'disabled aria-disabled="true"'} aria-label="${esc(nm + ", " + sub)}" style="min-height:44px;font:inherit;color:inherit"><span class="ic">${ok ? (outfitBadge(id) || ic("shirt")) : ic("lock")}</span><b class="sm">${esc(nm)}</b><span class="sub sm">${esc(sub)}</span></button>`;
   const got = n => n <= lv || (ME.unlocked || []).includes("o" + n); /* MVP-L3/OQ4: kept after a reversal */
-  return `<div class="chome" style="padding-top:0"><div class="cpic" style="width:150px;height:180px">${cut("idle", { alt: L3("Cici", "Cici", CICI_KO), eager: 1 })}${outfitBadge(ST.wear)}</div></div>
+  return `<div class="chome" style="padding-top:0"><div class="cpic" style="width:150px;height:180px">${cut("idle", { alt: L3("Cici", "Cici", CICI_KO), eager: 1 })}${outfitBadge(ST.wear, "frame")}</div></div>
   <p class="sub sm" id="look-note">${esc(L3("Each new level unlocks a look for Cici. Looks are just for fun: they can't be bought, sold or swapped for discounts.", "Mỗi cấp mới mở một phong cách cho Cici. Chỉ để vui: không mua, bán hay đổi lấy ưu đãi được.", "레벨이 오를 때마다 " + CICI_KO + "의 새 스타일이 열려요. 재미로만 즐기는 거라 사거나 팔거나 할인으로 바꿀 수 없어요."))}</p>
   <div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
 }
@@ -2007,7 +2009,7 @@ function maybeUnlock() {
   const n = ME.notices.find(x => x.k === "outfitUnlocked" && !x.played); if (!n) return; n.played = true;
   const id = n.v.item || ("o" + n.v.lvl), nm = outfitNm(outfitIdx(id)) || n.v.outfit; track("cici_item_unlock", { item: id, lvl: n.v.lvl });
   const el = document.createElement("div"); el.className = "munlock"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "unl-t");
-  el.innerHTML = `<div class="box" id="unl-box"><div class="cpic">${cut("ribbon", { alt: L3("Cici twirling a ribbon", "Cici múa dải ruy băng", "리본을 돌리는 " + CICI_KO), eager: 1, once: 1 })}${outfitBadge(id)}</div><h2 id="unl-t" style="justify-content:center;margin:4px 0">${esc(pvT("outfitUnlocked"))}</h2><p class="sm" style="margin:0 0 12px"><b>${esc(nm)}</b> · ${esc(pvT("level", { n: n.v.lvl, name: lvlName(n.v.lvl) }))}</p><div class="stack"><button class="btn full" data-act="unlwear" data-v="${id}">${esc(L3("Wear it", "Mặc ngay", "입혀 보기"))}</button><button class="btn ghost full" data-act="unlclose">${esc(L3("Later", "Để sau", "나중에"))}</button></div></div>`;
+  el.innerHTML = `<div class="box" id="unl-box"><div class="cpic">${cut("ribbon", { alt: L3("Cici twirling a ribbon", "Cici múa dải ruy băng", "리본을 돌리는 " + CICI_KO), eager: 1, once: 1 })}${outfitBadge(id, "frame")}</div><h2 id="unl-t" style="justify-content:center;margin:4px 0">${esc(pvT("outfitUnlocked"))}</h2><p class="sm" style="margin:0 0 12px"><b>${esc(nm)}</b> · ${esc(pvT("level", { n: n.v.lvl, name: lvlName(n.v.lvl) }))}</p><div class="stack"><button class="btn full" data-act="unlwear" data-v="${id}">${esc(L3("Wear it", "Mặc ngay", "입혀 보기"))}</button><button class="btn ghost full" data-act="unlclose">${esc(L3("Later", "Để sau", "나중에"))}</button></div></div>`;
   document.body.appendChild(el); hydrateCuts(el); const b = el.querySelector("[data-act=unlwear]"); if (b) b.focus();
 }
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
