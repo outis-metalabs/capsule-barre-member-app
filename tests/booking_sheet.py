@@ -38,6 +38,8 @@ with sync_playwright() as p:
     ok(f'[{lang}] {name}: booked via the shared engine', nb['status']=='confirmed' and (move or J(g, "B.filter(b=>b.status==='confirmed').length")==n0+1))
     if move: return nb
     ok(f'[{lang}] {name}: success: Cici cheer + summary + earn + View in My bookings', g.locator('#bk-confirm .pic').count()==1 and g.locator('#bk-earn').count()==1 and g.locator('#bk-view').count()==1 and g.locator('[data-act=addcal]').count()==1)
+    ov = J(g, "(()=>{const t=document.querySelector('#toast');if(!t||t.hidden)return [];const r=t.getBoundingClientRect();return [...document.querySelectorAll('#bk-done-acts button,#bk-confirm')].filter(e=>{const q=e.getBoundingClientRect();return q.height&&r.left<q.right&&q.left<r.right&&r.top<q.bottom&&q.top<r.bottom}).map(e=>e.innerText.slice(0,20))})()")
+    ok(f'[{lang}] {name}: Undo toast covers no confirmation button (Add to calendar)', not ov, ov)
     a = J(g, A11Y); ok(f'[{lang}] {name}: success AA + 44px', not a['bad'] and not a['small'], a); shot(g, shots and shots+'-4-success')
     g.click('#bk-view'); g.wait_for_timeout(250)
     ok(f'[{lang}] {name}: appears in My bookings', J(g, "ST.page")=='bookings' and g.locator(f"#bk-{nb['id']}").count()==1 and J(g, "ST.tab")!='cici')
