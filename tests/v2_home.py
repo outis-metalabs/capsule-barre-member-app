@@ -24,7 +24,7 @@ with sync_playwright() as p:
   for w, h in [(360, 640), (360, 780), (390, 844), (430, 932)]:
     for L in ('ko', 'en', 'vi'):
       g = page(L, w, h); k = f'[{w}/{L}]'; G = g.evaluate(GEO); f = G['f']
-      ok(f'{k} official Dubu loop/poster loads full-bleed (cover, 50% 35%) and the hero fills the screen', G['loaded'] and abs(G['heroH'] - h) < 2 and f['fit'] == 'cover' and f['pos'] == '50% 35%', [G['heroH'], f])
+      ok(f'{k} official Mochi (petting) loop/poster loads full-bleed (cover, 50% 35%) and the hero fills the screen', G['loaded'] and abs(G['heroH'] - h) < 2 and f['fit'] == 'cover' and f['pos'] == '50% 35%', [G['heroH'], f])
       ok(f'{k} face fully on screen, in the upper-middle, above the bar', f['l'] >= 0 and f['r'] <= w and f['t'] >= 0 and f['b'] <= G['barTop'] and f['t'] < h * .5 and abs((f['l'] + f['r']) / 2 - w / 2) < w * .12, [f, G['barTop']])
       ok(f'{k} face never covered by the glass card or the header', not G['coverCard'] and not G['coverHdr'], [f, G['card']])
       ok(f'{k} ONE glass card top-left: greeting, bold line with berry highlight, chevron, <=1 secondary row', G['cards'] == 1 and G['card']['l'] <= 20 and G['card']['t'] < 120 and G['em'] and G['chev'] and G['sec'] <= 1, G)

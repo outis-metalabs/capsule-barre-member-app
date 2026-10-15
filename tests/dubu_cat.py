@@ -1,4 +1,4 @@
-"""Dubu (두부) the cat, v2 phase2 only. One check group per BA AC id in dubu-cat-ba-ac.md (DB-H/T/M/C/V/X).
+"""Mochi (모찌) the cat (was Dubu), v2 phase2 only. One check group per BA AC id in dubu-cat-ba-ac.md (DB-H/T/M/C/V/X). File path kept as dubu_cat.py.
 Usage: dubu_cat.py [base_url] [shots_dir]"""
 import sys, os, re
 from playwright.sync_api import sync_playwright
@@ -33,7 +33,7 @@ with sync_playwright() as p:
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.day='old';P2S.cat.fed=1;P2S.cat.earned=3;render()}")
   ok('DB-H3 new home-tz day resets earned/fed', J(g, "catDay().earned===0 && catDay().fed===0"))
   # DB-H4 no push
-  ok('DB-H4 no push/Notification API used for Dubu', J(g, "!/Notification|showNotification|pushManager/.test(catFeed.toString()+catEarn.toString()+catRow.toString()+catCard.toString())"))
+  ok('DB-H4 no push/Notification API used for Mochi', J(g, "!/Notification|showNotification|pushManager/.test(catFeed.toString()+catEarn.toString()+catRow.toString()+catCard.toString())"))
   # DB-H5 pending visit doesn't count
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;const now=PV.now();BKREG.pz={member:ME.id,store:'capsule',start:now-10*60000,end:now+40*60000,status:'booked'};render()}")
   ok('DB-H5 a visit pending confirmation does not count (still hungry, no treat)', J(g, "catHungry() && catDay().treats===0"))
@@ -68,12 +68,12 @@ with sync_playwright() as p:
   # DB-C1 / C2
   g = page(q='?phase2=1&demo=1'); J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=2;render()}")
   J(g, "()=>{const c=CH.cici;crisisReply(c,'test');render()}")
-  ok('DB-C1 crisis turn itself: no Dubu card, row or feed', J(g, "!document.querySelector('#cat-card,#cat-feed,#hb-sec')"))
+  ok('DB-C1 crisis turn itself: no Mochi card, row or feed', J(g, "!document.querySelector('#cat-card,#cat-feed,#hb-sec')"))
   J(g, "()=>{CH.cici.gate=false;render()}")
   ok('DB-C1 within 24h: hunger, treat counters and Feed hidden; calm only', J(g, "catCrisis() && !catHungry() && catMood()==='calm' && !document.querySelector('#cat-feed,#cat-card,#cat-feedbtn,[data-hungry]') && !/\\d/.test(document.querySelector('#cat-line').innerText)"))
   J(g, "()=>catFeed()"); ok('DB-C1 no happy moment in the window', J(g, "catDay().treats===2 && !ST.catEat"))
-  J(g, "()=>{P2S.cat.crisisAt=PV.now()-25*3600*1000;render()}"); ok('DB-C1 after 24h the Dubu prompts return', J(g, "!catCrisis() && !!document.querySelector('#cat-feed')"))
-  ok('DB-C2 crisis copy/no-number unchanged and no Dubu prompt in the Cici chat', J(g, "!/Dubu|두부|tel:/.test(CH.cici.msgs.map(m=>m.text||'').join(' '))"))
+  J(g, "()=>{P2S.cat.crisisAt=PV.now()-25*3600*1000;render()}"); ok('DB-C1 after 24h the Mochi prompts return', J(g, "!catCrisis() && !!document.querySelector('#cat-feed')"))
+  ok('DB-C2 crisis copy/no-number unchanged and no Dubu prompt in the Cici chat', J(g, "!/Mochi|모찌|Dubu|두부|tel:/.test(CH.cici.msgs.map(m=>m.text||'').join(' '))"))
   g.close()
   # DB-V
   g = page()
@@ -101,11 +101,11 @@ with sync_playwright() as p:
     ok(f'DB-V1 {os.path.basename(f)} <=2.5 MB, {lim[0]}-8 s, no audio track', os.path.getsize(f) <= 2.5e6 and lim[0] <= dur <= lim[1] and 'audio' not in o, [os.path.getsize(f), dur, o])
   # DB-X
   g = page(); J(g, FRESH); before = J(g, LED); J(g, "()=>{catEarn('x');P2S.cat.treats=1;catFeed()}"); g.wait_for_timeout(100)
-  ok('DB-X1 points, ledger, caps, streak unchanged by Dubu', J(g, LED) == before)
-  ok('DB-X1 realRewards gating untouched (no Dubu reference in reward code)', J(g, "typeof DEMO_MODE!=='undefined'"))
+  ok('DB-X1 points, ledger, caps, streak unchanged by Mochi', J(g, LED) == before)
+  ok('DB-X1 realRewards gating untouched (no Mochi reference in reward code)', J(g, "typeof DEMO_MODE!=='undefined'"))
   g.close()
   g = page(q=''); J(g, "()=>{render()}")
-  ok('DB-X2 flag off: no Dubu UI, storage or request', J(g, "!document.querySelector('#cat-card,#cat-feed,#cat-video,.catrow') && !/\"cat\"/.test(localStorage.getItem('cici.p2')||'')") and not any('cici-cat' in u for u in g.REQ)); g.close()
+  ok('DB-X2 flag off: no Mochi UI, storage or request', J(g, "!document.querySelector('#cat-card,#cat-feed,#cat-video,.catrow') && !/\"cat\"/.test(localStorage.getItem('cici.p2')||'')") and not any('cici-cat' in u for u in g.REQ)); g.close()
   # demo controls + screenshots
   for w, h in [(390, 844), (430, 932)]:
     for L in ('ko', 'en'):
