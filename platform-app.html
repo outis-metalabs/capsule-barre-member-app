@@ -124,7 +124,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .conf{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:14px;margin:12px 0}
 .conf dt{color:var(--sub)}.conf dd{margin:0;font-weight:600}
 .conf .tot{font-size:18px;font-weight:800}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:30;background:var(--ink);color:#fff;border-radius:14px;padding:6px 6px 6px 14px;display:flex;align-items:center;gap:8px;max-width:400px;width:calc(100% - 24px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:30;background:var(--ink);color:#fff;border-radius:14px;padding:6px 6px 6px 14px;display:flex;align-items:center;gap:8px;max-width:400px;width:calc(100% - 24px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .toast[hidden]{display:none}
 .toast .tx{flex:1;font-size:14px;padding:6px 0}
 .toast button{min-height:44px;border:0;background:transparent;color:#FFD3DC;font-weight:750;padding:0 12px;text-decoration:underline}
@@ -135,13 +135,13 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .sosbtn{flex:none;min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:0;background:#B04A5E;color:#fff;font-weight:700;font-size:13px;white-space:nowrap}
 .sosbtn:focus-visible,.sosmini:focus-visible{outline:3px solid #3A2E31;outline-offset:2px}
 .sosmini{display:block;min-height:44px;margin:2px 0 -8px;padding:12px 0;line-height:1.3;border:0;background:none;color:#8A3446;font-size:12px;text-align:left}
-.chatbox textarea,.inp{flex:1;min-width:0;text-overflow:ellipsis;min-height:48px;max-height:120px;border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;background:#fff;font:inherit;resize:none;color:var(--ink)}
-.chatbox textarea:focus,.inp:focus{border-color:var(--rasp);outline:none;box-shadow:0 0 0 3px #F0C9D2}
+.chatbox textarea,.inp{flex:1;min-width:0;text-overflow:ellipsis;min-height:48px;max-height:120px;border:1.5px solid #F0C9D3;border-radius:22px;padding:12px 14px;background:#FFFBFC;font:inherit;resize:none;color:var(--ink);box-shadow:0 1px 2px rgba(176,74,94,.04)}
+.chatbox textarea:focus,.inp:focus{border-color:#E8A0B0;outline:2px solid #E98597;outline-offset:3px;box-shadow:0 0 0 4px rgba(233,133,151,.22)}
 .send{min-width:48px;min-height:48px;border-radius:50%;border:0;background:var(--rasp);color:#fff;display:grid;place-items:center}
 .thread{display:flex;flex-direction:column;gap:10px;margin:12px 0}
-.msg{max-width:88%;padding:10px 13px;border-radius:16px;font-size:15px}
-.msg.me{align-self:flex-end;background:var(--rasp);color:#fff;border-bottom-right-radius:4px}
-.msg.n{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg{max-width:88%;padding:10px 13px;border-radius:22px;font-size:15px}
+.msg.me{align-self:flex-end;background:var(--rasp);color:#fff;border-radius:22px;box-shadow:0 6px 16px rgba(142,51,70,.16)}
+.msg.n{align-self:flex-start;background:#fff;border:0;border-radius:22px;box-shadow:0 8px 20px rgba(176,74,94,.10)}
 .nrow{display:flex;gap:8px;align-items:flex-end;align-self:flex-start;max-width:96%}
 .nrow .av{width:32px;height:32px}
 .mcard{margin-top:8px;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--cream)}
@@ -172,10 +172,10 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 @media (max-width:350px){main{padding:10px 12px 24px}.scroll{margin:0 -12px;padding-left:12px;padding-right:12px}.scene .pic{width:38%}h1{font-size:20px}nav.tabs button{font-size:11px;letter-spacing:-.2px;padding:0 1px}.brand span.t{font-size:15px}.tr .icb{min-width:44px;padding:0 4px}h2{flex-wrap:wrap}.chip{padding:8px 11px}}
 
 /* ===== playful restyle (young, soft blush; raspberry #B04A5E for text/buttons, #E98597 decoration only) ===== */
-:root{--cream:#FFF6F3;--card:#FFFFFF;--line:#F3DCD8;--tint:#FDE7EA}
-html,body{background:linear-gradient(180deg,#FFE9E6 0%,#FFF1E8 45%,#FFF6F3 100%) fixed}
-#app{background:transparent}
-header.top{background:#FFF4F1;border-bottom:1px solid #F6DDE1;z-index:15}
+:root{--cream:#FDECEF;--card:#FFFFFF;--line:#F0D3DB;--tint:#FDE8EE;--bg:#FFFFFF}
+html,body{background:#F6D9E2}
+#app{background:#FDECEF}
+header.top{background:rgba(253,236,239,.96);border-bottom:0;box-shadow:0 8px 18px rgba(176,74,94,.06);z-index:15}
 h1{font-weight:850;letter-spacing:-.3px;font-size:24px}
 h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .card{border-radius:22px;border:0;box-shadow:0 6px 22px rgba(176,74,94,.08),0 1px 0 rgba(176,74,94,.04);padding:16px}
@@ -185,9 +185,9 @@ h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .tag{border-radius:999px;background:#FCE4E2}
 .tag.ok{background:#D9F0E6}
 .svc,.slot,.place,.tile{border-radius:20px;border:0;box-shadow:0 4px 16px rgba(176,74,94,.07)}
-.scene{border-radius:24px;background:linear-gradient(135deg,#FFD9DF 0%,#FFE4D3 100%);box-shadow:0 10px 30px rgba(233,133,151,.25)}
+.scene{border-radius:24px;background:linear-gradient(135deg,#F8D5DE 0%,#FDECEF 100%);box-shadow:0 10px 30px rgba(233,133,151,.18)}
 .scene .pic{background:transparent;width:48%;max-width:190px;min-height:230px}
-html{min-height:100%;background:#FFF6F3}
+html{min-height:100%;background:#F6D9E2}
 .scene .pic img:not(.cut),.cici-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
 .scene .pic img:not(.cut){animation:nfloat 4s ease-in-out infinite}
 .cut{display:block;background:transparent}
@@ -200,7 +200,7 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .cut-note{width:72px;height:auto;flex:none}
 /* polish: Cici tab like a chat app (input pinned above the tab bar), store action row */
 #view.cici-v{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - 72px - env(safe-area-inset-bottom));padding-bottom:0}
-#view.cici-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FFF4F1;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
+#view.cici-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FDECEF;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
 .nhero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0 14px;text-align:center}
 .nhero-cut{width:auto;height:200px;max-width:60%;object-fit:contain}
 .nhero .msg.n{max-width:100%;text-align:center;font-size:16px;line-height:1.45;padding:12px 16px}
@@ -237,12 +237,20 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 @keyframes wpin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} /* on the Cici tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
-.msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
+.msg,.msg.me,.msg.n{border-radius:22px}.msg.n{border:0;background:#fff;box-shadow:0 8px 20px rgba(176,74,94,.10)}
+.nrow .msg.n,.nhero .msg.n{position:relative}
+.nrow .msg.n::after,.nhero .msg.n::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 6px 8px -4px rgba(176,74,94,.16)}
+.nrow .msg.n::after{left:14px;bottom:-5px}
+.nhero .msg.n::after{left:50%;top:-6px;transform:translateX(-50%)}
+.chome .cg{position:relative;margin:16px 0 6px;padding:12px 18px;background:#fff;border-radius:28px;box-shadow:0 10px 24px rgba(176,74,94,.10)}
+.chome .cg::before{content:"";position:absolute;left:50%;top:-6px;width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX(-50%)}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
 .sheet-bg{animation:fadein .2s ease}
 #view{animation:viewin .25s ease}
-nav.tabs{z-index:15;border-top:0;box-shadow:0 -6px 24px rgba(176,74,94,.10);border-radius:22px 22px 0 0}
-nav.tabs button[aria-current=page] svg{transform:translateY(-2px) scale(1.12);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+nav.tabs{z-index:15;border-top:0;background:#FFF1F4;box-shadow:0 -12px 28px rgba(176,74,94,.08);border-radius:28px 28px 0 0;padding:6px 6px calc(8px + env(safe-area-inset-bottom));gap:4px}
+nav.tabs button{border-radius:18px;min-height:52px}
+nav.tabs button[aria-current=page]{background:#fff;color:var(--rasp);box-shadow:0 6px 16px rgba(176,74,94,.14)}
+nav.tabs button[aria-current=page] svg{transform:translateY(-1px) scale(1.08);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 button{transition:transform .15s cubic-bezier(.3,1.6,.5,1)}
 button:active:not([disabled]){transform:scale(.94)}
 .nempty{display:flex;align-items:center;gap:12px}.nempty img{width:72px;height:96px;object-fit:cover;object-position:50% 15%;flex:none}
@@ -323,7 +331,17 @@ button:active:not([disabled]){transform:scale(.94)}
 /* profile edit */
 .pedit-form{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .pedit-form .field label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px}
-.pedit-form .field input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-size:16px;font:inherit;box-sizing:border-box}
+.pedit-form .field input{width:100%;border:1.5px solid #F0C9D3;border-radius:22px;padding:12px 16px;min-height:48px;font-size:16px;font:inherit;box-sizing:border-box;background:#FFFBFC;box-shadow:0 1px 2px rgba(176,74,94,.04)}
+.pedit-form .field input:focus{border-color:#E8A0B0;outline:2px solid #E98597;outline-offset:3px;box-shadow:0 0 0 4px rgba(233,133,151,.22)}
+.bar,.week b{background:#F8E4EA}
+.icb:hover{background:#F8E4EA}
+.btn.pvoff[disabled]{background:#F8E4EA;border-color:#F8E4EA}
+.tile.lock,.chip.p2lock{background:#F8E4EA}
+.p2room .p2floor{background:linear-gradient(180deg,#FDECEF 0 62%,#F3D5DC 62%)}
+.sosbar{border-color:#F0D3DB;background:#FFF6F8}
+.mcard.care{border-color:#F0D3DB;background:#FFF6F8}
+.munlock .box{background:#FFF8F6}
+.onboard-step{border:0;border-radius:18px;background:#fff;box-shadow:0 6px 16px rgba(176,74,94,.08)}
 /* gain float */
 .gain-float{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));display:flex;gap:6px;z-index:50;pointer-events:none}
 .gain-pill{background:var(--ox);color:#fff;border-radius:99px;padding:5px 14px;font-size:14px;font-weight:800;animation:gainpop .4s cubic-bezier(.3,1.6,.5,1) both,gainfade 1.8s .4s ease forwards}
@@ -456,7 +474,7 @@ const SHOP_ITEMS = [
   { id:"comp-axolotl", cat:"companion", icon:"🦎", name:["Axolotl","Axolotl hồng","아홀로틀"],        desc:["Rare pink study buddy","Bạn học hiếm màu hồng","희귀 핑크 공부 친구"],            price:220, rarity:"epic"   },
   { id:"comp-bunny",   cat:"companion", icon:"🐰", name:["Bunny","Thỏ","버니"],                       desc:["Hops beside you at class","Nhảy cùng bạn trong lớp","수업에서 옆에서 뛰어요"],  price:90,  rarity:"common" },
   { id:"comp-fox",     cat:"companion", icon:"🦊", name:["Fox","Cáo","폭스"],                         desc:["Clever streak protector","Bảo vệ chuỗi thông minh","연속 기록 수호자"],         price:160, rarity:"rare"   },
-  { id:"boost-xp",     cat:"boost",     icon:"⚡", name:["XP Rush ×2","XP gấp đôi","XP 2배"],         desc:["Double XP for next 3 visits","XP gấp đôi 3 lần tới","다음 방문 3번 XP 2배"],    price:50,  rarity:"common" },
+  { id:"boost-xp",     cat:"boost",     icon:"⚡", name:["Points Rush ×2","Điểm gấp đôi","포인트 2배"],  desc:["Double points for next 3 visits","Điểm gấp đôi 3 lần tới","다음 방문 3번 포인트 2배"], price:50,  rarity:"common" },
   { id:"boost-coin",   cat:"boost",     icon:"💰", name:["Coin Rain ×2","Xu gấp đôi","코인 2배"],     desc:["Double coins for 3 visits","Xu gấp đôi 3 lần tới","방문 3번 코인 2배"],          price:50,  rarity:"common" },
   { id:"music-lofi",   cat:"music",     icon:"🎵", name:["Lo-fi Study","Lo-fi thư giãn","로파이"],    desc:["Chill beats while you train","Nhịp thư giãn lúc tập","훈련 중 편안한 비트"],      price:70,  rarity:"common" },
   { id:"music-pop",    cat:"music",     icon:"🎶", name:["K-Pop Energy","Nhạc K-pop","케이팝"],        desc:["Energising K-Pop mix","Nhạc K-Pop sôi động","에너지 넘치는 케이팝 믹스"],        price:70,  rarity:"common" },
@@ -511,7 +529,7 @@ function shopPage() {
   }).join("");
   return `<button class="link" style="min-height:44px;margin-bottom:4px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
     <div class="shop-head"><h2>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</h2><span class="shop-balance">🪙 ${ST.shopCoins}</span></div>
-    ${boostActive?`<div class="sboost"><span>⚡</span><div>${ST.xpBoostLeft>0?esc(L3("XP ×2 active","XP ×2 đang bật","XP ×2 활성"))+" — "+ST.xpBoostLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}${ST.xpBoostLeft>0&&ST.coinRushLeft>0?" · ":""}${ST.coinRushLeft>0?esc(L3("Coin ×2 active","Xu ×2 đang bật","코인 ×2 활성"))+" — "+ST.coinRushLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}</div></div>`:""}
+    ${boostActive?`<div class="sboost"><span>⚡</span><div>${ST.xpBoostLeft>0?esc(L3("Points ×2 active","Điểm ×2 đang bật","포인트 ×2 활성"))+" — "+ST.xpBoostLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}${ST.xpBoostLeft>0&&ST.coinRushLeft>0?" · ":""}${ST.coinRushLeft>0?esc(L3("Coin ×2 active","Xu ×2 đang bật","코인 ×2 활성"))+" — "+ST.coinRushLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}</div></div>`:""}
     <div class="shop-cats">${chips}</div>
     <div class="shop-grid">${grid||`<p class="sub sm" style="grid-column:span 2">${esc(L3("Nothing here yet.","Chưa có gì.","아직 없어요."))}</p>`}</div>`;
 }
@@ -2157,8 +2175,9 @@ function missionsCard() {
   const M = [["attend", t("mAttend"), 50, L3("counts when the store confirms your visit", "được tính khi cửa hàng xác nhận bạn đã đến", "매장에서 방문을 확인하면 적립")], ["newplace", t("mNew"), 80, L3("first confirmed visit to a place", "lần đầu được xác nhận tại một nơi", "처음 확인된 방문")], ["stretch", t("mStretch"), 10, L3("at home is fine", "ở nhà cũng được", "집에서도 괜찮아요")]];
   const done = M.filter(m => ST.miss[m[0]]).length;
   const row = (k, l, x, why, btn) => `<div class="mis${ST.miss[k] ? " done" : ""}"><span class="ck" aria-hidden="true">${ST.miss[k] ? ic("check", "s") : ""}</span><span class="grow"><span class="mt">${esc(l)}</span><span class="vh">${ST.miss[k] ? ", " + tr("done") : ""}</span><br><span class="sub sm">+${esc(fmtPts(x))} · ${esc(why)}</span></span>${ST.miss[k] ? "" : btn || ""}</div>`;
-  return `<div class="card" id="home-mis"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span></div>
-  ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : "")).join("")}</div>`;
+  const demoBtn = (act) => `<button class="btn sec" data-act="${act}">${L3("Demo ›","Demo ›","데모 ›")}</button>`;
+  return `<div class="card" id="home-mis"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span><span class="sub sm" style="color:#c98b00;font-weight:800">🪙 ${ST.shopCoins}</span></div>
+  ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : k === "attend" ? demoBtn("attend-demo") : k === "newplace" ? demoBtn("newplace-demo") : "")).join("")}</div>`;
 }
 const AGAIN = [["capsule", "barre", { staff: "yuna" }, "Barre with Yuna"], ["salon", "cut", { staff: "linh" }, "Women's cut with Linh"], ["skin", "hydra", {}, "Hydrating facial"], ["spa", "aroma90", {}, "Aroma 90 min"], ["pickle", "court", { party: 4 }, "Court · 4 players"]];
 function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
@@ -2561,7 +2580,7 @@ function attend(b) { /* the Store app scans the member's code (demo); points com
   ST.miss.attend = true; if (FLAGS.quest) ST.steps = Math.min(14, ST.steps + 1); if (r.bonus) ST.miss.newplace = true;
   s.visits++; ST.week[(wd(0) + 6) % 7] = 1;
   if (FLAGS.quest) { if (["fitness", "sport"].includes(s.cat)) ST.quest.active = true; if (["massage", "skin"].includes(s.cat)) ST.quest.relax = true; }
-  closeSheet(); render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnVisit", { n: r.pts, s: s.name }) + (r.bonus ? " · " + pvT("earnNewPlace", { n: r.bonus, s: s.name }) : "") : pvT("howEarn"));
+  closeSheet(); render(); if (r.pts) { celebrate(); shopGain(20); } toast(r.pts ? pvT("earnVisit", { n: r.pts, s: s.name }) + (r.bonus ? " · " + pvT("earnNewPlace", { n: r.bonus, s: s.name }) : "") + " · +20 🪙" : pvT("howEarn"));
 }
 let stretchT = null;
 function stretchSheet() {
@@ -2570,7 +2589,7 @@ function stretchSheet() {
   <p class="sub sm" style="margin-top:8px">${tr("Stop if anything hurts.")}</p><div class="stack"><button class="btn full" data-act="stretchdone">${tr("Finish (demo: skip the timer)")}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("mStretch"));
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000);
 }
-function finishStretch() { clearInterval(stretchT); const r = pvMission(ME, "stretch"); ST.miss.stretch = true; closeSheet(); render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("mStretch") }) : pvT(r.msg)); }
+function finishStretch() { clearInterval(stretchT); const r = pvMission(ME, "stretch"); ST.miss.stretch = true; closeSheet(); render(); if (r.pts) { celebrate(); shopGain(10); } toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("mStretch") }) + " · +10 🪙" : pvT(r.msg)); }
 function manage(b) {
   if (!b) return; const s = S[b.store], P = bkPol(b), free = bkFree(b), st = bkStarted(b) || b.status !== "confirmed";
   const acts = st ? "" : b.req ? `<span class="tag warn">${t("bkRequested")}</span>` : !free && P.studio ? `<p class="sm" style="margin:0">${esc(t("askStudioHint"))}</p><button class="btn full" data-act="askstudio" data-id="${b.id}">${t("askStudio")}</button>`
@@ -2887,7 +2906,9 @@ document.addEventListener("click", e => {
       const key = catMap[it.cat]; if (key) ST.shopEquipped[key] = unequip ? null : id;
       toast(unequip ? it.icon+" "+L3("Removed.","Đã bỏ.","해제됐어요.") : it.icon+" "+shopItemNm(it)+" "+L3("equipped!","đã đeo!","착용!"));
       applyEquipped(); render(); break; }
-    case "onboard-done": ST.firstRun = false; ST.page = null; ST.shopCoins += 50; showGainPill(0, 50); toast(L3("Welcome! +50 🪙","Chào mừng! +50 🪙","환영해요! +50 🪙")); render(); break;
+    case "onboard-done": ST.firstRun = false; try { localStorage.setItem("cici.ob","1"); } catch(e){} ST.page = null; ST.shopCoins += 50; showGainPill(0, 50); toast(L3("Welcome! +50 🪙","Chào mừng! +50 🪙","환영해요! +50 🪙")); render(); break;
+    case "attend-demo": { const b = B.find(bk => bk.status === "confirmed"); if (b) { attend(b); } else { ST.miss.attend = true; shopGain(20); render(); toast(L3("Attended! +20 🪙","Đã điểm danh! +20 🪙","출석 완료! +20 🪙")); } break; }
+    case "newplace-demo": ST.miss.newplace = true; shopGain(30); render(); toast(L3("New place visited! +30 🪙","Thử nơi mới! +30 🪙","새로운 곳 방문! +30 🪙")); break;
     case "edit-profile": ST.editNameVal = ST.profileName || L3("Mina","Mina","미나"); ST.page = "profile-edit"; render(); window.scrollTo(0,0); break;
     case "save-profile": { const v = ($("#fEditName")||{}).value||""; const vt = v.trim(); if (!vt) { toast(L3("Name can't be empty.","Tên không được bỏ trống.","이름을 입력해 주세요.")); break; } ST.profileName = vt; ST.editNameVal = vt; ST.page = null; toast(L3("Saved.","Đã lưu.","저장됐어요.")); render(); break; }
     case "back": if (ST.page === "bookings") { bookingsBack(); break; } if (ST.page) { ST.page = ST.page === "nset" && ST.fromFeed ? "notif" : null; ST.fromFeed = false; render(); $("#view").focus(); break; } ST.store = null; render(); window.scrollTo(0, 0); $("#view").focus(); break;
@@ -3572,7 +3593,7 @@ ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
 pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
-seed(); try { migrateOnLoad(); } catch (e) {} try { const w = localStorage.getItem("cici.wear"); if (w) ST.wear = w; } catch (e) {} render(); if (ST.firstRun) { ST.page = "onboard"; render(); } /* MVP-R2: deep links #/nari, #/book, #/ask (and store/svc query) land on the Cici tab */
+seed(); try { migrateOnLoad(); } catch (e) {} try { const w = localStorage.getItem("cici.wear"); if (w) ST.wear = w; } catch (e) {} try { if (localStorage.getItem("cici.ob")) ST.firstRun = false; } catch(e){} render(); if (ST.firstRun) { ST.page = "onboard"; render(); } /* MVP-R2: deep links #/nari, #/book, #/ask (and store/svc query) land on the Cici tab */
 function hashBoot() {
   try {
     const h = (location.hash || "").replace(/^#\/?/, ""); if (!h) return;
