@@ -59,14 +59,14 @@ with sync_playwright() as p:
   YP(pg, 'points'); pend2 = pg.locator('#pv-pending').count()
   ok('AC-P3', R['AC-P3'][0] and pend1 == 1 and pend2 == 0, [R['AC-P3'][1], pend1, pend2, msg])
   # AC-P12 UI: streakReset shows on next open
-  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.days={};m.rest={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'Fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
+  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.days={[__plat.pv.dayKey(m,m.closedTo)]:'v'};m.rest={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'Fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
   pg.close()
   # --- flag ON: claim, use, validate, redeem through the UI
   pg = page('?realRewards=1'); pg.click('[data-act=pvseen]'); YP(pg, 'vouchers', 'more')
   claimBtns = pg.locator('[data-act=pvclaim]').count()
   pg.click('[data-act=pvclaim]:not([disabled])'); sheet = pg.inner_text('.sheet'); pg.click('[data-act=pvclaimok]'); you = YALL(pg, lambda: pg.inner_text('#view'))
   ok('AC-P17', R['AC-P17'][0] and 'Valid until' in sheet and 'Terms' in sheet and 'Ready' in you and '100 points' in you, [R['AC-P17'][1], sheet[:120]])
-  ok('AC-P16', R['AC-P16'][0] and 'Unlocks at Level 3' in you and 'more streak days needed' in you, R['AC-P16'][1])
+  ok('AC-P16', R['AC-P16'][0] and 'Unlocks at Level 3' in you and 'more days of streak needed' in you, R['AC-P16'][1])
   YP(pg, 'vouchers', 'mine'); pg.click('[data-act=pvuse]'); code1 = pg.inner_text('#pv-code'); pg.screenshot(path=f'{SHOTS}/use-code-390-en.png')
   pg.click('[data-act=pvrefresh]'); code2 = pg.inner_text('#pv-code')
   pg.check('[data-act=pvmoff]'); pg.click('[data-act=pvrefresh]'); offl = pg.locator('#pv-offline').count(); pg.screenshot(path=f'{SHOTS}/use-offline-390-en.png'); pg.uncheck('[data-act=pvmoff]'); pg.click('[data-act=pvrefresh]'); code3 = pg.inner_text('#pv-code')

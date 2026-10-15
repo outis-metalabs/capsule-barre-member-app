@@ -236,6 +236,17 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 /* post-merge polish */ .ptsbtn{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:44px;padding:0;margin:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}.ptsbtn svg{width:16px;height:16px;flex:none;color:#B04A5E} input.cb44{-webkit-appearance:none;appearance:none;width:44px;height:44px;margin:0 0 0 -10px;flex:none;cursor:pointer;border:0;background:center/22px 22px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='1' y='1' width='20' height='20' rx='5' fill='%23fff' stroke='%23767676' stroke-width='2'/%3E%3C/svg%3E")} input.cb44:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect x='0' y='0' width='22' height='22' rx='5' fill='%23B04A5E'/%3E%3Cpath d='M5.5 11.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")} input.cb44:focus-visible{outline:3px solid #B04A5E;outline-offset:-6px;border-radius:10px}input.cb44:disabled{opacity:.5;cursor:default} .pv-v{flex-wrap:wrap;row-gap:8px}.pv-v>.grow{flex:1 1 170px;min-width:0}.pv-v>.btn{flex:none;white-space:nowrap;margin-left:auto} 
 @keyframes wpin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
 body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))}
+.ghero{text-align:center}.gfig{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:300px;isolation:isolate}
+.gfig .cpic{position:relative;z-index:2;transform:scale(var(--gsc,1));transform-origin:50% 100%;transition:transform .6s}
+.gaura{position:absolute;z-index:0;left:50%;bottom:4%;width:78%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,var(--ga1) 0%,var(--ga2) 55%,transparent 72%);animation:gpulse 3.2s ease-in-out infinite;pointer-events:none}
+.gspark{position:absolute;z-index:1;color:#B04A5E;font-size:16px;line-height:1;animation:gtw 2.4s ease-in-out infinite;pointer-events:none}
+.gfig.cozy .gaura{animation-duration:6s;filter:saturate(.8)}.gzz{position:absolute;z-index:1;right:4%;top:2%;color:#6B5E62;font-weight:750;font-size:20px;animation:gtw 3s ease-in-out infinite}.gzz small{font-size:13px}
+.gfig.gup .cpic{animation:gpop 1.2s ease-out 1}.gstageup{margin:10px 0 0;background:#FFF3F5;border-color:#F6B8C4}
+.gstage{margin:8px 0 4px}.gbars{display:grid;gap:6px;margin:8px auto;width:100%;max-width:340px;align-self:center}.gbar{display:grid;grid-template-columns:72px 1fr 28px;align-items:center;gap:8px;text-align:left;font-size:14px}
+.gtrack{display:block;height:10px;border-radius:99px;background:#EFE4E7;overflow:hidden}.gtrack i{display:block;height:100%;background:#B04A5E;border-radius:99px}.gbar[data-k=calm] .gtrack i{background:#4E7A6A}.gbar[data-k=glow] .gtrack i{background:#9A6A1F}
+.ghint{margin:6px 0 10px}.gdemo{margin-top:10px;text-align:left}.gdemo summary{min-height:44px;display:flex;align-items:center;font-weight:650;cursor:pointer}
+@keyframes gpulse{0%,100%{opacity:.85;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.06)}}@keyframes gtw{0%,100%{opacity:.35}50%{opacity:1}}@keyframes gpop{0%{transform:scale(calc(var(--gsc,1)*.9))}60%{transform:scale(calc(var(--gsc,1)*1.06))}100%{transform:scale(var(--gsc,1))}}
+@media (prefers-reduced-motion:reduce){.gaura,.gspark,.gzz,.gfig.gup .cpic{animation:none}}
 body:has(#bk-confirm) .toast{top:calc(10px + env(safe-area-inset-top));bottom:auto} /* PR22: on the booking confirmation the Undo toast sits at the top, never over Add to calendar / the action buttons */ /* on the Cici tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
@@ -349,7 +360,7 @@ const ciciNm = () => CICI[L] || CICI.en;
    P2-F photo demo (consent first, mock, auto-delete, Delete/withdraw wipes derived data). ⚠ PIPA: facial images may be sensitive/biometric data; wording, retention, age rule and processing location need legal review (OQ-F1). */
 function P2() { try { return !!FLAGS.phase2; } catch (e) { return false; } } /* hoisted; false before FLAGS exists */
 const P2T = {
-  roomT: ["Cici's room", "Phòng của Cici", "{c}의 방"], ptsL: ["Points", "Điểm", "포인트"],
+  roomT: ["Cici's room", "Phòng của Cici", "{c}의 방"], ptsL: ["Points", "Điểm", "포인트"], ptsPrice: ["{n} points", "{n} điểm", "{n}포인트"], belowZero: ["Your balance is below zero, so new purchases are paused. Items you own stay yours.", "Số dư đang dưới 0 nên tạm dừng mua mới. Vật phẩm đã có vẫn là của bạn.", "잔액이 0 미만이라 새 구매가 잠시 멈췄어요. 가진 아이템은 그대로예요."], confirmBuy: ["Buy room item", "Mua vật phẩm phòng", "방 아이템 구매"], vWarn: ["Points spent here can't be used for vouchers.", "Điểm dùng ở đây không thể dùng cho ưu đãi.", "여기서 쓴 포인트는 바우처에 쓸 수 없어요."],
   ptsNote: ["Room items use your points, the same single balance as on the Points page. They're just for looks: buying one never changes your level, streak or bookings.", "Vật phẩm phòng dùng điểm của bạn, chung một số dư với trang Điểm. Chỉ để trang trí: mua không làm thay đổi cấp, chuỗi hay lịch đặt.", "방 아이템은 포인트 페이지와 같은 하나의 포인트로 사요. 꾸미기용이라 레벨, 연속 기록, 예약에는 영향이 없어요."],
   decorate: ["Decorate", "Trang trí", "꾸미기"], shop: ["Item shop", "Cửa hàng vật phẩm", "아이템 샵"], empty: ["Your room is empty. Add something cosy.", "Phòng còn trống. Thêm chút gì ấm cúng nhé.", "방이 비어 있어요. 아늑한 걸 놓아 보세요."],
   buyPts: ["Get · {n} points", "Lấy · {n} điểm", "받기 · {n}포인트"], place: ["Place", "Đặt vào", "놓기"], remove: ["Take out", "Cất đi", "빼기"], owned: ["Owned", "Đã có", "보유"],
@@ -403,7 +414,8 @@ const P2_ITEMS = [
 /* state: preset IDs only (P2-B4); fun = own counter (P2-R3); demo = demo-bought items, kept apart from owned (P2-P3/P4); photo = derived look + consent (P2-F) */
 const P2S = { owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
 let P2D = null; /* builder draft (Cancel leaves Cici unchanged) */
-function p2Load() { if (!P2()) return; try { const x = JSON.parse(localStorage.getItem("cici.p2") || "null"); if (x) { delete x.fun; Object.assign(P2S, x); } } catch (e) {} }
+let p2Loaded = false;
+function p2Load() { if (!P2()) return; p2Loaded = true; try { const x = JSON.parse(localStorage.getItem("cici.p2") || "null"); if (x) { delete x.fun; Object.assign(P2S, x); } } catch (e) {} }
 function p2Save() { if (!P2()) return; try { localStorage.setItem("cici.p2", JSON.stringify(P2S)); } catch (e) {} }
 /* Migration (one-points): a saved cici.p2 "fun" balance is DROPPED, not converted. Fun points had no cash value and were never store-ledger events, so converting would mint ledger points without a confirmed visit/mission. */
 const p2M = () => (typeof ME === "object" && ME && ME.ledger) ? ME : PV.members.mina;
@@ -411,11 +423,12 @@ const p2Bal = () => { const m = p2M(); return m ? bal(m) : 0; };
 function p2MsBonus(m, ms, now) { if (!P2()) return 0; row(m, { reason: "streak_bonus", src: "MS" + ms, delta: P2_MS_BONUS, life: P2_MS_BONUS }, now);
   if (!gated() && typeof showWin === "function") { try { showWin("+" + P2_MS_BONUS, "cheer", { reason: L3(`${ms}-day streak bonus`, `Thưởng chuỗi ${ms} ngày`, `${ms}일 연속 보너스`) }); } catch (e) {} }
   return P2_MS_BONUS; }
-function p2BuyRoom(id, now) { const it = p2Item(id), m = p2M(); if (!it || !it.pts || !m || p2Has(id)) return { ok: false };
+function p2BuyRoom(id, now, pid) { const it = p2Item(id), m = p2M(); if (!it || !it.pts || !m) return { ok: false }; if (p2Has(id) || m.ledger.some(r => r.reason === "spend_room" && r.pid === (pid || "P" + id))) return { ok: true, dup: true }; /* P2-R11: one row per purchase id, a retry never charges twice */
+  if (bal(m) < 0) return { ok: false, below: true }; /* P2-R12 belowZero */
   const b = bal(m); if (b < it.pts) return { ok: false, need: it.pts - b };
-  row(m, { reason: "room", src: id, delta: -it.pts, life: 0, actor: "member" }, now); P2S.owned.push(id); P2S.placed.push(id); p2Save(); return { ok: true }; } /* cosmetic: allowed with realRewards off; life 0 so levels never drop */
-const p2Item = id => P2_ITEMS.find(x => x.id === id);
-const p2Has = id => P2S.owned.includes(id) || P2S.demo.includes(id);
+  row(m, { reason: "spend_room", src: id, item: id, pid: pid || ("P" + id), delta: -it.pts, life: 0, actor: "member" }, now); P2S.owned.push(id); P2S.placed.push(id); p2Save(); return { ok: true }; } /* cosmetic: allowed with realRewards off; life 0 so levels never drop */
+const p2Item = id => P2_ITEMS.find(x => x.id === id) || (typeof G_ITEMS !== "undefined" && G_ITEMS.find(x => x.id === id));
+const p2Has = id => P2S.owned.includes(id) || P2S.demo.includes(id) || (/^g_/.test(id) && typeof gHas === "function" && (() => { const it = G_ITEMS.find(x => x.id === id); return !!it && gHas(it); })());
 const p2Svg = (it, s) => `<svg viewBox="0 0 24 24" width="${s || 40}" height="${s || 40}" aria-hidden="true">${it.svg}</svg>`;
 const p2Price = it => it.free ? p2t("free") : vnd(it.krw * 10); /* PO prices: decor ₩1,100 · outfit ₩2,200 · room theme ₩4,400; sponsored = free */ /* store-currency formatter (KRW display = seed / 10) */
 const p2Nm = it => L3(...it.n);
@@ -426,6 +439,95 @@ function p2SkinAttr(look, soft) { if (!P2() || gated()) return ""; const l = loo
 function p2Acc(look) { if (!P2()) return ""; const l = look || p2Look(), hr = (P2_HAIR.find(x => x[0] === l.hair) || P2_HAIR[2])[1]; return `<span class="p2hair" data-hair="${l.hair}" style="background:${hr}" aria-hidden="true"></span>`; } /* acc-fix: tint chip only */
 function p2Char(size, look) { const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1];
   return `<span class="p2wrap" id="p2-preview" data-skin="${l.skin}" data-hair="${l.hair}" style="width:${size}px;height:${size}px"><span class="p2char" style="--sk:${sk};width:${size}px;height:${size}px">${cut("idle", { alt: p2t("builder") })}</span>${p2Acc(l)}${outfitBadge(l.outfit)}</span>`; } /* acc-fix: chips sit at the frame corners, outside the round portrait */
+
+/* ===== P2-G Cici growth (behind phase2; BA phase2-ba-ac.md P2-G1–G10). Everything here is DERIVED from the points engine:
+   stage <- lifetime points (LVL thresholds, PROPOSED) kept at the highest ever reached (P2-G2, OQ-G1 default); stats <- non-reversed, uncapped
+   store-confirmed visits (m.att) + ledger "mission" rows (E3 caps), max +1 per stat per day from missions (P2-G4/G9); mood <- daily streak (P2-G6).
+   Nothing here writes to the ledger or changes points/level/streak (P2-G8/R11). Unlock items are earned only: no price, never in the shop (P2-G3). */
+const G_STAGES = [["Seed", "Hạt mầm", "씨앗"], ["Sprout", "Chồi non", "새싹"], ["Bud", "Nụ hoa", "꽃봉오리"], ["Blossom", "Nở hoa", "만개"], ["Shine", "Tỏa sáng", "샤인"]]; /* BA final 2026-10-15: Seed 0 · Sprout 500 · Bud 1,500 · Blossom 3,000 · Shine 6,000 (LVL thresholds; level names unchanged) */
+const G_LOOK = [ /* 2D placeholders on the existing cut-outs: scale, aura colours, sparkles (never over the face, see cici_growth geometry) */
+  { sc: .86, a1: "#DDEFD8", a2: "#F7F1EA", sp: 0 }, { sc: .92, a1: "#FAD3DC", a2: "#FFF3F5", sp: 2 }, { sc: .96, a1: "#FBE3A6", a2: "#FFF8E6", sp: 3 },
+  { sc: 1, a1: "#F6B8C4", a2: "#FDE6C8", sp: 4 }, { sc: 1.03, a1: "#E9B44C", a2: "#F8D7E0", sp: 6 }];
+const G_STAT = { str: ["Strength", "Sức mạnh", "근력"], calm: ["Calm", "Bình tâm", "평온"], glow: ["Glow", "Rạng rỡ", "광채"] };
+const G_STORE_CAT = { capsule: "barre", yoga: "yoga", pickle: "pickleball", rally: "pickleball", spa: "spa", moc: "massage", salon: "hair", barber: "hair", nails: "nails", skin: "skincare" };
+const G_CAT_STAT = { barre: "str", pilates: "str", pickleball: "str", fitness: "str", yoga: "calm", meditation: "calm", spa: "calm", massage: "calm", hair: "glow", nails: "glow", skincare: "glow", facial: "glow", makeup: "glow" };
+const G_CAT_NM = { barre: ["barre", "barre", "바레"], yoga: ["yoga", "yoga", "요가"], pickleball: ["pickleball", "pickleball", "피클볼"], spa: ["spa", "spa", "스파"], massage: ["massage", "massage", "마사지"], hair: ["hair", "làm tóc", "헤어"], nails: ["nail", "làm móng", "네일"], skincare: ["skincare", "chăm sóc da", "스킨케어"] };
+const G_MIS_STAT = { stretch: "str", rest: "calm", breathing: "calm", skincare: "glow" };
+const G_MAX = 20; /* bar scale: 20 points per stat fills the bar (display only) */
+/* earned-only unlocks: { need: [kind, key, n] } kind = cat (visits of that category) | stat | stage. No price field, ever (P2-G3). */
+const G_ITEMS = [
+  { id: "g_legw", need: ["cat", "barre", 10], n: ["Barre leg-warmers", "Tất ống barre", "바레 레그워머"], svg: '<rect x="7" y="4" width="4" height="16" rx="2" fill="#E98597"/><rect x="13" y="4" width="4" height="16" rx="2" fill="#E98597"/><path d="M7 8h4M7 12h4M7 16h4M13 8h4M13 12h4M13 16h4" stroke="#B04A5E"/>' },
+  { id: "g_visor", need: ["cat", "pickleball", 5], n: ["Pickleball visor", "Mũ lưỡi trai pickleball", "피클볼 바이저"], svg: '<path d="M4 13c0-4 4-7 8-7s8 3 8 7z" fill="#4E7A4A"/><path d="M2 13h20" stroke="#2B2326" stroke-width="2"/>' },
+  { id: "g_ribbon", need: ["stat", "str", 15], n: ["Power ribbon", "Ruy băng sức mạnh", "파워 리본"], svg: '<path d="M12 4l3 6-3 10-3-10z" fill="#B04A5E"/><circle cx="12" cy="8" r="3" fill="#E98597"/>' },
+  { id: "g_mat", need: ["cat", "yoga", 5], n: ["Yoga mat", "Thảm yoga", "요가 매트"], svg: '<rect x="3" y="14" width="18" height="5" rx="2.5" fill="#7FB7A4"/><circle cx="19" cy="16.5" r="2.5" fill="#4E8C78"/>' },
+  { id: "g_halo", need: ["cat", "yoga", 5], n: ["Zen halo", "Vầng hào quang Zen", "젠 헤일로"], svg: '<ellipse cx="12" cy="12" rx="9" ry="4" fill="none" stroke="#E9B44C" stroke-width="2.5"/>' },
+  { id: "g_robe", need: ["cat", "spa", 5], n: ["Spa robe", "Áo choàng spa", "스파 가운"], svg: '<path d="M7 4l5 3 5-3 3 5-3 2v9H7v-9L4 9z" fill="#F7F1EA" stroke="#6B5E62"/>' },
+  { id: "g_lotus", need: ["stat", "calm", 15], n: ["Lotus cushion", "Gối hoa sen", "연꽃 쿠션"], svg: '<ellipse cx="12" cy="17" rx="9" ry="3" fill="#E98597"/><path d="M12 6c2 3 2 6 0 9-2-3-2-6 0-9zM6 10c3 1 5 3 6 5-3 0-5-2-6-5zm12 0c-3 1-5 3-6 5 3 0 5-2 6-5z" fill="#F6B8C4"/>' },
+  { id: "g_scrunchie", need: ["cat", "hair", 5], n: ["Silk scrunchie", "Dây buộc tóc lụa", "실크 스크런치"], svg: '<circle cx="12" cy="12" r="7" fill="none" stroke="#C98B3C" stroke-width="4" stroke-dasharray="3 2"/>' },
+  { id: "g_charm", need: ["cat", "nails", 5], n: ["Nail-art charm", "Charm nail-art", "네일아트 참"], svg: '<path d="M12 3l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#E98597"/>' },
+  { id: "g_mist", need: ["cat", "skincare", 5], n: ["Dewy glow mist", "Xịt khoáng căng bóng", "듀이 글로우 미스트"], svg: '<rect x="9" y="8" width="6" height="12" rx="2" fill="#DDEFF2" stroke="#6B5E62"/><path d="M10 8V5h4v3" fill="#B8DDD7"/>' },
+  { id: "g_mirror", need: ["stat", "glow", 15], n: ["Star mirror", "Gương ngôi sao", "별 거울"], svg: '<circle cx="12" cy="10" r="6" fill="#DDEFF2" stroke="#E9B44C" stroke-width="2"/><path d="M12 16v5" stroke="#6B5E62" stroke-width="2"/>' },
+  { id: "g_garland", need: ["stage", 1], n: ["Flower garland", "Vòng hoa", "꽃 화관"], svg: '<path d="M3 8c3 5 15 5 18 0" fill="none" stroke="#4E7A4A" stroke-width="2"/><circle cx="6" cy="10" r="2" fill="#E98597"/><circle cx="12" cy="12" r="2" fill="#F4D58D"/><circle cx="18" cy="10" r="2" fill="#E98597"/>' },
+  { id: "g_lantern", need: ["stage", 2], n: ["Glow lantern", "Đèn lồng rạng rỡ", "글로우 랜턴"], svg: '<circle cx="12" cy="12" r="6" fill="#F4D58D"/><path d="M12 3v3M9 20h6" stroke="#6B5E62" stroke-width="1.5"/>' },
+  { id: "g_sunlamp", need: ["stage", 3], n: ["Sun lamp", "Đèn mặt trời", "선 램프"], svg: '<circle cx="12" cy="10" r="5" fill="#E9B44C"/><path d="M12 2v2M4 10H2M22 10h-2M6 4l1.5 1.5M18 4l-1.5 1.5M10 20h4" stroke="#C98B3C" stroke-width="1.5"/>' },
+  { id: "g_crown", need: ["stage", 4], n: ["Crown light", "Đèn vương miện", "크라운 라이트"], svg: '<path d="M4 17l2-9 4 5 2-7 2 7 4-5 2 9z" fill="#E9B44C" stroke="#8E3346"/>' }
+];
+const G_TX = { stage: ["Stage", "Giai đoạn", "단계"], mood_energised: ["Energised", "Tràn năng lượng", "에너지 가득"], mood_happy: ["Happy", "Vui vẻ", "행복"], mood_rested: ["Rested", "Thư thái", "푹 쉰"],
+  line_energised: ["Cici is full of energy today!", "Hôm nay Cici tràn đầy năng lượng!", "오늘 Cici는 에너지가 넘쳐요!"], line_happy: ["Cici is happy and ready to move.", "Cici vui vẻ và sẵn sàng vận động.", "Cici는 기분 좋게 움직일 준비가 됐어요."],
+  line_rested: ["Cici is cozy and well rested. Whenever you're ready.", "Cici đang ấm áp và nghỉ ngơi đủ. Khi nào bạn sẵn sàng nhé.", "Cici는 포근하게 푹 쉬었어요. 준비되면 언제든지요."],
+  toStage: ["{n} points to {s}", "Còn {n} điểm nữa tới {s}", "{s}까지 {n}포인트"], toItem: ["{k} more {c} visits to unlock the {i}", "Thêm {k} lượt {c} để mở {i}", "{c} 방문 {k}번 더 하면 {i} 획득"],
+  toStat: ["{k} more {c} to unlock the {i}", "Thêm {k} điểm {c} để mở {i}", "{c} {k} 더 모으면 {i} 획득"], allDone: ["Everything unlocked. Cici is shining!", "Đã mở hết. Cici đang tỏa sáng!", "모두 획득했어요. Cici가 빛나요!"],
+  book: ["Book a visit", "Đặt lịch", "예약하기"], earned: ["Earned", "Đã đạt", "획득"], atStage: ["Unlocks at {s}", "Mở ở {s}", "{s}에서 획득"],
+  grew: ["Cici grew into {s}!", "Cici đã lớn lên thành {s}!", "Cici가 {s} 단계로 성장했어요!"], grewSub: ["New look unlocked. Earned with your visits.", "Mở diện mạo mới, nhờ các lượt đến của bạn.", "방문으로 얻은 새 모습이에요."],
+  growth: ["Cici's growth", "Sự phát triển của Cici", "Cici의 성장"], demoT: ["Demo controls (growth)", "Điều khiển demo (phát triển)", "데모 컨트롤 (성장)"], dayOff: ["+{n} days off", "+{n} ngày nghỉ", "+{n}일 쉬기"], simV: ["Visit: {c}", "Lượt đến: {c}", "방문: {c}"] };
+const gT = (k, o = {}) => L3(...G_TX[k]).replace("{n}", o.n == null ? "" : o.n).replace("{s}", o.s || "").replace("{k}", o.k == null ? "" : o.k).replace("{c}", o.c || "").replace("{i}", o.i || "");
+const gStageOf = life => { let i = 0; for (let k = 0; k < LVL.length; k++) if (life >= LVL[k]) i = k; return i; };
+const gUnmapped = []; /* OQ-G2: unmapped categories are logged for mapping, never counted */
+function gStats(m) {
+  const st = { str: 0, calm: 0, glow: 0 }, cats = {};
+  for (const a of Object.values((m && m.att) || {})) { if (a.reversed || a.capped) continue; const c = G_STORE_CAT[a.store], k = G_CAT_STAT[c]; if (!k) { if (!gUnmapped.includes(a.store)) gUnmapped.push(a.store); continue; } st[k]++; cats[c] = (cats[c] || 0) + 1; }
+  const seen = {}; for (const r of (m && m.ledger) || []) if (r.reason === "mission") { const k = G_MIS_STAT[r.src]; if (!k) continue; const key = dayKey(m, r.t) + ":" + k; if (seen[key]) continue; seen[key] = 1; st[k]++; } /* E3-capped rows only; +1 per stat per day */
+  return { st, cats };
+}
+const gMood = m => !m || !m.streak || isPaused(m) ? "rested" : m.streak >= 7 ? "energised" : "happy";
+function gState() {
+  const m = ME, life0 = m ? life(m) : 0, cur = gStageOf(Math.max(0, life0));
+  if (P2() && p2Loaded && cur > (P2S.gMax || 0)) { P2S.gMax = cur; p2Save(); } /* P2-G2: highest ever reached, kept after a reversal */
+  const stage = Math.max(cur, P2S.gMax || 0), { st, cats } = gStats(m);
+  if (P2() && p2Loaded && P2S.gSeen == null && m) { P2S.gSeen = stage; p2Save(); } /* first Phase 2 view: no celebration for the stage already held */
+  return { life: life0, stage, st, cats, mood: gMood(m) };
+}
+function gHas(it, g) { g = g || gState(); const [k, a, n] = it.need; return k === "stage" ? g.stage >= a : k === "cat" ? (g.cats[a] || 0) >= n : (g.st[a] || 0) >= n; }
+function gHint(g) {
+  const c = []; if (g.stage < LVL.length - 1) { const need = LVL[g.stage + 1] - g.life; c.push([Math.ceil(Math.max(1, need) / 50), gT("toStage", { n: fmtN(Math.max(1, need)), s: L3(...G_STAGES[g.stage + 1]) })]); }
+  for (const it of G_ITEMS) { if (gHas(it, g) || it.need[0] === "stage") continue; const [k, a, n] = it.need, left = n - (k === "cat" ? (g.cats[a] || 0) : (g.st[a] || 0));
+    c.push([left, k === "cat" ? gT("toItem", { k: left, c: L3(...G_CAT_NM[a]), i: p2Nm(it) }) : gT("toStat", { k: left, c: L3(...G_STAT[a]), i: p2Nm(it) })]); }
+  c.sort((x, y) => x[0] - y[0]); return c.length ? c[0][1] : gT("allDone");
+}
+function gSparks(n) { const pos = [[4, 62], [90, 58], [8, 80], [86, 78], [16, 92], [78, 92]]; return pos.slice(0, n).map(([x, y], i) => `<span class="gspark" style="left:${x}%;top:${y}%;animation-delay:${i * .35}s" aria-hidden="true">✦</span>`).join(""); }
+function gHero() { /* Home in phase2 (P2-G7): Cici large (stage art + mood pose), stage name, 3 stat bars, ONE next-unlock hint, Book CTA. Crisis: calm pose only (P2-G10). */
+  const g = gState(), L0 = G_LOOK[g.stage], nm = L3(...G_STAGES[g.stage]), pose = g.mood === "energised" ? "jump" : g.mood === "rested" ? "idle" : "wave";
+  const alt = L3(`Cici, ${nm} stage, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, giai đoạn ${nm}, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, ${nm} 단계, ${L3(...G_TX["mood_" + g.mood])}`);
+  const up = P2S.gSeen != null && P2S.gSeen < g.stage;
+  const bars = ["str", "calm", "glow"].map(k => `<div class="gbar" data-k="${k}"><span class="gbl">${esc(L3(...G_STAT[k]))}</span><span class="gtrack" role="progressbar" aria-label="${esc(L3(...G_STAT[k]))}" aria-valuemin="0" aria-valuemax="${G_MAX}" aria-valuenow="${Math.min(G_MAX, g.st[k])}"><i style="width:${Math.min(100, g.st[k] / G_MAX * 100)}%"></i></span><b class="gbn">${g.st[k]}</b></div>`).join("");
+  return `<section class="chome ghero" id="home-cici" aria-label="${esc(ciciNm())}" data-stage="${g.stage}" data-mood="${g.mood}" data-pose="${pose}">
+  <div class="gfig${g.mood === "rested" ? " cozy" : ""}${up ? " gup" : ""}" style="--ga1:${L0.a1};--ga2:${L0.a2};--gsc:${L0.sc}"><span class="gaura" aria-hidden="true"></span>${gSparks(L0.sp)}${g.mood === "rested" ? `<span class="gzz" aria-hidden="true">z<small>z</small></span>` : ""}<div class="cpic p2sk"${p2SkinAttr(null, 1)}>${cut(pose, { alt, eager: 1, loop: 1 })}</div></div>
+  ${up ? `<div class="card gstageup" id="g-stageup" role="status"><b>${esc(gT("grew", { s: nm }))}</b><br><span class="sub sm">${esc(gT("grewSub"))}</span></div>` : ""}
+  <p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="sub sm" id="g-mood">${esc(gT("line_" + g.mood))}</span></p>
+  ${(() => { const wn = wearNm(); return wn ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${p2Acc()}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""; })()}
+  <div class="gbars" id="g-bars">${bars}</div><p class="sm ghint" id="g-hint">${esc(gHint(g))}</p>
+  <button class="btn full" data-act="bk" data-from="growth" id="g-book">${esc(gT("book"))}</button>${gDemo()}</section>`;
+}
+function gAfterHome() { const g = gState(); if ((P2S.gSeen || 0) < g.stage) { P2S.gSeen = g.stage; p2Save(); try { celebrate(false); } catch (e) {} } } /* one-time stage-up moment (P2-G1/G2: never re-awarded) */
+const gDemoOn = () => { try { return !!DEMO_MODE; } catch (e) { return false; } };
+function gDemo() { if (!gDemoOn()) return ""; const cs = ["barre", "yoga", "pickleball", "spa", "hair", "nails", "skincare"];
+  return `<details class="card gdemo" id="g-demo"><summary>${esc(gT("demoT"))}</summary><div class="chips">${cs.map(c => `<button class="chip" data-act="gsim" data-v="${c}">${esc(gT("simV", { c: L3(...G_CAT_NM[c]) }))}</button>`).join("")}<button class="chip" data-act="goff" data-v="1">${esc(gT("dayOff", { n: 1 }))}</button><button class="chip" data-act="goff" data-v="3">${esc(gT("dayOff", { n: 3 }))}</button></div></details>`; }
+/* demo: a REAL store-confirmed visit through the engine (booking -> staff confirm), so caps/idempotency/ledger all apply (P2-G9) */
+function gSimVisit(cat, now) { const sid = Object.keys(G_STORE_CAT).find(k => G_STORE_CAT[k] === cat); if (!sid) return null; const m = ME;
+  now = now == null ? PV.now() : now; const dv = m.dayVisits[dayKey(m, now)] || []; if (dv.includes(sid) || dv.length >= 2) { PV.srvOff += DAY; now = PV.now(); }
+  const id = "G" + PV.seq++; BKREG[id] = { member: m.id, store: sid, status: "booked", start: now - 30 * MIN, end: now + 20 * MIN };
+  return confirmVisit(m, id, "staff:" + sid + "-desk", now, sid); }
+function gDaysOff(n) { PV.srvOff += n * DAY; pvTick(ME); }
 function p2Room() {
   if (!P2() || gated()) return ""; /* P2-X3/X4: nothing from Phase 2 in a crisis/urgent turn */
   const pl = P2S.placed.map(p2Item).filter(Boolean);
@@ -434,10 +536,10 @@ function p2Room() {
 }
 function p2DecoSheet(msg) {
   if (!P2() || gated()) return;
-  const own = P2_ITEMS.filter(it => p2Has(it.id)), buy = P2_ITEMS.filter(it => it.pts && !p2Has(it.id));
+  const own = P2_ITEMS.concat(G_ITEMS).filter(it => p2Has(it.id)), glock = G_ITEMS.filter(it => !p2Has(it.id)), buy = P2_ITEMS.filter(it => it.pts && !p2Has(it.id));
   openSheet(sheetHd(p2t("decorate")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sm p2pts">${ptsIc} <b>${esc(p2t("ptsL"))}</b> · <b id="p2-bal">${esc(fmtN(p2Bal()))}</b></p><p class="sub sm" id="p2-ptsnote">${esc(p2t("ptsNote"))}</p>
-  ${own.length ? `<h2>${esc(p2t("owned"))}</h2><div class="stack">${own.map(it => { const on = P2S.placed.includes(it.id); return `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b>${P2S.demo.includes(it.id) ? ` <span class="tag">${esc(p2t("demoItem"))}</span>` : ""}</span><button class="btn sec" data-act="p2place" data-v="${it.id}" aria-pressed="${on}">${esc(p2t(on ? "remove" : "place"))}</button></div>`; }).join("")}</div>` : ""}
-  <h2>${esc(p2t("decorate"))}</h2><div class="stack">${buy.map(it => `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b></span><button class="btn" data-act="p2buypts" data-v="${it.id}">${esc(p2t("buyPts", { n: fmtN(it.pts) }))}</button></div>`).join("") || `<p class="sub sm">—</p>`}</div>`, p2t("decorate"));
+  ${own.length ? `<h2>${esc(p2t("owned"))}</h2><div class="stack">${own.map(it => { const on = P2S.placed.includes(it.id); return `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b>${P2S.demo.includes(it.id) ? ` <span class="tag">${esc(p2t("demoItem"))}</span>` : ""}${/^g_/.test(it.id) ? ` <span class="tag ok gearned">${esc(gT("earned"))}</span>` : ""}</span><button class="btn sec" data-act="p2place" data-v="${it.id}" aria-pressed="${on}">${esc(p2t(on ? "remove" : "place"))}</button></div>`; }).join("")}</div>` : ""}
+  <h2>${esc(p2t("decorate"))}</h2><div class="stack">${buy.map(it => { const b0 = p2Bal(), why = b0 < 0 ? p2t("belowZero") : b0 < it.pts ? p2t("needMore", { n: fmtN(it.pts - b0) }) : ""; return `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b><br><span class="sub">${esc(p2t("ptsPrice", { n: fmtN(it.pts) }))}</span>${why ? `<br><span class="sub p2why">${esc(why)}</span>` : ""}</span><button class="btn" data-act="p2buypts" data-v="${it.id}" ${why ? "disabled" : ""}>${esc(p2t("buyPts", { n: fmtN(it.pts) }))}</button></div>`; }).join("") || `<p class="sub sm">—</p>`}</div>${glock.length ? `<h2>${esc(gT("growth"))}</h2><div class="stack" id="g-locked">${glock.map(it => `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b><br><span class="sub">${esc(it.need[0] === "stage" ? gT("atStage", { s: L3(...G_STAGES[it.need[1]]) }) : (() => { const g = gState(), [k2, a, n] = it.need, left = n - (k2 === "cat" ? (g.cats[a] || 0) : (g.st[a] || 0)); return k2 === "cat" ? gT("toItem", { k: left, c: L3(...G_CAT_NM[a]), i: p2Nm(it) }) : gT("toStat", { k: left, c: L3(...G_STAT[a]), i: p2Nm(it) }); })())}</span></span></div>`).join("")}</div>` : ""}`, p2t("decorate"));
 }
 function p2ShopSheet(msg) {
   if (!P2() || gated()) return;
@@ -499,7 +601,8 @@ document.addEventListener("click", e => {
   if (a === "p2checkout") return p2Checkout(v);
   if (a === "p2pay") { const it = p2Item(v); if (!it || !(it.krw || it.free) || p2Has(v)) return; P2S.demo.push(v); p2Save(); render(); return p2ShopSheet(p2t("gotIt")); } /* demo only: no provider call, no receipt */
   if (a === "p2demoreset") { P2S.placed = P2S.placed.filter(x => !P2S.demo.includes(x)); P2S.demo = []; p2Save(); render(); return p2ShopSheet(); }
-  if (a === "p2buypts") { const r = p2BuyRoom(v); if (r.need) return p2DecoSheet(p2t("needMore", { n: fmtN(r.need) })); if (!r.ok) return; render(); return p2DecoSheet(p2t("gotIt")); }
+  if (a === "p2buypts") { const it = p2Item(v); if (!it || !it.pts || p2Has(v)) return; return openSheet(sheetHd(p2t("confirmBuy")) + `<div class="row" id="p2-buyconf">${p2Svg(it)}<span class="grow"><b>${esc(p2Nm(it))}</b><br><span class="sub sm">${esc(p2t("ptsPrice", { n: fmtN(it.pts) }))} · ${esc(p2t("ptsL"))} ${esc(fmtN(p2Bal()))} → ${esc(fmtN(p2Bal() - it.pts))}</span></span></div>${PV.flag ? `<p class="sm tag warn" id="p2-vwarn">${esc(p2t("vWarn"))}</p>` : ""}<div class="stack" style="margin-top:12px"><button class="btn full" data-act="p2buyok" data-v="${it.id}" id="p2-buyok">${esc(p2t("buyPts", { n: fmtN(it.pts) }))}</button><button class="btn ghost full" data-act="p2deco">${esc(t("back"))}</button></div>`, p2t("confirmBuy")); }
+  if (a === "p2buyok") { const r = p2BuyRoom(v); if (r.below) return p2DecoSheet(p2t("belowZero")); if (r.need) return p2DecoSheet(p2t("needMore", { n: fmtN(r.need) })); if (!r.ok) return; render(); return p2DecoSheet(p2t("gotIt")); }
   if (a === "p2place") { const i = P2S.placed.indexOf(v); if (i >= 0) P2S.placed.splice(i, 1); else if (p2Has(v)) P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(); }
   if (a === "p2look") { P2D = null; ST.page = "p2char"; render(); window.scrollTo(0, 0); return; }
   if (a === "p2set") { P2D = P2D || Object.assign({}, p2Look()); P2D[el.dataset.k] = v; render(); return; }
@@ -2054,7 +2157,7 @@ function importCard() {
 function vHome() {
   /* MVP-H1 order: Cici + greeting, level bar, 2–3 missions, Next class card (+ "All bookings"). Allowed extras: the one-line migration banner (A3) and the header bell. */
   const up = upcoming(); track("home_open");
-  return heroScene() + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
+  return (P2() && !gated() ? gHero() : heroScene()) + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${missionsCard()}` +
     `<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>`;
 }
@@ -2214,7 +2317,7 @@ function maybeUnlock() {
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); if (P2() && ST.tab === "home" && !ST.page && !ST.store && !gated() && typeof gAfterHome === "function") setTimeout(gAfterHome, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -2746,6 +2849,8 @@ document.addEventListener("click", e => {
     case "walletbook": bookSheet(d.s, { svc: d.v || null, from: "wallet" }); break;
     case "bk": bookSheet(d.s || null, { svc: d.v || null, from: d.from || "" }); break;
     case "bkpick": openBook(d.s, d.v); break;
+    case "gsim": if (P2() && gDemoOn() && !gated()) { gSimVisit(d.v); render(); } break;
+    case "goff": if (P2() && gDemoOn() && !gated()) { gDaysOff(+d.v || 1); render(); } break;
     case "bksvc": svcStep(d.s); break;
     case "bkback": if (PEND) { const x = PEND; PEND = null; openBook(x.store, x.svc, { d: x.d }); } else closeSheet(); break;
     case "bkask": closeSheet(); go("cici:store:" + d.s); break;
@@ -2844,6 +2949,7 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   lvl1: ["Newcomer", "Người mới", "뉴커머"], lvl2: ["Regular", "Thân quen", "레귤러"], lvl3: ["Devoted", "Gắn bó", "디보티드"], lvl4: ["Radiant", "Rạng rỡ", "래디언트"], lvl5: ["Icon", "Biểu tượng", "아이콘"],
   nextLevel: ["{n} points to Level {m}", "Còn {n} điểm để lên Cấp {m}", "레벨 {m}까지 {n}포인트"], streak: ["{n}-day streak", "Chuỗi {n} ngày", "{n}일 연속"],
   multiplier: ["Visits earn ×{x}", "Mỗi lần đến được ×{x}", "방문 시 ×{x} 적립"], freezeHeld: ["1 rest day left this week", "Còn 1 ngày nghỉ tuần này", "이번 주 쉬는 날 1일 남음"],
+  streakPaused: ["Streak paused at {n} days · your next studio visit picks it back up.", "Chuỗi tạm dừng ở {n} ngày · lượt đến tiếp theo sẽ tiếp tục chuỗi.", "연속 기록 {n}일에서 잠시 멈춤 · 다음 매장 방문 때 다시 이어져요."],
   freezeUsed: ["Rest day used — your streak is safe.", "Đã dùng ngày nghỉ — chuỗi của bạn vẫn được giữ.", "쉬는 날을 사용했어요. 기록은 그대로예요."],
   streakReset: ["Fresh start. A visit or a self-care mission today starts a new streak.", "Khởi đầu mới. Một lượt đến hoặc nhiệm vụ chăm sóc bản thân hôm nay sẽ bắt đầu chuỗi mới.", "새로 시작해요. 오늘 방문하거나 셀프케어 미션을 하면 새 연속 기록이 시작돼요."],
   earnVisit: ["+{n} points for your visit to {s}", "+{n} điểm cho lần đến {s}", "{s} 방문으로 +{n}포인트"], earnNewPlace: ["+{n} bonus for your first visit to {s}", "+{n} điểm thưởng cho lần đầu đến {s}", "{s} 첫 방문 보너스 +{n}포인트"],
@@ -2860,7 +2966,7 @@ const PV_STR = { /* member copy from spec §9 — VI and KO NEED NATIVE-SPEAKER 
   maxReady: ["You already have 3 vouchers for {s}", "Bạn đã có 3 ưu đãi tại {s}", "{s} 쿠폰을 이미 3개 갖고 있어요"], refreshCode: ["Get a new code", "Lấy mã mới", "새 코드 받기"],
   offlineCode: ["Connect to show your code", "Kết nối mạng để hiện mã của bạn", "코드를 보려면 인터넷에 연결하세요"], codeReplaced: ["This code was replaced by a newer one.", "Mã này đã được thay bằng mã mới hơn.", "이 코드는 새 코드로 바뀌었어요."],
   redeemed: ["Used at {s} on {date}", "Đã dùng tại {s} ngày {date}", "{date} {s}에서 사용함"], statusReady: ["Ready", "Sẵn sàng", "사용 가능"], statusUsed: ["Used", "Đã dùng", "사용 완료"], statusExpired: ["Expired", "Hết hạn", "만료"],
-  needStreak: ["{n} more streak days needed", "Cần thêm {n} ngày liên tiếp", "연속 기록 {n}일 더 필요해요"], outOfStock: ["Out of stock", "Đã hết", "품절"],
+  needStreak: ["{n} more days of streak needed", "Cần thêm {n} ngày liên tiếp", "연속 기록 {n}일 더 필요해요"], outOfStock: ["Out of stock", "Đã hết", "품절"],
   belowZero: ["Balance below zero. Earn points to claim rewards again.", "Số điểm đang âm. Hãy tích điểm để đổi ưu đãi lại.", "포인트가 0 미만이에요. 적립 후 다시 받을 수 있어요."],
   validUntil: ["Valid until {date}", "Hạn đến {date}", "{date}까지"], cancelClaim: ["Cancel and get {n} points back", "Hủy và nhận lại {n} điểm", "취소하고 {n}포인트 돌려받기"],
   pointsExpireWarn: ["{n} points expire on {date}. Visit any store to keep them.", "{n} điểm sẽ hết hạn vào {date}. Ghé bất kỳ cửa hàng nào để giữ điểm.", "{n}포인트가 {date}에 만료돼요. 아무 매장이나 방문하면 유지돼요."],
@@ -2909,13 +3015,19 @@ const lvlOf = m => { const l = life(m); let n = 1; LVL.forEach((x, i) => { if (l
 /* STREAK IN DAYS (PO/user 2026-10-15, prototype-only change to points spec v4.1 §2 streak rules, pending a BA AC update):
    a day counts if it has a store-confirmed visit OR a completed self-care mission (home time zone, dayKey); 1 free rest day per week keeps it alive;
    milestones 7 / 14 / 30 days -> visits earn x1.1 / x1.2 / x1.3 (and a +50 points streak bonus in Phase 2). */
-const MS_DAYS = [7, 14, 30];
-const mult = m => m.streak >= 30 ? 1.3 : m.streak >= 14 ? 1.2 : m.streak >= 7 ? 1.1 : 1;
+const MS_DAYS = [7, 14, 30]; /* multiplier tiers (P2-S6) and the Phase 2 +50 bonus */
+const MS_VOUCH = [7, 30, 100]; /* PO 2026-10-15: milestone vouchers at streak days 7 / 30 / 100, only under realRewards (AC-P44) */
+const MS_ALL = [7, 14, 30, 100];
+const mult = m => isPaused(m) ? 1 : m.streak >= 30 ? 1.3 : m.streak >= 14 ? 1.2 : m.streak >= 7 ? 1.1 : 1;
 function dayStart(m, t) { const d = loc(t, homeTz(m)); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - TZOFF[homeTz(m)] * MIN; }
+const visitRecent = (m, now) => { for (let i = 0; i <= 7; i++) if ((m.days || {})[dayKey(m, now - i * DAY)] === "v") return true; return false; }; /* P2-S11: paused once day V+7 ends with no new visit */
+const isPaused = (m, now) => !!(m && m.days && m.streak && !visitRecent(m, now == null ? PV.now() : now)); /* PO 2026-10-15 (OQ-S3): >=1 store-confirmed visit in every 7 days */
 function streakHit(m, now, why) { /* mark today active; counts once per day */
-  const dk = dayKey(m, now); m.days = m.days || {}; if (m.days[dk]) { if (why === "v") m.days[dk] = "v"; return false; }
+  const dk = dayKey(m, now);
+  if (why === "m" && !visitRecent(m, now)) { m.days = m.days || {}; if (!m.days[dk]) m.days[dk] = "p"; if (!m.paused) note(m, "streakPaused", { n: m.streak }); m.paused = true; return false; } /* paused: held, not grown, never broken by this day; a visit resumes it */
+  if (why === "v") m.paused = false; m.days = m.days || {}; if (m.days[dk] && m.days[dk] !== "p") { if (why === "v") m.days[dk] = "v"; return false; }
   m.days[dk] = why; m.streak++; m.run++;
-  for (const ms of MS_DAYS) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msDay = Object.assign(m.msDay || {}, { [ms]: dk }); note(m, "milestone", { n: ms }); if (typeof P2 === "function" && P2() && typeof p2MsBonus === "function") p2MsBonus(m, ms, now); }
+  for (const ms of MS_ALL) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msDay = Object.assign(m.msDay || {}, { [ms]: dk }); if (MS_VOUCH.includes(ms) || MS_DAYS.includes(ms)) note(m, "milestone", { n: ms }); if (MS_DAYS.includes(ms) && typeof P2 === "function" && P2() && typeof p2MsBonus === "function") p2MsBonus(m, ms, now); }
   return true;
 }
 function row(m, o, t) { /* append-only ledger (A8, AC-P37) */
@@ -2925,10 +3037,18 @@ function row(m, o, t) { /* append-only ledger (A8, AC-P37) */
 function note(m, k, v) { m.notices.push({ k, v: v || {}, t: PV.now() }); }
 function checkLevel(m) { const n = lvlOf(m); m.unlocked = m.unlocked || []; if (n > m.lvlSeen) { for (let k = m.lvlSeen + 1; k <= n; k++) if (!m.unlocked.includes("o" + k)) m.unlocked.push("o" + k); m.lvlSeen = n; note(m, "outfitUnlocked", { lvl: n, outfit: OUTFIT[n - 1], item: "o" + n }); } } /* MVP-L1/L3: lvlSeen never goes down, so a reversal + re-earn never fires the same unlock twice; unlocked items stay (OQ4) */
 /* migration (§10, AC-P34, AC-P54a/b) — idempotent */
+function streakRecalc(m, now) { /* P2-S2/S7: recompute the daily streak from the day map (counted days, 1 free rest day per Mon–Sun week held, 2nd missed day resets) */
+  now = now == null ? PV.now() : now; m.days = m.days || {}; const ks = Object.keys(m.days); if (!ks.length) { m.streak = 0; m.run = 0; return 0; }
+  const today = dayStart(m, now), minK = ks.sort()[0]; let t = today; for (let i = 0; i < 400 && dayKey(m, t - DAY) >= minK; i++) t -= DAY;
+  let n = 0; const rest = {}, used = {};
+  for (; t < today; t += DAY) { const dk = dayKey(m, t), wk = weekKey(m, t); if (m.days[dk] === "p" || (!m.days[dk] && n && !visitRecent(m, t))) continue; if (m.days[dk]) n++; else if (n && !used[wk]) { used[wk] = 1; rest[dk] = wk; } else n = 0; }
+  if (m.days[dayKey(m, today)] && m.days[dayKey(m, today)] !== "p") n++;
+  m.streak = n; m.run = n; m.rest = rest; return n;
+}
 function streakSeed(m) { /* demo seed: back-fill the streak's past active days so the 14-day dot row is consistent (1 rest day per week) */
   const now = PV.now(); m.days = m.days || {}; m.rest = m.rest || {}; let n = m.streak, t = dayStart(m, now) - DAY, restWk = {};
   while (n > 0) { const dk = dayKey(m, t), wk = weekKey(m, t); if (!restWk[wk] && (n % 5 === 2)) { restWk[wk] = 1; m.rest[dk] = wk; } else { m.days[dk] = n % 3 ? "m" : "v"; n--; } t -= DAY; }
-  for (const ms of MS_DAYS) if (m.streak >= ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msGranted.push(ms); }
+  for (const ms of MS_ALL) if (m.streak >= ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msGranted.push(ms); }
 }
 function pvMigrate(m, old) {
   if (m.migrated) return false; m.migrated = true;
@@ -2942,8 +3062,9 @@ function pvTick(m, now) { /* daily roll: each passed day with no visit/mission u
   if (m.closedTo == null || m.closedTo % 1 !== 0) m.closedTo = dayStart(m, now);
   while (now >= m.closedTo + DAY) {
     const dk = dayKey(m, m.closedTo), wk = weekKey(m, m.closedTo);
-    if (!m.days[dk]) {
-      if (m.streak && !Object.keys(m.rest).some(k => m.rest[k] === wk)) { m.rest[dk] = wk; note(m, "freezeUsed"); }
+    if (!m.days[dk] || m.days[dk] === "p") {
+      if (m.streak && !visitRecent(m, m.closedTo)) { if (!m.paused) { m.paused = true; note(m, "streakPaused", { n: m.streak }); } } /* P2-S11/S14: paused: count frozen, no rest day consumed, never broken */
+      else if (m.streak && !Object.keys(m.rest).some(k => m.rest[k] === wk)) { m.rest[dk] = wk; note(m, "freezeUsed"); }
       else if (m.streak) { note(m, "streakReset"); m.streak = 0; m.run = 0; }
     }
     m.closedTo += DAY;
@@ -2975,7 +3096,8 @@ function confirmVisit(m, bid, actor, now, store) {
   const s = bk.store, dk = dayKey(m, now), dv = m.dayVisits[dk] = m.dayVisits[dk] || [];
   m.att[bid] = { store: s, t: now, actor, rows: [], week: weekKey(m, now) }; bk.status = "attended";
   if (dv.includes(s) || dv.length >= 2) { row(m, { store: s, src: bid, reason: "daily_cap", actor }, now); m.att[bid].capped = true; return { ok: true, pts: 0, reason: "daily_cap" }; }
-  dv.push(s); m.weekVisits[m.att[bid].week] = (m.weekVisits[m.att[bid].week] || 0) + 1; m.lastVisit = now; m.att[bid].day = dk; m.att[bid].hit = streakHit(m, now, "v");
+  dv.push(s); m.weekVisits[m.att[bid].week] = (m.weekVisits[m.att[bid].week] || 0) + 1; m.lastVisit = now;
+  { const sd = dayKey(m, bk.start); if (sd === dk) { m.att[bid].day = dk; m.att[bid].hit = streakHit(m, now, "v"); } else { const had = !!m.days[sd]; m.days[sd] = "v"; m.att[bid].day = sd; m.att[bid].hit = !had; streakRecalc(m, now); } } /* P2-S2: a late confirmation counts for the class start date (home tz), then the streak is recomputed */
   const base = Math.floor(50 * mult(m)), out = { ok: true, pts: base, bonus: 0 };
   m.att[bid].rows.push(row(m, { store: s, src: bid, delta: base, life: base, reason: "visit", actor, x: mult(m) }, now).id);
   if (!m.visited[s]) { m.visited[s] = true; const mk = monKey(m, now);
@@ -3074,8 +3196,8 @@ function reverseVisit(actor, m, bid, reason, noteTxt, now, ops) {
   a.reversed = true; if (a.np) m.npMonth[a.np]--;
   if (reason === "staff_error" && !a.capped) { const dv = m.dayVisits[dayKey(m, a.t)]; if (dv) { const i = dv.indexOf(a.store); if (i >= 0) dv.splice(i, 1); } if (BKREG[bid]) BKREG[bid].status = "booked"; } if (!a.capped) { m.weekVisits[a.week]--;
     const dk0 = a.day || dayKey(m, a.t), other = Object.entries(m.att).some(([id, x]) => id !== bid && !x.reversed && !x.capped && (x.day || dayKey(m, x.t)) === dk0) || (m.misDay[dk0] || 0) > 0;
-    if (a.hit && !other && m.days && m.days[dk0]) { /* the day only counted because of this visit: remove its credit */ delete m.days[dk0]; m.streak = Math.max(0, m.streak - 1);
-      for (const ms of MS_DAYS) if (m.msDay && m.msDay[ms] === dk0) { const c = m.claims.find(c => c.milestone === ms && c.status === "ready"); if (c) c.status = "reversed"; if (!m.msGranted.includes(ms)) m.msGranted.push(ms); /* once ever */ } } }
+    if (a.hit && !other && m.days && m.days[dk0]) { /* the day only counted because of this visit: remove its credit */ delete m.days[dk0]; streakRecalc(m, now); /* P2-S7: recomputed from that day (rest day covers it if unused, else it breaks) */
+      for (const ms of MS_ALL) if (m.msDay && m.msDay[ms] === dk0) { const c = m.claims.find(c => c.milestone === ms && c.status === "ready"); if (c) c.status = "reversed"; if (!m.msGranted.includes(ms)) m.msGranted.push(ms); /* once ever */ } } }
   note(m, "reversed", { n, s: a.store }); return { ok: true, n };
 }
 /* vouchers (§4, §5) */
@@ -3138,7 +3260,7 @@ function validateCode(store, code, now) { /* Store app Validate (scan or typed c
 function redeem(staff, store, code, now) { now = now == null ? PV.now() : now; const r = validateCode(store, code, now); if (!r.ok) return r;
   Object.assign(r.c, { status: "used", usedAt: now, usedBy: staff, usedStore: store }); return { ok: true, c: r.c }; }
 function grantMilestones(m, now) { /* U2 demo values: 50.000 / 75.000 / 100.000 ₫, platform-funded */
-  for (const ms of m.msReached) if (!m.msGranted.includes(ms)) { m.msGranted.push(ms); const val = MARKET === "kr" ? { 7: 5000, 14: 7500, 30: 10000 }[ms] : { 7: 50000, 14: 75000, 30: 100000 }[ms];
+  for (const ms of m.msReached) if (!m.msGranted.includes(ms)) { m.msGranted.push(ms); if (!MS_VOUCH.includes(ms)) continue; const val = MARKET === "kr" ? { 7: 5000, 30: 10000, 100: 20000 }[ms] : { 7: 50000, 30: 100000, 100: 200000 }[ms];
     m.claims.push({ id: "C" + PV.seq++, def: "MS" + ms, milestone: ms, terms: { title: [`${ms}-day streak reward`, `Quà chuỗi ${ms} ngày`, `${ms}일 연속 리워드`], type: "fixed", value: val, cur: CUR, terms: ["Platform-funded. Demo value, pending U2.", "Nền tảng tài trợ. Giá trị demo, chờ U2.", "플랫폼 제공. 데모 금액, U2 결정 대기."] }, store: null, scope: null, t: now, exp: now + 30 * DAY, status: "ready", cost: 0 }); }
 }
 function setFlag(on, now) { /* U1. Turning on: one-time coin conversion at U8 ×5, milestone grants, expiry clock starts */
@@ -3203,7 +3325,7 @@ const skT = (k, o) => { let x = L3(...SKT[k]); for (const [a, b] of Object.entri
 const REF_URL = "https://cici.example/r/CB7Q4K"; /* demo referral link: no member id or name in it */
 function streakDots(m) {
   const now = PV.now(), t0 = dayStart(m, now), out = []; m.days = m.days || {}; m.rest = m.rest || {};
-  for (let i = 13; i >= 0; i--) { const dk = dayKey(m, t0 - i * DAY), k = m.days[dk] ? "on" : m.rest[dk] ? "rest" : i === 0 ? "today" : "off"; out.push([dk, k]); }
+  for (let i = 13; i >= 0; i--) { const dk = dayKey(m, t0 - i * DAY), k = m.days[dk] && m.days[dk] !== "p" ? "on" : m.rest[dk] ? "rest" : i === 0 ? "today" : "off"; out.push([dk, k]); }
   return out;
 }
 function streakCard() {
@@ -3212,7 +3334,7 @@ function streakCard() {
   const alt = skT("dotsAlt", { a: c("on"), r: c("rest"), x: c("off"), t: skT(today ? "todayDone" : "todayOpen") });
   const wk = weekKey(m, PV.now()), restLeft = !Object.values(m.rest || {}).includes(wk);
   return `<section class="card" id="pv-streak" aria-labelledby="pv-sk-n"><div class="row" style="gap:12px"><img class="sk-cici" src="${CUT}cheer.webp" alt="" aria-hidden="true" width="64" height="64">
-  <div class="grow"><b id="pv-sk-n" class="sk-n">${esc(skT("days", { n }))}</b><div class="sub sm" id="pv-sk-lbl">${esc(pvT("streak", { n }))}</div></div></div>
+  <div class="grow"><b id="pv-sk-n" class="sk-n">${esc(skT("days", { n }))}</b><div class="sub sm" id="pv-sk-lbl">${esc(isPaused(m) ? pvT("streakPaused", { n }) : pvT("streak", { n }))}</div></div></div>
   <div class="sk-dots" id="pv-sk-dots" role="img" aria-label="${esc(alt)}">${dots.map(([dk, k]) => `<span class="sk-d ${k}" data-day="${dk}" data-k="${k}">${k === "rest" ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4a8 8 0 1 0 5 13A7 7 0 0 1 15 4z" fill="#6B5E62"/></svg>' : ""}</span>`).join("")}</div>
   <div class="row wrap" style="gap:6px;margin-top:8px">${x > 1 ? `<span class="tag" id="pv-sk-mult">${esc(pvT("multiplier", { x }))}</span>` : ""}${nx ? `<span class="tag" id="pv-sk-next">${esc(skT("next", { x: xs[nx], d: nx }))}</span>` : ""}${restLeft && n ? `<span class="tag ok" id="pv-sk-rest">${esc(skT("restLeft"))}</span>` : ""}</div>
   ${gated() ? "" : `<button class="btn sec full" data-act="pvshare" id="pv-share" style="margin-top:10px">${esc(skT("share"))}</button>`}</section>`;
@@ -3305,7 +3427,7 @@ function scDone(r) { render(); if (r.ok) maybeUnlock(); confirmSheet(sT(r.key, {
 function questSheet() { if (!FLAGS.quest) return go("tab:home"); openSheet(sheetHd(t("quest")) + `<div class="card"><b>${tr("Self-care week")}</b><p class="sub sm">${tr("1 active visit + 1 relaxing visit, at any verified places · reward: lantern hair clip")}</p><div class="chips"><span class="tag ${ST.quest.active ? "ok" : ""}">${ST.quest.active ? tr("Done: ") : ""}${tr("Active (barre, courts)")}</span><span class="tag ${ST.quest.relax ? "ok" : ""}">${ST.quest.relax ? tr("Done: ") : ""}${tr("Relaxing (spa, skin)")}</span></div></div><h2>${t("journey")} <span class="sub sm">${tr("step")} ${ST.steps}/14</span></h2><div class="card">${journeySVG()}<p class="sub sm" style="margin:6px 0 0">${tr("Each attended visit, at any place, is one step.")}</p></div>`, t("quest")); }
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
-  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
+  const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: ME.legacyOpen ? L3("Earlier balance · pending, not converted yet", "Số dư cũ · đang chờ, chưa chuyển đổi", "이전 잔액 · 대기 중, 아직 전환 안 됨") : L3("Earlier balance · converted", "Số dư cũ · đã chuyển đổi", "이전 잔액 · 전환 완료"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
   openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
 }
 function claimSheet(id) {
@@ -3470,7 +3592,7 @@ function checkJumps() {
 }
 window.checkJumps = checkJumps;
 p2Load(); if (P2()) render();
-window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, G_ITEMS, G_STAGES, gState, gStats, gHint, gSimVisit, gDaysOff, gUnmapped, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
