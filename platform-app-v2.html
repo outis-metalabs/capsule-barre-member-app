@@ -683,9 +683,9 @@ function v2Hero() {
 /* VIDEO SLOT: drop official 3D Designer loops in assets/cici-real/ as cici-cat-<mood>.webm/.mp4 (+ cici-cat-poster.webp) and list the moods here.
    Rules: muted, playsinline, loop, <=2.5 MB, 6-8 s. Until files exist the still CICI_HOME image is shown with CSS mood cues. Never generate Cici. */
 const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real/cici-cat-poster.jpg",
-  clips: { calm: "petting", lively: "petting", napping: "petting", hungry: "petting", react: "petting", eating: "petting" },
+  clips: { calm: "petting", lively: "lively", napping: "petting", hungry: "hungry", react: "react", eating: "petting" },
   eat: "assets/cici-real/dubu-eating", fadeMs: 400 };
-  /* Home loops: official petting (cici_mochi_petting_loop_tall). SWAP lively/napping/hungry/react by adding cici-cat-<name>.webm/.mp4 and pointing clips. Crossfade CICI_CAT.fadeMs (300–500). */ /* official 3D Designer loops (720x1280, 6.5 s, no audio). Lively/napping loops don't exist yet: they reuse "petting" with CSS mood cues; SWAP by pointing a mood at its own clip name (cici-cat-<name>.webm/.mp4). */
+  /* Official loops (tall): petting default; lively / hungry / react wired 2026-10-16. Napping + mission stretch/water await 3D Designer redo — keep petting/CSS until then. Crossfade CICI_CAT.fadeMs (300–500). */
 const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
 const MOCHI = () => L3("Mochi", "Mochi", "모찌"); /* was Dubu/두부; renamed 2026-10-15 */
 function catDay() { const dk = ME ? dayKey(ME, PV.now()) : "d"; const c = P2S.cat = P2S.cat || {}; c.treats = c.treats || 0; if (c.day !== dk) { c.day = dk; c.earned = 0; c.fed = 0; c.log = []; } /* DB-H3: daily reset of earned/fed; held treats carry over (DB-T4 cap 3) */ return c; }
