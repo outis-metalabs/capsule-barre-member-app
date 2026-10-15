@@ -1598,12 +1598,13 @@ function reply(c, text) {
   const signal = !!(p.store || p.cands || p.svc || p.staff || p.usual || p.bookWord);
   const answering = c.draft && c.ask && c.ask !== "confirm" && (p.d != null || p.m != null || p.party || p.len || p.period || p.paddles != null || p.nextWeek || p.weekend);
   const switching = c.draft && ((p.store && c.draft.store && p.store !== c.draft.store && !(p.staff && staffStore(p.staff) === c.draft.store)) || (p.cands && !p.staff));
+  { const uj = !p.store && !(c.draft && c.draft.store) ? unjoinedHit(s, text) : null; /* a booking request for a store not joined yet: offer Join & book, never a dead end */
+    if (uj && signal) return say(c, jbT("chat", S[uj].name), { chips: [chip(jbT("btn", S[uj].name), { act: "jbook", store: uj, d: p.d })] }); }
   if (signal && (!c.draft || !c.ask || c.ask === "confirm" || switching)) c.draft = {};
   else if (!answering && !signal) {
     /* a place the member hasn't joined yet: point to Discover instead of guessing */
-    const KW2 = { nails: /\b(nails?|manicure|mani\w*|pedicure|gel|lam mong|son gel|mong tay|mong chan)\b|네일|매니큐어|페디큐어/, yoga: /\b(yoga)\b|요가/ };
-    const ns = ORDER0.find(id => !S[id].joined && ((KW2[id] && (KW2[id].test(s) || KW2[id].test(vnL(text)))) || (S[id].names && S[id].names.test(s))));
-    if (ns) return say(c, L3(`You haven't joined ${S[ns].name} yet. Find it in Discover to book there.`, `Bạn chưa tham gia ${S[ns].name}. Tìm trong Khám phá để đặt lịch nhé.`, `아직 ${S[ns].name}에 가입하지 않으셨어요. 탐색에서 찾아 예약할 수 있어요.`));
+    const ns = unjoinedHit(s, text);
+    if (ns) return say(c, jbT("chat", S[ns].name), { chips: [chip(jbT("btn", S[ns].name), { act: "jbook", store: ns })] }); /* unjoined store: same Join & book path */
     return fallbackReply(c);
   }
   c.fails = 0; merge(c.draft, p); advance(c);
@@ -1747,13 +1748,14 @@ function chatChip(cid, mi, ci) {
   c.msgs.push({ who: "me", text: ch.label });
   if (v.act === "sosu" || v.act === "sosx") { c.draft = null; c.ask = null; if (v.act === "sosu") urgentReply(c); else crisisReply(c, ""); render(); scrollThread(cid); return; }
   if (v.act === "riskx") { c.draft = null; c.ask = null; crisisReply(c, v.q || ""); render(); scrollThread(cid); return; }
-  if (v.act === "beardjoin") { joinConsent("barber"); return; }
+  if (v.act === "beardjoin") { joinBookSheet("barber", nextFree("barber", "mcut"), "mcut"); return; }
   if (v.act === "riskok") { c.skipRisk = true; c.gate = false; c.care = false; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
   if (v.act === "fbbook") { c.fails = 0; say(c, t("whatBook"), { chips: exampleChips() }); render(); scrollThread(cid); return; }
   if (v.act === "fbask") { say(c, L3("Ask me about opening hours, prices, parking, what to bring, or your passes.", "Bạn có thể hỏi giờ mở cửa, giá, chỗ gửi xe, cần mang gì, hoặc gói của bạn.", "영업시간, 가격, 주차, 준비물, 이용권에 대해 물어보세요."), { chips: [chip(L3("Opening hours", "Giờ mở cửa", "영업시간"), { say: L3("what time do you open", "mấy giờ mở cửa", "몇 시에 열어요?") }), chip(L3("Prices", "Giá", "가격"), { say: L3("prices", "giá bao nhiêu", "가격") }), chip(L3("My passes", "Gói của tôi", "내 이용권"), { say: L3("my pass balance", "gói của tôi còn mấy buổi", "이용권 몇 회 남았어?") })] }); render(); scrollThread(cid); return; }
   if (v.act === "aslot") { const x = completeDraft(Object.assign({}, v.x)); say(c, againLine(x), { confirm: x, chips: againAlts(v.i, x) }); render(); scrollThread(cid); return; }
   if (v.act === "againmore") { const [sid, vid, o] = AGAIN[v.i]; c.msgs.pop(); openBook(sid, vid, Object.assign({}, o)); return; }
   if (v.act === "booknext") { c.skipSafety = true; try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
+  if (v.act === "jbook") { joinBookSheet(v.store, nextFree(v.store, null, v.d), null); return; } /* keeps the day the member asked for */
   if (v.act === "askstore") { sendToStore(v.store, v.q || "Question from chat"); say(c, `Sent to ${S[v.store].name}. Replies land in your inbox.`); }
   else if (v.act === "pickbk") { const b = B.find(z => z.id === v.id && z.status === "confirmed"); if (!b) say(c, "That one's already cancelled."); else if (v.mode === "cancel") askCancel(c, b); else askMove(c, b); }
   else if (v.act === "cancelbk") { const b = B.find(z => z.id === v.id); if (!b || b.status !== "confirmed") say(c, "That one's already cancelled."); else { const free = freeNow(b.store, b.d, b.m, b.pol); if (!free && bkPol(b).studio) { askCancel(c, b); render(); scrollThread(cid); return; } cancelB(b, !free); c.ask = null; say(c, L3(`Cancelled: ${N(svcOf(b.store, b.svc).n)} at ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `Đã hủy: ${N(svcOf(b.store, b.svc).n)} ở ${S[b.store].name}, ${fWhen(b.d, b.m)}.`, `취소됨: ${S[b.store].name} ${N(svcOf(b.store, b.svc).n)}, ${fWhen(b.d, b.m)}.`) + " " + (free ? L3("Nothing charged.", "Không tính phí.", "청구된 건 없어요.") + (b.usePass ? " " + tr(" The class goes back on your pass.").trim() : "") : L3(`Late cancel: ${lateLine(b)}`, `Hủy muộn: ${lateLine(b)}`, `늦은 취소: ${lateLine(b)}`)), { chips: [chip(t("undo"), { act: "uncancel", id: b.id })] }); } }
@@ -1894,17 +1896,17 @@ function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card">${s.photo ? `<div class="cover hero">${shopImg(sid, "himg", true)}<span class="hsample">${t("sample")}</span></div>` : `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
-  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="cici:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<button class="btn full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button>`}</div></div>`;
+  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="go" data-v="cici:store:${sid}">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<div class="stack" style="width:100%"><button class="btn full" data-act="jbook" data-v="${sid}" id="st-jbook">${esc(jbT("btn", s.name))}</button><button class="btn ghost full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button></div>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
-  h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${tr("Join to book. You can look first.")}</p>`}<div class="stack">`;
+  h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${esc(jbT("hint", s.name))}</p>`}<div class="stack">`;
   if (s.kind === "class") {
     for (const [cid, m, tid] of s.sched) {
       let d = 0, z = slotsFor(sid, cid, 0).find(q => q.m === m); if (!z) { d = 1; z = slotsFor(sid, cid, 1).find(q => q.m === m); } if (!z) continue;
       const v = svcOf(sid, cid), full = z.left <= 0;
-      h += `<button class="svc" data-act="classpick" data-s="${sid}" data-v="${cid}" data-d="${d}" data-m="${m}" ${full || !s.joined ? "disabled" : ""}><span style="font-weight:750;min-width:52px">${fTime(m)}</span><span class="grow"><b>${esc(N(v.n))}</b> · ${esc(resName(sid, tid))}<br><span class="sub sm">${fDay(d)} · ${v.len} min · ${full ? tr("Full") : z.left + " " + tr("spots open")} · ${fCancel(sid, d, m)}</span></span><span class="pr">${passFor(sid, cid) ? tr("Pass") : vnd(v.price)}</span></button>`;
+      h += `<button class="svc" data-act="classpick" data-s="${sid}" data-v="${cid}" data-d="${d}" data-m="${m}" ${full ? "disabled" : ""}><span style="font-weight:750;min-width:52px">${fTime(m)}</span><span class="grow"><b>${esc(N(v.n))}</b> · ${esc(resName(sid, tid))}<br><span class="sub sm">${fDay(d)} · ${v.len} min · ${full ? tr("Full") : z.left + " " + tr("spots open")} · ${fCancel(sid, d, m)}</span></span><span class="pr">${passFor(sid, cid) ? tr("Pass") : vnd(v.price)}</span></button>`;
     }
-    h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${s.svcs[0].id}" ${s.joined ? "" : "disabled"}><span class="grow"><b>${tr("Other days")}</b><br><span class="sub sm">${tr("Full timetable")}</span></span>${ic("chev")}</button>`;
-  } else for (const v of s.svcs) h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${v.id}" ${s.joined ? "" : "disabled"}><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${esc(tr(v.desc))}${s.kind !== "rental" ? " · " + v.len + " " + L3("min","phút","분") : ""}</span></span><span class="pr">${esc(priceLabel(v))}</span></button>`;
+    h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${s.svcs[0].id}"><span class="grow"><b>${tr("Other days")}</b><br><span class="sub sm">${tr("Full timetable")}</span></span>${ic("chev")}</button>`;
+  } else for (const v of s.svcs) h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${v.id}"><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${esc(tr(v.desc))}${s.kind !== "rental" ? " · " + v.len + " " + L3("min","phút","분") : ""}</span></span><span class="pr">${esc(priceLabel(v))}</span></button>`;
   h += `</div>`;
   if (s.joined) {
     h += `<h2>${t("passes")}</h2><div class="card stack">${w.length ? w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("") : `<p class="sub sm">${tr("No passes here. You pay per visit.")}</p>`}${mine.filter(b => b.dep).map(b => `<p class="sm">${tr("Deposit held")}: <b>${vnd(b.dep)}</b> · ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}</div>`;
@@ -2099,9 +2101,9 @@ const DSYN = { fitness: "barre pilates gym fitness tập thể dục lớp tập
   massage: "massage spa mát xa xoa bóp thư giãn 마사지 스파", sport: "pickleball court courts sân thể thao 피클볼 코트", nails: "nail nails manicure làm móng móng 네일", yoga: "yoga 요가" };
 const DF = { type: "all", dist: 99, open: false, price: 0, rate: 0, map: false, pin: null };
 const typeLabel = sid => { const r = DTYPES.find(x => x[0] === DISC[sid].type); return r ? r[L === "vi" ? 2 : L === "ko" ? 3 : 1] : ""; };
-function nextFree(sid) {
-  const s = S[sid], v = s.svcs[0];
-  for (let d = 0; d < 7; d++) { const z = slotsFor(sid, v.id, d, { len: 60, party: 4 }).find(q => q.left !== 0); if (z) return Object.assign({}, z, { store: sid, svc: v.id, party: s.kind === "rental" ? 4 : 0, paddles: 0 }); }
+function nextFree(sid, vid, from) {
+  const s = S[sid], v = (vid && s.svcs.find(q => q.id === vid)) || s.svcs[0];
+  for (let d = from > 0 ? +from : 0; d < 7; d++) { const z = slotsFor(sid, v.id, d, { len: 60, party: 4 }).find(q => q.left !== 0); if (z) return Object.assign({}, z, { store: sid, svc: v.id, party: s.kind === "rental" ? 4 : 0, paddles: 0 }); }
   return null;
 }
 function discList() {
@@ -2171,7 +2173,7 @@ function discAct(a, d) {
   else if (a === "drate") DF.rate = DF.rate ? 0 : 4.5;
   else if (a === "pin") DF.pin = d.v;
   else if (a === "dfilters") { filterSheet(); return true; }
-  else if (a === "dslot") { const x = nextFree(d.v); if (x) { if (!S[d.v].joined) x.joinOnBook = true; openConfirm(x); } return; }
+  else if (a === "dslot") { const x = nextFree(d.v); if (!S[d.v].joined) joinBookSheet(d.v, x, null); else if (x) openConfirm(x); else toast(jbT("none")); return true; }
   else return false;
   renderView(); if ($("#dfsheet")) { filterSheet(); const g = $(`#dfsheet [data-act="${a}"][data-v="${d.v}"]`); if (g) g.focus(); return true; }
   const f = $(`[data-act="${a}"]`); if (f) f.focus();
@@ -2184,6 +2186,41 @@ document.addEventListener("input", e => { if (e.target.id === "dq" && DF.map) { 
 function joinSheet() { openSheet(sheetHd(tr("Join a place")) + `<p class="sub">${tr("Each place keeps its own passes and rules. Your account, Cici and your journey come with you.")}</p><div class="stack"><button class="btn full" data-act="qr">${ic("qr", "s")} ${t("scan")}</button><button class="btn sec full" data-act="linkjoin">${ic("link", "s")} ${t("link")}</button><button class="btn ghost full" data-act="gosearch">${ic("search", "s")} ${tr("Search places")}</button></div>`, tr("Join a place")); }
 function qrSheet() { openSheet(sheetHd(t("scan")) + `<div class="vf" role="img" aria-label="${L3("Camera viewfinder, simulated", "Khung camera, mô phỏng", "카메라 화면, 시뮬레이션")}">${tr("Point at the QR on the counter")}</div><p class="demo">${t("demo")}${tr(": no camera is used")}</p><button class="btn full" data-act="qrscan" style="margin-top:10px">${tr("Simulate scan · Ipsae Nail Bar")}</button>`, t("scan")); }
 function linkSheet() { openSheet(sheetHd(t("link")) + `<label for="lk" class="sub sm">${tr("Invite link from SMS or Zalo")}</label><input id="lk" class="inp" style="width:100%;margin:6px 0 12px" value="https://cici.example/j/bloom-yoga"><button class="btn full" data-act="linkopen">${tr("Open link")}</button>`, t("link")); }
+/* Book on a store the member hasn't joined: one short sheet, then the normal review/confirm (tap 1 Book, tap 2 Join and book, tap 3 Book) */
+const JBT = {
+  btn: ["Join {s} & book", "Tham gia {s} & đặt lịch", "{s} 가입하고 예약"],
+  title: ["Join {s} & book", "Tham gia {s} & đặt lịch", "{s} 가입하고 예약"],
+  go: ["Join and book", "Tham gia và đặt lịch", "가입하고 예약"],
+  share: ["Joining adds {s} to My places and shares your name and phone with them for bookings. Nothing is booked until you confirm on the next screen.", "Tham gia sẽ thêm {s} vào Nơi của tôi và chia sẻ tên, số điện thoại để đặt lịch. Chưa đặt gì cho đến khi bạn xác nhận ở màn hình sau.", "가입하면 {s}이(가) 내 매장에 추가되고 예약을 위해 이름과 전화번호가 공유돼요. 다음 화면에서 확인하기 전에는 예약되지 않아요."],
+  slot: ["Slot", "Giờ", "시간"], svc: ["Service", "Dịch vụ", "서비스"],
+  noSlot: ["No free slots this week. Join to see the full timetable and pick another day.", "Tuần này hết chỗ. Tham gia để xem lịch đầy đủ và chọn ngày khác.", "이번 주는 빈 시간이 없어요. 가입하면 전체 시간표에서 다른 날을 고를 수 있어요."],
+  hint: ["Tap a service to join {s} and book in one step. You can look first.", "Chạm vào dịch vụ để tham gia {s} và đặt lịch một lần. Bạn có thể xem trước.", "서비스를 누르면 {s} 가입과 예약을 한 번에 할 수 있어요. 먼저 둘러봐도 돼요."],
+  chat: ["You haven't joined {s} yet. I can join it for you and book right away.", "Bạn chưa tham gia {s}. Mình có thể tham gia giúp bạn và đặt lịch ngay.", "아직 {s}에 가입하지 않으셨어요. 가입하고 바로 예약할 수 있어요."],
+  gone: ["That slot was just taken. Pick another time.", "Giờ này vừa có người đặt. Hãy chọn giờ khác.", "방금 마감된 시간이에요. 다른 시간을 골라 주세요."],
+  none: ["No free slots this week. Open the store to see other days.", "Tuần này hết chỗ. Mở cửa hàng để xem ngày khác.", "이번 주는 빈 시간이 없어요. 매장에서 다른 날을 확인해 주세요."],
+  crisis: ["Booking is paused for now. I'm here if you want to talk.", "Tạm dừng đặt lịch lúc này. Mình vẫn ở đây nếu bạn muốn trò chuyện.", "지금은 예약을 잠시 멈췄어요. 이야기하고 싶으면 여기 있어요."]
+};
+const jbT = (k, sn) => L3(...JBT[k]).replace(/\{s\}/g, sn || "");
+let JBX = null;
+const KW2 = { nails: /\b(nails?|manicure|mani\w*|pedicure|gel|lam mong|son gel|mong tay|mong chan)\b|네일|매니큐어|페디큐어/, yoga: /\b(yoga)\b|요가/ };
+function unjoinedHit(s, text) { return ORDER0.find(id => !S[id].joined && ((KW2[id] && (KW2[id].test(s) || KW2[id].test(vnL(text)))) || (S[id].names && S[id].names.test(s)))) || null; }
+function joinBookSheet(sid, x, vid) {
+  const s = S[sid]; if (!s) return;
+  if (gated()) { toast(jbT("crisis")); return; } /* MVP-B7: no booking prompts in a crisis/urgent turn, but never a silent dead end */
+  if (s.joined) { if (x) openConfirm(x); else openBook(sid, vid || s.svcs[0].id); return; }
+  JBX = { sid, x: x || null, vid: vid || (x && x.svc) || s.svcs[0].id }; track("join_book_open", { store: sid, slot: !!x });
+  const sv = svcOf(sid, JBX.vid);
+  openSheet(sheetHd(jbT("title", s.name)) + storeBar(sid) + `<dl class="conf" id="jb-conf" style="margin-top:10px"><dt>${esc(jbT("svc"))}</dt><dd>${esc(N(sv.n))}</dd>${x ? `<dt>${esc(jbT("slot"))}</dt><dd id="jb-slot">${esc(fWhen(x.d, x.m))}</dd>` : ""}</dl>
+  ${x ? "" : `<p class="sm" id="jb-noslot" role="status">${esc(jbT("noSlot"))}</p>`}<p class="sub sm" id="jb-share">${esc(jbT("share", s.name))}</p>
+  <div class="stack" style="margin-top:12px"><button class="btn full" data-act="jbgo" id="jb-go">${esc(jbT("go"))}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, jbT("title", s.name));
+}
+function joinAndBook() {
+  const j = JBX; JBX = null; if (!j || !S[j.sid]) { closeSheet(); return; }
+  const s = S[j.sid]; if (!s.joined) { s.joined = true; INBOX.unshift({ s: j.sid, text: `Welcome to ${s.name}! (sample store)`, when: "Now", unread: false }); track("store_join", { store: j.sid, via: "book" }); }
+  closeSheet(); render();
+  if (j.x) { const z = slotsFor(j.sid, j.x.svc, j.x.d, { len: j.x.len || 60, party: j.x.party || 4 }).find(q => q.m === j.x.m && q.left !== 0); if (z) return openConfirm(Object.assign({}, j.x, z)); toast(jbT("gone")); }
+  openBook(j.sid, j.vid);
+}
 function joinConsent(sid) {
   const s = S[sid];
   openSheet(sheetHd(t("join") + " " + s.name) + storeBar(sid) + `<div class="stack" style="margin-top:12px"><label class="row sm"><input type="checkbox" checked disabled style="width:22px;height:22px"><span class="grow">${L3(`Share my name and phone with ${esc(s.name)} for bookings`, `Chia sẻ tên và số điện thoại với ${esc(s.name)} để đặt lịch`, `예약을 위해 ${esc(s.name)}에 이름과 전화번호 공유`)} <span class="sub">(${L3("needed to book", "cần để đặt lịch", "예약에 필요")})</span></span></label>
@@ -2612,8 +2649,10 @@ document.addEventListener("click", e => {
     case "nfriend": NSET.friendOptIn = el.checked; NSET.types.friend = el.checked; saveN(); render(); { const f = $(`[data-act="nfriend"]`); if (f) f.focus(); } break;
     case "cheer": toast(L3("Cheer sent to Mai!", "Đã gửi cổ vũ cho Mai!", "마이에게 응원을 보냈어요!")); break;
     case "again": { const [sid, vid, o] = AGAIN[+d.i]; openBook(sid, vid, Object.assign({}, o)); break; }
-    case "svc": openBook(d.s, d.v); break;
-    case "classpick": { const z = slotsFor(d.s, d.v, +d.d).find(q => q.m === +d.m); if (z) openConfirm(Object.assign({}, z, { store: d.s, svc: d.v })); break; }
+    case "svc": if (S[d.s] && !S[d.s].joined) { joinBookSheet(d.s, nextFree(d.s, d.v), d.v); break; } openBook(d.s, d.v); break;
+    case "classpick": { const z = slotsFor(d.s, d.v, +d.d).find(q => q.m === +d.m); if (!z) { toast(jbT("gone")); break; } const x = Object.assign({}, z, { store: d.s, svc: d.v }); if (S[d.s] && !S[d.s].joined) joinBookSheet(d.s, x, d.v); else openConfirm(x); break; }
+    case "jbook": joinBookSheet(d.v, nextFree(d.v), null); break;
+    case "jbgo": joinAndBook(); break;
     case "bs": BS[d.k] = ["d", "len", "party", "paddles"].includes(d.k) ? +d.v : d.v; renderBook(); break;
     case "slot": { const z = slotsFor(BS.store, BS.svc, BS.d, bsOpts()).find(q => q.m === +d.m); if (z) openConfirm(Object.assign({}, z, { store: BS.store, svc: BS.svc, party: S[BS.store].kind === "rental" ? BS.party : 0, paddles: BS.paddles, move: BS.move })); break; }
     case "dobook": if (PEND) { const x = PEND; PEND = null; doBook(x); } break;
