@@ -278,9 +278,10 @@ button:active:not([disabled]){transform:scale(.94)}
 .p2items{display:flex;flex-wrap:wrap;gap:6px;flex:1;align-items:flex-end}.p2it{display:inline-grid;place-items:center}
 .p2char{position:relative;display:inline-block;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff 0 35%,var(--sk) 36%);overflow:hidden;flex:none}.p2char .cut{width:100%;height:100%;object-fit:contain}
 .p2sw{display:inline-block;width:16px;height:16px;border-radius:50%;margin-right:6px;border:1px solid var(--line);vertical-align:-3px}
-.p2brand{color:#74283A;font-weight:650}.p2two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.p2fun{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}.p2funic{flex:none}.chip.p2lock{color:var(--sub);background:#F6F0EA}
+.p2brand{color:#74283A;font-weight:650}.p2two .btn{min-width:0;white-space:normal}.p2two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}.p2fun{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}.p2funic{flex:none}.chip.p2lock{color:var(--sub);background:#F6F0EA}
 /* acc-fix: hair is a tint chip, never a shape on the face */ .p2hair{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(142,51,70,.35);margin-right:4px;vertical-align:-2px;flex:none}
 #cici-hd-av .p2hair{position:absolute;left:-6px;bottom:-4px;margin:0}
+.chome .cpic.p2sk{border-radius:50% 50% 24px 24px}
 .p2wrap{position:relative;display:inline-block;flex:none}.p2wrap .p2hair{position:absolute;left:0;bottom:0;margin:0;width:16px;height:16px}.p2wrap .wear-acc{position:absolute;right:0;bottom:0;margin:0;width:22px;height:22px;padding:3px;box-sizing:border-box;border-radius:50%;background:#fff}
 </style>
 </head>
@@ -372,12 +373,14 @@ const P2T = {
   photoOn: ["Made from your photo (demo). The photo itself was deleted.", "Tạo từ ảnh của bạn (demo). Ảnh gốc đã bị xóa.", "사진으로 만든 모습이에요 (데모). 원본 사진은 삭제됐어요."],
   delPhoto: ["Delete my photo character", "Xóa nhân vật từ ảnh", "사진 캐릭터 삭제"], withdraw: ["Withdraw photo consent", "Rút lại đồng ý dùng ảnh", "사진 동의 철회"],
   delDone: ["Deleted. Your photo character and everything made from it are gone, and Cici is back to your preset look.", "Đã xóa. Nhân vật từ ảnh và mọi dữ liệu tạo ra đã bị xóa, Cici trở về phong cách mẫu.", "삭제됐어요. 사진 캐릭터와 그로부터 만든 데이터가 모두 지워졌고 {c}는 프리셋 모습으로 돌아왔어요."],
+  ageUnk: ["Photo mode needs your age first. Add it in your profile; until then you can customise Cici with presets.", "Chế độ ảnh cần biết tuổi của bạn trước. Hãy thêm tuổi trong hồ sơ; trong lúc đó bạn vẫn tùy chỉnh Cici bằng mẫu.", "사진 모드는 나이 확인이 먼저 필요해요. 프로필에 나이를 추가해 주세요. 그전까지는 프리셋으로 Cici를 꾸밀 수 있어요."],
   minor: ["Photo mode isn't available for your account. You can still customise Cici with presets.", "Chế độ ảnh không khả dụng cho tài khoản của bạn. Bạn vẫn có thể tùy chỉnh Cici bằng mẫu.", "이 계정에서는 사진 모드를 쓸 수 없어요. 프리셋으로 {c}를 꾸밀 수 있어요."]
 };
 const p2t = (k, v) => { let s = (P2T[k] || [k])[L === "vi" ? 1 : L === "ko" ? 2 : 0]; s = s.split("{c}").join(ciciNm()); if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
 const P2_HAIR = [["bob", "#6B4A3A", ["Short bob", "Tóc ngắn bob", "짧은 단발"]], ["pony", "#2B2326", ["Ponytail", "Tóc đuôi ngựa", "포니테일"]], ["bun", "#B04A5E", ["Ballet bun", "Búi ballet", "발레 번"]], ["waves", "#C98B3C", ["Long waves", "Tóc dài gợn sóng", "긴 웨이브"]]];
 const P2_SKIN = [["s1", "#F6DCC8", ["Tone 1", "Tông 1", "톤 1"]], ["s2", "#E5B897", ["Tone 2", "Tông 2", "톤 2"]], ["s3", "#C68A63", ["Tone 3", "Tông 3", "톤 3"]], ["s4", "#8A5A3C", ["Tone 4", "Tông 4", "톤 4"]]]; /* P2-B5: all tones equal, none locked or premium */
 const P2_DEF = { hair: "bun", skin: "s2", outfit: "o1" };
+const p2AgeOk = () => typeof ME.age === "number" && ME.age >= P2_AGE_MIN; /* PR19-2: unknown age = no photo mode until known */
 const P2_AGE_MIN = 14; /* PROPOSED placeholder, OQ-F1 (legal): age threshold and source pending */
 const P2_EARN = { visit: 10, mission: 2 }; /* PROPOSED placeholder, OQ-R1 */
 const P2_ITEMS = [
@@ -402,6 +405,8 @@ const p2Price = it => vnd(it.krw * 10); /* store-currency formatter (KRW display
 const p2Nm = it => L3(...it.n);
 const funIc = '<svg class="p2funic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
 const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
+/* PR19-1: the saved skin tone applies everywhere Cici appears (same soft backdrop as the builder/room portrait) */
+function p2SkinAttr(look) { if (!P2() || gated()) return ""; const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1]; return ` data-skin="${l.skin}" style="--sk:${sk};background:radial-gradient(circle at 50% 40%,#fff 0 35%,${sk} 36%)"`; }
 function p2Acc(look) { if (!P2()) return ""; const l = look || p2Look(), hr = (P2_HAIR.find(x => x[0] === l.hair) || P2_HAIR[2])[1]; return `<span class="p2hair" data-hair="${l.hair}" style="background:${hr}" aria-hidden="true"></span>`; } /* acc-fix: tint chip only */
 function p2Char(size, look) { const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1];
   return `<span class="p2wrap" id="p2-preview" data-skin="${l.skin}" data-hair="${l.hair}" style="width:${size}px;height:${size}px"><span class="p2char" style="--sk:${sk};width:${size}px;height:${size}px">${cut("idle", { alt: p2t("builder") })}</span>${p2Acc(l)}${outfitBadge(l.outfit)}</span>`; } /* acc-fix: chips sit at the frame corners, outside the round portrait */
@@ -434,22 +439,22 @@ function p2Builder(msg) {
   if (!P2D) P2D = Object.assign({}, p2Look()); const c = P2D, lv = lvlOf(ME), got = n => n <= lv || (ME.unlocked || []).includes("o" + n);
   const opt = (k, arr) => `<div class="chips" role="group" aria-label="${esc(p2t(k))}">${arr.map(([id, col, n]) => `<button class="chip" data-act="p2set" data-k="${k}" data-v="${id}" aria-pressed="${c[k] === id}" aria-label="${esc(p2t(k) + ": " + L3(...n))}"><span class="p2sw" style="background:${col}" aria-hidden="true"></span>${esc(L3(...n))}</button>`).join("")}</div>`;
   const outs = `<div class="chips" role="group" aria-label="${esc(p2t("outfit"))}">${[1, 2, 3, 4, 5].map(n => got(n) ? `<button class="chip" data-act="p2set" data-k="outfit" data-v="o${n}" aria-pressed="${c.outfit === "o" + n}" aria-label="${esc(p2t("outfit") + ": " + outfitNm(n))}">${esc(outfitNm(n))}</button>` : `<button class="chip p2lock" disabled aria-disabled="true" data-v="o${n}" aria-label="${esc(p2t("outfit") + ": " + outfitNm(n) + ", " + p2t("unlocksAt", { n }))}">${esc(outfitNm(n))} · ${esc(p2t("unlocksAt", { n }))}</button>`).join("")}</div>`;
-  const minor = (ME.age || 99) < P2_AGE_MIN;
+  const minor = typeof ME.age === "number" && ME.age < P2_AGE_MIN, ageUnk = typeof ME.age !== "number";
   return `<div class="chome" id="p2-builder" style="padding-top:0"><div class="cpic">${p2Char(150, c)}</div></div>${msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : ""}<p class="sub sm" id="p2-bnote">${esc(p2t("builderNote"))}</p>${P2S.photo ? `<p class="sm" id="p2-photoon">${esc(p2t("photoOn"))}</p>` : ""}
   <h2>${esc(p2t("hair"))}</h2>${opt("hair", P2_HAIR)}<h2>${esc(p2t("skin"))}</h2>${opt("skin", P2_SKIN)}<h2>${esc(p2t("outfit"))}</h2>${outs}
   <div class="stack" style="margin-top:14px"><button class="btn full" data-act="p2save">${esc(p2t("save"))}</button><button class="btn ghost full" data-act="p2cancel">${esc(p2t("cancel"))}</button><button class="btn ghost full" data-act="p2reset">${esc(p2t("reset"))}</button>
-  ${minor ? `<p class="sub sm" id="p2-minor">${esc(p2t("minor"))}</p>` : P2S.photo ? `<button class="btn sec full" data-act="p2delphoto">${esc(p2t("delPhoto"))}</button><button class="btn ghost full" data-act="p2withdraw">${esc(p2t("withdraw"))}</button>` : `<button class="btn sec full" data-act="p2photo">${esc(p2t("photoBtn"))}</button>`}</div>`;
+  ${ageUnk ? `<p class="sub sm" id="p2-ageunk">${esc(p2t("ageUnk"))}</p>` : minor ? `<p class="sub sm" id="p2-minor">${esc(p2t("minor"))}</p>` : P2S.photo ? `<button class="btn sec full" data-act="p2delphoto">${esc(p2t("delPhoto"))}</button><button class="btn ghost full" data-act="p2withdraw">${esc(p2t("withdraw"))}</button>` : `<button class="btn sec full" data-act="p2photo">${esc(p2t("photoBtn"))}</button>`}</div>`;
 }
 /* P2-F: step 1 consent (no picker exists yet), step 2 upload with the self-only check; the File is held in memory only and never read, uploaded or saved */
-let P2FILE = null;
+let P2FILE = null, p2Pend = null; /* pending consent (memory only) */
 function p2Consent(err) {
-  if (!P2() || gated() || (ME.age || 99) < P2_AGE_MIN) return;
+  if (!P2() || gated() || !p2AgeOk()) return;
   openSheet(sheetHd(p2t("consentT")) + `<div id="p2-consent"><ul class="sm" style="padding-left:18px;margin:0 0 8px"><li id="p2-c-purpose">${esc(p2t("cPurpose"))}</li><li>${esc(p2t("cWhat"))}</li><li id="p2-del">${esc(p2t("cKeep"))}</li><li>${esc(p2t("cShare"))}</li><li>${esc(p2t("cDelete"))}</li></ul><p class="sub sm" id="p2-legal">${esc(p2t("cLegal"))}</p>
     <label class="row sm" style="min-height:44px"><input type="checkbox" id="p2-agree" class="cb44"><span class="grow">${esc(p2t("agree"))}</span></label>
     ${err ? `<p class="sm" id="p2-err" role="alert" style="color:#8E3346"><b>${esc(err)}</b></p>` : ""}<div class="p2two"><button class="btn sec" data-act="p2nothanks">${esc(p2t("noThanks"))}</button><button class="btn sec" data-act="p2agree">${esc(p2t("cont"))}</button></div></div>`, p2t("consentT"));
 }
 function p2Upload(err, keepMe) {
-  if (!P2() || gated() || !P2S.consent || !P2S.consent.active) return;
+  if (!P2() || gated() || !p2AgeOk() || !((p2Pend && p2Pend.active) || (P2S.consent && P2S.consent.active))) return;
   const live = $("#p2-upload"); if (live && err) { /* re-validate in place so the chosen file and checkbox survive */
     let e = $("#p2-err"); if (!e) { e = document.createElement("p"); e.className = "sm"; e.id = "p2-err"; e.setAttribute("role", "alert"); e.style.color = "#8E3346"; live.querySelector("[data-act=p2gen]").before(e); }
     e.innerHTML = `<b>${esc(err)}</b>`; return; }
@@ -465,9 +470,9 @@ function p2Generate() {
   const h = Math.abs(hsh(String(file.size) + "|" + file.name)) >>> 0; /* mock generation: preset IDs picked from a hash; the bytes are never read */
   P2S.photo = { look: { hair: P2_HAIR[h % P2_HAIR.length][0], skin: P2_SKIN[(h >>> 3) % P2_SKIN.length][0] }, at: Date.now() }; /* derived character only */
   if (f) f.value = ""; P2FILE = null; /* P2-F5: source photo dropped */
-  P2D = null; p2Save(); closeSheet(); ST.page = "p2char"; p2MsgAfter = p2t("genDone"); render();
+  if (p2Pend) { P2S.consent = p2Pend; p2Pend = null; } P2D = null; p2Save(); closeSheet(); ST.page = "p2char"; p2MsgAfter = p2t("genDone"); render();
 }
-function p2Wipe() { P2FILE = null; P2S.photo = null; if (P2S.consent) P2S.consent = { active: false, withdrawnAt: Date.now() }; P2D = null; p2Save(); } /* P2-F6/F7 */
+function p2Wipe() { P2FILE = null; p2Pend = null; P2S.photo = null; if (P2S.consent) P2S.consent = { active: false, withdrawnAt: Date.now() }; P2D = null; p2Save(); } /* P2-F6/F7 */
 let p2MsgAfter = null;
 function p2CharPage() { if (gated()) return ""; const m = p2MsgAfter; p2MsgAfter = null; return p2Builder(m); }
 document.addEventListener("click", e => {
@@ -487,7 +492,7 @@ document.addEventListener("click", e => {
   if (a === "p2reset") { P2S.char = Object.assign({}, P2_DEF); P2S.photo = null; ST.wear = P2_DEF.outfit; P2D = null; p2Save(); p2MsgAfter = p2t("resetDone"); render(); return; }
   if (a === "p2photo") return p2Consent();
   if (a === "p2nothanks") { closeSheet(); ST.page = "p2char"; render(); return; }
-  if (a === "p2agree") { if (!($("#p2-agree") || {}).checked) return p2Consent(p2t("needAgree")); P2S.consent = { active: true, at: Date.now() }; p2Save(); return p2Upload(); }
+  if (a === "p2agree") { if (!($("#p2-agree") || {}).checked) return p2Consent(p2t("needAgree")); p2Pend = { active: true, at: Date.now() }; return p2Upload(); } /* PR19-3: consent is only persisted once a photo is used */
   if (a === "p2gen") return p2Generate();
   if (a === "p2delphoto" || a === "p2withdraw") { p2Wipe(); p2MsgAfter = p2t("delDone"); render(); return; }
 });
@@ -1339,7 +1344,7 @@ function openSheet(html, label) {
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" data-act="bgclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}</div></div>`;
   const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); (f || sh).focus();
 }
-function closeSheet() { const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } $("#sheetRoot").innerHTML = ""; if (!had) return; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus(); }
+function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } $("#sheetRoot").innerHTML = ""; if (!had) return; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus(); }
 const sheetHd = title => `<div class="hd"><h2>${esc(title)}</h2><button class="icb" data-act="close" aria-label="${t("close")}">${ic("x")}</button></div>`;
 let toastT = null, toastUndo = null;
 function toast(msg, undo) {
@@ -1958,7 +1963,7 @@ function heroScene() {
     : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
   const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
   const wn = wearNm();
-  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${P2() ? p2Acc() : ""}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic${P2() && !calm ? " p2sk" : ""}"${calm ? "" : p2SkinAttr()}>${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${P2() ? p2Acc() : ""}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
 }
 /* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
 function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
@@ -2539,7 +2544,7 @@ function ciciAgainChips() { return `<div class="scroll" role="group" aria-label=
 function vCici() {
   const c = CH.cici, g = gated(); c.unread = false;
   const scope = c.scope && S[c.scope] ? `<div class="chips" role="group" aria-label="${L3("Booking at", "Đặt tại", "예약 매장")}"><button class="chip" aria-pressed="true" data-act="unscope" aria-label="${esc(t("removeScope", { store: S[c.scope].name }))}">${logo(c.scope)} ${esc(S[c.scope].name)} ${ic("x", "s")}</button></div>` : "";
-  const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear) + (P2() ? p2Acc() : "")}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
+  const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"${g ? "" : p2SkinAttr()}><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear) + (P2() ? p2Acc() : "")}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
   ${g ? "" : `<button class="icb" data-act="mybk" data-from="cici" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}</div>`; /* A7/OQ5: the voice-demo call is cut from the MVP, so the overflow menu that only held it is gone */
   const empty = !c.msgs.length;
   const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">${esc(ciciNm())}: </span>${esc(t("ciciHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${ciciAgainChips()}` : "";
@@ -3286,7 +3291,7 @@ function checkJumps() {
 }
 window.checkJumps = checkJumps;
 p2Load(); if (P2()) render();
-window.__plat = { CICI_ALIAS_RE, P2S, P2_ITEMS, P2T, P2_AGE_MIN, p2Earn, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, p2Earn, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
