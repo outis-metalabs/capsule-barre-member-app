@@ -20,7 +20,7 @@ with sync_playwright() as p:
   # --- greeting per language + a11y
   for L, hi in [('ko', '미나님~'), ('en', 'Hi Mina!'), ('vi', 'Chào Mina!')]:
     g = page(lang=L); t = g.inner_text('#hb-bubble')
-    ok(f'[{L}] bubble greets by name ({hi}) + one line', t.startswith(hi) and len(g.inner_text('#hb-line')) > 10, t)
+    ok(f'[{L}] glass card greets by name ({hi}) + one bold line', t.startswith(hi) and len(g.inner_text('#hb-line')) >= 5, t)
     a = g.evaluate(A11Y, '#hb-bubble .hbt, #hb-bubble .hbhi, #hb-bubble .hbgo, #home-dm b, #home-dm .sub, #home-dm .mt, #home-dm .btn')
     ok(f'[{L}] AA contrast on bubble + mission card text', all(x['c'] >= 4.5 for x in a), [x for x in a if x['c'] < 4.5])
     tg = g.evaluate(A11Y, '#hb-bubble .hbgo, #home-dm .btn')
@@ -31,15 +31,13 @@ with sync_playwright() as p:
     v = g.inner_text('#view'); ok(f'[{L}] no "coins pending" migration card (#24 check)', not re.search(r'coins? (are|is) pending|đang chờ|대기 중', v, re.I))
     if L in ('ko', 'en'): g.screenshot(path=f'{SH}/home-{L}-390.png'); g.screenshot(path=f'{SH}/home-full-{L}-390.png', full_page=True)
     ok(f'[{L}] no page errors', not g.E, g.E); g.close()
-  # --- bubble priority
+  # --- card line priority (v2 full-screen Home): today's class -> today's missions
   g = page(lang='en')
-  ok('priority 3: streak reminder when the day is not active yet (gentle)', J(g, "hbPick(gState()).k") == 'streak' and '!' in g.inner_text('#hb-line'))
-  J(g, "()=>{window.gHintC=()=>[[2,'2 more Barre visits to unlock the Yoga mat']];render()}")
-  ok('priority 2: next-unlock hint (within reach) beats streak; chevron opens booking', J(g, "hbPick(gState()).k") == 'hint' and J(g, "document.querySelector('#hb-bubble .hbgo').dataset.act") == 'bk')
-  ok('hint shown once (duplicate #g-hint hidden: uncluttered)', J(g, "document.querySelector('#g-hint').hidden"))
-  g.click('#hb-bubble .hbgo'); g.wait_for_timeout(300); ok('chevron -> booking sheet opens', J(g, "!!document.querySelector('.sheet')")); J(g, "closeSheet()")
-  J(g, "()=>{const n=nowMin(),d=Math.floor(n/1440),m=Math.min(1439,n%1440+30);B.push({id:990001,store:'capsule',svc:B.find(x=>x.store==='capsule').svc,d,m,status:'confirmed',rids:[],source:'app'});render()}")
-  ok("priority 1: today's class beats everything; chevron -> that booking", J(g, "hbPick(gState()).k") == 'class' and J(g, "document.querySelector('#hb-bubble .hbgo').dataset.id") == '990001', g.inner_text('#hb-bubble'))
+  ok('card: missions line with a berry highlight (n/3) when no class today; chevron opens the sheet', J(g, "document.querySelector('#hb-bubble').dataset.k") == 'missions' and J(g, "document.querySelector('#hb-line em').innerText") == '0/3' and J(g, "document.querySelector('#hb-bubble .hbgo').dataset.act") == 'hbsheet')
+  ok('card: at most one secondary row (streak)', J(g, "document.querySelectorAll('#hb-bubble .hbsec').length") <= 1)
+  g.click('#hb-bubble .hbgo'); g.wait_for_timeout(700); ok('chevron -> scrolls to the Today sheet', J(g, "Math.abs(document.querySelector('#home-sheet').getBoundingClientRect().top) < 120"))
+  J(g, "()=>{scrollTo(0,0);const n=nowMin(),d=Math.floor(n/1440),m=Math.min(1439,n%1440+30);B.push({id:990001,store:'capsule',svc:B.find(x=>x.store==='capsule').svc,d,m,status:'confirmed',rids:[],source:'app'});render()}"); g.wait_for_timeout(200)
+  ok("priority 1: today's class beats missions (time highlighted); chevron -> that booking", J(g, "document.querySelector('#hb-bubble').dataset.k") == 'class' and J(g, "document.querySelector('#hb-bubble .hbgo').dataset.id") == '990001' and bool(J(g, "document.querySelector('#hb-line em').innerText")), g.inner_text('#hb-bubble'))
   g.screenshot(path=f'{SH}/bubble-today-class-en-390.png')
   g.click('#hb-bubble .hbgo'); g.wait_for_timeout(300); ok("chevron -> manage today's booking sheet", J(g, "!!document.querySelector('.sheet')")); g.close()
   # --- missions: bonus, cap, stats, streak
@@ -71,16 +69,11 @@ with sync_playwright() as p:
     ok(f'[{L}] crisis: no bubble, no daily-mission nudge card, no cheering Cici, no hint', J(g, "!document.querySelector('#hb-bubble,#home-dm,.dmcici,#g-hint')"))
     ok(f'[{L}] crisis: actions ignored (dmwater)', J(g, "(()=>{const b=__plat.pv.bal(__plat.pv.ME());document.body.insertAdjacentHTML('beforeend','<button id=x data-act=dmwater>x</button>');document.querySelector('#x').click();return __plat.pv.bal(__plat.pv.ME())===b})()"))
     g.close()
-  # --- realistic Cici (v2 default): alternate Home figure only, rest untouched vs platform-app.html
+  # --- v2 Home image slot (placeholder until the official image); the rest of the app is not restyled vs platform-app.html
   for L in ('ko', 'en'):
     g = page('?phase2=1', L); g.wait_for_timeout(600)
     has = J(g, "(()=>{const i=document.querySelector('#cici-real img');return i?{ok:i.complete&&i.naturalWidth>0,src:i.getAttribute('src')}:null})()")
-    ok(f'[{L}] real: render shown on Home (asset loads)', has and has['ok'], has)
-    ok(f'[{L}] real: bubble + missions still on Home, standard figure swapped', J(g, "!!document.querySelector('#hb-bubble') && !!document.querySelector('#home-dm') && getComputedStyle(document.querySelector('.gfig')).display==='none'"))
-    geo = J(g, "(()=>{const b=document.querySelector('#hb-bubble').getBoundingClientRect(),f=document.querySelector('#cici-real').getBoundingClientRect(),i=document.querySelector('#cici-real img'),r=i.getBoundingClientRect(),cs=getComputedStyle(i);return {bb:b.bottom,bt:b.top,ft:f.top,it:r.top,ih:r.height,iw:r.width,fw:f.width,fit:cs.objectFit,pos:cs.objectPosition,inside:b.left>=f.left&&b.right<=f.right}})()")
-    # render: 1280x720, Cici centred at ~52% x, head top ~7% / face from ~17% of the image height (cover-scaled to the img box height)
-    ok(f'[{L}] real: Cici centred on a 390 phone (object-fit cover, object-position 52%)', geo['fit'] == 'cover' and geo['pos'].startswith('52%') and geo['iw'] <= 390, geo)
-    ok(f'[{L}] real: bubble sits on the wall band above her, face uncovered', geo['inside'] and geo['bt'] >= geo['ft'] and geo['bb'] < geo['it'] + 0.16 * geo['ih'], geo)
+    ok(f'[{L}] Home image slot loads (CICI_HOME)', has and has['ok'], has)
     J(g, "()=>{ST.tab='you';ST.page='points';render()}"); a = g.inner_html('#view')
     g2 = page('?phase2=1', L, v1=True); J(g2, "()=>{ST.tab='you';ST.page='points';render()}"); b2 = g2.inner_html('#view')
     ok(f'[{L}] real: the rest of the app is not restyled (Points page identical to platform-app.html)', a == b2)
