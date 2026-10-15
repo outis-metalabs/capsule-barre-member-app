@@ -9,7 +9,8 @@ SCREENS = [('tab:home', None), ('tab:cici', None), ('tab:places', None), ('tab:y
 norm = lambda t: t.replace('씨씨', 'Cici')
 def snap(b, url, lang):
   c = b.new_context(viewport={'width': 390, 'height': 844}); g = c.new_page(); net = []
-  g.on('request', lambda r: net.append(r.url.split('/')[-1]) if not r.url.startswith('data:') else None)
+  doc = url.split('?')[0].split('/')[-1]  # X2 is file-name-agnostic: the page document itself (platform-app.html / platform-app-v2.html) is normalised
+  g.on('request', lambda r: net.append('<document>' if r.url.split('?')[0].split('/')[-1] == doc else r.url.split('/')[-1]) if not r.url.startswith('data:') else None)
   g.goto(url); g.wait_for_timeout(300); g.evaluate(f"()=>{{setLang('{lang}');render()}}"); out = {}
   for r, pgn in SCREENS:
     g.evaluate(f"()=>{{go('{r}');{f'ST.page={json.dumps(pgn)};render();' if pgn else ''}}}"); g.wait_for_timeout(80)
