@@ -288,6 +288,48 @@ button:active:not([disabled]){transform:scale(.94)}
 #cici-hd-av .p2hair{position:absolute;left:-6px;bottom:-4px;margin:0}
 .chome .cpic.p2sk{border-radius:50% 50% 24px 24px}
 .p2wrap{position:relative;display:inline-block;flex:none}.p2wrap .p2hair{position:absolute;left:0;bottom:0;margin:0;width:16px;height:16px}.p2wrap .wear-acc{position:absolute;right:0;bottom:0;margin:0;width:22px;height:22px;padding:3px;box-sizing:border-box;border-radius:50%;background:#fff}
+/* ===== CICI SHOP ===== */
+.shop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.shop-head h2{margin:0}
+.shop-balance{display:inline-flex;align-items:center;gap:5px;background:#fff9e6;border:1.5px solid #E9B44C;border-radius:99px;padding:4px 12px;font-size:14px;font-weight:800;color:#7a5c00}
+.shop-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}.shop-cats::-webkit-scrollbar{display:none}
+.shop-cats button{flex:none;border:1.5px solid var(--line);background:var(--bg);border-radius:99px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer}
+.shop-cats button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shop-item{background:var(--bg);border:1.5px solid var(--line);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.shop-item.owned{border-color:var(--ok)}.shop-item.equipped-item{border-color:#E9B44C;background:#fffdf0}
+.shop-item .sico{font-size:36px;line-height:1;margin-bottom:2px}.shop-item .snm{font-size:14px;font-weight:800;text-align:center}.shop-item .sdesc{font-size:11px;color:var(--sub);font-weight:500;text-align:center;line-height:1.3}
+.srarity{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:2px 8px}
+.srarity.common{background:#e8f4ec;color:#2e6b52}.srarity.rare{background:#e8eeff;color:#2244aa}.srarity.epic{background:#f5e8ff;color:#7700cc}
+.sprice{font-size:13px;font-weight:800;color:#c98b00;display:flex;align-items:center;gap:3px}
+.sbtns{display:flex;gap:6px;margin-top:4px;width:100%}.sbtns button{flex:1;border-radius:99px;border:0;padding:6px 4px;font-size:12px;font-weight:800;cursor:pointer}
+.sbtns .sbuy{background:var(--ox);color:#fff}.sbtns .sbuy:disabled{background:#ddd;color:#999;cursor:default}
+.sbtns .sequip{background:var(--ink);color:#fff}.sbtns .sunequip{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)!important}
+.sbtns .seqtag{background:#e8f4ec;color:#2e6b52;text-align:center;border-radius:99px;padding:6px 4px;font-size:11px;font-weight:800;flex:1}
+.sboost{background:#fff9e6;border:1.5px solid #E9B44C;border-radius:14px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.sboost span{font-size:20px}
+/* companion badge */
+.ccstage{position:relative;display:inline-block}.ccbadge{position:absolute;right:-8px;bottom:-4px;font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2));pointer-events:none}
+/* avatar initials */
+.initav{width:56px;height:56px;border-radius:50%;background:#E98597;color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800;flex:none}
+.initav.frame-silver{border:3px solid #a8a8b8;box-shadow:0 0 0 2px #e0e0ea}
+.initav.frame-gold{border:3px solid #E9B44C;box-shadow:0 0 0 2px #fff3a0}
+.initav.frame-rainbow{border:3px solid transparent;background-image:linear-gradient(white,white),linear-gradient(135deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);background-origin:border-box;background-clip:padding-box,border-box}
+.initav.frame-fire{border:3px solid #e85c20;box-shadow:0 0 8px rgba(245,160,64,.53)}
+/* onboard */
+.onboard-hero{text-align:center;padding:24px 0 16px}.onboard-hero h1{margin:4px 0 6px}
+.onboard-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.onboard-step{display:flex;align-items:flex-start;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px}
+.onboard-step .num{width:28px;height:28px;border-radius:50%;background:var(--ox);color:#fff;display:grid;place-items:center;font-size:14px;font-weight:800;flex:none}
+/* profile edit */
+.pedit-form{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.pedit-form .field label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.pedit-form .field input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-size:16px;font:inherit;box-sizing:border-box}
+/* gain float */
+.gain-float{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));display:flex;gap:6px;z-index:50;pointer-events:none}
+.gain-pill{background:var(--ox);color:#fff;border-radius:99px;padding:5px 14px;font-size:14px;font-weight:800;animation:gainpop .4s cubic-bezier(.3,1.6,.5,1) both,gainfade 1.8s .4s ease forwards}
+.gain-pill.gold{background:#E9B44C;color:#3a2600}
+@keyframes gainpop{0%{transform:translateY(10px) scale(.7)}100%{transform:translateY(0) scale(1)}}
+@keyframes gainfade{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-20px)}}
 </style>
 </head>
 <body>
@@ -299,6 +341,7 @@ button:active:not([disabled]){transform:scale(.94)}
 </div>
 <div id="sheetRoot"></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tx"></span></div>
+<div class="gain-float" id="gainFloat" aria-hidden="true"></div>
 <script>
 "use strict";
 /* ===== safety logic reused verbatim from mascot3d-app.html (ask-hana-spec §3) ===== */
@@ -399,6 +442,112 @@ const P2_ITEMS = [
   { id: "sofa", krw: 4400, cat: "theme", n: ["Velvet lounge theme", "Chủ đề phòng nhung", "벨벳 라운지 테마"], svg: '<rect x="3" y="10" width="18" height="7" rx="3" fill="#8E3346"/><rect x="5" y="7" width="14" height="5" rx="2" fill="#B04A5E"/><path d="M5 17v3M19 17v3" stroke="#2B2326" stroke-width="2"/>' },
   { id: "lumi", free: 1, cat: "decor", brand: "Lumi Skin", limited: 1, n: ["Lumi Skin vanity", "Bàn trang điểm Lumi Skin", "루미 스킨 화장대"], svg: '<rect x="5" y="12" width="14" height="8" rx="1.5" fill="#F7F1EA" stroke="#6B5E62"/><circle cx="12" cy="7" r="4.5" fill="#DDEFF2" stroke="#6B5E62"/>' }
 ];
+/* ===== CICI SHOP ITEMS (cosmetic, separate from store-money) ===== */
+const SHOP_ITEMS = [
+  { id:"bg-sakura",    cat:"bg",        icon:"🌸", name:["Sakura","Hoa anh đào","사쿠라"],          desc:["Soft pink blossom backdrop","Nền hoa anh đào hồng","부드러운 벚꽃 배경"],       price:80,  rarity:"common" },
+  { id:"bg-ocean",     cat:"bg",        icon:"🌊", name:["Ocean Calm","Đại dương xanh","오션 블루"],  desc:["Deep blue wave gradient","Sóng biển xanh dịu","깊고 차분한 바다 그라데이션"], price:120, rarity:"rare"   },
+  { id:"bg-aurora",    cat:"bg",        icon:"🌌", name:["Aurora","Cực quang","오로라"],              desc:["Northern lights gradient","Ánh cực quang huyền ảo","오로라 그라데이션"],        price:200, rarity:"epic"   },
+  { id:"bg-forest",    cat:"bg",        icon:"🌿", name:["Forest","Rừng xanh","포레스트"],            desc:["Mossy green studio vibes","Màu xanh studio thiên nhiên","초록 스튜디오 분위기"],price:80,  rarity:"common" },
+  { id:"frame-silver", cat:"frame",     icon:"🪙", name:["Silver Ring","Khung bạc","실버 링"],        desc:["Shining silver border","Viền bạc sáng bóng","빛나는 실버 테두리"],              price:60,  rarity:"common" },
+  { id:"frame-gold",   cat:"frame",     icon:"🏅", name:["Gold Ring","Khung vàng","골드 링"],         desc:["Warm gold champion border","Viền vàng ấm áp","따뜻한 골드 테두리"],             price:150, rarity:"rare"   },
+  { id:"frame-rainbow",cat:"frame",     icon:"🌈", name:["Rainbow","Cầu vồng","레인보우"],            desc:["Animated spectrum border","Viền cầu vồng sống động","스펙트럼 테두리"],          price:250, rarity:"epic"   },
+  { id:"frame-fire",   cat:"frame",     icon:"🔥", name:["Fire Ring","Khung lửa","파이어 링"],        desc:["Blazing streak border","Viền lửa cho chuỗi ngày","불꽃 연속 테두리"],            price:180, rarity:"rare"   },
+  { id:"comp-cat",     cat:"companion", icon:"🐱", name:["Lucky Cat","Mèo may mắn","럭키캣"],         desc:["Waves away bad classes","Xua tan những buổi tập xấu","나쁜 수업을 쫓아내요"],    price:100, rarity:"common" },
+  { id:"comp-axolotl", cat:"companion", icon:"🦎", name:["Axolotl","Axolotl hồng","아홀로틀"],        desc:["Rare pink study buddy","Bạn học hiếm màu hồng","희귀 핑크 공부 친구"],            price:220, rarity:"epic"   },
+  { id:"comp-bunny",   cat:"companion", icon:"🐰", name:["Bunny","Thỏ","버니"],                       desc:["Hops beside you at class","Nhảy cùng bạn trong lớp","수업에서 옆에서 뛰어요"],  price:90,  rarity:"common" },
+  { id:"comp-fox",     cat:"companion", icon:"🦊", name:["Fox","Cáo","폭스"],                         desc:["Clever streak protector","Bảo vệ chuỗi thông minh","연속 기록 수호자"],         price:160, rarity:"rare"   },
+  { id:"boost-xp",     cat:"boost",     icon:"⚡", name:["XP Rush ×2","XP gấp đôi","XP 2배"],         desc:["Double XP for next 3 visits","XP gấp đôi 3 lần tới","다음 방문 3번 XP 2배"],    price:50,  rarity:"common" },
+  { id:"boost-coin",   cat:"boost",     icon:"💰", name:["Coin Rain ×2","Xu gấp đôi","코인 2배"],     desc:["Double coins for 3 visits","Xu gấp đôi 3 lần tới","방문 3번 코인 2배"],          price:50,  rarity:"common" },
+  { id:"music-lofi",   cat:"music",     icon:"🎵", name:["Lo-fi Study","Lo-fi thư giãn","로파이"],    desc:["Chill beats while you train","Nhịp thư giãn lúc tập","훈련 중 편안한 비트"],      price:70,  rarity:"common" },
+  { id:"music-pop",    cat:"music",     icon:"🎶", name:["K-Pop Energy","Nhạc K-pop","케이팝"],        desc:["Energising K-Pop mix","Nhạc K-Pop sôi động","에너지 넘치는 케이팝 믹스"],        price:70,  rarity:"common" },
+  { id:"music-jazz",   cat:"music",     icon:"🎷", name:["Jazz Barre","Jazz barre","재즈 바레"],       desc:["Smooth jazz for barre mood","Jazz nhẹ cho barre","바레 분위기의 스무스 재즈"],    price:120, rarity:"rare"   },
+];
+const shopItemNm = it => L3(...it.name);
+const shopItemDesc = it => L3(...it.desc);
+function shopGain(coins) { ST.shopCoins += coins; showGainPill(0, coins); }
+/* gain pill for shop coins / XP */
+function showGainPill(xp, coins) {
+  let wrap = document.getElementById("gainFloat");
+  if (!wrap) { wrap = document.createElement("div"); wrap.id = "gainFloat"; wrap.className = "gain-float"; document.body.appendChild(wrap); }
+  wrap.innerHTML = "";
+  if (xp) { const p = document.createElement("span"); p.className = "gain-pill"; p.textContent = "+" + xp + " XP"; wrap.appendChild(p); }
+  if (coins) { const p = document.createElement("span"); p.className = "gain-pill gold"; p.textContent = "+" + coins + " 🪙"; wrap.appendChild(p); }
+  clearTimeout(showGainPill.t); showGainPill.t = setTimeout(() => { if (wrap) wrap.innerHTML = ""; }, 2200);
+}
+function shopPage() {
+  const f = ST.shopFilter || "all";
+  const cats = [
+    { k:"all", l:L3("All","Tất cả","전체") }, { k:"bg", l:"🖼 "+L3("Background","Nền","배경") },
+    { k:"frame", l:"🪙 "+L3("Frames","Khung","프레임") }, { k:"companion", l:"🐱 "+L3("Companions","Bạn đồng hành","동반자") },
+    { k:"music", l:"🎵 "+L3("Music","Nhạc","음악") }, { k:"boost", l:"⚡ "+L3("Boosts","Tăng cường","부스트") },
+  ];
+  const items = SHOP_ITEMS.filter(x => f === "all" || x.cat === f);
+  const eq = ST.shopEquipped;
+  const isEq = it => eq.bg === it.id || eq.frame === it.id || eq.companion === it.id || eq.music === it.id;
+  const own = id => ST.shopInventory.includes(id);
+  const boostActive = ST.xpBoostLeft > 0 || ST.coinRushLeft > 0;
+  const chips = cats.map(c => `<button type="button" class="${f===c.k?"on":""}" data-act="shop-filter" data-k="${c.k}">${esc(c.l)}</button>`).join("");
+  const grid = items.map(it => {
+    const o = own(it.id), eq2 = isEq(it), isB = it.cat === "boost";
+    const canBuy = !o && ST.shopCoins >= it.price;
+    let btns = "";
+    if (isB) {
+      const active = (it.id==="boost-xp"&&ST.xpBoostLeft>0)||(it.id==="boost-coin"&&ST.coinRushLeft>0);
+      btns = active ? `<div class="sbtns"><span class="seqtag">${esc(L3("Active!","Đang bật!","활성화!"))}</span></div>`
+        : `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+    } else if (o) {
+      btns = eq2
+        ? `<div class="sbtns"><span class="seqtag">✓ ${esc(L3("Equipped","Đang dùng","착용 중"))}</span><button class="sunequip" data-act="equip-shopitem" data-id="${it.id}" data-unequip="1">${esc(L3("Remove","Bỏ","해제"))}</button></div>`
+        : `<div class="sbtns"><button class="sequip" data-act="equip-shopitem" data-id="${it.id}">${esc(L3("Equip","Đeo vào","착용"))}</button></div>`;
+    } else {
+      btns = `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+    }
+    return `<div class="shop-item${o?" owned":""}${eq2?" equipped-item":""}">
+      <div class="sico">${it.icon}</div><div class="snm">${esc(shopItemNm(it))}</div>
+      <div class="sdesc">${esc(shopItemDesc(it))}</div>
+      <span class="srarity ${it.rarity}">${it.rarity}</span>
+      ${!o?`<div class="sprice">🪙 ${it.price}</div>`:""}
+      ${btns}</div>`;
+  }).join("");
+  return `<button class="link" style="min-height:44px;margin-bottom:4px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
+    <div class="shop-head"><h2>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</h2><span class="shop-balance">🪙 ${ST.shopCoins}</span></div>
+    ${boostActive?`<div class="sboost"><span>⚡</span><div>${ST.xpBoostLeft>0?esc(L3("XP ×2 active","XP ×2 đang bật","XP ×2 활성"))+" — "+ST.xpBoostLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}${ST.xpBoostLeft>0&&ST.coinRushLeft>0?" · ":""}${ST.coinRushLeft>0?esc(L3("Coin ×2 active","Xu ×2 đang bật","코인 ×2 활성"))+" — "+ST.coinRushLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}</div></div>`:""}
+    <div class="shop-cats">${chips}</div>
+    <div class="shop-grid">${grid||`<p class="sub sm" style="grid-column:span 2">${esc(L3("Nothing here yet.","Chưa có gì.","아직 없어요."))}</p>`}</div>`;
+}
+function applyEquipped() {
+  const bgMap = { "bg-sakura":"#fde8f0","bg-ocean":"#e0eeff","bg-aurora":"linear-gradient(135deg,#1a0038,#00204a,#003a1a)","bg-forest":"#e6f5ec" };
+  const view = document.getElementById("view"); if (view) view.style.background = bgMap[ST.shopEquipped.bg] || "";
+  const compMap = { "comp-cat":"🐱","comp-axolotl":"🦎","comp-bunny":"🐰","comp-fox":"🦊" };
+  document.querySelectorAll(".ccstage .ccbadge").forEach(el => el.remove());
+  const comp = ST.shopEquipped.companion;
+  if (comp && compMap[comp]) {
+    document.querySelectorAll(".ccstage").forEach(stage => {
+      const b = document.createElement("span"); b.className = "ccbadge"; b.textContent = compMap[comp]; stage.appendChild(b);
+    });
+  }
+  const av = document.querySelector(".initav");
+  if (av) { av.classList.remove("frame-silver","frame-gold","frame-rainbow","frame-fire"); if (ST.shopEquipped.frame) av.classList.add(ST.shopEquipped.frame); }
+}
+function onboardPage() {
+  return `<div class="onboard-hero">${cut("cheer",{alt:"Cici",eager:1})}<h1>${esc(L3("Hi, I'm Cici.","Chào, mình là Cici.",CICI_KO+"예요."))}</h1><p class="sub">${esc(L3("Book classes, build streaks, and earn rewards at every place you love.","Đặt lớp, xây chuỗi ngày, nhận thưởng ở mọi nơi bạn yêu thích.","좋아하는 모든 곳에서 클래스를 예약하고 연속 기록을 쌓아 보상을 받아요."))}</p></div>
+  <div class="onboard-steps">
+    <div class="onboard-step"><span class="num">1</span><p><b>${esc(L3("Discover places","Khám phá nơi mới","장소 찾기"))}</b> — ${esc(L3("barre, spa, pickleball and more","barre, spa, pickleball và hơn nữa","바레, 스파, 피클볼 등"))}</p></div>
+    <div class="onboard-step"><span class="num">2</span><p><b>${esc(L3("Book with Cici","Đặt lịch cùng Cici","Cici와 예약하기"))}</b> — ${esc(L3("just type what you want","gõ điều bạn muốn","원하는 것을 입력하세요"))}</p></div>
+    <div class="onboard-step"><span class="num">3</span><p><b>${esc(L3("Earn points","Kiếm điểm","포인트 적립"))}</b> — ${esc(L3("every visit grows your level","mỗi lần đến tăng cấp độ","방문할수록 레벨 상승"))}</p></div>
+  </div>
+  <p class="sub sm" style="text-align:center;margin:0 0 8px">${esc(L3("Join to earn +50 Cici coins to spend in the shop.","Tham gia để nhận +50 xu Cici dùng trong cửa hàng.","가입하면 샵에서 쓸 수 있는 Cici 코인 +50을 받아요."))}</p>
+  <button class="btn full" data-act="onboard-done">${esc(L3("Let's go · +50 🪙","Bắt đầu · +50 🪙","시작하기 · +50 🪙"))}</button>`;
+}
+function profileEditPage() {
+  return `<button class="link" style="min-height:44px;margin-bottom:4px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
+    <h2>${esc(L3("Edit profile","Chỉnh hồ sơ","프로필 수정"))}</h2>
+    <div class="pedit-form">
+      <div class="field"><label>${esc(L3("Your name","Tên của bạn","이름"))}</label><input id="fEditName" value="${esc(ST.editNameVal || (ME ? ME.id : "Mina"))}" autocomplete="name"></div>
+      <button class="btn full" data-act="save-profile">${esc(L3("Save","Lưu","저장"))}</button>
+    </div>
+    <p class="sub sm" style="margin-top:8px">${esc(L3("Phone can only be changed at the studio.","Số điện thoại chỉ đổi được tại cửa hàng.","전화번호는 매장에서만 변경 가능해요."))}</p>`;
+}
 /* state: preset IDs only (P2-B4); fun = own counter (P2-R3); demo = demo-bought items, kept apart from owned (P2-P3/P4); photo = derived look + consent (P2-F) */
 const P2S = { owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
 let P2D = null; /* builder draft (Cancel leaves Cici unchanged) */
@@ -1077,7 +1226,9 @@ const fCancel = (sid, d, m) => freeNow(sid, d, m) ? t("freeCancel") + " " + fDea
 
 /* ===== member state (one account across stores) ===== */
 const ST = { tab: "home", store: null, xp0: 640, coins0: 120, wear: "o2", steps: 9, weeks: 3, days: 12, week: [1, 0, 1, 0, 0, 0, 0], miss: { attend: false, newplace: false, stretch: false, rest: false },
-  quest: { active: false, relax: false }, owned: ["wrap", "lan"] }; /* xp0/coins0 = pre-points prototype state, migrated once into points (spec §10) */
+  quest: { active: false, relax: false }, owned: ["wrap", "lan"],
+  shopCoins: 35, shopInventory: [], shopEquipped: { bg: null, frame: null, companion: null, music: null },
+  shopFilter: "all", xpBoostLeft: 0, coinRushLeft: 0, firstRun: true, editNameVal: "" }; /* xp0/coins0 = pre-points prototype state, migrated once into points (spec §10) */
 const WALLET = { capsule: [{ id: "p10", t: "10-class pass", left: 6, exp: "Valid until 30 Nov" }], spa: [{ id: "pk5", t: "5-massage package (Aroma 60)", left: 3, exp: "Valid until 31 Dec", svc: "aroma60" }],
   pickle: [{ id: "cr", t: "Store credit", credit: 120000, exp: "No expiry" }], salon: [], skin: [], nails: [], yoga: [] };
 let B = []; let BID = 1;
@@ -2130,11 +2281,15 @@ const youTitle = p => p === "p2char" ? p2t("builder") : p === "look" ? t("wardro
 function vYou() {
   /* MVP-Y1: profile (name, lifetime points, streak, level) + tiles Wallet · My bookings · Cici's look (+ Vouchers only when realRewards is on, A1) */
   const m = ME, lv = lvlOf(m), pts = fmtPts(life(m));
-  let h = notesCard() + `<section class="card row" id="you-prof"><span class="av cav-h" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt="">${outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm" id="you-lvl">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</div><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
+  const uname = ST.profileName || L3("Mina","Mina","미나");
+  const uinit = (uname||"").split(/\s+/).filter(Boolean).map(w=>w[0].toUpperCase()).slice(0,2).join("")||"?";
+  let h = notesCard() + `<section class="card row" id="you-prof"><span class="initav${ST.shopEquipped.frame?" "+ST.shopEquipped.frame:""}" aria-hidden="true">${esc(uinit)}</span><div class="grow"><h1 style="margin:0">${esc(uname)}</h1><div class="sub sm" id="you-lvl">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</div><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
+  h += `<button class="link" style="font-size:14px;margin:0 0 12px" data-act="edit-profile">${esc(L3("Edit name ›","Sửa tên ›","이름 수정 ›"))}</button>`;
   const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)], ["look", "shirt", t("wardrobe"), wearNm() || "—"]];
     if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
   h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
-  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
+  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="open-shop" id="you-shop">${ic("star")}<span class="grow"><b>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</b><br><span class="sub sm">🪙 ${ST.shopCoins} ${esc(L3("coins · backgrounds, frames, companions","xu · nền, khung, bạn đồng hành","코인 · 배경, 프레임, 동반자"))}</span></span>${ic("chev")}</button>
+  <button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
   return h;
 }
 /* MVP-L4: You → Cici's look. 5 outfits (L1 default + Studio/Glow/Bloom/Icon at L2–L5) + legacy owned cosmetics (AC-P54a). Cosmetic only: no price, no buy/sell/transfer (MVP-L5). */
@@ -2167,7 +2322,7 @@ function vSettings() {
   h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Cici's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Cici dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.",CICI_KO + "의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "p2char" && P2() ? p2CharPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
+function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "p2char" && P2() ? p2CharPage() : ST.page === "shop" ? shopPage() : ST.page === "onboard" ? onboardPage() : ST.page === "profile-edit" ? profileEditPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
 /* MVP-L1/L7: the unlock animation plays once, on the next normal Home view (deferred while a crisis/urgent turn is in force, A6) */
 function maybeUnlock() {
   if (!ME || ST.tab !== "home" || ST.page || ST.store || gated() || $(".sheet") || $(".munlock")) return;
@@ -2180,7 +2335,7 @@ function maybeUnlock() {
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); setTimeout(applyEquipped, 0); setTimeout(maybeUnlock, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -2718,6 +2873,23 @@ document.addEventListener("click", e => {
     case "rtag": { const n = +d.v; RS.tags = RS.tags.includes(n) ? RS.tags.filter(x => x !== n) : RS.tags.concat([n]); RS.note = ($("#rnote") || {}).value || RS.note; rateSheet(bk(RS.id), true); const f = $(`[data-act="rtag"][data-v="${d.v}"]`); if (f) f.focus(); break; }
     case "ratesave": rateSave(bk(d.id)); break;
     case "ratedel": delete RATINGS[d.id]; closeSheet(); render(); toast(L3("Rating deleted.", "Đã xóa đánh giá.", "평가를 삭제했어요.")); break;
+    case "open-shop": ST.page = "shop"; ST.shopFilter = "all"; render(); window.scrollTo(0,0); $("#view").focus(); break;
+    case "shop-filter": ST.shopFilter = d.k || "all"; renderView(); { const f = $(`[data-act="shop-filter"][data-k="${ST.shopFilter}"]`); if (f) f.focus(); } break;
+    case "buy-shopitem": { const id = d.id, it = SHOP_ITEMS.find(x=>x.id===id); if (!it) break;
+      if (ST.shopCoins < it.price) { toast(L3("Not enough coins 🪙","Không đủ xu 🪙","코인이 부족해요 🪙")); break; }
+      ST.shopCoins -= it.price;
+      if (it.cat==="boost") { if (id==="boost-xp") ST.xpBoostLeft=3; if (id==="boost-coin") ST.coinRushLeft=3; toast(it.icon+" "+shopItemNm(it)+" "+L3("activated!","đã bật!","활성화!")); }
+      else { if (!ST.shopInventory.includes(id)) ST.shopInventory.push(id); toast(it.icon+" "+shopItemNm(it)+" "+L3("unlocked!","đã mở khóa!","잠금 해제!")); showGainPill(0, 0); }
+      render(); break; }
+    case "equip-shopitem": { const id = d.id, it = SHOP_ITEMS.find(x=>x.id===id); if (!it) break;
+      const unequip = d.unequip==="1";
+      const catMap = { bg:"bg", frame:"frame", companion:"companion", music:"music" };
+      const key = catMap[it.cat]; if (key) ST.shopEquipped[key] = unequip ? null : id;
+      toast(unequip ? it.icon+" "+L3("Removed.","Đã bỏ.","해제됐어요.") : it.icon+" "+shopItemNm(it)+" "+L3("equipped!","đã đeo!","착용!"));
+      applyEquipped(); render(); break; }
+    case "onboard-done": ST.firstRun = false; ST.page = null; ST.shopCoins += 50; showGainPill(0, 50); toast(L3("Welcome! +50 🪙","Chào mừng! +50 🪙","환영해요! +50 🪙")); render(); break;
+    case "edit-profile": ST.editNameVal = ST.profileName || L3("Mina","Mina","미나"); ST.page = "profile-edit"; render(); window.scrollTo(0,0); break;
+    case "save-profile": { const v = ($("#fEditName")||{}).value||""; const vt = v.trim(); if (!vt) { toast(L3("Name can't be empty.","Tên không được bỏ trống.","이름을 입력해 주세요.")); break; } ST.profileName = vt; ST.editNameVal = vt; ST.page = null; toast(L3("Saved.","Đã lưu.","저장됐어요.")); render(); break; }
     case "back": if (ST.page === "bookings") { bookingsBack(); break; } if (ST.page) { ST.page = ST.page === "nset" && ST.fromFeed ? "notif" : null; ST.fromFeed = false; render(); $("#view").focus(); break; } ST.store = null; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "store": closeSheet(); ST.page = null; ST.store = d.v; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "lang": openSheet(sheetHd(t("language")) + `<div class="stack">${[["en", "English"], ["vi", "Tiếng Việt"], ["ko", "한국어"]].map(([k, l]) => `<button class="chip" style="width:100%" aria-pressed="${L === k}" data-act="setlang" data-v="${k}" lang="${k}">${l}</button>`).join("")}</div>`, t("language")); break;
@@ -3400,7 +3572,7 @@ ME = pvSeed();
 try { if (localStorage.getItem("cb.migratedSeen") === "1") ME.notices.forEach(n => { if (n.k === "migrated") n.seen = true; }); } catch (e) {} /* banner shows once, survives reload */
 { const q = new URLSearchParams(location.search).get("realRewards"); if (q === "1" || q === "true") setFlag(true); } /* demo switch: ?realRewards=1 (U1 still pending) */
 pvBook("demo-past", { store: "capsule", member: "mina", start: PV.now() - 100 * MIN, end: PV.now() - 50 * MIN, label: "Barre" }); /* a class that has ended, waiting for store confirmation */
-seed(); try { migrateOnLoad(); } catch (e) {} try { const w = localStorage.getItem("cici.wear"); if (w) ST.wear = w; } catch (e) {} render(); /* MVP-R2: deep links #/nari, #/book, #/ask (and store/svc query) land on the Cici tab */
+seed(); try { migrateOnLoad(); } catch (e) {} try { const w = localStorage.getItem("cici.wear"); if (w) ST.wear = w; } catch (e) {} render(); if (ST.firstRun) { ST.page = "onboard"; render(); } /* MVP-R2: deep links #/nari, #/book, #/ask (and store/svc query) land on the Cici tab */
 function hashBoot() {
   try {
     const h = (location.hash || "").replace(/^#\/?/, ""); if (!h) return;
