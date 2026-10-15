@@ -30,11 +30,11 @@ window.__pointsAC = function () {
     const c = mk(); c.streak = 40; c.visited.capsule = 1; const rc = P.confirmVisit(c, bk(c, "capsule", T0), "staff:d", T0);
     ok("AC-P8", ra.pts === 55 && rb.pts === 60 && rc.pts === 65, [ra.pts, rb.pts, rc.pts]); });
   T("AC-P9", () => { const m = mk(); m.streak = 6; const r = visit(m, "capsule", T0); const r2 = P.pvMission(m, "stretch", T0); ok("AC-P9", r.pts === 55 && r.bonus === 80 && r2.pts === 10 && m.streak === 7, [r, r2, m.streak]); });
-  T("AC-P10", () => { const m = mk(); const late = T0 + 13 * 3600e3 + 59 * MINm; /* 23:59 home (Saigon) */ P.pvMission(m, "rest", late); const a = m.streak; P.pvMission(m, "stretch", late + 2 * MINm); /* 00:01 next day */ const b = m.streak;
-    visit(m, "capsule", late + 3 * MINm); const c = m.streak; ok("AC-P10", a === 1 && b === 2 && c === 2, [a, b, c]); });
-  T("AC-P11", () => { const m = mk(); for (let d = 0; d < 13; d++) if (d !== 3) P.pvMission(m, "a", T0 + d * DAYm + 1); P.pvTick(m, T0 + 13 * DAYm);
-    ok("AC-P11", m.streak === 12 && Object.keys(m.rest).length === 1, [m.streak, m.rest]); });
-  T("AC-P12", () => { const m = mk(); m.streak = 5; P.pvTick(m, T0 + 1 * DAYm); const a = [m.streak, m.notices.some(n => n.k === "freezeUsed")]; P.pvTick(m, T0 + 2 * DAYm);
+  T("AC-P10", () => { const m = mk(); visit(m, "spa", T0 - DAYm); /* P2-S11: a real confirmed visit the day before (counts 1 day), so missions count within the 7-day visit rule */ const late = T0 + 13 * 3600e3 + 59 * MINm; /* 23:59 home (Saigon) */ P.pvMission(m, "rest", late); const a = m.streak; P.pvMission(m, "stretch", late + 2 * MINm); /* 00:01 next day */ const b = m.streak;
+    visit(m, "capsule", late + 3 * MINm); const c = m.streak; ok("AC-P10", a === 2 && b === 3 && c === 3, [a, b, c]); /* +1 for the prior visit day */ });
+  T("AC-P11", () => { const m = mk(); visit(m, "spa", T0 - DAYm); /* P2-S11: a real confirmed visit the day before (counts 1 day), so missions count within the 7-day visit rule */ for (let d = 0; d < 13; d++) if (d !== 3) { if (d === 6) P.streakHit(m, T0 + d * DAYm + 1, "v"); else P.pvMission(m, "a", T0 + d * DAYm + 1); } P.pvTick(m, T0 + 13 * DAYm);
+    ok("AC-P11", m.streak === 13 && Object.keys(m.rest).length === 1, [m.streak, m.rest]); });
+  T("AC-P12", () => { const m = mk(); visit(m, "spa", T0 - DAYm); /* P2-S11: a real confirmed visit the day before (counts 1 day), so missions count within the 7-day visit rule */ m.streak = 5; P.pvTick(m, T0 + 1 * DAYm); const a = [m.streak, m.notices.some(n => n.k === "freezeUsed")]; P.pvTick(m, T0 + 2 * DAYm);
     ok("AC-P12", a[0] === 5 && a[1] && m.streak === 0 && m.notices.some(n => n.k === "streakReset"), [a, m.streak]); });
   T("AC-P13", () => { const m = mk(); for (let d = 0; d < 7; d++) visit(m, "capsule", T0 + d * DAYm); P.pvTick(m, T0 + 6 * DAYm + 1); const n1 = m.claims.filter(c => c.milestone === 7).length;
     P.pvTick(m, T0 + 10 * DAYm); /* rest day then reset */ for (let d = 10; d < 17; d++) visit(m, "capsule", T0 + d * DAYm);
@@ -117,7 +117,7 @@ window.__pointsAC = function () {
     ok("AC-P55", b0 === 300 && !w0 && !!w1 && bBefore === 300 && P.bal(m) === 0, [b0, !!w1, bBefore, P.bal(m)]); });
   T("AC-P56", () => { P.setFlag(false, T0); const m = mk(); for (let d = 0; d < 14; d++) visit(m, "capsule", T0 + d * DAYm); P.pvTick(m, T0 + 14 * DAYm); const off = m.claims.length; const G = T0 + 15 * DAYm;
     P.setFlag(true, G); const ms = m.claims.filter(c => c.milestone); P.setFlag(false, G + 1); P.setFlag(true, G + 2);
-    ok("AC-P56", off === 0 && ms.length === 2 && ms.every(c => c.t === G && c.exp === G + 30 * DAYm) && m.claims.filter(c => c.milestone).length === 2, [off, ms.length]); });
+    ok("AC-P56", off === 0 && ms.length === 1 && ms[0].milestone === 7 && ms.every(c => c.t === G && c.exp === G + 30 * DAYm) && m.claims.filter(c => c.milestone).length === 1, [off, ms.length]); }); /* milestone vouchers now at 7/30/100 days (P2-S16): 14 visit-days grant only the 7-day one */
   T("AC-P44e", () => { P.setFlag(false, T0); const m = mk(); m.enabledAt = null; for (let w = 0; w < 4; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 500 * DAYm); const c = P.claim(m, def({ cost: 100 }).id, T0 + 500 * DAYm);
     ok("AC-P44e", m.claims.length === 0 && !m.ledger.some(r => r.reason === "expired") && P.bal(m) > 0 && !c.ok, [m.claims.length, P.bal(m)]); });
   T("AC-P54", () => { const m = mk(); P.pvMigrate(m, { xp: 640, coins: 120, weeks: 3 }); const off = [P.bal(m), m.ledger.filter(r => r.reason === "migration").length, (m.ledger.find(r => r.reason === "legacy_coins") || {}).legacy];

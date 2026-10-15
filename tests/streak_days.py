@@ -18,7 +18,7 @@ with sync_playwright() as p:
   # engine on a fresh member with a controllable clock
   eng = J(g, """(()=>{const P=__plat.PV||PV;const off0=PV.srvOff;const m=pvMember('t1',{});const D=86400000;const r={};
     const at=k=>{PV.srvOff=off0+k*D};
-    at(0); pvMission(m,'stretch'); r.a=m.streak; pvMission(m,'rest'); r.b=m.streak;            // mission counts the day, once
+    at(0); m.days[dayKey(m,PV.now()-D)]='v'; /* P2-S11: a confirmed visit yesterday keeps missions counting for 7 days */ pvMission(m,'stretch'); r.a=m.streak; pvMission(m,'rest'); r.b=m.streak;            // mission counts the day, once
     at(1); pvTick(m); r.c=m.streak; pvMission(m,'stretch'); r.d=m.streak;
     at(3); pvTick(m); r.e=m.streak; r.rest=Object.keys(m.rest).length;                          // day 2 missed -> rest day keeps it
     pvMission(m,'stretch'); r.f=m.streak;
@@ -28,7 +28,7 @@ with sync_playwright() as p:
   ok('next day counts again', eng['c']==1 and eng['d']==2, eng)
   ok('1 free rest day per week keeps the streak alive', eng['e']==2 and eng['rest']>=1 and eng['f']==3, eng)
   ok('more missed days reset the streak', eng['g']==0, eng)
-  ms = J(g, """(()=>{const off0=PV.srvOff,D=86400000,m=pvMember('t2',{});const seen=[];for(let k=0;k<31;k++){PV.srvOff=off0+k*D;pvTick(m);pvMission(m,'stretch');}PV.srvOff=off0;return [m.streak,m.msReached.join(),m.notices.filter(n=>n.k==='milestone').map(n=>n.v.n).join()]})()""")
+  ms = J(g, """(()=>{const off0=PV.srvOff,D=86400000,m=pvMember('t2',{});const seen=[];for(let k=0;k<31;k++){PV.srvOff=off0+k*D;pvTick(m);if(k%7===0)streakHit(m,PV.now(),'v');else pvMission(m,'stretch');}PV.srvOff=off0;return [m.streak,m.msReached.join(),m.notices.filter(n=>n.k==='milestone').map(n=>n.v.n).join()]})()""")
   ok('milestones fire at 7 / 14 / 30 days', ms[0]==31 and ms[1]=='7,14,30' and ms[2]=='7,14,30', ms)
   ok('voucher minStreak gate in days (14)', J(g, "PV.defs.some(v=>v.minStreak===14)") and not J(g, "PV.defs.some(v=>v.minStreak>0&&v.minStreak<7)"))
   # copy: no weeks
