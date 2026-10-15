@@ -63,6 +63,21 @@ with sync_playwright() as p:
   ok('water mission start → water overlay', J(g, "!!document.querySelector('#cat-clip[data-kind=water] video, #cat-clip[data-kind=water] img')"))
   J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove()}")
 
+  # Panel must-fixes
+  J(g, FRESH); J(g, "()=>{P2S.cat.treats=0;P2S.cat.demoHour=18;render();openHomeSheet()}"); g.wait_for_timeout(400)
+  ok('first-treat on-ramp: no greyed Feed; Open missions + Book', J(g, "document.querySelector('#cat-card').dataset.ramp==='1' && !!document.querySelector('#cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"))
+  J(g, "()=>{document.querySelector('#cat-open-mis').click()}"); g.wait_for_timeout(300)
+  ok('on-ramp Open missions focuses mission card (≤2 taps to earn)', J(g, "!!document.querySelector('#home-dm')"))
+  J(g, "()=>{catClipPlay('stretch'); catClipPlay('water')}"); g.wait_for_timeout(200)
+  ok('no stacked overlays: only one #cat-clip', J(g, "document.querySelectorAll('#cat-clip').length===1 && document.querySelector('#cat-clip').dataset.kind==='water'"))
+  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); catEatShow(); catClipPlay('stretch')}"); g.wait_for_timeout(200)
+  ok('clip dismisses eating overlay', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('#cat-clip')"))
+  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); P2S.placed=[]; P2S.cat.owned=[]; openHomeSheet()}"); g.wait_for_timeout(400)
+  ok('short sheet: empty room hidden; locked items collapsed', J(g, "!document.querySelector('#p2-room') && !!document.querySelector('#cat-locked-hint') && document.querySelectorAll('#cat-items .catitem').length===0"))
+  ok('napping clip is distinct file (not petting)', J(g, "catClipName('napping')==='napping' && CICI_CAT.clips.napping==='napping'"))
+  for mood in ('lively','napping','hungry','react'):
+    ok(f'distinct asset exists for {mood}', os.path.exists(f'/tmp/hot/assets/cici-real/cici-cat-{mood}.mp4'))
+
   for w,h in [(390,844),(430,932)]:
     for L in ('ko','en'):
       g2 = page(L,w,h); J(g2, FRESH)
@@ -79,6 +94,12 @@ with sync_playwright() as p:
       J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); catClipPlay('water')}"); g2.wait_for_timeout(400)
       g2.screenshot(path=f'{SH}/water-{L}-{w}.png')
       J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet()}")
+      J(g2, "()=>{P2S.cat.treats=0;P2S.placed=[];P2S.cat.owned=[];P2S.cat.demoHour=18;render();openHomeSheet()}"); g2.wait_for_timeout(500)
+      if w in (390,430) and L in ('ko','en'):
+        g2.screenshot(path=f'{SH}/ramp-0treat-{L}-{w}.png')
+        g2.evaluate("()=>{const e=document.querySelector('#cat-card'); if(e)e.scrollIntoView({block:'center'})}")
+        g2.wait_for_timeout(200)
+        g2.screenshot(path=f'{SH}/sheet-short-{L}-{w}.png')
       ok(f'[{w}/{L}] no page errors', not g2.E, g2.E); g2.close()
   g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)

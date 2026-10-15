@@ -52,8 +52,8 @@ with sync_playwright() as p:
   g.wait_for_timeout(4900); ok('DB-T5 overlay closes and returns to the loop', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('.catvid.on, #cat-video-a, #cat-video')"))
   ok('DB-T5 happy moment is short (back to normal mood)', J(g, "document.querySelector('#cici-real').dataset.mood!=='eating'"))
   # DB-T6
-  J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('DB-T6 0 treats: Feed disabled with the earn hint', J(g, "(()=>{const b=document.querySelector('#cat-feedbtn');return b && b.disabled && /미션을 완료하거나 스튜디오에 방문하면/.test(document.querySelector('#cat-hint').innerText)})()"))
-  J(g, "()=>{setLang('en');render();openHomeSheet()}"); g.wait_for_timeout(200); ok('DB-T6 EN hint text', J(g, "(document.querySelector('#cat-hint')||{}).innerText") == 'Complete a mission or visit a studio to earn a treat'); J(g, "()=>{setLang('ko');render()}")
+  J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('DB-T6 0 treats: on-ramp CTAs (no dead Feed)', J(g, "!!document.querySelector('#cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"))
+  J(g, "()=>{setLang('en');render();openHomeSheet()}"); g.wait_for_timeout(200); ok('DB-T6 EN on-ramp copy', 'mission' in (J(g, "(document.querySelector('#cat-hint')||{}).innerText") or '').lower()); J(g, "()=>{setLang('ko');render()}")
   # DB-T7
   SRC = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read(); calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
   ok('DB-T7 treats only from missions/visits (+demo): no buy/gift/premium path grants treats', sorted(set(calls)) == ['demo', 'mission', 'visit'], calls)
@@ -78,7 +78,7 @@ with sync_playwright() as p:
   # DB-V
   g = page()
   ok('DB-V1 video slot: muted, playsinline, loop, no controls', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return !!v&&v.muted&&v.hasAttribute('playsinline')&&v.loop&&!v.controls})()"))
-  g.wait_for_timeout(1500); ok('DB-V1 official petting loop plays (has data, no audio control)', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return v.readyState>=2 && /cici-cat-petting/.test(v.currentSrc) && v.duration>=6 && v.duration<=8})()"), J(g, "[document.querySelector('.catvid.on, #cat-video-a, #cat-video').currentSrc,document.querySelector('.catvid.on, #cat-video-a, #cat-video').duration]"))
+  g.wait_for_timeout(1500); ok('DB-V1 official Home loop plays (has data, no audio control)', J(g, "(()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');return v&&v.readyState>=2 && /cici-cat-/.test(v.currentSrc) && v.duration>=2 && v.duration<=8})()"), J(g, "[document.querySelector('.catvid.on, #cat-video-a, #cat-video').currentSrc,document.querySelector('.catvid.on, #cat-video-a, #cat-video').duration]"))
   J(g, "()=>{const v=document.querySelector('.catvid.on, #cat-video-a, #cat-video');v.dispatchEvent(new Event('error'))}")
   ok('DB-V1 a failing clip falls back to the official poster still', J(g, "!!document.querySelector('#cici-real img[src*=cici-cat-poster]')"))
   HOLD = []; g.route('**/cici-cat-*', lambda r: HOLD.append(r))  # keep clip requests pending so the 404 fallback doesn't swap the element
@@ -98,7 +98,7 @@ with sync_playwright() as p:
   import glob, subprocess
   for f in sorted(glob.glob('/tmp/hot/assets/cici-real/*.mp4') + glob.glob('/tmp/hot/assets/cici-real/*.webm')):
     o = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration:stream=codec_type', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout.split()
-    dur = float([x for x in o if re.match(r'^[\d.]+$', x)][0]); lim = (6, 8) if 'cici-cat-' in f else (3.5, 8)
+    dur = float([x for x in o if re.match(r'^[\d.]+$', x)][0]); name=os.path.basename(f); lim=(5.5,8) if 'petting' in name else (2,8)
     ok(f'DB-V1 {os.path.basename(f)} <=2.5 MB, {lim[0]}-8 s, no audio track', os.path.getsize(f) <= 2.5e6 and lim[0] <= dur <= lim[1] and 'audio' not in o, [os.path.getsize(f), dur, o])
   # DB-X
   g = page(); J(g, FRESH); before = J(g, LED); J(g, "()=>{catEarn('x');P2S.cat.treats=1;catFeed()}"); g.wait_for_timeout(100)

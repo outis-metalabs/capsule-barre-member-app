@@ -34,5 +34,6 @@ One-shot overlay, then back to the Home loop. Still under reduced motion / Save-
 
 (The earlier AI-generated stand-in `cici-real-studio.webp` was removed.)
 
-## Panel review
-Full set (petting + lively + napping + hungry + react + stretch + water + eating) is ready for Young Women Panel review.
+## Panel review (2026-10-16)
+Full set wired: petting + lively + napping + hungry + react + stretch + water + eating.
+Panel must-fixes on #32: first-treat on-ramp, one overlay at a time, short sheet (hide empty room / collapse locked growth).

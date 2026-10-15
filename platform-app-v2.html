@@ -390,7 +390,7 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 @media (prefers-reduced-motion:reduce){.catrow[data-hungry] .catfeed,.v2bg img{animation:none!important}}
 .cateat{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(280px,72vw);aspect-ratio:1;border-radius:28px;overflow:hidden;box-shadow:0 18px 50px rgba(60,30,40,.35);z-index:60;background:#F7F2EF;border:4px solid #fff}
 .cateat video,.cateat img{width:100%;height:100%;object-fit:cover;display:block}.cateatx{position:absolute;top:6px;right:6px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#B04A5E;font-size:24px;cursor:pointer}
-.v2bg.cat-lively video{animation:catlive 6s ease-in-out infinite;filter:saturate(1.08)}.v2bg.cat-napping video{filter:saturate(.8) brightness(.95)}
+.v2bg.cat-lively video{animation:catlive 6s ease-in-out infinite;filter:saturate(1.08)}.v2bg.cat-napping video{filter:saturate(.72) brightness(.92) contrast(.96)}
 @media (prefers-reduced-motion:reduce){.v2bg video{animation:none!important}}
 .catbowl{display:inline-block;margin-right:4px;animation:catnudge 2.4s ease-in-out infinite}
 .catgrow .caticon{flex:none;width:44px;height:44px;display:grid;place-items:center;background:#FBE9ED;border-radius:12px}
@@ -409,6 +409,8 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 @keyframes catreact{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.v2bg .catvid{transition:none!important}.v2bg.cat-react .catvid.on,.v2bg.cat-hungry::after{animation:none!important}}
 .v2bg{touch-action:manipulation;cursor:pointer}
+.catramp .btn,.catramp .btn.sec{min-height:44px;flex:1 1 auto}
+.catfeed.catmis{background:#FFF3F5}
 </style>
 </head>
 <body>
@@ -710,7 +712,9 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   const c = catDay(), d = MOCHI(), cr = catCrisis();
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   const fb = c.treats > 0 ? `<button class="catfeed" id="cat-feed" data-act="catfeed" aria-label="${esc(L3(`Give ${d} a treat (${c.treats} left)`, `Cho ${d} ăn vặt (còn ${c.treats})`, `${d}에게 간식 주기 (${c.treats}개 남음)`))}"><span aria-hidden="true">🐟</span><b>${c.treats}</b></button>` : "";
-  if (catHungry()) return [L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`), fb];
+  if (catHungry()) {
+    const mis = c.treats <= 0 ? `<button class="catfeed catmis" id="cat-mis" data-act="hbmis" aria-label="${esc(L3("Open missions to earn a treat", "Mở nhiệm vụ để nhận ăn vặt", "미션 열고 간식 받기"))}"><span aria-hidden="true">✨</span></button>` : fb;
+    return [L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`), mis]; }
   if (c.treats > 0) return [L3(`${d} has ${c.treats} treat${c.treats > 1 ? "s" : ""} waiting`, `${d} có ${c.treats} món ăn vặt`, `${d} 간식 ${c.treats}개`), fb];
   const st = ME ? ME.streak : 0, mo = catMood(), mt = { lively: L3(`${d} is playful`, `${d} đang vui`, `${d} 신났어요`), napping: L3(`${d} is napping`, `${d} đang ngủ`, `${d} 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
   return [(st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
@@ -756,7 +760,7 @@ function catSyncMood() { const fig = document.getElementById("cici-real"); if (!
   if (!catMotionOk()) return; catXfadeTo(catClipName(mo), { loop: true }); }
 function catReact(kind) { /* tap = short wave/pet; long-press = longer happy — no clutter (MC-K4/crisis quiet) */
   if (!V2HOME() || catCrisis() || ST.catEat) return;
-  ST.catReact = kind || "tap"; catSyncMood();
+  catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood();
   const ms = kind === "long" ? 1400 : 700;
   clearTimeout(catReact.t); catReact.t = setTimeout(() => { ST.catReact = null; catSyncMood(); }, ms);
 }
@@ -779,7 +783,7 @@ function catWire() { /* pause off-screen / hidden; tap & long-press reactions; k
 }
 document.addEventListener("visibilitychange", () => { const vids = catVids(); if (!vids.length) return; if (document.hidden) vids.forEach(v => v.pause()); else { const v = catFrontVid(); if (v && v.getBoundingClientRect().bottom > 0) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } } });
 function catEatShow() { /* DB-T5: official 4 s eating clip in a small overlay, then back to the loop; still poster under reduced motion / Save-Data */
-  const old = document.getElementById("cat-eat"); if (old) old.remove(); const mv = catMotionOk(), o = document.createElement("div"); o.id = "cat-eat"; o.className = "cateat"; o.setAttribute("role", "status");
+  catDismissOverlays(); const mv = catMotionOk(), o = document.createElement("div"); o.id = "cat-eat"; o.className = "cateat"; o.setAttribute("role", "status");
   const alt = L3(`${MOCHI()} happily eating a treat`, `${MOCHI()} đang vui vẻ ăn vặt`, `간식을 맛있게 먹는 ${MOCHI()}`);
   o.innerHTML = (mv ? `<video id="cat-eat-v" muted playsinline autoplay preload="auto" disableremoteplayback poster="${CICI_CAT.eat}-poster.jpg" aria-label="${esc(alt)}"><source src="${CICI_CAT.eat}.webm" type="video/webm"><source src="${CICI_CAT.eat}.mp4" type="video/mp4"></video>` : `<img src="${CICI_CAT.eat}-poster.jpg" alt="${esc(alt)}">`) + `<button class="cateatx" aria-label="${esc(L3("Close", "Đóng", "닫기"))}">×</button>`;
   document.body.appendChild(o); const end = () => { clearTimeout(catEatShow.t); o.remove(); ST.catEat = false; if (V2HOME()) { render(); catSyncMood(); } };
@@ -803,24 +807,30 @@ function catGrantItems() { /* grant on reaching stage; never for sale (MC-I1/I5 
   for (const it of CAT_ITEMS) { if (it.need[0] === "stage" && catStage() >= it.need[1] && !c.owned.includes(it.id)) { c.owned.push(it.id); ch = true; } }
   if (ch) catSave(); }
 function catEquip(id) { if (catCrisis() || !catItemOwned(id)) return; const c = P2S.cat; c.worn = c.worn || {}; c.worn[id] = !c.worn[id]; catSave(); render(); }
-function catItemsCard() { /* sheet only (OQ-M4): growth + earned items; locked placeholders until stage */
+function catItemsCard() { /* sheet only: stage chip + owned items; locked growth collapsed (panel: short sheet) */
   if (catCrisis()) return ""; catGrantItems();
   const st = catStage(), nm = catStageNm(), d = MOCHI();
-  const rows = CAT_ITEMS.map(it => {
-    const own = catItemOwned(it.id), on = catItemOn(it.id), need = it.need[1], locked = !own;
-    const why = locked ? L3(`Unlocks at ${L3(...G_STAGES[need])}`, `Mở khóa ở ${L3(...G_STAGES[need])}`, `${L3(...G_STAGES[need])}에서 해금`) : "";
-    const btn = locked ? `<span class="tag">${esc(L3("Coming soon", "Sắp có", "곧 만나요"))}</span>` :
-      `<button class="btn sec" data-act="catequip" data-v="${it.id}" aria-pressed="${on}">${esc(on ? L3("Unequip", "Gỡ", "해제") : L3("Equip", "Đeo", "착용"))}</button>`;
-    return `<div class="row catitem" data-id="${it.id}" data-locked="${locked?1:0}"><span class="caticon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40">${it.svg}</svg></span><span class="grow sm"><b>${esc(L3(...it.n))}</b>${why?`<div class="sub">${esc(why)}</div>`:""}</span>${btn}</div>`; }).join("");
-  return `<section class="card catgrow" id="cat-grow" data-stage="${st}"><div class="row" style="gap:8px;margin-bottom:8px"><div class="grow"><b>${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}</b>
+  const owned = CAT_ITEMS.filter(it => catItemOwned(it.id));
+  const locked = CAT_ITEMS.filter(it => !catItemOwned(it.id));
+  const rows = owned.map(it => {
+    const on = catItemOn(it.id);
+    return `<div class="row catitem" data-id="${it.id}" data-locked="0"><span class="caticon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40">${it.svg}</svg></span><span class="grow sm"><b>${esc(L3(...it.n))}</b></span><button class="btn sec" data-act="catequip" data-v="${it.id}" aria-pressed="${on}">${esc(on ? L3("Unequip", "Gỡ", "해제") : L3("Equip", "Đeo", "착용"))}</button></div>`;
+  }).join("");
+  const tip = locked.length ? `<p class="sm sub" id="cat-locked-hint" style="margin-top:8px">${esc(L3(`Collar & bed unlock as ${d} grows (earned only).`, `Vòng cổ & giường mở khi ${d} lớn lên (chỉ nhận được).`, `목걸이·침대는 ${d}가 성장하면 열려요 (획득 전용).`))}</p>` : `<p class="sm sub" style="margin-top:8px">${esc(L3("Earned only — never for sale.", "Chỉ nhận được — không bán.", "획득 전용 — 판매하지 않아요."))}</p>`;
+  return `<section class="card catgrow" id="cat-grow" data-stage="${st}" data-owned="${owned.length}"><div class="row" style="gap:8px;margin-bottom:${owned.length ? 8 : 0}px"><div class="grow"><b>${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}</b>
   <div class="sm sub" id="cat-stage">${esc(gT("stage"))} · ${esc(nm)}</div></div><span class="tag" id="cat-stage-tag">${esc(nm)}</span></div>
-  <div class="stack" id="cat-items">${rows}</div>
-  <p class="sm sub" style="margin-top:8px">${esc(L3("Earned only — never for sale.", "Chỉ nhận được — không bán.", "획득 전용 — 판매하지 않아요."))}</p></section>`; }
+  ${owned.length ? `<div class="stack" id="cat-items">${rows}</div>` : `<div class="stack" id="cat-items" hidden></div>`}${tip}</section>`; }
 /* Mission clips (MC-K): stretch + water. Drop official ≤1 MB muted clips as assets/cici-real/mochi-stretch.* / mochi-water.*; until then a soft still toast moment. */
 const CAT_CLIPS = { stretch: "assets/cici-real/mochi-stretch", water: "assets/cici-real/mochi-water" };
-function catClipPlay(kind) { /* one-shot overlay then back to Home loop (MC-K5); suppressed in crisis (MC-K4) */
-  if (catCrisis() || !CAT_CLIPS[kind]) return; const base = CAT_CLIPS[kind], poster = base + "-poster.jpg", mv = catMotionOk();
-  const old = document.getElementById("cat-clip"); if (old) old.remove();
+function catDismissOverlays() { /* one mood/mission overlay at a time (panel must-fix) */
+  clearTimeout(catClipPlay.t); clearTimeout(catEatShow.t); clearTimeout(catReact.t);
+  const a = document.getElementById("cat-clip"); if (a) a.remove();
+  const b = document.getElementById("cat-eat"); if (b) b.remove();
+  if (ST.catReact) { ST.catReact = null; }
+  if (ST.catEat) ST.catEat = false;
+}
+function catClipPlay(kind, onEnd) { /* one-shot overlay then back to Home loop (MC-K5); suppressed in crisis (MC-K4) */
+  if (catCrisis() || !CAT_CLIPS[kind]) { if (onEnd) onEnd(); return; } catDismissOverlays(); const base = CAT_CLIPS[kind], poster = base + "-poster.jpg", mv = catMotionOk();
   const o = document.createElement("div"); o.id = "cat-clip"; o.className = "cateat catclip"; o.setAttribute("role", "status"); o.dataset.kind = kind;
   const alt = kind === "stretch" ? L3(`${MOCHI()} stretching`, `${MOCHI()} đang giãn cơ`, `스트레칭하는 ${MOCHI()}`) : L3(`${MOCHI()} lapping water`, `${MOCHI()} đang uống nước`, `물 마시는 ${MOCHI()}`);
   o.innerHTML = `<img id="cat-clip-still" src="${poster}" alt="${esc(alt)}" style="display:block"><button class="cateatx" aria-label="${esc(L3("Close","Đóng","닫기"))}">×</button>`;
@@ -831,17 +841,21 @@ function catClipPlay(kind) { /* one-shot overlay then back to Home loop (MC-K5);
     v.addEventListener("loadeddata", () => { const im = o.querySelector("#cat-clip-still"); if (im) im.remove(); });
     o.insertBefore(v, o.firstChild); }
   document.body.appendChild(o);
-  const end = () => { clearTimeout(catClipPlay.t); o.remove(); };
+  const end = () => { clearTimeout(catClipPlay.t); o.remove(); if (typeof onEnd === "function") onEnd(); };
   o.querySelector(".cateatx").addEventListener("click", end);
   const v = o.querySelector("video"); if (v) { v.addEventListener("ended", end); const p = v.play(); if (p && p.catch) p.catch(() => {}); }
   clearTimeout(catClipPlay.t); catClipPlay.t = setTimeout(end, mv ? 4500 : 2200); }
 
 function catCard() { if (catCrisis()) return ""; catGrantItems(); const c = catDay(), d = MOCHI(), h = catHungry(), off = c.treats <= 0, st = catStageNm();
-  const hint = L3("Complete a mission or visit a studio to earn a treat", "Hoàn thành nhiệm vụ hoặc ghé studio để nhận ăn vặt", "미션을 완료하거나 스튜디오에 방문하면 간식을 받아요");
   const bowl = h ? `<span class="catbowl" id="cat-bowl" aria-hidden="true" title="${esc(L3("Empty bowl","Bát trống","빈 그릇"))}">🥣</span>` : "";
-  return `<section class="card catcard" id="cat-card" data-mood="${catMood()}" data-stage="${catStage()}"${h ? ' data-hungry="1"' : ""}><div class="row" style="gap:10px"><div class="grow"><b>${esc(L3(`${d}, Cici's cat`, `${d}, mèo của Cici`, `${CICI_KO}의 고양이 ${d}`))}</b>
-  <div class="sm sub" id="cat-st">${bowl}${esc(h ? L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`) : L3(`Treats ${c.treats}/${CAT_MAX} · ${st}`, `Ăn vặt ${c.treats}/${CAT_MAX} · ${st}`, `간식 ${c.treats}/${CAT_MAX} · ${st}`))}</div></div>
-  <button class="btn sec" id="cat-feedbtn" data-act="catfeed"${off ? ' disabled aria-describedby="cat-hint"' : ""}>${esc(L3(`Feed (${c.treats})`, `Cho ăn (${c.treats})`, `간식 주기 (${c.treats})`))}</button></div>${off ? `<p class="sm sub" id="cat-hint">${esc(hint)}</p>` : ""}</section>`; }
+  const stLine = h ? L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`) : L3(`Treats ${c.treats}/${CAT_MAX} · ${st}`, `Ăn vặt ${c.treats}/${CAT_MAX} · ${st}`, `간식 ${c.treats}/${CAT_MAX} · ${st}`);
+  /* First-treat on-ramp (panel): never a dead greyed Feed — soft path to missions / Book in ≤2 taps */
+  const actions = off
+    ? `<p class="sm sub" id="cat-hint">${esc(L3(`Earn a treat with a quick mission — then feed ${d}.`, `Làm một nhiệm vụ nhanh để nhận ăn vặt — rồi cho ${d} ăn.`, `미션 하나만 하면 간식이 생겨요. 그다음 ${d}에게 주세요.`))}</p>
+  <div class="row wrap catramp" id="cat-ramp" style="gap:8px;margin-top:8px"><button type="button" class="btn" id="cat-open-mis" data-act="hbmis">${esc(L3("Open missions", "Xem nhiệm vụ", "미션 열기"))}</button><button type="button" class="btn sec" id="cat-open-bk" data-act="bk" data-from="mochi">${esc(L3("Book a class", "Đặt lịch", "수업 예약"))}</button></div>`
+    : `<button class="btn sec" id="cat-feedbtn" data-act="catfeed">${esc(L3(`Feed (${c.treats})`, `Cho ăn (${c.treats})`, `간식 주기 (${c.treats})`))}</button>`;
+  return `<section class="card catcard" id="cat-card" data-mood="${catMood()}" data-stage="${catStage()}" data-treats="${c.treats}"${h ? ' data-hungry="1"' : ""}${off ? ' data-ramp="1"' : ""}><div class="row" style="gap:10px"><div class="grow"><b>${esc(L3(`${d}, Cici's cat`, `${d}, mèo của Cici`, `${CICI_KO}의 고양이 ${d}`))}</b>
+  <div class="sm sub" id="cat-st">${bowl}${esc(stLine)}</div></div>${off ? "" : actions}</div>${off ? actions : ""}</section>`; }
 function catDemo() { if (!gDemoOn()) return ""; const c = catDay(), cr = catCrisis(), b = (a, v, l, on) => `<button class="chip${on ? " on" : ""}" data-act="${a}"${v != null ? ` data-v="${v}"` : ""}${on != null ? ` aria-pressed="${!!on}"` : ""}>${esc(l)}</button>`;
   return `<details class="card gdemo" id="cat-demo"><summary>${esc(L3("Demo controls (Mochi)", "Điều khiển demo (Mochi)", "데모 컨트롤 (모찌)"))}</summary>
   <p class="sm sub" id="cat-demo-st">${esc(L3(`Hour ${catHour()}:00 · treats ${c.treats} · earned ${c.earned}/${CAT_MAX} · crisis ${cr ? "on" : "off"}`, `Giờ ${catHour()}:00 · ăn vặt ${c.treats} · nhận ${c.earned}/${CAT_MAX} · khủng hoảng ${cr ? "bật" : "tắt"}`, `${catHour()}시 · 간식 ${c.treats} · 획득 ${c.earned}/${CAT_MAX} · 위기 ${cr ? "켜짐" : "꺼짐"}`))}</p>
@@ -871,6 +885,7 @@ function gDaysOff(n) { PV.srvOff += n * DAY; pvTick(ME); }
 function p2Room() {
   if (!P2() || gated()) return ""; /* P2-X3/X4: nothing from Phase 2 in a crisis/urgent turn */
   const pl = P2S.placed.map(p2Item).filter(Boolean);
+  if (!pl.length) return ""; /* panel: hide empty room until something is placed */
   return `<h2>${esc(p2t("roomT"))}</h2><section class="card p2room" id="p2-room"><div class="p2floor">${p2Char(96)}<div class="p2items">${pl.length ? pl.map(it => `<span class="p2it" data-v="${it.id}" role="img" aria-label="${esc(p2Nm(it))}">${p2Svg(it, 44)}</span>`).join("") : `<p class="sub sm" style="margin:0">${esc(p2t("empty"))}</p>`}</div></div>
   <div class="row wrap" style="gap:8px;margin-top:10px"><span class="grow sm p2pts" id="p2-pts">${ptsIc} <b>${esc(p2t("ptsL"))}</b> · ${esc(fmtN(p2Bal()))}</span><button class="btn sec" data-act="p2deco">${esc(p2t("decorate"))}</button><button class="btn sec" data-act="p2shop">${esc(p2t("shop"))}</button></div></section>`;
 }
@@ -2920,11 +2935,15 @@ function attend(b) { /* the Store app scans the member's code (demo); points com
   closeSheet(); render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnVisit", { n: r.pts, s: s.name }) + (r.bonus ? " · " + pvT("earnNewPlace", { n: r.bonus, s: s.name }) : "") : pvT("howEarn"));
 }
 let stretchT = null;
-function stretchSheet() { if (P2() && !catCrisis()) catClipPlay("stretch");
+function stretchSheetOpen() {
   let left = 120;
   openSheet(sheetHd(t("mStretch")) + `<div class="card scene"><div class="pic"><img src="${A}warmup.webp" alt="${L3("Cici stretching", "Cici đang giãn cơ", "스트레칭하는 " + CICI_KO)}"></div><div class="txt"><div class="who">Cici</div><p>${tr("Slow breaths. Roll your shoulders, reach up, fold gently.")}</p><p id="stl" style="font-size:28px;font-weight:800;margin:0">2:00</p></div></div>
   <p class="sub sm" style="margin-top:8px">${tr("Stop if anything hurts.")}</p><div class="stack"><button class="btn full" data-act="stretchdone">${tr("Finish (demo: skip the timer)")}</button><button class="btn ghost full" data-act="close">${t("close")}</button></div>`, t("mStretch"));
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000);
+}
+function stretchSheet() { /* one overlay at a time: Mochi stretch clip, then the timer sheet */
+  if (P2() && !catCrisis()) catClipPlay("stretch", () => stretchSheetOpen());
+  else stretchSheetOpen();
 }
 function finishStretch() { clearInterval(stretchT); const r = pvMission(ME, "stretch"); ST.miss.stretch = true; const dm = dmMark("stretch"); closeSheet(); render(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, t("mStretch"), dm)); }
 function dmToast(r, nm, dm) { const a = r.pts ? pvT("earnMission", { n: r.pts, mission: nm }) : r.msg ? pvT(r.msg) : ""; return dm && dm.bonus ? (a ? a + " " : "") + L3(`All 3 done: +${DM_BONUS} bonus!`, `Xong cả 3: +${DM_BONUS} thưởng!`, `3개 모두 완료: 보너스 +${DM_BONUS}!`) : a; }
@@ -3270,7 +3289,7 @@ document.addEventListener("click", e => {
     case "dmwater": { if (!P2() || gated()) break; catClipPlay("water"); const r = pvMission(ME, "water"), dm = dmMark("water"); render(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm)); break; }
     case "catfeed": case "cattime": case "cattreat": case "catreset": case "catcrisis": case "catcrisisoff": case "catequip": catAct(a, d.v); break;
     case "hbsheet": openHomeSheet(); break;
-    case "hbmis": { const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }
+    case "hbmis": { if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }
     case "stretchdone": finishStretch(); break;
     case "rest": { const r = pvMission(ME, "rest"); ST.miss.rest = true; render(); if (r.pts) celebrate(); toast(r.pts ? pvT("earnMission", { n: r.pts, mission: t("restDay") }) : pvT(r.msg)); break; }
     case "joinsheet": joinSheet(); break;
