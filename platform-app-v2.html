@@ -242,7 +242,10 @@ body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))}
 .hbgo{flex:none;min-width:44px;min-height:44px;border-radius:50%;border:0;background:#B04A5E;color:#fff;display:grid;place-items:center;cursor:pointer}.hbgo svg{transform:none}
 .dmc .dmbar{height:8px;border-radius:8px;background:var(--tint);margin-top:8px;overflow:hidden}.dmc .dmbar span{display:block;height:100%;background:#B04A5E;border-radius:8px;transition:width .3s}
 .dmc .mis .btn{min-height:44px}.dmcici{flex:none;width:56px;height:56px;overflow:hidden;border-radius:50%;background:var(--tint)}.dmcici img,.dmcici video{width:100%;height:100%;object-fit:cover}
-.creal{margin:0 0 8px;align-self:stretch;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(43,35,38,.14)}.creal img{display:block;width:100%;height:auto}
+.creal{position:relative;margin:0 0 8px;align-self:stretch;height:clamp(420px,118vw,520px);border-radius:24px;overflow:hidden;background:linear-gradient(#EBD3C1,#ECD5C3 70px);box-shadow:0 8px 24px rgba(43,35,38,.14)}
+.creal img{position:absolute;left:0;right:0;bottom:0;display:block;width:100%;height:calc(100% - 64px);object-fit:cover;object-position:52% 0;-webkit-mask-image:linear-gradient(transparent,#000 40px);mask-image:linear-gradient(transparent,#000 40px)}
+.creal .hbub{position:absolute;top:10px;left:10px;right:10px;margin:0;z-index:2}
+@media (min-width:600px){.creal{height:auto;aspect-ratio:16/9}.creal img{height:calc(100% - 40px);object-position:center}}
 .ghero.isreal .gfig{display:none}body.noreal .ghero.isreal .gfig{display:flex}
 .ghero{text-align:center}.gfig{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:300px;isolation:isolate}
 .gfig .cpic{position:relative;z-index:2;transform:scale(var(--gsc,1));transform-origin:50% 100%;transition:transform .6s}
@@ -519,7 +522,7 @@ function gHero() { /* Home in phase2 (P2-G7): Cici large (stage art + mood pose)
   const alt = L3(`Cici, ${nm} stage, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, giai đoạn ${nm}, ${L3(...G_TX["mood_" + g.mood])}`, `Cici, ${nm} 단계, ${L3(...G_TX["mood_" + g.mood])}`);
   const up = P2S.gSeen != null && P2S.gSeen < g.stage;
   const bars = ["str", "calm", "glow"].map(k => `<div class="gbar" data-k="${k}"><span class="gbl">${esc(L3(...G_STAT[k]))}</span><span class="gtrack" role="progressbar" aria-label="${esc(L3(...G_STAT[k]))}" aria-valuemin="0" aria-valuemax="${G_MAX}" aria-valuenow="${Math.min(G_MAX, g.st[k])}"><i style="width:${Math.min(100, g.st[k] / G_MAX * 100)}%"></i></span><b class="gbn">${g.st[k]}</b></div>`).join("");
-  return `<section class="chome ghero${CICI_REAL ? " isreal" : ""}" id="home-cici" aria-label="${esc(ciciNm())}" data-stage="${g.stage}" data-mood="${g.mood}" data-pose="${pose}">${hbBubble(g)}${CICI_REAL ? realHero() : ""}
+  return `<section class="chome ghero${CICI_REAL ? " isreal" : ""}" id="home-cici" aria-label="${esc(ciciNm())}" data-stage="${g.stage}" data-mood="${g.mood}" data-pose="${pose}">${CICI_REAL ? realHero(hbBubble(g)) : hbBubble(g)}
   <div class="gfig${g.mood === "rested" ? " cozy" : ""}${up ? " gup" : ""}" style="--ga1:${L0.a1};--ga2:${L0.a2};--gsc:${L0.sc}"><span class="gaura" aria-hidden="true"></span>${gSparks(L0.sp)}${g.mood === "rested" ? `<span class="gzz" aria-hidden="true">z<small>z</small></span>` : ""}<div class="cpic p2sk"${p2SkinAttr(null, 1)}>${cut(pose, { alt, eager: 1, loop: 1 })}</div></div>
   ${up ? `<div class="card gstageup" id="g-stageup" role="status"><b>${esc(gT("grew", { s: nm }))}</b><br><span class="sub sm">${esc(gT("grewSub"))}</span></div>` : ""}
   <p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="sub sm" id="g-mood">${esc(gT("line_" + g.mood))}</span></p>
@@ -561,8 +564,8 @@ function dmCard() {
   ${DM_KEYS.map(k => `<div class="mis${d.done[k] ? " done" : ""}" data-m="${k}"><span class="ck" aria-hidden="true">${d.done[k] ? ic("check", "s") : ""}</span><span class="grow mt">${esc(M[k][0])}<span class="vh">${d.done[k] ? ", " + tr("done") : ""}</span></span>${d.done[k] ? "" : M[k][1]}</div>`).join("")}
   <div class="row sm sub" style="margin-top:6px"><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span></div></section>`;
 }
-function realHero() { /* v2 Home figure only; falls back to the standard hero if the render is missing */
-  return `<figure class="creal" id="cici-real"><img src="assets/cici-real/cici-real-studio.webp" alt="${esc(L3("Cici in a bright Seoul studio with a city-tower view", "Cici trong studio sáng ở Seoul, nhìn ra tháp thành phố", "서울 타워가 보이는 밝은 스튜디오의 " + CICI_KO))}" onerror="this.closest('figure').hidden=true;document.body.classList.add('noreal')"></figure>`;
+function realHero(bub) { /* v2 Home figure only: Cici centred (object-position), bubble on the wall band above her head; falls back to the standard hero if the render is missing */
+  return `<figure class="creal" id="cici-real">${bub || ""}<img src="assets/cici-real/cici-real-studio.webp" width="1280" height="720" alt="${esc(L3("Cici in a bright Seoul studio with a city-tower view", "Cici trong studio sáng ở Seoul, nhìn ra tháp thành phố", "서울 타워가 보이는 밝은 스튜디오의 " + CICI_KO))}" onerror="const f=this.closest('figure'),b=f.querySelector('.hbub');if(b)f.before(b);f.hidden=true;document.body.classList.add('noreal')"></figure>`;
 }
 function gAfterHome() { const g = gState(); if ((P2S.gSeen || 0) < g.stage) { P2S.gSeen = g.stage; p2Save(); try { celebrate(false); } catch (e) {} } } /* one-time stage-up moment (P2-G1/G2: never re-awarded) */
 const gDemoOn = () => { try { return !!DEMO_MODE; } catch (e) { return false; } };
