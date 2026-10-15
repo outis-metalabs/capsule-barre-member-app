@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cici platform report</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #F6D9E2; color: #2B2326; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 16px 28px 18px; min-height: 100vh; }
+  .phone { box-sizing: border-box; width: 410px; height: 764px; border: 10px solid #fff; border-radius: 40px; overflow: hidden; background: #FDECEF; box-shadow: 0 24px 60px rgba(142,51,70,.18); flex: none; }
+  iframe { width: 100%; height: 100%; border: 0; display: block; background: #FDECEF; }
+  .cap { width: min(550px,100%); margin-top: 18px; background: #fff; border-radius: 22px; padding: 14px 24px 16px; box-shadow: 0 10px 28px rgba(176,74,94,.10); box-sizing: border-box; }
+  .kicker { margin: 0 0 2px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B04A5E; font-weight: 700; }
+  h2 { margin: 0 0 4px; font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
+  p { margin: 0; font-size: 15px; line-height: 1.45; color: #5c4450; }
+</style>
+</head>
+<body>
+  <div class="phone"><iframe id="appframe" title="Cici member app" src="platform-app.html?lang=en"></iframe></div>
+  <div class="cap">
+    <p class="kicker" id="kicker">Cici · member app</p>
+    <h2 id="title">Meet Cici</h2>
+    <p id="line">One account for many places. This walkthrough uses the sample Korea demo, in English.</p>
+  </div>
+  <script>
+    window.setCap = function(kicker, title, line) {
+      document.getElementById("kicker").textContent = kicker;
+      document.getElementById("title").textContent = title;
+      document.getElementById("line").textContent = line;
+    };
+  </script>
+</body>
+</html>
