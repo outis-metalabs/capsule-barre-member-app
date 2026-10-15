@@ -683,9 +683,9 @@ function v2Hero() {
 /* VIDEO SLOT: drop official 3D Designer loops in assets/cici-real/ as cici-cat-<mood>.webm/.mp4 (+ cici-cat-poster.webp) and list the moods here.
    Rules: muted, playsinline, loop, <=2.5 MB, 6-8 s. Until files exist the still CICI_HOME image is shown with CSS mood cues. Never generate Cici. */
 const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real/cici-cat-poster.jpg",
-  clips: { calm: "petting", lively: "lively", napping: "petting", hungry: "hungry", react: "react", eating: "petting" },
+  clips: { calm: "petting", lively: "lively", napping: "napping", hungry: "hungry", react: "react", eating: "petting" },
   eat: "assets/cici-real/dubu-eating", fadeMs: 400 };
-  /* Official loops (tall): petting default; lively / hungry / react wired 2026-10-16. Napping + mission stretch/water await 3D Designer redo — keep petting/CSS until then. Crossfade CICI_CAT.fadeMs (300–500). */
+  /* Official loops (tall): petting default; lively / napping / hungry / react wired. Mission stretch/water = square overlays. Crossfade CICI_CAT.fadeMs (300–500). */
 const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
 const MOCHI = () => L3("Mochi", "Mochi", "모찌"); /* was Dubu/두부; renamed 2026-10-15 */
 function catDay() { const dk = ME ? dayKey(ME, PV.now()) : "d"; const c = P2S.cat = P2S.cat || {}; c.treats = c.treats || 0; if (c.day !== dk) { c.day = dk; c.earned = 0; c.fed = 0; c.log = []; } /* DB-H3: daily reset of earned/fed; held treats carry over (DB-T4 cap 3) */ return c; }
@@ -819,14 +819,13 @@ function catItemsCard() { /* sheet only (OQ-M4): growth + earned items; locked p
 /* Mission clips (MC-K): stretch + water. Drop official ≤1 MB muted clips as assets/cici-real/mochi-stretch.* / mochi-water.*; until then a soft still toast moment. */
 const CAT_CLIPS = { stretch: "assets/cici-real/mochi-stretch", water: "assets/cici-real/mochi-water" };
 function catClipPlay(kind) { /* one-shot overlay then back to Home loop (MC-K5); suppressed in crisis (MC-K4) */
-  if (catCrisis() || !CAT_CLIPS[kind]) return; const base = CAT_CLIPS[kind], mv = catMotionOk();
+  if (catCrisis() || !CAT_CLIPS[kind]) return; const base = CAT_CLIPS[kind], poster = base + "-poster.jpg", mv = catMotionOk();
   const old = document.getElementById("cat-clip"); if (old) old.remove();
-  const o = document.createElement("div"); o.id = "cat-clip"; o.className = "cateat catclip"; o.setAttribute("role", "status");
+  const o = document.createElement("div"); o.id = "cat-clip"; o.className = "cateat catclip"; o.setAttribute("role", "status"); o.dataset.kind = kind;
   const alt = kind === "stretch" ? L3(`${MOCHI()} stretching`, `${MOCHI()} đang giãn cơ`, `스트레칭하는 ${MOCHI()}`) : L3(`${MOCHI()} lapping water`, `${MOCHI()} đang uống nước`, `물 마시는 ${MOCHI()}`);
-  const tryVid = mv && true; /* slot always ready; error falls back to poster/still */
-  o.innerHTML = `<img id="cat-clip-still" src="${CICI_CAT.poster}" alt="${esc(alt)}" style="display:block"><button class="cateatx" aria-label="${esc(L3("Close","Đóng","닫기"))}">×</button>`;
-  if (tryVid) { const v = document.createElement("video"); v.id = "cat-clip-v"; v.muted = true; v.playsInline = true; v.autoplay = true; v.preload = "auto"; v.setAttribute("disableremoteplayback", "");
-    v.poster = CICI_CAT.poster; v.setAttribute("aria-label", alt);
+  o.innerHTML = `<img id="cat-clip-still" src="${poster}" alt="${esc(alt)}" style="display:block"><button class="cateatx" aria-label="${esc(L3("Close","Đóng","닫기"))}">×</button>`;
+  if (mv) { const v = document.createElement("video"); v.id = "cat-clip-v"; v.muted = true; v.playsInline = true; v.autoplay = true; v.preload = "auto"; v.setAttribute("disableremoteplayback", "");
+    v.poster = poster; v.setAttribute("aria-label", alt);
     v.innerHTML = `<source src="${base}.webm" type="video/webm"><source src="${base}.mp4" type="video/mp4">`;
     v.addEventListener("error", () => { v.remove(); }, true);
     v.addEventListener("loadeddata", () => { const im = o.querySelector("#cat-clip-still"); if (im) im.remove(); });
@@ -835,7 +834,7 @@ function catClipPlay(kind) { /* one-shot overlay then back to Home loop (MC-K5);
   const end = () => { clearTimeout(catClipPlay.t); o.remove(); };
   o.querySelector(".cateatx").addEventListener("click", end);
   const v = o.querySelector("video"); if (v) { v.addEventListener("ended", end); const p = v.play(); if (p && p.catch) p.catch(() => {}); }
-  clearTimeout(catClipPlay.t); catClipPlay.t = setTimeout(end, tryVid ? 5000 : 2200); }
+  clearTimeout(catClipPlay.t); catClipPlay.t = setTimeout(end, mv ? 4500 : 2200); }
 
 function catCard() { if (catCrisis()) return ""; catGrantItems(); const c = catDay(), d = MOCHI(), h = catHungry(), off = c.treats <= 0, st = catStageNm();
   const hint = L3("Complete a mission or visit a studio to earn a treat", "Hoàn thành nhiệm vụ hoặc ghé studio để nhận ăn vặt", "미션을 완료하거나 스튜디오에 방문하면 간식을 받아요");

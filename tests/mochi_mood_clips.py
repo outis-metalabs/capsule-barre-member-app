@@ -16,7 +16,7 @@ with sync_playwright() as p:
   J = lambda g, s: g.evaluate(s)
 
   # Asset presence + specs
-  for mood, lim in [('petting', (5.5, 8)), ('lively', (3, 8)), ('hungry', (3, 8)), ('react', (2, 8))]:
+  for mood, lim in [('petting', (5.5, 8)), ('lively', (3, 8)), ('napping', (3, 8)), ('hungry', (3, 8)), ('react', (2, 8))]:
     for ext in ('mp4', 'webm'):
       f = f'/tmp/hot/assets/cici-real/cici-cat-{mood}.{ext}'
       assert os.path.exists(f), f
@@ -25,7 +25,7 @@ with sync_playwright() as p:
       ok(f'asset {mood}.{ext} ≤2.5MB muted {lim[0]}-{lim[1]}s', os.path.getsize(f) <= 2.5e6 and lim[0] <= dur <= lim[1] and 'audio' not in o, [os.path.getsize(f), dur, o])
 
   g = page(); J(g, FRESH); g.wait_for_timeout(800)
-  ok('clips map: lively/hungry/react pointed at own files; nap still petting', J(g, "CICI_CAT.clips.lively==='lively' && CICI_CAT.clips.hungry==='hungry' && CICI_CAT.clips.react==='react' && CICI_CAT.clips.napping==='petting' && CICI_CAT.clips.calm==='petting'"))
+  ok('clips map: lively/napping/hungry/react pointed at own files', J(g, "CICI_CAT.clips.lively==='lively' && CICI_CAT.clips.napping==='napping' && CICI_CAT.clips.hungry==='hungry' && CICI_CAT.clips.react==='react' && CICI_CAT.clips.calm==='petting'"))
   ok('fadeMs in 300–500', J(g, "CICI_CAT.fadeMs>=300 && CICI_CAT.fadeMs<=500"))
 
   # Default / lively on active streak
@@ -38,7 +38,7 @@ with sync_playwright() as p:
 
   # Rest day stays petting (nap not wired)
   J(g, "()=>{ST.miss.rest=true;P2S.cat.demoHour=19;render()}"); g.wait_for_timeout(600)
-  ok('rest/napping still uses petting until redo', J(g, "catMood()==='napping' && catClipName('napping')==='petting' && (document.querySelector('.catvid.on')||{}).dataset.clip==='petting'"))
+  ok('rest/napping uses napping clip', J(g, "catMood()==='napping' && catClipName('napping')==='napping' && (document.querySelector('.catvid.on')||{}).dataset.clip==='napping'"), J(g, "[catMood(),(document.querySelector('.catvid.on')||{}).dataset.clip]"))
 
   # React on tap
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;ME.streak=12;ST.miss.rest=false;render()}"); g.wait_for_timeout(500)
@@ -52,7 +52,16 @@ with sync_playwright() as p:
   ok('Home non-scroll', J(g, "Math.abs(document.documentElement.scrollHeight-document.documentElement.clientHeight)<=2"))
 
   # Mission slots not inventing new stretch/water files in CICI map
-  ok('stretch/water not required in Home clips map yet', J(g, "!CICI_CAT.clips.stretch && !CICI_CAT.clips.water"))
+  # Mission clips
+  for kind, lim in [('mochi-stretch', 1e6), ('mochi-water', 1e6)]:
+    for ext in ('mp4', 'webm'):
+      f = f'/tmp/hot/assets/cici-real/{kind}.{ext}'
+      ok(f'asset {kind}.{ext} ≤1MB muted', os.path.exists(f) and os.path.getsize(f) <= lim, f)
+  J(g, FRESH); J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(500)
+  ok('stretch mission start → stretch overlay', J(g, "!!document.querySelector('#cat-clip[data-kind=stretch] video, #cat-clip[data-kind=stretch] img')"))
+  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); catClipPlay('water')}"); g.wait_for_timeout(400)
+  ok('water mission start → water overlay', J(g, "!!document.querySelector('#cat-clip[data-kind=water] video, #cat-clip[data-kind=water] img')"))
+  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove()}")
 
   for w,h in [(390,844),(430,932)]:
     for L in ('ko','en'):
@@ -63,6 +72,13 @@ with sync_playwright() as p:
       g2.screenshot(path=f'{SH}/hungry-{L}-{w}.png')
       J(g2, "()=>{P2S.cat.demoHour=12;catReact('tap')}"); g2.wait_for_timeout(400)
       g2.screenshot(path=f'{SH}/react-{L}-{w}.png')
+      J(g2, "()=>{ST.catReact=null;ST.miss.rest=true;P2S.cat.demoHour=19;render()}"); g2.wait_for_timeout(700)
+      g2.screenshot(path=f'{SH}/napping-{L}-{w}.png')
+      J(g2, "()=>{ST.miss.rest=false;stretchSheet()}"); g2.wait_for_timeout(500)
+      g2.screenshot(path=f'{SH}/stretch-{L}-{w}.png')
+      J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); catClipPlay('water')}"); g2.wait_for_timeout(400)
+      g2.screenshot(path=f'{SH}/water-{L}-{w}.png')
+      J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet()}")
       ok(f'[{w}/{L}] no page errors', not g2.E, g2.E); g2.close()
   g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)
