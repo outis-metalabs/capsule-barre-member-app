@@ -655,12 +655,12 @@ const CICI_HOME = { src: "assets/cici-real/cici-cat-poster.jpg", w: 720, h: 1280
 function v2Hero() {
   return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg cat-${catMood()}" id="cici-real" data-mood="${catMood()}">${catMedia(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}</figure></section>`;
 }
-/* ===== Cici's cat Dubu (두부), phase2 v2 only (P2-C). No points: treats never touch the ledger, points or mission caps. ===== */
+/* ===== Cici's cat Mochi (모찌), phase2 v2 only (P2-C). Formerly Dubu; asset paths still use dubu-* filenames. No points: treats never touch the ledger, points or mission caps. ===== */
 /* VIDEO SLOT: drop official 3D Designer loops in assets/cici-real/ as cici-cat-<mood>.webm/.mp4 (+ cici-cat-poster.webp) and list the moods here.
    Rules: muted, playsinline, loop, <=2.5 MB, 6-8 s. Until files exist the still CICI_HOME image is shown with CSS mood cues. Never generate Cici. */
 const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real/cici-cat-poster.jpg", clips: { calm: "petting", lively: "petting", napping: "petting" }, eat: "assets/cici-real/dubu-eating" }; /* official 3D Designer loops (720x1280, 6.5 s, no audio). Lively/napping loops don't exist yet: they reuse "petting" with CSS mood cues; SWAP by pointing a mood at its own clip name (cici-cat-<name>.webm/.mp4). */
 const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
-const DUBU = () => L3("Dubu", "Dubu", "두부");
+const MOCHI = () => L3("Mochi", "Mochi", "모찌"); /* was Dubu/두부; renamed 2026-10-15 */
 function catDay() { const dk = ME ? dayKey(ME, PV.now()) : "d"; const c = P2S.cat = P2S.cat || {}; c.treats = c.treats || 0; if (c.day !== dk) { c.day = dk; c.earned = 0; c.fed = 0; c.log = []; } /* DB-H3: daily reset of earned/fed; held treats carry over (DB-T4 cap 3) */ return c; }
 function catSave() { if (p2Loaded) p2Save(); }
 function catCrisisMark() { if (typeof P2 !== "function" || !P2()) return; (P2S.cat = P2S.cat || {}).crisisAt = PV.now(); catSave(); }
@@ -676,7 +676,7 @@ function catMood() { /* calm by default; lively on an active streak day; napping
   if (isPaused(m) || ST.miss.rest || !m.streak) return "napping"; /* DB-M2; OQ-D4 TBD default: broken streak -> napping */
   return "lively"; } /* DB-M1: active streak */
 function catRow() { /* the card's ONE secondary row; returns [text, feedButton] */
-  const c = catDay(), d = DUBU(), cr = catCrisis();
+  const c = catDay(), d = MOCHI(), cr = catCrisis();
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   const fb = c.treats > 0 ? `<button class="catfeed" id="cat-feed" data-act="catfeed" aria-label="${esc(L3(`Give ${d} a treat (${c.treats} left)`, `Cho ${d} ăn vặt (còn ${c.treats})`, `${d}에게 간식 주기 (${c.treats}개 남음)`))}"><span aria-hidden="true">🐟</span><b>${c.treats}</b></button>` : "";
   if (catHungry()) return [L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`), fb];
@@ -700,21 +700,21 @@ function catWire() { /* pause off-screen or when the tab is hidden */
 document.addEventListener("visibilitychange", () => { const v = document.getElementById("cat-video"); if (!v) return; if (document.hidden) v.pause(); else if (v.getBoundingClientRect().bottom > 0) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } });
 function catEatShow() { /* DB-T5: official 4 s eating clip in a small overlay, then back to the loop; still poster under reduced motion / Save-Data */
   const old = document.getElementById("cat-eat"); if (old) old.remove(); const mv = catMotionOk(), o = document.createElement("div"); o.id = "cat-eat"; o.className = "cateat"; o.setAttribute("role", "status");
-  const alt = L3(`${DUBU()} happily eating a treat`, `${DUBU()} đang vui vẻ ăn vặt`, `간식을 맛있게 먹는 ${DUBU()}`);
+  const alt = L3(`${MOCHI()} happily eating a treat`, `${MOCHI()} đang vui vẻ ăn vặt`, `간식을 맛있게 먹는 ${MOCHI()}`);
   o.innerHTML = (mv ? `<video id="cat-eat-v" muted playsinline autoplay preload="auto" disableremoteplayback poster="${CICI_CAT.eat}-poster.jpg" aria-label="${esc(alt)}"><source src="${CICI_CAT.eat}.webm" type="video/webm"><source src="${CICI_CAT.eat}.mp4" type="video/mp4"></video>` : `<img src="${CICI_CAT.eat}-poster.jpg" alt="${esc(alt)}">`) + `<button class="cateatx" aria-label="${esc(L3("Close", "Đóng", "닫기"))}">×</button>`;
   document.body.appendChild(o); const end = () => { clearTimeout(catEatShow.t); o.remove(); ST.catEat = false; if (V2HOME()) render(); };
   const v = o.querySelector("video"); if (v) { v.muted = true; v.addEventListener("ended", end); const p = v.play(); if (p && p.catch) p.catch(() => {}); }
   o.querySelector(".cateatx").addEventListener("click", end); clearTimeout(catEatShow.t); catEatShow.t = setTimeout(end, mv ? 4600 : 2200); }
 function catFeed() { if (catCrisis()) return; const c = catDay(); if (c.treats <= 0) return; c.treats--; c.fed++; catSave(); ST.catEat = true; render(); catEatShow();
-  toast(L3(`${DUBU()} loved it! Purr…`, `${DUBU()} thích lắm! Rừ rừ…`, `${DUBU()}가 맛있게 먹었어요! 골골…`));
+  toast(L3(`${MOCHI()} loved it! Purr…`, `${MOCHI()} thích lắm! Rừ rừ…`, `${MOCHI()}가 맛있게 먹었어요! 골골…`));
 }
-function catCard() { if (catCrisis()) return ""; const c = catDay(), d = DUBU(), h = catHungry(), off = c.treats <= 0;
+function catCard() { if (catCrisis()) return ""; const c = catDay(), d = MOCHI(), h = catHungry(), off = c.treats <= 0;
   const hint = L3("Complete a mission or visit a studio to earn a treat", "Hoàn thành nhiệm vụ hoặc ghé studio để nhận ăn vặt", "미션을 완료하거나 스튜디오에 방문하면 간식을 받아요");
   return `<section class="card catcard" id="cat-card" data-mood="${catMood()}"${h ? ' data-hungry="1"' : ""}><div class="row" style="gap:10px"><div class="grow"><b>${esc(L3(`${d}, Cici's cat`, `${d}, mèo của Cici`, `${CICI_KO}의 고양이 ${d}`))}</b>
   <div class="sm sub" id="cat-st">${esc(h ? L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`) : L3(`Treats ${c.treats}/${CAT_MAX}`, `Ăn vặt ${c.treats}/${CAT_MAX}`, `간식 ${c.treats}/${CAT_MAX}`))}</div></div>
   <button class="btn sec" id="cat-feedbtn" data-act="catfeed"${off ? ' disabled aria-describedby="cat-hint"' : ""}>${esc(L3(`Feed (${c.treats})`, `Cho ăn (${c.treats})`, `간식 주기 (${c.treats})`))}</button></div>${off ? `<p class="sm sub" id="cat-hint">${esc(hint)}</p>` : ""}</section>`; }
 function catDemo() { if (!gDemoOn()) return ""; const c = catDay(), cr = catCrisis(), b = (a, v, l, on) => `<button class="chip${on ? " on" : ""}" data-act="${a}"${v != null ? ` data-v="${v}"` : ""}${on != null ? ` aria-pressed="${!!on}"` : ""}>${esc(l)}</button>`;
-  return `<details class="card gdemo" id="cat-demo"><summary>${esc(L3("Demo controls (Dubu)", "Điều khiển demo (Dubu)", "데모 컨트롤 (두부)"))}</summary>
+  return `<details class="card gdemo" id="cat-demo"><summary>${esc(L3("Demo controls (Mochi)", "Điều khiển demo (Mochi)", "데모 컨트롤 (모찌)"))}</summary>
   <p class="sm sub" id="cat-demo-st">${esc(L3(`Hour ${catHour()}:00 · treats ${c.treats} · earned ${c.earned}/${CAT_MAX} · crisis ${cr ? "on" : "off"}`, `Giờ ${catHour()}:00 · ăn vặt ${c.treats} · nhận ${c.earned}/${CAT_MAX} · khủng hoảng ${cr ? "bật" : "tắt"}`, `${catHour()}시 · 간식 ${c.treats} · 획득 ${c.earned}/${CAT_MAX} · 위기 ${cr ? "켜짐" : "꺼짐"}`))}</p>
   <div class="chips">${b("cattime", 9, "09:00", c.demoHour === 9)}${b("cattime", 18, "18:30", c.demoHour === 18)}${b("cattime", "", L3("Real time", "Giờ thật", "실제 시간"), c.demoHour == null)}${b("cattreat", null, L3("+1 treat", "+1 ăn vặt", "간식 +1"))}${b("catreset", null, L3("Reset day", "Đặt lại ngày", "하루 초기화"))}${b("catcrisis", null, L3("Crisis turn (24h)", "Lượt khủng hoảng (24h)", "위기 대화 (24시간)"), cr)}${b("catcrisisoff", null, L3("Clear crisis", "Xóa khủng hoảng", "위기 해제"))}</div></details>`; }
 function catAct(a, v) { const c = catDay();
