@@ -72,7 +72,7 @@ with sync_playwright() as p:
   # --- v2 Home image slot (placeholder until the official image); the rest of the app is not restyled vs platform-app.html
   for L in ('ko', 'en'):
     g = page('?phase2=1', L); g.wait_for_timeout(600)
-    has = J(g, "(()=>{const i=document.querySelector('#cici-real img');return i?{ok:i.complete&&i.naturalWidth>0,src:i.getAttribute('src')}:null})()")
+    has = J(g, "(()=>{const i=document.querySelector('#cici-real video, #cici-real img');return i?{ok:i.tagName==='VIDEO'?(i.readyState>=1&&i.poster.includes(CICI_HOME.src)):(i.complete&&i.naturalWidth>0),src:i.currentSrc||i.getAttribute('src')}:null})()")
     ok(f'[{L}] Home image slot loads (CICI_HOME)', has and has['ok'], has)
     J(g, "()=>{ST.tab='you';ST.page='points';render()}"); a = g.inner_html('#view')
     g2 = page('?phase2=1', L, v1=True); J(g2, "()=>{ST.tab='you';ST.page='points';render()}"); b2 = g2.inner_html('#view')
