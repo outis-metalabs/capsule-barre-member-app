@@ -1,9 +1,9 @@
-/* Points & vouchers acceptance tests (spec v4 §11). Runs inside platform-app.html: window.__pointsAC() -> {AC: [pass, detail]} */
+/* Points & vouchers acceptance tests (spec v4 §11). Streak ACs P1/P8–P13/P24/P51/P56 adapted to the DAYS rule (PO 2026-10-15, prototype-only, pending BA AC update). Runs inside platform-app.html: window.__pointsAC() -> {AC: [pass, detail]} */
 window.__pointsAC = function () {
   /* store-less staff ids ("staff:d") now fail the scan store check (PR11 r5); these AC tests are about earning rules, so the scanning desk is logged in to the booking's store */
   const P = Object.assign({}, __plat.pv, { confirmVisit: (m, b, a, n, st) => __plat.pv.confirmVisit(m, b, /^staff:[a-z0-9]+$/.test(String(a)) && !st && __plat.pv.BKREG[b] ? "staff:" + __plat.pv.BKREG[b].store + "-" + String(a).slice(6) : a, n, st) }), PVx = __plat.PV, R = {}, DAYm = 864e5, MINm = 6e4;
   const T0 = Date.UTC(2026, 9, 12, 3, 0); /* Mon 12 Oct 2026 10:00 Saigon */
-  let k = 0; const mk = (o) => { const m = P.pvMember("t" + (++k), Object.assign({ name: "Tester " + k }, o || {})); m.closedTo = P.weekStart(m, T0); return m; };
+  let k = 0; const mk = (o) => { const m = P.pvMember("t" + (++k), Object.assign({ name: "Tester " + k }, o || {})); m.closedTo = P.dayStart(m, T0); return m; };
   const bk = (m, store, t) => { const id = "b" + (++k); P.pvBook(id, { store, member: m.id, start: t - 60 * MINm, end: t }); return id; };
   const visit = (m, store, t) => P.confirmVisit(m, bk(m, store, t), "staff:desk", t);
   const def = (o) => P.publish(Object.assign({ store: "capsule", title: "T", type: "fixed", value: 50000, cost: 100, stock: 50, validFor: 30, terms: "t" }, o)).v;
@@ -11,9 +11,9 @@ window.__pointsAC = function () {
   const T = (id, f) => { try { f(); } catch (e) { R[id] = [false, "threw " + e.message]; } };
   const flagWas = PVx.flag;
   P.setFlag(true, T0);
-  T("AC-P1", () => { const m = mk(); const r = visit(m, "capsule", T0); const m2 = mk(); m2.streak = 3; m2.visited.capsule = true; const r2 = P.confirmVisit(m2, bk(m2, "capsule", T0), "staff:desk", T0);
+  T("AC-P1", () => { const m = mk(); const r = visit(m, "capsule", T0); const m2 = mk(); m2.streak = 6; m2.visited.capsule = true; const r2 = P.confirmVisit(m2, bk(m2, "capsule", T0), "staff:desk", T0);
     const m3 = mk(); m3.visited.capsule = true; const b3 = bk(m3, "capsule", T0); const r3 = P.markAttended("staff:a", "capsule", m3, b3, "no_phone", T0);
-    ok("AC-P1", r.pts === 50 && m.ledger.some(x => x.reason === "visit" && x.store === "capsule" && x.delta === 50) && r2.pts === 60 && P.bal(m3) === 50, [r.pts, r2.pts, P.bal(m3)]); });
+    ok("AC-P1", r.pts === 50 && m.ledger.some(x => x.reason === "visit" && x.store === "capsule" && x.delta === 50) && r2.pts === 55 && P.bal(m3) === 50, [r.pts, r2.pts, P.bal(m3)]); });
   T("AC-P2", () => { const m = mk(); const id = bk(m, "capsule", T0 + DAYm); P.markNoShow(m, id); const id2 = bk(m, "salon", T0); P.BKREG[id2].status = "cancelled"; P.pvTick(m, T0 + 8 * DAYm);
     ok("AC-P2", P.bal(m) === 0 && m.ledger.length === 0 && m.streak === 0, [P.bal(m), m.ledger.length]); });
   T("AC-P3", () => { const m = mk(); const id = "p" + (++k); P.pvBook(id, { store: "capsule", member: m.id, start: T0, end: T0 + 50 * MINm }); const a = P.pendingFor(m, T0 + 10 * MINm).length, b0 = P.bal(m);
@@ -26,20 +26,19 @@ window.__pointsAC = function () {
     ok("AC-P5", r1.bonus === 80 && P.bal(m) > 0 && !r2.bonus && !r5.bonus && r5.pts === 50 && m.ledger.some(x => x.reason === "newplace_cap"), [r1, r2, r5]); });
   T("AC-P6", () => { const m = mk(); P.pvMission(m, "stretch", T0); P.pvMission(m, "rest", T0); const r = P.pvMission(m, "steps", T0); ok("AC-P6", r.pts === 0 && r.msg === "missionCap" && P.bal(m) === 20, r); });
   T("AC-P7", () => { const m = mk(); for (let d = 0; d < 3; d++) { P.pvMission(m, "a", T0 + d * DAYm); P.pvMission(m, "b", T0 + d * DAYm); } const r = P.pvMission(m, "c", T0 + 3 * DAYm); ok("AC-P7", P.bal(m) === 60 && r.pts === 0 && r.msg === "missionWeekCap", [P.bal(m), r]); });
-  T("AC-P8", () => { const a = mk(); a.streak = 4; a.visited.capsule = 1; const ra = P.confirmVisit(a, bk(a, "capsule", T0), "staff:d", T0); const b = mk(); b.streak = 6; b.visited.capsule = 1; const rb = P.confirmVisit(b, bk(b, "capsule", T0), "staff:d", T0);
-    const c = mk(); c.streak = 30; c.visited.capsule = 1; const rc = P.confirmVisit(c, bk(c, "capsule", T0), "staff:d", T0);
-    const f = mk(); f.streak = 3; f.run = 3; f.freeze = 1; P.pvTick(f, T0 + 7 * DAYm); const runAfterFrozen = f.run, frz = f.freeze;
-    ok("AC-P8", ra.pts === 60 && rb.pts === 75 && rc.pts === 75 && runAfterFrozen === 3 && frz === 0, [ra.pts, rb.pts, rc.pts, runAfterFrozen]); });
-  T("AC-P9", () => { const m = mk(); m.streak = 4; const r = visit(m, "capsule", T0); const r2 = P.pvMission(m, "stretch", T0); ok("AC-P9", r.pts === 60 && r.bonus === 80 && r2.pts === 10, [r, r2]); });
-  T("AC-P10", () => { const m = mk(); visit(m, "capsule", T0); P.pvTick(m, T0 + 6 * DAYm + 13 * 3600e3 - 1); const before = m.streak; /* Sun 23:59:59 home */ P.pvTick(m, T0 + 6 * DAYm + 14 * 3600e3 + 1); const after = m.streak;
-    P.pvMission(m, "rest", T0 + 8 * DAYm); P.pvMission(m, "stretch", T0 + 9 * DAYm); P.pvTick(m, T0 + 14 * DAYm + 1); ok("AC-P10", before === 0 && after === 1 && m.streak === 0, [before, after, m.streak]); });
-  T("AC-P11", () => { const m = mk(); for (let w = 0; w < 4; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 28 * DAYm); const f4 = m.freeze; for (let w = 4; w < 8; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 56 * DAYm);
-    ok("AC-P11", f4 === 1 && m.freeze === 1 && m.streak === 8, [f4, m.freeze, m.streak]); });
-  T("AC-P12", () => { const m = mk(); m.streak = 5; m.freeze = 1; P.pvTick(m, T0 + 7 * DAYm); const a = [m.freeze, m.streak, m.notices.some(n => n.k === "freezeUsed")]; P.pvTick(m, T0 + 14 * DAYm);
-    ok("AC-P12", a[0] === 0 && a[1] === 5 && a[2] && m.streak === 0 && m.notices.some(n => n.k === "streakReset"), [a, m.streak]); });
-  T("AC-P13", () => { const m = mk(); for (let w = 0; w < 4; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 28 * DAYm); const n1 = m.claims.filter(c => c.milestone === 4).length;
-    P.pvTick(m, T0 + 42 * DAYm); /* 2 empty weeks: freeze then reset */ for (let w = 6; w < 10; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 70 * DAYm);
-    ok("AC-P13", n1 === 1 && m.streak === 4 && m.claims.filter(c => c.milestone === 4).length === 1, [n1, m.streak]); });
+  T("AC-P8", () => { const a = mk(); a.streak = 6; a.visited.capsule = 1; const ra = P.confirmVisit(a, bk(a, "capsule", T0), "staff:d", T0); const b = mk(); b.streak = 13; b.visited.capsule = 1; const rb = P.confirmVisit(b, bk(b, "capsule", T0), "staff:d", T0);
+    const c = mk(); c.streak = 40; c.visited.capsule = 1; const rc = P.confirmVisit(c, bk(c, "capsule", T0), "staff:d", T0);
+    ok("AC-P8", ra.pts === 55 && rb.pts === 60 && rc.pts === 65, [ra.pts, rb.pts, rc.pts]); });
+  T("AC-P9", () => { const m = mk(); m.streak = 6; const r = visit(m, "capsule", T0); const r2 = P.pvMission(m, "stretch", T0); ok("AC-P9", r.pts === 55 && r.bonus === 80 && r2.pts === 10 && m.streak === 7, [r, r2, m.streak]); });
+  T("AC-P10", () => { const m = mk(); const late = T0 + 13 * 3600e3 + 59 * MINm; /* 23:59 home (Saigon) */ P.pvMission(m, "rest", late); const a = m.streak; P.pvMission(m, "stretch", late + 2 * MINm); /* 00:01 next day */ const b = m.streak;
+    visit(m, "capsule", late + 3 * MINm); const c = m.streak; ok("AC-P10", a === 1 && b === 2 && c === 2, [a, b, c]); });
+  T("AC-P11", () => { const m = mk(); for (let d = 0; d < 13; d++) if (d !== 3) P.pvMission(m, "a", T0 + d * DAYm + 1); P.pvTick(m, T0 + 13 * DAYm);
+    ok("AC-P11", m.streak === 12 && Object.keys(m.rest).length === 1, [m.streak, m.rest]); });
+  T("AC-P12", () => { const m = mk(); m.streak = 5; P.pvTick(m, T0 + 1 * DAYm); const a = [m.streak, m.notices.some(n => n.k === "freezeUsed")]; P.pvTick(m, T0 + 2 * DAYm);
+    ok("AC-P12", a[0] === 5 && a[1] && m.streak === 0 && m.notices.some(n => n.k === "streakReset"), [a, m.streak]); });
+  T("AC-P13", () => { const m = mk(); for (let d = 0; d < 7; d++) visit(m, "capsule", T0 + d * DAYm); P.pvTick(m, T0 + 6 * DAYm + 1); const n1 = m.claims.filter(c => c.milestone === 7).length;
+    P.pvTick(m, T0 + 10 * DAYm); /* rest day then reset */ for (let d = 10; d < 17; d++) visit(m, "capsule", T0 + d * DAYm);
+    ok("AC-P13", n1 === 1 && m.streak === 7 && m.claims.filter(c => c.milestone === 7).length === 1, [n1, m.streak]); });
   T("AC-P14", () => { const m = mk(); P.pvMigrate(m, { xp: 480, coins: 0, weeks: 0 }); P.pvMission(m, "a", T0); const l1 = P.lvlOf(m); P.pvMission(m, "b", T0); ok("AC-P14", l1 === 1 && P.lvlOf(m) === 2 && m.notices.some(n => n.k === "outfitUnlocked" && n.v.outfit === "Studio"), [l1, P.lvlOf(m)]); });
   T("AC-P15", () => { const m = mk(); visit(m, "capsule", T0); const v = def({ cost: 100 }); const l0 = P.life(m), lv0 = P.lvlOf(m); const r = P.claim(m, v.id, T0); ok("AC-P15", r.ok && P.life(m) === l0 && P.lvlOf(m) === lv0 && P.bal(m) === 30, [P.life(m), P.bal(m)]); });
   T("AC-P16", () => { const m = mk(); visit(m, "capsule", T0); const e1 = P.eligibility(m, def({ cost: 250 }), T0), e2 = P.eligibility(m, def({ cost: 100, minLevel: 3 }), T0), e3 = P.eligibility(m, def({ cost: 100, minStreak: 2 }), T0);
@@ -65,11 +64,11 @@ window.__pointsAC = function () {
     const c2 = P.claim(m, def({}).id, T0).c; const hidden = !__plat.pv.ME || true; const after = P.cancelClaim(m, c2.id, T0 + DAYm + 1);
     const vp = def({ stock: 3 }); const c3 = P.claim(m, vp.id, T0).c; vp.paused = true; P.cancelClaim(m, c3.id, T0 + 1); const blockedWhilePaused = P.claim(m, vp.id, T0 + 2);
     ok("AC-P23", r.ok && P.bal(m) === 1000 - 100 && v.stock === 5 && !dead.ok && !after.ok && vp.stock === 3 && !blockedWhilePaused.ok, [P.bal(m), v.stock, dead.msg, after.ok, vp.stock]); });
-  T("AC-P24", () => { const m = mk(); m.streak = 3; const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:d", T0); const b0 = P.bal(m); /* 60 + 80 */ const noReason = P.reverseVisit("staff:d", m, id, "", "", T0 + DAYm);
+  T("AC-P24", () => { const m = mk(); m.streak = 6; const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:d", T0); const b0 = P.bal(m); /* 55 (x1.1 at 7 days) + 80 */ const noReason = P.reverseVisit("staff:d", m, id, "", "", T0 + DAYm);
     const r = P.reverseVisit("staff:d", m, id, "service_refund", "", T0 + 3 * DAYm); const row = m.ledger.filter(x => x.reason.startsWith("reversed"));
     const m2 = mk(); const id2 = bk(m2, "capsule", T0); P.confirmVisit(m2, id2, "staff:d", T0); const late = P.reverseVisit("staff:d", m2, id2, "staff_error", "", T0 + 15 * DAYm);
-    const m3 = mk(); for (let w = 0; w < 4; w++) visit(m3, "capsule", T0 + w * 7 * DAYm); P.pvTick(m3, T0 + 28 * DAYm); const lastId = Object.keys(m3.att).pop(); const ms = m3.claims.find(c => c.milestone === 4); P.reverseVisit("staff:d", m3, lastId, "staff_error", "", T0 + 29 * DAYm);
-    ok("AC-P24", b0 === 140 && !noReason.ok && r.ok && P.bal(m) === 0 && row.length === 2 && row.every(x => x.actor === "staff:d" && x.reason === "reversed:service_refund") && m.notices.some(n => n.k === "reversed") && !late.ok && ms.status === "reversed" && m3.streak === 3, [b0, P.bal(m), late.err, ms && ms.status, m3.streak]); });
+    const m3 = mk(); for (let d = 0; d < 7; d++) visit(m3, "capsule", T0 + d * DAYm); P.pvTick(m3, T0 + 6 * DAYm + 1); const lastId = Object.keys(m3.att).pop(); const ms = m3.claims.find(c => c.milestone === 7); P.reverseVisit("staff:d", m3, lastId, "staff_error", "", T0 + 7 * DAYm);
+    ok("AC-P24", b0 === 135 && !noReason.ok && r.ok && P.bal(m) === 0 && row.length === 2 && row.every(x => x.actor === "staff:d" && x.reason === "reversed:service_refund") && m.notices.some(n => n.k === "reversed") && !late.ok && ms.status === "reversed" && m3.streak === 6, [b0, P.bal(m), late.err, ms && ms.status, m3.streak]); });
   T("AC-P49", () => { const m = mk(); const id = bk(m, "capsule", T0); P.confirmVisit(m, id, "staff:d", T0); const c = P.claim(m, def({ cost: 100 }).id, T0).c; const u = P.useCode(m, c.id, T0 + 1); P.redeem("staff:d", "capsule", u.code, T0 + 2);
     P.reverseVisit("staff:d", m, id, "fraud", "", T0 + 3 * DAYm); const neg = P.bal(m), st = c.status; const blocked = P.eligibility(m, def({ cost: 100 }), T0 + 3 * DAYm).k;
     const m2 = mk(); const id2 = bk(m2, "capsule", T0); P.confirmVisit(m2, id2, "staff:d", T0); const s15 = P.reverseVisit("staff:d", m2, id2, "fraud", "", T0 + 15 * DAYm); const b15 = P.bal(m2); const ops = P.reverseVisit("ops:anna", m2, id2, "fraud", "", T0 + 15 * DAYm, true);
@@ -87,7 +86,7 @@ window.__pointsAC = function () {
   T("AC-P30", () => { const L0 = L, out = []; for (const l of ["en", "vi", "ko"]) { L = l; out.push(P.fmtPts(1250)); } L = L0; ok("AC-P30", out.join("|") === "1,250 points|1.250 điểm|1,250포인트" && !/[₫₩$]/.test(out.join("")), out); });
   T("AC-P31", () => { const bad = [{ cost: 99 }, { cost: 5001 }, { cost: 500, type: "percent", value: 4 }, { cost: 500, type: "percent", value: 51 }].map(d => P.validateDraft(Object.assign({ type: "fixed", value: 1 }, d)).length > 0), good = P.validateDraft({ cost: 100, type: "percent", value: 5 }).length === 0 && P.validateDraft({ cost: 5000, type: "percent", value: 50 }).length === 0;
     ok("AC-P31", bad.every(Boolean) && good && !P.publish({ cost: 99, type: "fixed", value: 1 }).ok, [bad, good]); });
-  T("AC-P51", () => { const bad = [{ validFor: 6 }, { validFor: 91 }, { minStreak: -1 }, { minStreak: 13 }].map(d => P.validateDraft(Object.assign({ cost: 500, type: "fixed", value: 1 }, d)).length > 0), good = P.validateDraft({ cost: 500, type: "fixed", value: 1, validFor: 7, minStreak: 12 }).length + P.validateDraft({ cost: 500, type: "fixed", value: 1, validFor: 90, minStreak: 0 }).length === 0;
+  T("AC-P51", () => { const bad = [{ validFor: 6 }, { validFor: 91 }, { minStreak: -1 }, { minStreak: 61 }].map(d => P.validateDraft(Object.assign({ cost: 500, type: "fixed", value: 1 }, d)).length > 0), good = P.validateDraft({ cost: 500, type: "fixed", value: 1, validFor: 7, minStreak: 60 }).length + P.validateDraft({ cost: 500, type: "fixed", value: 1, validFor: 90, minStreak: 0 }).length === 0;
     ok("AC-P51", bad.every(Boolean) && good, bad); });
   T("AC-P32", () => { const m = rich(); const v = def({}); const c = P.claim(m, v.id, T0).c; v.paused = true; const m2 = rich(); const r2 = P.claim(m2, v.id, T0); const u = P.useCode(m, c.id, T0); const rd = P.redeem("staff:d", "capsule", u.code, T0 + 1);
     ok("AC-P32", !r2.ok && r2.k === "unlisted" && rd.ok, [r2.k, rd.ok]); });
@@ -116,7 +115,7 @@ window.__pointsAC = function () {
   T("AC-P55", () => { P.setFlag(false, T0); const m = mk(); m.lastVisit = T0 - 395 * DAYm; m.ledger.push(Object.freeze({ id: "v" + k, member: m.id, delta: 300, life: 300, reason: "visit", actor: "staff:d", t: m.lastVisit, store: "capsule", src: "old" })); m.enabledAt = null;
     P.setFlag(true, T0); const b0 = P.bal(m); const exp = Date.UTC(2027, 9, 12, 3, 0); const w0 = P.pointsWarn(m, exp - 31 * DAYm), w1 = P.pointsWarn(m, exp - 30 * DAYm); P.pvTick(m, exp - 1); const bBefore = P.bal(m); P.pvTick(m, exp);
     ok("AC-P55", b0 === 300 && !w0 && !!w1 && bBefore === 300 && P.bal(m) === 0, [b0, !!w1, bBefore, P.bal(m)]); });
-  T("AC-P56", () => { P.setFlag(false, T0); const m = mk(); for (let w = 0; w < 8; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 56 * DAYm); const off = m.claims.length; const G = T0 + 57 * DAYm;
+  T("AC-P56", () => { P.setFlag(false, T0); const m = mk(); for (let d = 0; d < 14; d++) visit(m, "capsule", T0 + d * DAYm); P.pvTick(m, T0 + 14 * DAYm); const off = m.claims.length; const G = T0 + 15 * DAYm;
     P.setFlag(true, G); const ms = m.claims.filter(c => c.milestone); P.setFlag(false, G + 1); P.setFlag(true, G + 2);
     ok("AC-P56", off === 0 && ms.length === 2 && ms.every(c => c.t === G && c.exp === G + 30 * DAYm) && m.claims.filter(c => c.milestone).length === 2, [off, ms.length]); });
   T("AC-P44e", () => { P.setFlag(false, T0); const m = mk(); m.enabledAt = null; for (let w = 0; w < 4; w++) visit(m, "capsule", T0 + w * 7 * DAYm); P.pvTick(m, T0 + 500 * DAYm); const c = P.claim(m, def({ cost: 100 }).id, T0 + 500 * DAYm);

@@ -54,10 +54,10 @@ with sync_playwright() as p:
   ok('Home empty next class uses 05 idle', (es2 or '').endswith('idle.webp'), es2)
   # points win pop: 03 jump; voucher claimed: 06
   J(pg, "()=>{celebrate();toast('+10')}"); pg.wait_for_timeout(100)
-  ok('points/streak win pill (header free space) carries 03 jump', J(pg, "()=>!!document.querySelector('#winpill:not([hidden]) .cut-jump')"))
-  pg.wait_for_timeout(3700); ok('win pill auto-dismisses', J(pg, "()=>document.getElementById('winpill').hidden && !document.querySelector('.cheerpop')"))
+  pg.wait_for_function("()=>!!document.querySelector('#wintoast:not([hidden]) .cut-jump')", timeout=4000); ok('points/streak win toast (bottom, above the tab bar) carries 03 jump', J(pg, "()=>!!document.querySelector('#wintoast:not([hidden]) .cut-jump')"))
+  pg.wait_for_timeout(2900); ok('win toast auto-dismisses (~2.5s)', J(pg, "()=>document.getElementById('wintoast').hidden && !document.querySelector('.cheerpop')"))
   J(pg, """()=>{window.claim=()=>({ok:true,c:{terms:{title:['Voucher','Voucher','바우처']}}}); document.body.insertAdjacentHTML('beforeend','<button id=tclaim data-act=pvclaimok data-v=x>c</button>'); document.getElementById('tclaim').click()}"""); pg.wait_for_timeout(100)
-  ok('voucher claimed pill carries 06 voucher', J(pg, "()=>!!document.querySelector('#winpill:not([hidden]) .cut-voucher')"))
+  pg.wait_for_function("()=>!!document.querySelector('#wintoast:not([hidden]) .cut-voucher')", timeout=4000); ok('voucher claimed toast carries 06 voucher', True)
   pg.close()
   # ribbon: realRewards only
   for q, want in [('', False), ('?realRewards=1', True)]:
