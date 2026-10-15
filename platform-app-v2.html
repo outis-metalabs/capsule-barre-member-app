@@ -360,7 +360,7 @@ body.v2home main{padding-top:0}
 /* full-bleed official image: object-fit cover, object-position from CICI_HOME (50% 35%); the glass card sits on the plain wall top-left above her head */
 .v2bg{position:absolute;inset:0;margin:0;z-index:0}
 .v2bg img{display:block;width:100%;height:100%;object-fit:cover}
-@media (max-height:760px){.v2hero .v2card{padding:10px 10px 10px 14px}.v2card .hbt{font-size:16px}.v2card .hbsec{display:none}} /* short phones: keep the card clear of her head */
+@media (max-height:760px){.v2hero .v2card{padding:10px 10px 10px 14px}.v2card .hbt{font-size:16px}.v2card .hbsec:not(:has(.catfeed)){display:none}} /* short phones: keep the card clear of her head */
 .v2sheet{position:relative;z-index:3;margin:-30px -16px 0;padding:10px 16px 8px;background:#F7F2EF;border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(60,30,30,.10)}
 .v2handle{display:block;width:40px;height:5px;border-radius:5px;background:#D9CCC6;margin:0 auto 6px}
 .v2sheet .ghero .gfig{display:none}.v2sheet .ghero{padding:0}
@@ -372,6 +372,20 @@ body.v2home main{padding-top:0}
 .gcomp .ghint{margin:10px 0 0;font-size:13px;color:#6B5E62;text-align:left}
 #p2-room .p2char{background:url(assets/cici-real/cici-sitting.webp) center bottom/contain no-repeat}#p2-room .p2char>*{opacity:0} /* v2: official sitting cut-out in the room */
 body.v2home{scroll-padding-top:72px}html:has(body.v2home){scroll-padding-top:72px}
+.v2bg video{width:100%;height:100%;object-fit:cover;display:block}
+.catrow{display:flex;align-items:center;gap:8px;justify-content:space-between}.catrow #cat-line{flex:1;min-width:0}
+.catfeed{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:3px;border:0;border-radius:999px;background:#FBE9ED;color:#B04A5E;font:inherit;font-weight:700;cursor:pointer;padding:0 10px;flex:none}
+.catfeed:focus-visible{outline:3px solid #B04A5E;outline-offset:2px}
+.catrow[data-hungry] .catfeed{animation:catnudge 2.4s ease-in-out infinite}
+@keyframes catnudge{0%,80%,100%{transform:none}86%{transform:rotate(-8deg)}92%{transform:rotate(8deg)}}
+.v2bg img,.v2bg video{transition:filter .6s,transform .6s}
+.v2bg.cat-lively img{animation:catlive 6s ease-in-out infinite}.v2bg.cat-napping img{filter:saturate(.85) brightness(.97)}.v2bg.cat-eating img{animation:cateat .6s ease-in-out 3}
+@keyframes catlive{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}@keyframes cateat{50%{transform:scale(1.02)}}
+@media (prefers-reduced-motion:reduce){.catrow[data-hungry] .catfeed,.v2bg img{animation:none!important}}
+.cateat{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(280px,72vw);aspect-ratio:1;border-radius:28px;overflow:hidden;box-shadow:0 18px 50px rgba(60,30,40,.35);z-index:60;background:#F7F2EF;border:4px solid #fff}
+.cateat video,.cateat img{width:100%;height:100%;object-fit:cover;display:block}.cateatx{position:absolute;top:6px;right:6px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#B04A5E;font-size:24px;cursor:pointer}
+.v2bg.cat-lively video{animation:catlive 6s ease-in-out infinite;filter:saturate(1.08)}.v2bg.cat-napping video{filter:saturate(.8) brightness(.95)}
+@media (prefers-reduced-motion:reduce){.v2bg video{animation:none!important}}
 </style>
 </head>
 <body>
@@ -633,14 +647,85 @@ function v2Card() { /* ONE glass card: name greeting, one bold line with a berry
   if (tb) { const v = svcOf(tb.store, tb.svc), tm = fWhen(tb.d, tb.m).split(" · ").pop(); k = "class"; act = "managebk"; id = tb.id; cta = L3("See booking", "Xem lịch", "예약 보기");
     line = L3(`Today <em>${esc(tm)}</em> ${esc(N(v.n))}`, `Hôm nay <em>${esc(tm)}</em> ${esc(N(v.n))}`, `오늘 <em>${esc(tm)}</em> ${esc(N(v.n))}`); }
   else { k = "missions"; act = "hbsheet"; cta = L3("Today's missions", "Nhiệm vụ hôm nay", "오늘의 미션"); line = L3(`Today's missions <em>${n}/3</em>`, `Nhiệm vụ hôm nay <em>${n}/3</em>`, `오늘의 미션 <em>${n}/3</em>`); }
-  const sec = st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) : "";
-  return `<div class="hbub v2card" id="hb-bubble" data-k="${k}" role="status"><p class="hbhi">${esc(hi)}</p><div class="v2row"><p class="hbt" id="hb-line">${line}</p><button class="hbgo" data-act="${act}"${id ? ` data-id="${esc(id)}"` : ""} data-from="bubble" aria-label="${esc(cta)}">${ic("chev", "s")}</button></div>${sec ? `<p class="hbsec" id="hb-sec">${esc(sec)}</p>` : ""}</div>`;
+  const [sec, fb] = catRow(), mo = catMood();
+  return `<div class="hbub v2card" id="hb-bubble" data-k="${k}" role="status"><p class="hbhi">${esc(hi)}</p><div class="v2row"><p class="hbt" id="hb-line">${line}</p><button class="hbgo" data-act="${act}"${id ? ` data-id="${esc(id)}"` : ""} data-from="bubble" aria-label="${esc(cta)}">${ic("chev", "s")}</button></div>${sec ? `<div class="hbsec catrow" id="hb-sec" data-mood="${mo}"${catHungry() ? ' data-hungry="1"' : ""}><span id="cat-line">${esc(sec)}</span>${fb}</div>` : ""}</div>`;
 }
 /* v2 Home image slot: SWAP HERE. The tall official Cici image from the 3D Designer replaces assets/cici-real/cici-home.webp; set its size and face box (image px). */
-const CICI_HOME = { src: "assets/cici-real/cici-home.webp", w: 1080, h: 1920, face: [354, 540, 720, 975], pos: [0.5, 0.35] }; /* official tall image (3D Designer); head box in image px; object-position */
+const CICI_HOME = { src: "assets/cici-real/cici-cat-poster.jpg", w: 720, h: 1280, face: [235, 352, 485, 723], pos: [0.5, 0.35] }; /* official tall image (3D Designer); head box in image px; object-position */
 function v2Hero() {
-  return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg" id="cici-real"><img src="${CICI_HOME.src}" width="${CICI_HOME.w}" height="${CICI_HOME.h}" style="object-position:${CICI_HOME.pos[0] * 100}% ${CICI_HOME.pos[1] * 100}%" alt="${esc(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}"></figure></section>`;
+  return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg cat-${catMood()}" id="cici-real" data-mood="${catMood()}">${catMedia(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}</figure></section>`;
 }
+/* ===== Cici's cat Dubu (두부), phase2 v2 only (P2-C). No points: treats never touch the ledger, points or mission caps. ===== */
+/* VIDEO SLOT: drop official 3D Designer loops in assets/cici-real/ as cici-cat-<mood>.webm/.mp4 (+ cici-cat-poster.webp) and list the moods here.
+   Rules: muted, playsinline, loop, <=2.5 MB, 6-8 s. Until files exist the still CICI_HOME image is shown with CSS mood cues. Never generate Cici. */
+const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real/cici-cat-poster.jpg", clips: { calm: "petting", lively: "petting", napping: "petting" }, eat: "assets/cici-real/dubu-eating" }; /* official 3D Designer loops (720x1280, 6.5 s, no audio). Lively/napping loops don't exist yet: they reuse "petting" with CSS mood cues; SWAP by pointing a mood at its own clip name (cici-cat-<name>.webm/.mp4). */
+const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
+const DUBU = () => L3("Dubu", "Dubu", "두부");
+function catDay() { const dk = ME ? dayKey(ME, PV.now()) : "d"; const c = P2S.cat = P2S.cat || {}; c.treats = c.treats || 0; if (c.day !== dk) { c.day = dk; c.earned = 0; c.fed = 0; c.log = []; } /* DB-H3: daily reset of earned/fed; held treats carry over (DB-T4 cap 3) */ return c; }
+function catSave() { if (p2Loaded) p2Save(); }
+function catCrisisMark() { if (typeof P2 !== "function" || !P2()) return; (P2S.cat = P2S.cat || {}).crisisAt = PV.now(); catSave(); }
+const catCrisis = () => gated() || !!(P2S.cat && P2S.cat.crisisAt && PV.now() - P2S.cat.crisisAt < CAT_CRISIS_MS);
+function catEarn(src) { /* 1 treat per qualifying action (completed mission / store-confirmed visit), max 3 a day; never a ledger row */
+  if (typeof P2 !== "function" || !P2() || !ME) return false; const c = catDay(); if (c.earned >= CAT_MAX || c.treats >= CAT_MAX) return false; /* DB-T1 3 earned/day, DB-T4 3 held */ c.earned++; c.treats++; (c.log = c.log || []).push(src); catSave(); return true; }
+const catHour = () => { const c = P2S.cat || {}; return c.demoHour != null ? c.demoHour : Math.floor((nowMin() % 1440 + 1440) % 1440 / 60); };
+const catCared = () => !!(ME && ME.days && ME.days[dayKey(ME, PV.now())]) || catDay().fed > 0 || DM_KEYS.some(k => dmDay().done[k]);
+const catRest = () => !!ME && (isPaused(ME) || ST.miss.rest || !ME.streak); /* OQ-D2 TBD default: no hunger on rest/paused days */
+const catHungry = () => !catCrisis() && catHour() >= CAT_HUNGRY_H && !catCared() && !catRest();
+function catMood() { /* calm by default; lively on an active streak day; napping on rest/paused days; crisis -> calm/cuddle only */
+  if (catCrisis()) return "calm"; if (ST.catEat) return "eating"; const m = ME; if (!m) return "calm";
+  if (isPaused(m) || ST.miss.rest || !m.streak) return "napping"; /* DB-M2; OQ-D4 TBD default: broken streak -> napping */
+  return "lively"; } /* DB-M1: active streak */
+function catRow() { /* the card's ONE secondary row; returns [text, feedButton] */
+  const c = catDay(), d = DUBU(), cr = catCrisis();
+  if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
+  const fb = c.treats > 0 ? `<button class="catfeed" id="cat-feed" data-act="catfeed" aria-label="${esc(L3(`Give ${d} a treat (${c.treats} left)`, `Cho ${d} ăn vặt (còn ${c.treats})`, `${d}에게 간식 주기 (${c.treats}개 남음)`))}"><span aria-hidden="true">🐟</span><b>${c.treats}</b></button>` : "";
+  if (catHungry()) return [L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`), fb];
+  if (c.treats > 0) return [L3(`${d} has ${c.treats} treat${c.treats > 1 ? "s" : ""} waiting`, `${d} có ${c.treats} món ăn vặt`, `${d} 간식 ${c.treats}개`), fb];
+  const st = ME ? ME.streak : 0, mo = catMood(), mt = { lively: L3(`${d} is playful`, `${d} đang vui`, `${d} 신났어요`), napping: L3(`${d} is napping`, `${d} đang ngủ`, `${d} 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
+  return [(st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
+}
+function catMotionOk() { try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return false; const cn = navigator.connection; if (cn && cn.saveData) return false; } catch (e) {} return true; }
+function catMedia(alt) { /* video when an official loop exists for the mood (else the calm loop), else the still */
+  const mo = catMood(), mv = CICI_CAT.clips[mo] || CICI_CAT.clips.calm, pos = `object-position:${CICI_HOME.pos[0] * 100}% ${CICI_HOME.pos[1] * 100}%`;
+  if (mv && catMotionOk()) return `<video id="cat-video" muted playsinline loop autoplay preload="auto" disableremoteplayback poster="${CICI_CAT.poster || CICI_HOME.src}" style="${pos}" aria-label="${esc(alt)}" data-mood="${mv}"><source src="${CICI_CAT.base}${mv}.webm" type="video/webm"><source src="${CICI_CAT.base}${mv}.mp4" type="video/mp4"></video>`;
+  return `<img src="${CICI_HOME.src}" width="${CICI_HOME.w}" height="${CICI_HOME.h}" style="${pos}" alt="${esc(alt)}">`;
+}
+let catIO = null;
+function catWire() { /* pause off-screen or when the tab is hidden */
+  const v = document.getElementById("cat-video"); if (catIO) { catIO.disconnect(); catIO = null; } if (!v) return;
+  v.muted = true; let vis = true; const sync = () => { if (vis && !document.hidden) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); };
+  if ("IntersectionObserver" in window) { catIO = new IntersectionObserver(es => { vis = es[0].isIntersecting && es[0].intersectionRatio > 0.15; sync(); }, { threshold: [0, 0.15, 0.5] }); catIO.observe(v); }
+  v.addEventListener("error", () => { const f = v.closest("figure"); if (f) f.innerHTML = `<img src="${CICI_HOME.src}" width="${CICI_HOME.w}" height="${CICI_HOME.h}" alt="${esc(v.getAttribute("aria-label") || "")}">`; }, true); sync();
+}
+document.addEventListener("visibilitychange", () => { const v = document.getElementById("cat-video"); if (!v) return; if (document.hidden) v.pause(); else if (v.getBoundingClientRect().bottom > 0) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } });
+function catEatShow() { /* DB-T5: official 4 s eating clip in a small overlay, then back to the loop; still poster under reduced motion / Save-Data */
+  const old = document.getElementById("cat-eat"); if (old) old.remove(); const mv = catMotionOk(), o = document.createElement("div"); o.id = "cat-eat"; o.className = "cateat"; o.setAttribute("role", "status");
+  const alt = L3(`${DUBU()} happily eating a treat`, `${DUBU()} đang vui vẻ ăn vặt`, `간식을 맛있게 먹는 ${DUBU()}`);
+  o.innerHTML = (mv ? `<video id="cat-eat-v" muted playsinline autoplay preload="auto" disableremoteplayback poster="${CICI_CAT.eat}-poster.jpg" aria-label="${esc(alt)}"><source src="${CICI_CAT.eat}.webm" type="video/webm"><source src="${CICI_CAT.eat}.mp4" type="video/mp4"></video>` : `<img src="${CICI_CAT.eat}-poster.jpg" alt="${esc(alt)}">`) + `<button class="cateatx" aria-label="${esc(L3("Close", "Đóng", "닫기"))}">×</button>`;
+  document.body.appendChild(o); const end = () => { clearTimeout(catEatShow.t); o.remove(); ST.catEat = false; if (V2HOME()) render(); };
+  const v = o.querySelector("video"); if (v) { v.muted = true; v.addEventListener("ended", end); const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+  o.querySelector(".cateatx").addEventListener("click", end); clearTimeout(catEatShow.t); catEatShow.t = setTimeout(end, mv ? 4600 : 2200); }
+function catFeed() { if (catCrisis()) return; const c = catDay(); if (c.treats <= 0) return; c.treats--; c.fed++; catSave(); ST.catEat = true; render(); catEatShow();
+  toast(L3(`${DUBU()} loved it! Purr…`, `${DUBU()} thích lắm! Rừ rừ…`, `${DUBU()}가 맛있게 먹었어요! 골골…`));
+}
+function catCard() { if (catCrisis()) return ""; const c = catDay(), d = DUBU(), h = catHungry(), off = c.treats <= 0;
+  const hint = L3("Complete a mission or visit a studio to earn a treat", "Hoàn thành nhiệm vụ hoặc ghé studio để nhận ăn vặt", "미션을 완료하거나 스튜디오에 방문하면 간식을 받아요");
+  return `<section class="card catcard" id="cat-card" data-mood="${catMood()}"${h ? ' data-hungry="1"' : ""}><div class="row" style="gap:10px"><div class="grow"><b>${esc(L3(`${d}, Cici's cat`, `${d}, mèo của Cici`, `${CICI_KO}의 고양이 ${d}`))}</b>
+  <div class="sm sub" id="cat-st">${esc(h ? L3(`${d} would love a snack`, `${d} muốn ăn vặt một chút`, `${d}가 간식을 기다려요`) : L3(`Treats ${c.treats}/${CAT_MAX}`, `Ăn vặt ${c.treats}/${CAT_MAX}`, `간식 ${c.treats}/${CAT_MAX}`))}</div></div>
+  <button class="btn sec" id="cat-feedbtn" data-act="catfeed"${off ? ' disabled aria-describedby="cat-hint"' : ""}>${esc(L3(`Feed (${c.treats})`, `Cho ăn (${c.treats})`, `간식 주기 (${c.treats})`))}</button></div>${off ? `<p class="sm sub" id="cat-hint">${esc(hint)}</p>` : ""}</section>`; }
+function catDemo() { if (!gDemoOn()) return ""; const c = catDay(), cr = catCrisis(), b = (a, v, l, on) => `<button class="chip${on ? " on" : ""}" data-act="${a}"${v != null ? ` data-v="${v}"` : ""}${on != null ? ` aria-pressed="${!!on}"` : ""}>${esc(l)}</button>`;
+  return `<details class="card gdemo" id="cat-demo"><summary>${esc(L3("Demo controls (Dubu)", "Điều khiển demo (Dubu)", "데모 컨트롤 (두부)"))}</summary>
+  <p class="sm sub" id="cat-demo-st">${esc(L3(`Hour ${catHour()}:00 · treats ${c.treats} · earned ${c.earned}/${CAT_MAX} · crisis ${cr ? "on" : "off"}`, `Giờ ${catHour()}:00 · ăn vặt ${c.treats} · nhận ${c.earned}/${CAT_MAX} · khủng hoảng ${cr ? "bật" : "tắt"}`, `${catHour()}시 · 간식 ${c.treats} · 획득 ${c.earned}/${CAT_MAX} · 위기 ${cr ? "켜짐" : "꺼짐"}`))}</p>
+  <div class="chips">${b("cattime", 9, "09:00", c.demoHour === 9)}${b("cattime", 18, "18:30", c.demoHour === 18)}${b("cattime", "", L3("Real time", "Giờ thật", "실제 시간"), c.demoHour == null)}${b("cattreat", null, L3("+1 treat", "+1 ăn vặt", "간식 +1"))}${b("catreset", null, L3("Reset day", "Đặt lại ngày", "하루 초기화"))}${b("catcrisis", null, L3("Crisis turn (24h)", "Lượt khủng hoảng (24h)", "위기 대화 (24시간)"), cr)}${b("catcrisisoff", null, L3("Clear crisis", "Xóa khủng hoảng", "위기 해제"))}</div></details>`; }
+function catAct(a, v) { const c = catDay();
+  if (a === "catfeed") return catFeed();
+  if (!gDemoOn()) return;
+  if (a === "cattime") c.demoHour = v === "" || v == null ? null : +v;
+  if (a === "cattreat") catEarn("demo");
+  if (a === "catreset") { c.earned = 0; c.treats = 0; c.fed = 0; c.log = []; }
+  if (a === "catcrisis") c.crisisAt = PV.now();
+  if (a === "catcrisisoff") c.crisisAt = 0;
+  catSave(); render(); }
 function v2Scroll() { document.body.classList.toggle("v2scr", document.body.classList.contains("v2home") && scrollY > innerHeight * .45); }
 addEventListener("scroll", () => v2Scroll(), { passive: true });
 function gAfterHome() { const g = gState(); if ((P2S.gSeen || 0) < g.stage) { P2S.gSeen = g.stage; p2Save(); try { celebrate(false); } catch (e) {} } } /* one-time stage-up moment (P2-G1/G2: never re-awarded) */
@@ -1889,17 +1974,17 @@ const SOS_BTN = () => L3("Get help now", "Trợ giúp ngay", "지금 도움 받�
 /* AC7: crisis escalations are logged with time, member, store and category only, never the message text. The log isn't shown anywhere in the member app (staff-only in production), and no staff alert is sent (CRISIS_STAFF_ALERT = false). */
 const SAFETY_LOG = [];
 function logEscalation(cat, text) { SAFETY_LOG.push({ ts: new Date().toISOString(), member: "mina", store: ST.store || null, cat: cat + (OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? "/overdose" : "") }); }
-function crisisReply(c, text) { logEscalation("crisis", text); TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "crisis", ts: Date.now() }); c.gate = true; c.care = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null; return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 }); }
-function urgentReply(c) { TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "urgent", ts: Date.now() }); c.gate = true; return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } }); }
+function crisisReply(c, text) { logEscalation("crisis", text); TURN_SAFE = true; catCrisisMark(); EVT.push({ e: "safety_turn", type: "crisis", ts: Date.now() }); c.gate = true; c.care = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null; return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 }); }
+function urgentReply(c) { TURN_SAFE = true; catCrisisMark(); EVT.push({ e: "safety_turn", type: "urgent", ts: Date.now() }); c.gate = true; return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } }); }
 /* the permanent "Hurt or in danger? Get help now" chip: a two-way choice, never a guess */
-function sosOpen(cid) { const c = CH[cid]; c.gate = true; c.draft = null; c.ask = null; c.queue = null; c.pend = null;
+function sosOpen(cid) { const c = CH[cid]; c.gate = true; catCrisisMark(); c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   say(c, L3("I'm here. Which is closest?", "Mình ở đây. Điều nào đúng nhất?", "제가 여기 있어요. 어느 쪽인가요?"), { care: 1, nosos: 1, chips: [chip(L3("Someone is hurt or unwell", "Có người bị thương hoặc không khỏe", "누군가 다쳤거나 아파요"), { act: "sosu" }), chip(L3("I'm not okay", "Mình không ổn", "제가 괜찮지 않아요"), { act: "sosx" })] });
   render(); scrollThread(cid); }
 function fallbackReply(c) {
   return say(c, L3("Sorry, I didn't quite get that. What would you like to do?", "Xin lỗi, mình chưa hiểu lắm. Bạn muốn làm gì?", "잘 이해하지 못했어요. 무엇을 도와드릴까요?"), { fb: 1, chips: [chip(L3("Book something", "Đặt lịch", "예약하기"), { act: "fbbook" }), chip(L3("Ask about the studio", "Hỏi về cửa hàng", "매장에 대해 묻기"), { act: "fbask" }), chip(L3("Someone is hurt / I need help", "Có người bị thương / Tôi cần giúp", "누가 다쳤어요 / 도움이 필요해요"), { act: "sos" })] });
 }
 function riskCheckIn(c, text) {
-  logEscalation("crisis-checkin", text); TURN_SAFE = true; EVT.push({ e: "safety_turn", type: "checkin", ts: Date.now() }); c.gate = true;
+  logEscalation("crisis-checkin", text); TURN_SAFE = true; catCrisisMark(); EVT.push({ e: "safety_turn", type: "checkin", ts: Date.now() }); c.gate = true;
   c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   return say(c, (CRISIS_COPY[L] || CRISIS_COPY.en) + " " + L3("Are you okay right now?", "Lúc này bạn có ổn không?", "지금 괜찮으세요?"), { care: 1, nosos: 1, checkin: 1,
     chips: [chip(L3("I'm not okay", "Mình không ổn", "괜찮지 않아요"), { act: "riskx", q: text }), chip(L3("I'm fine, I meant something else", "Mình ổn, ý mình là chuyện khác", "괜찮아요, 다른 뜻이었어요"), { act: "riskok", q: text })] });
@@ -2286,7 +2371,7 @@ function vHome() {
   if (V2HOME()) { track("home_open"); const up = upcoming(); /* v2: full-screen Cici + one glass card; everything else in a light sheet below the first screen */
     return v2Hero() + `<section class="v2sheet" id="home-sheet" aria-label="${esc(L3("Today", "Hôm nay", "오늘"))}"><span class="v2handle" aria-hidden="true"></span>` + gHero() + notesCard() +
       `<h2>${t("missions")}</h2>${dmCard()}<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>` +
-      `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + `</section>`; }
+      `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + catCard() + catDemo() + `</section>`; }
   const up = upcoming(); track("home_open");
   return (P2() && !gated() ? gHero() : heroScene()) + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${P2() && !gated() ? dmCard() : missionsCard()}` +
@@ -2448,7 +2533,7 @@ function maybeUnlock() {
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
-function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); { const on = V2HOME(); document.body.classList.toggle("v2home", on); if (on) { const t0 = $("#top .brand span.t"); if (t0) { try { t0.textContent = new Intl.DateTimeFormat(L === "ko" ? "ko-KR" : L === "vi" ? "vi-VN" : "en-US", { month: "long", day: "numeric", weekday: "long", timeZone: MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon" }).format(new Date()); } catch (e) {} } } v2Scroll(); } saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); if (P2() && ST.tab === "home" && !ST.page && !ST.store && !gated() && typeof gAfterHome === "function") setTimeout(gAfterHome, 0); }
+function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); { const on = V2HOME(); document.body.classList.toggle("v2home", on); if (on) { const t0 = $("#top .brand span.t"); if (t0) { try { t0.textContent = new Intl.DateTimeFormat(L === "ko" ? "ko-KR" : L === "vi" ? "vi-VN" : "en-US", { month: "long", day: "numeric", weekday: "long", timeZone: MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon" }).format(new Date()); } catch (e) {} } } v2Scroll(); catWire(); } saveThread(); hydrateCuts();  setTimeout(maybeUnlock, 0); if (P2() && ST.tab === "home" && !ST.page && !ST.store && !gated() && typeof gAfterHome === "function") setTimeout(gAfterHome, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
 Object.assign(S, {
   barber: { name: "Kiwi Barber", area: "Quận 1 (District 1)", cat: "hair", kind: "appt", color: "#5A5F6B", logo: "KB", joined: false, visits: 0,
@@ -3044,6 +3129,7 @@ document.addEventListener("click", e => {
     case "attend": attend(bk(d.id)); break;
     case "stretch": stretchSheet(); break;
     case "dmwater": { if (!P2() || gated()) break; const r = pvMission(ME, "water"), dm = dmMark("water"); render(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm)); break; }
+    case "catfeed": case "cattime": case "cattreat": case "catreset": case "catcrisis": case "catcrisisoff": catAct(a, d.v); break;
     case "hbsheet": { const el = $("#home-sheet"); if (el) { el.scrollIntoView({ block: "start", behavior: "smooth" }); const m = $("#home-dm"); if (m) m.focus({ preventScroll: true }); } break; }
     case "hbmis": { const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }
     case "stretchdone": finishStretch(); break;
@@ -3250,7 +3336,7 @@ function confirmVisit(m, bid, actor, now, store) {
   const s = bk.store, dk = dayKey(m, now), dv = m.dayVisits[dk] = m.dayVisits[dk] || [];
   m.att[bid] = { store: s, t: now, actor, rows: [], week: weekKey(m, now) }; bk.status = "attended";
   if (dv.includes(s) || dv.length >= 2) { row(m, { store: s, src: bid, reason: "daily_cap", actor }, now); m.att[bid].capped = true; return { ok: true, pts: 0, reason: "daily_cap" }; }
-  dv.push(s); m.weekVisits[m.att[bid].week] = (m.weekVisits[m.att[bid].week] || 0) + 1; m.lastVisit = now;
+  if (m === ME) catEarn("visit"); dv.push(s); m.weekVisits[m.att[bid].week] = (m.weekVisits[m.att[bid].week] || 0) + 1; m.lastVisit = now;
   { const sd = dayKey(m, bk.start); if (sd === dk) { m.att[bid].day = dk; m.att[bid].hit = streakHit(m, now, "v"); } else { const had = !!m.days[sd]; m.days[sd] = "v"; m.att[bid].day = sd; m.att[bid].hit = !had; streakRecalc(m, now); } } /* P2-S2: a late confirmation counts for the class start date (home tz), then the streak is recomputed */
   const base = Math.floor(50 * mult(m)), out = { ok: true, pts: base, bonus: 0 };
   m.att[bid].rows.push(row(m, { store: s, src: bid, delta: base, life: base, reason: "visit", actor, x: mult(m) }, now).id);
@@ -3264,7 +3350,7 @@ const pendingFor = (m, now) => Object.entries(BKREG).filter(([id, b]) => b.membe
 /* missions (E3): 10 each, 2/day, 60/week, never multiplied; a completed self-care mission now counts the day for the streak (days rule) */
 function pvMission(m, kind, now) {
   now = now == null ? PV.now() : now; pvTick(m, now);
-  const dk = dayKey(m, now), wk = weekKey(m, now); streakHit(m, now, "m"); /* the completed mission counts the day even when its points are capped */
+  const dk = dayKey(m, now), wk = weekKey(m, now); streakHit(m, now, "m"); if (m === ME) catEarn("mission"); /* the completed mission counts the day even when its points are capped */
   if ((m.misDay[dk] || 0) >= 2) { row(m, { reason: "mission_cap", src: kind }, now); return { pts: 0, msg: "missionCap" }; }
   if ((m.misWeek[wk] || 0) >= 60) { row(m, { reason: "mission_week_cap", src: kind }, now); return { pts: 0, msg: "missionWeekCap" }; }
   m.misDay[dk] = (m.misDay[dk] || 0) + 1; m.misWeek[wk] = (m.misWeek[wk] || 0) + 10;
