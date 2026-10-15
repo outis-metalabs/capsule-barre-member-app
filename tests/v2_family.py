@@ -36,5 +36,20 @@ with sync_playwright() as p:
   for L in ('ko', 'en'):
     g = page(lang=L); J(g, "()=>{CH.cici.gate=true;CH.cici.msgs.push({who:'cici',text:'x',care:true});ST.tab='home';render()}")
     ok(f'[{L}] crisis: no centre Book nudge, no bubble, no mission card', J(g, "!document.querySelector('.tfab,#hb-bubble,#home-dm')")); g.close()
+  # nothing tappable under the floating bar / centre button at the end of a scroll (all tabs, KO/EN/VI, 390 + 360)
+  UNDER = r"""(()=>{const bar=document.querySelector('#tabs').getBoundingClientRect(),f=document.querySelector('#tabs .tfab');const fr=f?f.getBoundingClientRect():null;const top=Math.min(bar.top,fr?fr.top:1e9);
+   const hit=r=>r.bottom>top+1&&r.top<bar.bottom&&r.width>0&&r.height>0;
+   return [...document.querySelectorAll('#view button,#view a[href],#view input,#view textarea,#view select,#view [data-act],#view [tabindex]:not([tabindex="-1"])')].filter(e=>e.offsetParent&&!e.closest('#tabs,.sheet,.toast')).map(e=>[e,e.getBoundingClientRect()]).filter(([e,r])=>hit(r)).map(([e,r])=>(e.dataset.act||e.tagName)+':'+(e.innerText||e.getAttribute('aria-label')||'').trim().slice(0,20)+'@'+Math.round(r.top))})()"""
+  for w in (390, 360):
+    for L in ('ko', 'en', 'vi'):
+      g = page(lang=L, w=w)
+      for tab in ['home', 'discover', 'cici', 'you']:
+        J(g, f"()=>{{ST.tab='{tab}';ST.page=null;ST.store=null;render()}}"); g.wait_for_timeout(150)
+        J(g, "scrollTo(0,document.documentElement.scrollHeight)"); g.wait_for_timeout(250)
+        bad = J(g, UNDER)
+        ok(f'[{w}/{L}] {tab}: end of scroll, nothing tappable under the bar/centre button', not bad, bad)
+        if w == 390 and L != 'vi' and tab == 'home': g.screenshot(path=f'{SH}/home-end-{L}-390.png')
+      ok(f'[{w}/{L}] v2 Home has no duplicate full-width Book CTA (centre button books)', J(g, "(()=>{ST.tab='home';render();return !document.querySelector('#g-book')})()"))
+      g.close()
   g = page(''); ok('flag off: tab bar still works (4 tabs + centre Book)', J(g, "document.querySelectorAll('#tabs [data-act=tab]').length") == 4); g.close()
   print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)

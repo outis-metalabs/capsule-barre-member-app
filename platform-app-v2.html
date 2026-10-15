@@ -321,7 +321,6 @@ h1{font-weight:800;letter-spacing:-.03em}h2{font-weight:800;font-size:16.5px;let
 .btn{font-weight:800;box-shadow:none}.btn.sec{border-width:2px;border-color:var(--rasp);color:#963A4D}
 .chip{border:0;background:#fff;box-shadow:0 1px 4px rgba(120,60,50,.06);font-weight:700}
 .chip[aria-pressed=true]{background:#2B2324;color:#fff;border:0}.chip[aria-pressed=true] .sub{color:#EDE3E5}
-main{padding-bottom:112px}
 nav.tabs{left:12px;right:12px;bottom:max(14px,env(safe-area-inset-bottom));transform:none;width:auto;max-width:406px;margin:0 auto;height:72px;padding:0 4px;border-radius:30px;border:1px solid rgba(255,255,255,.6);align-items:center;
   background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);box-shadow:0 10px 30px rgba(60,30,30,.12)}
 nav.tabs button{min-height:56px;font-size:11px;font-weight:700;color:#6B5E62}
@@ -340,6 +339,10 @@ nav.tabs .tfab .ico{width:26px;height:26px}
 .dmc .mis .btn.sec{background:#fff;color:#963A4D;border-color:#fff}
 .dmc .tag{background:rgba(60,10,25,.18);color:#fff}.dmc .sub{color:#fff}
 .dmc .dmcici{width:72px;height:72px;background:rgba(255,255,255,.2)}
+main{padding-bottom:calc(140px + env(safe-area-inset-bottom))} /* last content scrolls clear of the floating bar (72px + 14px) and the raised centre button (+26px) */
+#view.cici-v{min-height:calc(100dvh - 64px - env(safe-area-inset-bottom));padding-bottom:calc(122px + env(safe-area-inset-bottom));box-sizing:border-box}#view.cici-v .dock{bottom:calc(122px + env(safe-area-inset-bottom))}
+.toast{bottom:calc(124px + env(safe-area-inset-bottom))}body:has(#view.cici-v) .toast{bottom:calc(250px + env(safe-area-inset-bottom))}
+html{scroll-padding-bottom:calc(150px + env(safe-area-inset-bottom))}html:has(#view.cici-v){scroll-padding-bottom:calc(270px + env(safe-area-inset-bottom))} /* focus/scrollIntoView keeps targets clear of the floating bar (and the Cici dock) */
 </style>
 </head>
 <body>
@@ -557,7 +560,7 @@ function gHero() { /* Home in phase2 (P2-G7): Cici large (stage art + mood pose)
   <p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="sub sm" id="g-mood">${esc(gT("line_" + g.mood))}</span></p>
   ${(() => { const wn = wearNm(); return wn ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${p2Acc()}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""; })()}
   <div class="gbars" id="g-bars">${bars}</div><p class="sm ghint" id="g-hint"${!gated() && hbPick(g).k === "hint" ? " hidden" : ""}>${esc(gHint(g))}</p>
-  <button class="btn full" data-act="bk" data-from="growth" id="g-book">${esc(gT("book"))}</button>${gDemo()}</section>`;
+  ${gDemo()}</section>`; /* v2: no full-width Book CTA here; the raised centre button in the tab bar books */
 }
 /* ===== Home bubble + daily missions (phase2 only; crisis: neither renders, P2-X3/X4) ===== */
 const HB_NM = () => L3("Mina", "Mina", "미나"); /* same member name as the You profile */
