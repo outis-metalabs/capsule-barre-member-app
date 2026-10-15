@@ -39,12 +39,12 @@ with sync_playwright() as p:
   def run(i):
     pg.evaluate("()=>{setTab('you');ST.page='wallet';render()}"); pg.evaluate(f"()=>document.querySelectorAll('.wrow')[{i}].click()"); pg.wait_for_timeout(100)
     pg.evaluate("()=>document.querySelector('.sheet .btn:not(.ghost)').click()"); pg.wait_for_timeout(200)
-    return pg.evaluate("()=>({tab:ST.tab,store:ST.store,page:ST.page,scope:CH.cici.scope,sheet:!!document.querySelector('.sheet'),last:(document.querySelector('#view').innerText||'').slice(-200)})")
+    return pg.evaluate("()=>({tab:ST.tab,store:ST.store,page:ST.page,scope:CH.cici.scope,sheet:!!document.querySelector('.sheet'),bks:(document.querySelector('.sheet .slot,.sheet #bk-svcs')&&BS?BS.store:null)||(document.querySelector('.sheet #bk-svcs [data-s]')||{dataset:{}}).dataset.s||null,last:(document.querySelector('#view').innerText||'').slice(-200)})")
   res = [run(i) for i in range(len(acts))]
   for a, r in zip(acts, res):
     if a.startswith('Store credit'): ok('credit → Use at {store} opens the store page', r['store'] == 'pickle', r)
     elif a.startswith('Deposit'): ok('deposit → View booking opens My bookings', r['page'] == 'bookings', r)
-    else: ok(f'{a.split(",")[0]} → Book with this starts booking at that store', r['tab'] == 'cici' and r['scope'] in ('capsule', 'spa'), r)
+    else: ok(f'{a.split(",")[0]} → Book with this opens the booking sheet at that store (no chat jump)', r['tab'] != 'cici' and r['sheet'] and r['bks'] in ('capsule', 'spa'), r)
   pg.evaluate("()=>{setTab('you');ST.page='wallet';render();document.querySelector('[data-act=walletdep]').click()}"); pg.wait_for_timeout(100)
   ok('deposit sheet shows the refund rule', 'Refund rule' in pg.evaluate("()=>document.querySelector('.sheet').innerText"))
   pg.evaluate("()=>closeSheet()"); pg.keyboard.press('Tab')
