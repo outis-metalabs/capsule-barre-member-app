@@ -25,7 +25,7 @@ with sync_playwright() as p:
   ok('hero video lazy-hydrates and plays the alpha WebM', st and st['on'] == '1' and st['src'].endswith('wave.webm') and st['rs'] >= 2, st)
   ok('no multiply/mask stopgap on any cut-out', all(x['blend'] == 'normal' and x['mask'] in ('none', None, '') for x in c), c)
   ok('fallback still inside every video', J(pg, "()=>[...document.querySelectorAll('video.cut')].every(v=>v.querySelector('img.cut[src$=\".webp\"]'))"))
-  ok('hero has KO alt label', '씨씨' in (J(pg, "()=>document.querySelector('#home-cici video.cut-wave, #home-cici img.cut-wave, video.cut-wave').getAttribute('aria-label')") or ''))
+  ok('hero has KO alt label', 'Cici' in (J(pg, "()=>document.querySelector('#home-cici video.cut-wave, #home-cici img.cut-wave, video.cut-wave').getAttribute('aria-label')") or ''))
   # transparency: the cut-out has no box (corner pixel shows the scene gradient)
   bx = J(pg, "()=>{const el=document.querySelector('.chome .cpic')||document.querySelector('.scene .pic'); if(!el) return [0,0]; const r=el.getBoundingClientRect(); return [r.x+4,r.y+4]}")
   pg.screenshot(path=f'{SH}/home-390-ko.png')

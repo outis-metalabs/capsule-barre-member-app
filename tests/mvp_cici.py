@@ -24,7 +24,7 @@ with sync_playwright() as p:
       bad = [w for w in ['Nari', '나리'] if w in txt]
       ok(f'MVP-R1 no Nari [{lang}] {go[:24]}', not bad, bad)
     # CICI_KO is the one KO constant
-    ok(f'MVP-R1 CICI_KO [{lang}]', pg.evaluate("()=>CICI_KO==='씨씨' && ciciNm()===(L==='ko'?'씨씨':'Cici')"))
+    ok(f'MVP-R1 CICI_KO [{lang}]', pg.evaluate("()=>CICI_KO==='Cici' && ciciNm()==='Cici'"))
     pg.close()
   # ---- MVP-R2 / R3 migrations ----
   pg = page()

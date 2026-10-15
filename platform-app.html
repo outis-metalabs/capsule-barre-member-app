@@ -273,6 +273,12 @@ button:active:not([disabled]){transform:scale(.94)}
 .cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}
 .hsample{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.p2room .p2floor{display:flex;gap:12px;align-items:flex-end;background:linear-gradient(180deg,#FBF3EC 0 62%,#EAD9CB 62%);border-radius:14px;padding:10px;min-height:120px}
+.p2items{display:flex;flex-wrap:wrap;gap:6px;flex:1;align-items:flex-end}.p2it{display:inline-grid;place-items:center}
+.p2char{position:relative;display:inline-block;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff 0 35%,var(--sk) 36%);overflow:hidden;flex:none}.p2char .cut{width:100%;height:100%;object-fit:contain}
+.p2char .p2hair{position:absolute;top:4%;left:30%;width:40%;height:auto}.p2sw{display:inline-block;width:16px;height:16px;border-radius:50%;margin-right:6px;border:1px solid var(--line);vertical-align:-3px}
+.p2brand{color:#74283A;font-weight:650}.p2two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.p2fun{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}.p2funic{flex:none}.chip.p2lock{color:var(--sub);background:#F6F0EA}
+#home-cici .p2hair,#cici-hd-av .p2hair{position:absolute;top:2%;left:34%;width:32%;height:auto;pointer-events:none}
 </style>
 </head>
 <body>
@@ -322,11 +328,166 @@ const RED_FLAG_RE = /\b(faint(ed|ing|y)?|pass(ed|ing)? out|black(ed)? out|collap
 /* ===== platform prototype: sample data only, nothing is sent anywhere ===== */
 const RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 const A = "assets/mascot3d/";
-/* MVP-R1 / OQ1: the character's display name. The KO spelling (씨씨 vs 시시) is pending a native check, so it lives in ONE constant. */
-const CICI_KO = "씨씨";
+/* MVP-R1 / OQ1: the character's display name, ONE constant. User decision 2026-10-15: Latin "Cici" in KO too. Typed aliases 씨씨 / 시시 are still understood (CICI_ALIAS_RE). */
+const CICI_KO = "Cici";
+const CICI_ALIAS_RE = /^\s*(?:cici|씨씨|시시)(?:야|아|님)?\s*[,.!~]*\s*/i;
 const CICI = { en: "Cici", vi: "Cici", ko: CICI_KO };
 const ciciNm = () => CICI[L] || CICI.en;
 /* legacy (pre-rename) name, only used to recognise threads saved by older builds (NT-9); never displayed */
+/* ===== Phase 2 (PO plan + BA phase2-ba-ac.md): behind FLAGS.phase2, off by default, ?phase2=1 turns it on.
+   P2-B builder (preset IDs only) · P2-R room + fun points (own counter, no points-ledger rows, never converts) · P2-P premium demo checkout (no payment fields/calls, demo items only)
+   P2-F photo demo (consent first, mock, auto-delete, Delete/withdraw wipes derived data). ⚠ PIPA: facial images may be sensitive/biometric data; wording, retention, age rule and processing location need legal review (OQ-F1). */
+function P2() { try { return !!FLAGS.phase2; } catch (e) { return false; } } /* hoisted; false before FLAGS exists */
+const P2T = {
+  roomT: ["Cici's room", "Phòng của Cici", "{c}의 방"], funL: ["Fun points", "Điểm vui", "펀 포인트"], fun: ["{n} fun points", "{n} điểm vui", "펀 포인트 {n}"],
+  funNote: ["Fun points come with store-confirmed visits and missions. They're only for decorating Cici's room: no cash value, can't be bought, transferred, used at stores or swapped for voucher points, and they don't expire.", "Điểm vui đến cùng lượt đến được cửa hàng xác nhận và nhiệm vụ. Chỉ để trang trí phòng Cici: không có giá trị tiền mặt, không mua, chuyển, dùng tại cửa hàng hay đổi sang điểm ưu đãi, và không hết hạn.", "펀 포인트는 매장 확인 방문과 미션으로 모여요. {c}의 방 꾸미기 전용이라 현금 가치가 없고, 구매·양도·매장 사용·쿠폰 포인트 전환이 안 되며, 만료되지 않아요."],
+  decorate: ["Decorate", "Trang trí", "꾸미기"], shop: ["Item shop", "Cửa hàng vật phẩm", "아이템 샵"], empty: ["Your room is empty. Add something cosy.", "Phòng còn trống. Thêm chút gì ấm cúng nhé.", "방이 비어 있어요. 아늑한 걸 놓아 보세요."],
+  buyFun: ["Get · {n} fun points", "Lấy · {n} điểm vui", "받기 · 펀 포인트 {n}"], place: ["Place", "Đặt vào", "놓기"], remove: ["Take out", "Cất đi", "빼기"], owned: ["Owned", "Đã có", "보유"],
+  needMore: ["You need {n} more fun points", "Bạn cần thêm {n} điểm vui", "펀 포인트가 {n} 더 필요해요"],
+  demo: ["Demo", "Demo", "데모"], buyDemo: ["Buy · {p}", "Mua · {p}", "구매 · {p}"],
+  checkout: ["Demo checkout", "Thanh toán demo", "데모 결제"], payNote: ["Demo checkout. No payment is taken and nothing is charged.", "Thanh toán demo. Không thu tiền và không tính phí gì.", "데모 결제예요. 결제되지 않고 아무것도 청구되지 않아요."],
+  confirmDemo: ["Confirm demo", "Xác nhận demo", "데모 확인"], cancel: ["Cancel", "Hủy", "취소"], demoItem: ["Demo item", "Vật phẩm demo", "데모 아이템"], resetDemo: ["Reset demo items", "Đặt lại vật phẩm demo", "데모 아이템 초기화"],
+  offered: ["Offered by {b}", "Do {b} cung cấp", "{b} 제공"], limited: ["Limited", "Giới hạn", "한정"], noWin: ["Items are just for looks. They never change points, fun points, levels, streaks, bookings or vouchers.", "Vật phẩm chỉ để trang trí, không ảnh hưởng điểm, điểm vui, cấp, chuỗi, lịch đặt hay ưu đãi.", "아이템은 꾸미기용이에요. 포인트, 펀 포인트, 레벨, 연속 기록, 예약, 쿠폰에 영향이 없어요."],
+  gotIt: ["Added to your room items", "Đã thêm vào vật phẩm", "방 아이템에 추가됐어요"],
+  customise: ["Customise", "Tùy chỉnh", "꾸미기"], builder: ["Customise Cici", "Tùy chỉnh Cici", "{c} 꾸미기"], hair: ["Hair", "Tóc", "헤어"], skin: ["Skin tone", "Màu da", "피부 톤"], outfit: ["Outfit", "Trang phục", "의상"],
+  builderNote: ["Choose from presets. Only your choices are saved, never a photo or face.", "Chọn từ mẫu có sẵn. Chỉ lưu lựa chọn, không bao giờ lưu ảnh hay khuôn mặt.", "프리셋에서 골라요. 선택한 항목만 저장되고 사진이나 얼굴은 저장하지 않아요."],
+  save: ["Save", "Lưu", "저장"], saved: ["Saved", "Đã lưu", "저장됐어요"], reset: ["Reset to default", "Về mặc định", "기본으로 되돌리기"], resetDone: ["Back to the default look. Unlocked items stay unlocked.", "Đã về mặc định. Vật phẩm đã mở vẫn giữ.", "기본 모습으로 돌아왔어요. 잠금 해제한 아이템은 그대로예요."],
+  unlocksAt: ["Unlocks at Level {n}", "Mở ở cấp {n}", "레벨 {n}에서 잠금 해제"],
+  photoBtn: ["Make Cici from a photo (demo)", "Tạo Cici từ ảnh (demo)", "사진으로 {c} 만들기 (데모)"],
+  consentT: ["Make Cici from a photo", "Tạo Cici từ ảnh", "사진으로 {c} 만들기"],
+  cPurpose: ["Purpose: to generate your Cici character only.", "Mục đích: chỉ để tạo nhân vật Cici của bạn.", "목적: 나만의 {c} 캐릭터를 만드는 데만 써요."],
+  cWhat: ["What's processed: one photo of your face. In this demo it stays on your phone and is never uploaded.", "Dữ liệu xử lý: một ảnh khuôn mặt. Trong demo, ảnh ở lại trên điện thoại và không được tải lên.", "처리 항목: 얼굴 사진 1장. 이 데모에서는 휴대폰에만 있고 업로드되지 않아요."],
+  cKeep: ["How long: the photo is deleted automatically as soon as your character is made. Only the character is kept.", "Thời gian lưu: ảnh tự động bị xóa ngay khi tạo xong nhân vật. Chỉ giữ nhân vật.", "보관 기간: 캐릭터가 만들어지면 사진은 자동으로 바로 삭제돼요. 캐릭터만 남아요."],
+  cShare: ["Never used for training, analytics or ads, and never shared with stores or other members.", "Không dùng để huấn luyện, phân tích hay quảng cáo, không chia sẻ với cửa hàng hay thành viên khác.", "학습, 분석, 광고에 쓰지 않고 매장이나 다른 회원과 공유하지 않아요."],
+  cDelete: ["Delete it any time: Customise Cici → Delete my photo character.", "Xóa bất cứ lúc nào: Tùy chỉnh Cici → Xóa nhân vật từ ảnh.", "언제든 삭제: {c} 꾸미기 → 사진 캐릭터 삭제."],
+  cLegal: ["Demo wording, pending legal review (PIPA).", "Nội dung demo, đang chờ rà soát pháp lý (PIPA).", "데모 문구이며 법률 검토(개인정보보호법) 대기 중이에요."],
+  agree: ["I agree to this one-time use of my photo", "Tôi đồng ý cho dùng ảnh một lần", "사진 1회 사용에 동의해요"], noThanks: ["No thanks", "Không, cảm ơn", "괜찮아요"], cont: ["Continue", "Tiếp tục", "계속"],
+  selfOnly: ["Use only a photo of yourself.", "Chỉ dùng ảnh của chính bạn.", "본인 사진만 사용하세요."], isMe: ["This is a photo of me, not someone else", "Đây là ảnh của tôi, không phải người khác", "다른 사람이 아닌 제 사진이에요"],
+  pick: ["Choose a photo", "Chọn ảnh", "사진 선택"], gen: ["Make my Cici (demo)", "Tạo Cici (demo)", "{c} 만들기 (데모)"], needAgree: ["Tick the consent box to continue", "Hãy đánh dấu ô đồng ý để tiếp tục", "계속하려면 동의에 체크하세요"], needMe: ["Confirm it's a photo of you", "Xác nhận đây là ảnh của bạn", "본인 사진인지 확인해 주세요"], needPhoto: ["Choose a photo first", "Hãy chọn ảnh trước", "먼저 사진을 선택하세요"],
+  genDone: ["Done. Your photo was deleted. Your Cici look is ready (demo).", "Xong. Ảnh của bạn đã bị xóa. Phong cách Cici đã sẵn sàng (demo).", "완료. 사진은 삭제됐어요. {c} 모습이 준비됐어요 (데모)."],
+  mock: ["Demo: generation is simulated on this device.", "Demo: việc tạo được mô phỏng trên thiết bị.", "데모: 이 기기에서 모의로 생성해요."],
+  photoOn: ["Made from your photo (demo). The photo itself was deleted.", "Tạo từ ảnh của bạn (demo). Ảnh gốc đã bị xóa.", "사진으로 만든 모습이에요 (데모). 원본 사진은 삭제됐어요."],
+  delPhoto: ["Delete my photo character", "Xóa nhân vật từ ảnh", "사진 캐릭터 삭제"], withdraw: ["Withdraw photo consent", "Rút lại đồng ý dùng ảnh", "사진 동의 철회"],
+  delDone: ["Deleted. Your photo character and everything made from it are gone, and Cici is back to your preset look.", "Đã xóa. Nhân vật từ ảnh và mọi dữ liệu tạo ra đã bị xóa, Cici trở về phong cách mẫu.", "삭제됐어요. 사진 캐릭터와 그로부터 만든 데이터가 모두 지워졌고 {c}는 프리셋 모습으로 돌아왔어요."],
+  minor: ["Photo mode isn't available for your account. You can still customise Cici with presets.", "Chế độ ảnh không khả dụng cho tài khoản của bạn. Bạn vẫn có thể tùy chỉnh Cici bằng mẫu.", "이 계정에서는 사진 모드를 쓸 수 없어요. 프리셋으로 {c}를 꾸밀 수 있어요."]
+};
+const p2t = (k, v) => { let s = (P2T[k] || [k])[L === "vi" ? 1 : L === "ko" ? 2 : 0]; s = s.split("{c}").join(ciciNm()); if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
+const P2_HAIR = [["bob", "#6B4A3A", ["Short bob", "Tóc ngắn bob", "짧은 단발"]], ["pony", "#2B2326", ["Ponytail", "Tóc đuôi ngựa", "포니테일"]], ["bun", "#B04A5E", ["Ballet bun", "Búi ballet", "발레 번"]], ["waves", "#C98B3C", ["Long waves", "Tóc dài gợn sóng", "긴 웨이브"]]];
+const P2_SKIN = [["s1", "#F6DCC8", ["Tone 1", "Tông 1", "톤 1"]], ["s2", "#E5B897", ["Tone 2", "Tông 2", "톤 2"]], ["s3", "#C68A63", ["Tone 3", "Tông 3", "톤 3"]], ["s4", "#8A5A3C", ["Tone 4", "Tông 4", "톤 4"]]]; /* P2-B5: all tones equal, none locked or premium */
+const P2_DEF = { hair: "bun", skin: "s2", outfit: "o1" };
+const P2_AGE_MIN = 14; /* PROPOSED placeholder, OQ-F1 (legal): age threshold and source pending */
+const P2_EARN = { visit: 10, mission: 2 }; /* PROPOSED placeholder, OQ-R1 */
+const P2_ITEMS = [
+  { id: "plant", fun: 40, n: ["Little plant", "Chậu cây nhỏ", "작은 화분"], svg: '<path d="M12 20v-7" stroke="#4E7A4A" stroke-width="2"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6zm0 0c4 0 6-3 6-6-3 0-6 2-6 6z" fill="#6E9E68"/><path d="M8 20h8l-1 3H9z" fill="#B87A56"/>' },
+  { id: "rug", fun: 60, n: ["Round rug", "Thảm tròn", "동그란 러그"], svg: '<ellipse cx="12" cy="17" rx="10" ry="4" fill="#E98597"/><ellipse cx="12" cy="17" rx="6" ry="2.2" fill="#F7F1EA"/>' },
+  { id: "lamp", fun: 80, n: ["Paper lamp", "Đèn giấy", "종이 조명"], svg: '<path d="M12 2v4" stroke="#6B5E62" stroke-width="1.5"/><circle cx="12" cy="11" r="6" fill="#F4D58D"/><path d="M8 20h8" stroke="#6B5E62" stroke-width="2"/>' },
+  { id: "mat", fun: 100, n: ["Barre mat", "Thảm tập barre", "바레 매트"], svg: '<rect x="3" y="14" width="18" height="5" rx="2.5" fill="#B04A5E"/><rect x="3" y="14" width="18" height="2" rx="1" fill="#8E3346"/>' },
+  { id: "lantern", krw: 3900, n: ["Autumn lantern set", "Bộ đèn lồng mùa thu", "가을 등불 세트"], svg: '<circle cx="8" cy="10" r="4" fill="#E9B44C"/><circle cx="16" cy="12" r="4" fill="#E98597"/><path d="M8 3v3M16 5v3" stroke="#6B5E62"/>' },
+  { id: "sofa", krw: 5900, n: ["Velvet sofa", "Sofa nhung", "벨벳 소파"], svg: '<rect x="3" y="10" width="18" height="7" rx="3" fill="#8E3346"/><rect x="5" y="7" width="14" height="5" rx="2" fill="#B04A5E"/><path d="M5 17v3M19 17v3" stroke="#2B2326" stroke-width="2"/>' },
+  { id: "lumi", krw: 1900, brand: "Lumi Skin", limited: 1, n: ["Lumi Skin vanity", "Bàn trang điểm Lumi Skin", "루미 스킨 화장대"], svg: '<rect x="5" y="12" width="14" height="8" rx="1.5" fill="#F7F1EA" stroke="#6B5E62"/><circle cx="12" cy="7" r="4.5" fill="#DDEFF2" stroke="#6B5E62"/>' }
+];
+/* state: preset IDs only (P2-B4); fun = own counter (P2-R3); demo = demo-bought items, kept apart from owned (P2-P3/P4); photo = derived look + consent (P2-F) */
+const P2S = { fun: 0, owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
+let P2D = null; /* builder draft (Cancel leaves Cici unchanged) */
+function p2Load() { if (!P2()) return; try { const x = JSON.parse(localStorage.getItem("cici.p2") || "null"); if (x) Object.assign(P2S, x); } catch (e) {} }
+function p2Save() { if (!P2()) return; try { localStorage.setItem("cici.p2", JSON.stringify(P2S)); } catch (e) {} }
+function p2Earn(kind) { if (!P2()) return 0; const n = P2_EARN[kind] || 0; P2S.fun = Math.max(0, P2S.fun + n); p2Save(); return n; } /* never touches the points ledger; not clawed back on reversal (OQ-R2 placeholder) */
+const p2Item = id => P2_ITEMS.find(x => x.id === id);
+const p2Has = id => P2S.owned.includes(id) || P2S.demo.includes(id);
+const p2Svg = (it, s) => `<svg viewBox="0 0 24 24" width="${s || 40}" height="${s || 40}" aria-hidden="true">${it.svg}</svg>`;
+const p2Price = it => vnd(it.krw * 10); /* store-currency formatter (KRW display = seed / 10) */
+const p2Nm = it => L3(...it.n);
+const funIc = '<svg class="p2funic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
+const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
+function p2Acc(look) { if (!P2()) return ""; const l = look || p2Look(), hr = (P2_HAIR.find(x => x[0] === l.hair) || P2_HAIR[2])[1]; return `<svg class="p2hair" data-hair="${l.hair}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="${hr}"/></svg>`; }
+function p2Char(size, look) { const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1];
+  return `<span class="p2char" id="p2-preview" data-skin="${l.skin}" data-hair="${l.hair}" style="--sk:${sk};width:${size}px;height:${size}px">${cut("idle", { alt: p2t("builder") })}${p2Acc(l)}${outfitBadge(l.outfit)}</span>`; }
+function p2Room() {
+  if (!P2() || gated()) return ""; /* P2-X3/X4: nothing from Phase 2 in a crisis/urgent turn */
+  const pl = P2S.placed.map(p2Item).filter(Boolean);
+  return `<h2>${esc(p2t("roomT"))}</h2><section class="card p2room" id="p2-room"><div class="p2floor">${p2Char(96)}<div class="p2items">${pl.length ? pl.map(it => `<span class="p2it" data-v="${it.id}" role="img" aria-label="${esc(p2Nm(it))}">${p2Svg(it, 44)}</span>`).join("") : `<p class="sub sm" style="margin:0">${esc(p2t("empty"))}</p>`}</div></div>
+  <div class="row wrap" style="gap:8px;margin-top:10px"><span class="grow sm p2fun" id="p2-fun">${funIc} <b>${esc(p2t("funL"))}</b> · ${esc(fmtN(P2S.fun))}</span><button class="btn sec" data-act="p2deco">${esc(p2t("decorate"))}</button><button class="btn sec" data-act="p2shop">${esc(p2t("shop"))}</button></div></section>`;
+}
+function p2DecoSheet(msg) {
+  if (!P2() || gated()) return;
+  const own = P2_ITEMS.filter(it => p2Has(it.id)), fun = P2_ITEMS.filter(it => it.fun && !p2Has(it.id));
+  openSheet(sheetHd(p2t("decorate")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sm p2fun">${funIc} <b>${esc(p2t("funL"))}</b> · <b id="p2-bal">${esc(fmtN(P2S.fun))}</b></p><p class="sub sm" id="p2-funnote">${esc(p2t("funNote"))}</p>
+  ${own.length ? `<h2>${esc(p2t("owned"))}</h2><div class="stack">${own.map(it => { const on = P2S.placed.includes(it.id); return `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b>${P2S.demo.includes(it.id) ? ` <span class="tag">${esc(p2t("demoItem"))}</span>` : ""}</span><button class="btn sec" data-act="p2place" data-v="${it.id}" aria-pressed="${on}">${esc(p2t(on ? "remove" : "place"))}</button></div>`; }).join("")}</div>` : ""}
+  <h2>${esc(p2t("decorate"))}</h2><div class="stack">${fun.map(it => `<div class="row">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b></span><button class="btn" data-act="p2buyfun" data-v="${it.id}">${esc(p2t("buyFun", { n: it.fun }))}</button></div>`).join("") || `<p class="sub sm">—</p>`}</div>`, p2t("decorate"));
+}
+function p2ShopSheet(msg) {
+  if (!P2() || gated()) return;
+  const items = P2_ITEMS.filter(it => it.krw);
+  openSheet(sheetHd(p2t("shop")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sub sm">${esc(p2t("noWin"))}</p><div class="stack" id="p2-shop">${items.map(it => { const has = p2Has(it.id);
+    return `<div class="row top p2sk" data-v="${it.id}">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b> <span class="tag p2demo">${esc(p2t("demo"))}</span>${it.limited ? ` <span class="tag">${esc(p2t("limited"))}</span>` : ""}<br><span class="sub">${it.brand ? `<span class="p2brand">${esc(p2t("offered", { b: it.brand }))}</span> · ` : ""}<span class="p2price">${esc(p2Price(it))}</span></span></span>${has ? `<span class="tag ok">${esc(p2t("demoItem"))}</span>` : `<button class="btn" data-act="p2checkout" data-v="${it.id}" aria-label="${esc(p2t("buyDemo", { p: p2Price(it) }) + ", " + p2Nm(it) + ", " + p2t("demo"))}">${esc(p2t("buyDemo", { p: p2Price(it) }))}</button>`}</div>`; }).join("")}</div>
+    ${P2S.demo.length ? `<button class="btn ghost full" data-act="p2demoreset" style="margin-top:10px">${esc(p2t("resetDemo"))}</button>` : ""}`, p2t("shop"));
+}
+function p2Checkout(id) {
+  const it = p2Item(id); if (!P2() || gated() || !it || !it.krw) return;
+  openSheet(sheetHd(p2t("checkout")) + `<span class="tag p2demo" id="p2-demo">${esc(p2t("demo"))}</span><div class="card row" style="margin-top:8px">${p2Svg(it, 48)}<span class="grow"><b>${esc(p2Nm(it))}</b>${it.brand ? `<br><span class="sub sm p2brand">${esc(p2t("offered", { b: it.brand }))}</span>` : ""}</span><b class="p2price">${esc(p2Price(it))}</b></div><p class="sm" id="p2-paynote"><b>${esc(p2t("payNote"))}</b></p>
+    <div class="stack"><button class="btn full" data-act="p2pay" data-v="${it.id}">${esc(p2t("confirmDemo"))}</button><button class="btn ghost full" data-act="p2shop">${esc(p2t("cancel"))}</button></div>`, p2t("checkout"));
+}
+function p2Builder(msg) {
+  if (!P2D) P2D = Object.assign({}, p2Look()); const c = P2D, lv = lvlOf(ME), got = n => n <= lv || (ME.unlocked || []).includes("o" + n);
+  const opt = (k, arr) => `<div class="chips" role="group" aria-label="${esc(p2t(k))}">${arr.map(([id, col, n]) => `<button class="chip" data-act="p2set" data-k="${k}" data-v="${id}" aria-pressed="${c[k] === id}" aria-label="${esc(p2t(k) + ": " + L3(...n))}"><span class="p2sw" style="background:${col}" aria-hidden="true"></span>${esc(L3(...n))}</button>`).join("")}</div>`;
+  const outs = `<div class="chips" role="group" aria-label="${esc(p2t("outfit"))}">${[1, 2, 3, 4, 5].map(n => got(n) ? `<button class="chip" data-act="p2set" data-k="outfit" data-v="o${n}" aria-pressed="${c.outfit === "o" + n}" aria-label="${esc(p2t("outfit") + ": " + outfitNm(n))}">${esc(outfitNm(n))}</button>` : `<button class="chip p2lock" disabled aria-disabled="true" data-v="o${n}" aria-label="${esc(p2t("outfit") + ": " + outfitNm(n) + ", " + p2t("unlocksAt", { n }))}">${esc(outfitNm(n))} · ${esc(p2t("unlocksAt", { n }))}</button>`).join("")}</div>`;
+  const minor = (ME.age || 99) < P2_AGE_MIN;
+  return `<div class="chome" id="p2-builder" style="padding-top:0"><div class="cpic">${p2Char(150, c)}</div></div>${msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : ""}<p class="sub sm" id="p2-bnote">${esc(p2t("builderNote"))}</p>${P2S.photo ? `<p class="sm" id="p2-photoon">${esc(p2t("photoOn"))}</p>` : ""}
+  <h2>${esc(p2t("hair"))}</h2>${opt("hair", P2_HAIR)}<h2>${esc(p2t("skin"))}</h2>${opt("skin", P2_SKIN)}<h2>${esc(p2t("outfit"))}</h2>${outs}
+  <div class="stack" style="margin-top:14px"><button class="btn full" data-act="p2save">${esc(p2t("save"))}</button><button class="btn ghost full" data-act="p2cancel">${esc(p2t("cancel"))}</button><button class="btn ghost full" data-act="p2reset">${esc(p2t("reset"))}</button>
+  ${minor ? `<p class="sub sm" id="p2-minor">${esc(p2t("minor"))}</p>` : P2S.photo ? `<button class="btn sec full" data-act="p2delphoto">${esc(p2t("delPhoto"))}</button><button class="btn ghost full" data-act="p2withdraw">${esc(p2t("withdraw"))}</button>` : `<button class="btn sec full" data-act="p2photo">${esc(p2t("photoBtn"))}</button>`}</div>`;
+}
+/* P2-F: step 1 consent (no picker exists yet), step 2 upload with the self-only check; the File is held in memory only and never read, uploaded or saved */
+let P2FILE = null;
+function p2Consent(err) {
+  if (!P2() || gated() || (ME.age || 99) < P2_AGE_MIN) return;
+  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-consent"><ul class="sm" style="padding-left:18px;margin:0 0 8px"><li id="p2-c-purpose">${esc(p2t("cPurpose"))}</li><li>${esc(p2t("cWhat"))}</li><li id="p2-del">${esc(p2t("cKeep"))}</li><li>${esc(p2t("cShare"))}</li><li>${esc(p2t("cDelete"))}</li></ul><p class="sub sm" id="p2-legal">${esc(p2t("cLegal"))}</p>
+    <label class="row sm" style="min-height:44px"><input type="checkbox" id="p2-agree" class="cb44"><span class="grow">${esc(p2t("agree"))}</span></label>
+    ${err ? `<p class="sm" id="p2-err" role="alert" style="color:#8E3346"><b>${esc(err)}</b></p>` : ""}<div class="p2two"><button class="btn sec" data-act="p2nothanks">${esc(p2t("noThanks"))}</button><button class="btn sec" data-act="p2agree">${esc(p2t("cont"))}</button></div></div>`, p2t("consentT"));
+}
+function p2Upload(err, keepMe) {
+  if (!P2() || gated() || !P2S.consent || !P2S.consent.active) return;
+  const live = $("#p2-upload"); if (live && err) { /* re-validate in place so the chosen file and checkbox survive */
+    let e = $("#p2-err"); if (!e) { e = document.createElement("p"); e.className = "sm"; e.id = "p2-err"; e.setAttribute("role", "alert"); e.style.color = "#8E3346"; live.querySelector("[data-act=p2gen]").before(e); }
+    e.innerHTML = `<b>${esc(err)}</b>`; return; }
+  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-upload"><p class="sm" id="p2-self"><b>${esc(p2t("selfOnly"))}</b></p><p class="sub sm" id="p2-mock">${esc(p2t("mock"))} ${esc(p2t("cKeep"))}</p>
+    <label class="row sm" style="min-height:44px"><input type="checkbox" id="p2-isme" class="cb44" ${keepMe ? "checked" : ""}><span class="grow">${esc(p2t("isMe"))}</span></label>
+    <label class="btn sec full" for="p2-file" style="display:flex;justify-content:center;align-items:center">${esc(p2t("pick"))}</label><input type="file" id="p2-file" accept="image/*" class="sr">
+    ${err ? `<p class="sm" id="p2-err" role="alert" style="color:#8E3346"><b>${esc(err)}</b></p>` : ""}<button class="btn full" data-act="p2gen" style="margin-top:8px">${esc(p2t("gen"))}</button></div>`, p2t("consentT"));
+}
+function p2Generate() {
+  const m = $("#p2-isme"), f = $("#p2-file"); const file = (f && f.files && f.files[0]) || P2FILE; P2FILE = file || null;
+  if (!m || !m.checked) return p2Upload(p2t("needMe"));
+  if (!file) return p2Upload(p2t("needPhoto"), true);
+  const h = Math.abs(hsh(String(file.size) + "|" + file.name)) >>> 0; /* mock generation: preset IDs picked from a hash; the bytes are never read */
+  P2S.photo = { look: { hair: P2_HAIR[h % P2_HAIR.length][0], skin: P2_SKIN[(h >>> 3) % P2_SKIN.length][0] }, at: Date.now() }; /* derived character only */
+  if (f) f.value = ""; P2FILE = null; /* P2-F5: source photo dropped */
+  P2D = null; p2Save(); closeSheet(); ST.page = "p2char"; p2MsgAfter = p2t("genDone"); render();
+}
+function p2Wipe() { P2FILE = null; P2S.photo = null; if (P2S.consent) P2S.consent = { active: false, withdrawnAt: Date.now() }; P2D = null; p2Save(); } /* P2-F6/F7 */
+let p2MsgAfter = null;
+function p2CharPage() { if (gated()) return ""; const m = p2MsgAfter; p2MsgAfter = null; return p2Builder(m); }
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act^=p2]"); if (!el || !P2()) return; const a = el.dataset.act, v = el.dataset.v;
+  if (gated()) return; /* P2-X3/X4: crisis/urgent: no Phase 2 action at all */
+  if (a === "p2deco") return p2DecoSheet();
+  if (a === "p2shop") return p2ShopSheet();
+  if (a === "p2checkout") return p2Checkout(v);
+  if (a === "p2pay") { const it = p2Item(v); if (!it || !it.krw || p2Has(v)) return; P2S.demo.push(v); p2Save(); render(); return p2ShopSheet(p2t("gotIt")); } /* demo only: no provider call, no receipt */
+  if (a === "p2demoreset") { P2S.placed = P2S.placed.filter(x => !P2S.demo.includes(x)); P2S.demo = []; p2Save(); render(); return p2ShopSheet(); }
+  if (a === "p2buyfun") { const it = p2Item(v); if (!it || p2Has(v)) return; if (P2S.fun < it.fun) return p2DecoSheet(p2t("needMore", { n: it.fun - P2S.fun })); P2S.fun = Math.max(0, P2S.fun - it.fun); P2S.owned.push(v); P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(p2t("gotIt")); }
+  if (a === "p2place") { const i = P2S.placed.indexOf(v); if (i >= 0) P2S.placed.splice(i, 1); else if (p2Has(v)) P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(); }
+  if (a === "p2look") { P2D = null; ST.page = "p2char"; render(); window.scrollTo(0, 0); return; }
+  if (a === "p2set") { P2D = P2D || Object.assign({}, p2Look()); P2D[el.dataset.k] = v; render(); return; }
+  if (a === "p2save") { const d = P2D || p2Look(); if (P2S.photo) { P2S.photo.look = { hair: d.hair, skin: d.skin }; } else { P2S.char.hair = d.hair; P2S.char.skin = d.skin; } P2S.char.outfit = d.outfit; ST.wear = d.outfit; try { localStorage.setItem("cici.wear", d.outfit); } catch (e2) {} P2D = null; p2Save(); p2MsgAfter = p2t("saved"); render(); return; }
+  if (a === "p2cancel") { P2D = null; ST.page = "look"; render(); return; }
+  if (a === "p2reset") { P2S.char = Object.assign({}, P2_DEF); P2S.photo = null; ST.wear = P2_DEF.outfit; P2D = null; p2Save(); p2MsgAfter = p2t("resetDone"); render(); return; }
+  if (a === "p2photo") return p2Consent();
+  if (a === "p2nothanks") { closeSheet(); ST.page = "p2char"; render(); return; }
+  if (a === "p2agree") { if (!($("#p2-agree") || {}).checked) return p2Consent(p2t("needAgree")); P2S.consent = { active: true, at: Date.now() }; p2Save(); return p2Upload(); }
+  if (a === "p2gen") return p2Generate();
+  if (a === "p2delphoto" || a === "p2withdraw") { p2Wipe(); p2MsgAfter = p2t("delDone"); render(); return; }
+});
 const LEGACY_NAME = { en: "Nari", ko: "\uB098\uB9AC" };
 /* real alpha Cici cut-outs (assets/nari-cut): VP9-alpha WebM with the WebP still as poster + fallback.
    Safari / iOS (any iOS browser is WebKit) has no VP9 alpha, so they get the still; so does prefers-reduced-motion. Videos load lazily when on screen. */
@@ -1422,7 +1583,7 @@ const chip = (label, val) => ({ label, val });
 function chatSend(cid, text) {
   const c = CH[cid]; text = (text || "").trim(); if (!text) return; cid = c.id; TURN_SAFE = false;
   c.msgs.push({ who: "me", text, t: Date.now() }); CHX.draftOpen = !!(c.draft && c.ask && c.ask !== "confirm");
-  try { reply(c, text); } catch (e) { console.warn(e); say(c, "Sorry, I got mixed up. Try again?"); }
+  try { const tx = text.replace(CICI_ALIAS_RE, "") || text; reply(c, tx); } catch (e) { console.warn(e); say(c, "Sorry, I got mixed up. Try again?"); }
   if (!TURN_SAFE) track("cici_msg_sent"); /* NT-11: safety turns log only safety_turn{type}, never the message text */
   TURN_SAFE = false; renderView(); const inp = $("#in-" + cid); if (inp) inp.focus(); scrollThread(cid);
 }
@@ -1790,7 +1951,7 @@ function heroScene() {
     : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
   const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
   const wn = wearNm();
-  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}${calm ? "" : outfitBadge(ST.wear)}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic">${cut(pose, { alt, eager: 1, loop: !calm })}${calm ? "" : outfitBadge(ST.wear) + (P2() ? p2Acc() : "")}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
 }
 /* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
 function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
@@ -1830,7 +1991,7 @@ function importCard() {
 function vHome() {
   /* MVP-H1 order: Cici + greeting, level bar, 2–3 missions, Next class card (+ "All bookings"). Allowed extras: the one-line migration banner (A3) and the header bell. */
   const up = upcoming(); track("home_open");
-  return heroScene() + notesCard() + homeLevelBar() +
+  return heroScene() + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${missionsCard()}` +
     `<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="go" data-v="cici:book">${t("chipBook")}</button>`}</div>`;
 }
@@ -1935,13 +2096,14 @@ function nextReward() {
     if (PV.defs.some(x => listed(x, now))) return { txt: L3("You have enough points for a voucher", "Bạn đủ điểm để đổi ưu đãi", "쿠폰으로 바꿀 포인트가 충분해요"), pct: 100 }; }
   return nx ? { txt: pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 }), pct: Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) } : { txt: lvlName(5), pct: 100 };
 }
-const YOU_PAGES = ["wallet", "vouchers", "settings", "points", "look"];
-const youTitle = p => p === "look" ? t("wardrobe") : p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
+const YOU_PAGES = ["wallet", "vouchers", "settings", "points", "look", "p2char"];
+const youTitle = p => p === "p2char" ? p2t("builder") : p === "look" ? t("wardrobe") : p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
 function vYou() {
   /* MVP-Y1: profile (name, lifetime points, streak, level) + tiles Wallet · My bookings · Cici's look (+ Vouchers only when realRewards is on, A1) */
   const m = ME, lv = lvlOf(m), pts = fmtPts(life(m));
   let h = notesCard() + `<section class="card row" id="you-prof"><span class="av cav-h" style="width:56px;height:56px" aria-hidden="true"><img src="${A}cheer.webp" alt="">${outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0">${L3("Mina", "Mina", "미나")}</h1><div class="sub sm" id="you-lvl">${esc(pvT("level", { n: lv, name: lvlName(lv) }))}</div><button class="ptsbtn sm" id="you-pts" data-act="youpage" data-v="points" aria-label="${esc(pts + " · " + pvT("streak", { n: m.streak }) + ", " + L3("points details", "chi tiết điểm", "포인트 자세히"))}"><span><b>${esc(pts)}</b> · ${esc(pvT("streak", { n: m.streak }))}</span>${ic("chev")}</button></div></section>`;
   const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)], ["look", "shirt", t("wardrobe"), wearNm() || "—"]];
+  if (P2() && !gated()) tiles.push(["p2char", "star", p2t("funL"), fmtN(P2S.fun)]);
   if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
   h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
   h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
@@ -1954,7 +2116,7 @@ function vLook() {
   const got = n => n <= lv || (ME.unlocked || []).includes("o" + n); /* MVP-L3/OQ4: kept after a reversal */
   return `<div class="chome" style="padding-top:0"><div class="cpic" style="width:150px;height:180px">${cut("idle", { alt: L3("Cici", "Cici", CICI_KO), eager: 1 })}${outfitBadge(ST.wear)}</div></div>
   <p class="sub sm" id="look-note">${esc(L3("Each new level unlocks a look for Cici. Looks are just for fun: they can't be bought, sold or swapped for discounts.", "Mỗi cấp mới mở một phong cách cho Cici. Chỉ để vui: không mua, bán hay đổi lấy ưu đãi được.", "레벨이 오를 때마다 " + CICI_KO + "의 새 스타일이 열려요. 재미로만 즐기는 거라 사거나 팔거나 할인으로 바꿀 수 없어요."))}</p>
-  <div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
+  ${P2() && !gated() ? `<button class="btn full" data-act="p2look" id="p2-customise" style="margin-bottom:10px">${esc(p2t("customise"))}</button>` : ""}<div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
 }
 function vWallet() {
   const rows = joinedIds().map(sid => (WALLET[sid] || []).map(p => walletRow(sid, p)).join("")).join("") + upcoming().filter(b => b.dep).map(depRow).join("");
@@ -1977,7 +2139,7 @@ function vSettings() {
   h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Cici's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Cici dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.",CICI_KO + "의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
+function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "p2char" && P2() ? p2CharPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
 /* MVP-L1/L7: the unlock animation plays once, on the next normal Home view (deferred while a crisis/urgent turn is in force, A6) */
 function maybeUnlock() {
   if (!ME || ST.tab !== "home" || ST.page || ST.store || gated() || $(".sheet") || $(".munlock")) return;
@@ -2206,10 +2368,10 @@ function cancelAsk(b) {
 }
 
 /* ===== Cici tab (nari-tab spec v1.0): one thread, My bookings, ratings, Call {store}, app-state routes ===== */
-/* OQ defaults (spec §10) used until the user decides: OQ-1 label "Cici"/"씨씨"; OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
+/* OQ defaults (spec §10) used until the user decides: OQ-1 label "Cici" in every language (user decision); OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
    OQ-4 ratings private, publicRatings off; OQ-5 0 points; OQ-6 rating notes and Ask-the-studio notes are safety-scanned; OQ-7 "Talk to Cici (demo)" in overflow only; OQ-8 store phone field + emergency blocklist, no number = no button;
    OQ-9 Past = 12 months, rating/edit window 14 days; OQ-10 store messages stay in the Inbox; OQ-11 analytics carry event names only, safety turns only safety_turn{type} */
-const FLAGS = { publicRatings: false, quest: false }; /* PO 2026-10-14: Quest · Journey is out of the MVP; code kept, unreachable while false */
+const FLAGS = { publicRatings: false, quest: false, phase2: (() => { try { const q = new URLSearchParams(location.search).get("phase2"); return q === "1" || q === "true"; } catch (e) { return false; } })() }; /* Phase 2: off by default, ?phase2=1 */ /* PO 2026-10-14: Quest · Journey is out of the MVP; code kept, unreachable while false */
 const EVT = []; let TURN_SAFE = false;
 function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
 const gated = () => !!(CH.cici.gate && CH.cici.msgs.length);
@@ -2370,7 +2532,7 @@ function ciciAgainChips() { return `<div class="scroll" role="group" aria-label=
 function vCici() {
   const c = CH.cici, g = gated(); c.unread = false;
   const scope = c.scope && S[c.scope] ? `<div class="chips" role="group" aria-label="${L3("Booking at", "Đặt tại", "예약 매장")}"><button class="chip" aria-pressed="true" data-act="unscope" aria-label="${esc(t("removeScope", { store: S[c.scope].name }))}">${logo(c.scope)} ${esc(S[c.scope].name)} ${ic("x", "s")}</button></div>` : "";
-  const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear)}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
+  const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear) + (P2() ? p2Acc() : "")}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
   ${g ? "" : `<button class="icb" data-act="mybk" data-from="cici" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}</div>`; /* A7/OQ5: the voice-demo call is cut from the MVP, so the overflow menu that only held it is gone */
   const empty = !c.msgs.length;
   const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">${esc(ciciNm())}: </span>${esc(t("ciciHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${ciciAgainChips()}` : "";
@@ -2698,7 +2860,7 @@ function confirmVisit(m, bid, actor, now, store) {
   if (!m.visited[s]) { m.visited[s] = true; const mk = monKey(m, now);
     if ((m.npMonth[mk] || 0) < 4) { m.npMonth[mk] = (m.npMonth[mk] || 0) + 1; m.att[bid].np = mk; out.bonus = 80; m.att[bid].rows.push(row(m, { store: s, src: bid, delta: 80, life: 80, reason: "newplace", actor }, now).id); }
     else { row(m, { store: s, src: bid, reason: "newplace_cap", actor }, now); out.npCap = true; } }
-  checkLevel(m); return out;
+  checkLevel(m); if (out.pts > 0 && P2()) out.fun = p2Earn("visit"); return out;
 }
 function markNoShow(m, bid) { const bk = BKREG[bid]; if (bk) bk.status = "noshow"; return { pts: 0 }; }
 const pendingFor = (m, now) => Object.entries(BKREG).filter(([id, b]) => b.member === m.id && b.status === "booked" && now >= b.start && now < b.end + DAY && !m.att[id]).map(([id, b]) => Object.assign({ id }, b));
@@ -2709,7 +2871,7 @@ function pvMission(m, kind, now) {
   if ((m.misDay[dk] || 0) >= 2) { row(m, { reason: "mission_cap", src: kind }, now); return { pts: 0, msg: "missionCap" }; }
   if ((m.misWeek[wk] || 0) >= 60) { row(m, { reason: "mission_week_cap", src: kind }, now); return { pts: 0, msg: "missionWeekCap" }; }
   m.misDay[dk] = (m.misDay[dk] || 0) + 1; m.misWeek[wk] = (m.misWeek[wk] || 0) + 10;
-  row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); return { pts: 10 };
+  row(m, { reason: "mission", src: kind, delta: 10, life: 10 }, now); checkLevel(m); if (P2()) p2Earn("mission"); return { pts: 10 };
 }
 /* MVP-S1..S8: store confirm (scan check-in code / Mark attended). Staff strings in EN, VI, KO; VI and KO need native review before launch (S8). */
 const STAFF_TX = {
@@ -3116,7 +3278,8 @@ function checkJumps() {
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-window.__plat = { PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
+p2Load(); if (P2()) render();
+window.__plat = { CICI_ALIAS_RE, P2S, P2_ITEMS, P2T, P2_AGE_MIN, p2Earn, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
