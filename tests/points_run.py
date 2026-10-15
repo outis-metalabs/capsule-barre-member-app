@@ -39,7 +39,7 @@ with sync_playwright() as p:
   YP(pg, 'look'); pg.click('[data-act=pvwear][data-v=lan]'); wear = pg.evaluate("ST.wear")
   YP(pg, 'settings'); pg.click('#pv-flag'); on = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
   pg.click('#pv-flag'); pg.click('#pv-flag'); on2 = pg.evaluate("(()=>{const m=__plat.pv.ME();return {bal:__plat.pv.bal(m),rows:m.ledger.filter(r=>r.reason==='migration'&&r.delta>0).length}})()")
-  ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 3 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 600 and on['rows'] == 1 and on2 == on, [st, on, on2])
+  ok('AC-P34', st['life'] == 640 and st['lvl'] == 2 and st['streak'] == 12 and st['bal'] == 0 and st['legacy'] == 120 and st['note'] == 1 and banner1 and not banner2 and again == 2 and on['bal'] == 600 and on['rows'] == 1 and on2 == on, [st, on, on2])
   ok('AC-P54a', st['mig'] == 1 and st['legacy'] == 120 and st['bal'] == 0 and wear == 'lan', [st, wear])
   ok('AC-P54b', on['rows'] == 1 and on2['rows'] == 1 and on2['bal'] == 600, [on, on2])
   pg.close()
@@ -49,7 +49,7 @@ with sync_playwright() as p:
   hidden = not any(x in you for x in ['pv-rewards', 'data-act="pvclaim"', 'pv-mine']) and 'Validate' not in st_off and 'Points earned' in (YP(pg,'points') or pg.inner_text('#view'))
   b0 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())"); pg.evaluate("()=>{ST.tab='home';ST.page=null;render()}")
   pg.locator('[data-act=checkin]').first.click(); pg.locator('[data-act=attend]').first.click(); b1 = pg.evaluate("__plat.pv.bal(__plat.pv.ME())")
-  ok('AC-P44', hidden and b1 - b0 == 60 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
+  ok('AC-P44', hidden and b1 - b0 == 55 and R.get('AC-P44e', [False])[0], [hidden, b0, b1])
   n0 = pg.evaluate("__plat.pv.ME().ledger.length"); pg.evaluate("()=>{ST.tab='cici';ST.page=null;render()}"); pg.locator('[data-act=nagain][data-i="1"]').click(); pg.locator('[data-act=chatbook]').last.click(); pg.wait_for_timeout(100); pg.evaluate("closeSheet()")  # Nari tab: Book again = chip + Book (the Book tab and its sheet-only row are gone)
   n1 = pg.evaluate("__plat.pv.ME().ledger.length"); nb = pg.evaluate("__plat.B.length")
   ok('AC-P2', R['AC-P2'][0] and n1 == n0, R['AC-P2'][1] + [n0, n1, nb])
@@ -59,14 +59,14 @@ with sync_playwright() as p:
   YP(pg, 'points'); pend2 = pg.locator('#pv-pending').count()
   ok('AC-P3', R['AC-P3'][0] and pend1 == 1 and pend2 == 0, [R['AC-P3'][1], pend1, pend2, msg])
   # AC-P12 UI: streakReset shows on next open
-  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.weekVisits={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'New week, fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
+  pg.evaluate("()=>{const m=__plat.pv.ME();m.notices.forEach(n=>n.seen=true);m.closedTo-=21*864e5;m.days={};m.rest={};ST.tab='home';ST.page=null;render()}"); ok('AC-P12', R['AC-P12'][0] and 'Fresh start' in pg.inner_text('#view'), R['AC-P12'][1])
   pg.close()
   # --- flag ON: claim, use, validate, redeem through the UI
   pg = page('?realRewards=1'); pg.click('[data-act=pvseen]'); YP(pg, 'vouchers', 'more')
   claimBtns = pg.locator('[data-act=pvclaim]').count()
   pg.click('[data-act=pvclaim]:not([disabled])'); sheet = pg.inner_text('.sheet'); pg.click('[data-act=pvclaimok]'); you = YALL(pg, lambda: pg.inner_text('#view'))
   ok('AC-P17', R['AC-P17'][0] and 'Valid until' in sheet and 'Terms' in sheet and 'Ready' in you and '100 points' in you, [R['AC-P17'][1], sheet[:120]])
-  ok('AC-P16', R['AC-P16'][0] and 'Unlocks at Level 3' in you and 'more weeks of streak needed' in you, R['AC-P16'][1])
+  ok('AC-P16', R['AC-P16'][0] and 'Unlocks at Level 3' in you and 'more streak days needed' in you, R['AC-P16'][1])
   YP(pg, 'vouchers', 'mine'); pg.click('[data-act=pvuse]'); code1 = pg.inner_text('#pv-code'); pg.screenshot(path=f'{SHOTS}/use-code-390-en.png')
   pg.click('[data-act=pvrefresh]'); code2 = pg.inner_text('#pv-code')
   pg.check('[data-act=pvmoff]'); pg.click('[data-act=pvrefresh]'); offl = pg.locator('#pv-offline').count(); pg.screenshot(path=f'{SHOTS}/use-offline-390-en.png'); pg.uncheck('[data-act=pvmoff]'); pg.click('[data-act=pvrefresh]'); code3 = pg.inner_text('#pv-code')
@@ -84,7 +84,7 @@ with sync_playwright() as p:
   # AC-P31/P51 UI: Publish disabled
   YP(pg, 'settings'); pg.click('[data-act=pvstore]'); pub0 = pg.is_disabled('[data-act=pvpublish]')
   res = []
-  for k, v in [('cost', '99'), ('cost', '5001'), ('value', '51'), ('validFor', '6'), ('validFor', '91'), ('minStreak', '13')]:
+  for k, v in [('cost', '99'), ('cost', '5001'), ('value', '51'), ('validFor', '6'), ('validFor', '91'), ('minStreak', '61')]:
     pg.fill(f'[data-pvd={k}]', v); res.append(pg.is_disabled('[data-act=pvpublish]')); pg.fill(f'[data-pvd={k}]', {'cost': '500', 'value': '10', 'validFor': '30', 'minStreak': '0'}[k])
   pg.fill('[data-pvd=cost]', '99'); pg.screenshot(path=f'{SHOTS}/store-new-voucher-error-390.png'); pg.fill('[data-pvd=cost]', '500')
   ok('AC-P31', R['AC-P31'][0] and not pub0 and all(res[:3]), res)

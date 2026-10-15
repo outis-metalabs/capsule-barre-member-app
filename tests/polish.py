@@ -13,9 +13,9 @@ with sync_playwright() as p:
     J = lambda js: pg.evaluate(js)
     hd = J("()=>{const h=document.querySelector('header.top'),cs=getComputedStyle(h);return {bg:cs.backgroundColor,z:+cs.zIndex,bf:cs.backdropFilter}}")
     ok(f'{L} header opaque and above confetti', hd['bg'].startswith('rgb(') and hd['z'] > 12 and hd['bf'] in ('none', ''), hd)
-    J("()=>{window.scrollTo(0,600);celebrate();toast('+10')}"); pg.wait_for_timeout(250)
-    w = J("()=>{const t=document.getElementById('winpill').getBoundingClientRect(),h=document.querySelector('header.top').getBoundingClientRect(),c=document.querySelector('.confetti');return {top:t.top,bottom:t.bottom,hb:h.bottom,h:t.height,pops:document.querySelectorAll('.cheerpop').length,cz:c?+getComputedStyle(c).zIndex:0,hz:+getComputedStyle(document.querySelector('header.top')).zIndex}}")
-    ok(f'{L} win = small pill in the header free space (cutout-fixes P3), no floating Nari', w['pops'] == 0 and w['bottom'] <= w['hb'] and w['h'] <= 44 and w['cz'] < w['hz'], w)
+    J("()=>{window.scrollTo(0,600);celebrate();toast('+10')}"); pg.wait_for_function("()=>{const e=document.getElementById('wintoast');return e&&!e.hidden}", timeout=4000); pg.wait_for_timeout(320)
+    w = J("()=>{const t=document.getElementById('wintoast').getBoundingClientRect(),tb=document.getElementById('tabs').getBoundingClientRect().top,h=document.querySelector('header.top').getBoundingClientRect(),c=document.querySelector('.confetti');return {top:t.top,bottom:t.bottom,hb:h.bottom,tb,h:t.height,pops:document.querySelectorAll('.cheerpop').length,cz:c?+getComputedStyle(c).zIndex:0,hz:+getComputedStyle(document.querySelector('header.top')).zIndex}}")
+    ok(f'{L} win = bottom toast above the tab bar (PO 2026-10-15: no header pill), no floating Cici', w['pops'] == 0 and w['top'] >= w['hb'] and w['bottom'] <= w['tb'] and w['h'] <= 72 and w['cz'] < w['hz'], w)
     # the header hides confetti: topmost element at a header point is the header
     ok(f'{L} confetti never shows through the header', J("()=>{const e=document.elementFromPoint(200,20);return !!(e&&e.closest('header.top'))}"))
     pg.wait_for_timeout(3700); J("()=>window.scrollTo(0,0)")
