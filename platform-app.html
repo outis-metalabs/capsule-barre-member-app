@@ -351,6 +351,7 @@ const P2T = {
   demo: ["Demo", "Demo", "데모"], buyDemo: ["Buy · {p}", "Mua · {p}", "구매 · {p}"],
   checkout: ["Demo checkout", "Thanh toán demo", "데모 결제"], payNote: ["Demo checkout. No payment is taken and nothing is charged.", "Thanh toán demo. Không thu tiền và không tính phí gì.", "데모 결제예요. 결제되지 않고 아무것도 청구되지 않아요."],
   confirmDemo: ["Confirm demo", "Xác nhận demo", "데모 확인"], cancel: ["Cancel", "Hủy", "취소"], demoItem: ["Demo item", "Vật phẩm demo", "데모 아이템"], resetDemo: ["Reset demo items", "Đặt lại vật phẩm demo", "데모 아이템 초기화"],
+  free: ["Free", "Miễn phí", "무료"], pendingPriv: ["Demo – pending privacy review", "Demo – đang chờ rà soát quyền riêng tư", "데모 – 개인정보 검토 대기 중"],
   offered: ["Offered by {b}", "Do {b} cung cấp", "{b} 제공"], limited: ["Limited", "Giới hạn", "한정"], noWin: ["Items are just for looks. They never change points, fun points, levels, streaks, bookings or vouchers.", "Vật phẩm chỉ để trang trí, không ảnh hưởng điểm, điểm vui, cấp, chuỗi, lịch đặt hay ưu đãi.", "아이템은 꾸미기용이에요. 포인트, 펀 포인트, 레벨, 연속 기록, 예약, 쿠폰에 영향이 없어요."],
   gotIt: ["Added to your room items", "Đã thêm vào vật phẩm", "방 아이템에 추가됐어요"],
   customise: ["Customise", "Tùy chỉnh", "꾸미기"], builder: ["Customise Cici", "Tùy chỉnh Cici", "{c} 꾸미기"], hair: ["Hair", "Tóc", "헤어"], skin: ["Skin tone", "Màu da", "피부 톤"], outfit: ["Outfit", "Trang phục", "의상"],
@@ -382,15 +383,16 @@ const P2_SKIN = [["s1", "#F6DCC8", ["Tone 1", "Tông 1", "톤 1"]], ["s2", "#E5B
 const P2_DEF = { hair: "bun", skin: "s2", outfit: "o1" };
 const p2AgeOk = () => typeof ME.age === "number" && ME.age >= P2_AGE_MIN; /* PR19-2: unknown age = no photo mode until known */
 const P2_AGE_MIN = 14; /* PROPOSED placeholder, OQ-F1 (legal): age threshold and source pending */
-const P2_EARN = { visit: 10, mission: 2 }; /* PROPOSED placeholder, OQ-R1 */
+const P2_EARN = { visit: 10, mission: 5, streak: 20 }; /* PO 2026-10-15: +10 store-confirmed visit, +5 completed mission, +20 streak milestone. No real money ever buys fun points. */
 const P2_ITEMS = [
   { id: "plant", fun: 40, n: ["Little plant", "Chậu cây nhỏ", "작은 화분"], svg: '<path d="M12 20v-7" stroke="#4E7A4A" stroke-width="2"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6zm0 0c4 0 6-3 6-6-3 0-6 2-6 6z" fill="#6E9E68"/><path d="M8 20h8l-1 3H9z" fill="#B87A56"/>' },
   { id: "rug", fun: 60, n: ["Round rug", "Thảm tròn", "동그란 러그"], svg: '<ellipse cx="12" cy="17" rx="10" ry="4" fill="#E98597"/><ellipse cx="12" cy="17" rx="6" ry="2.2" fill="#F7F1EA"/>' },
   { id: "lamp", fun: 80, n: ["Paper lamp", "Đèn giấy", "종이 조명"], svg: '<path d="M12 2v4" stroke="#6B5E62" stroke-width="1.5"/><circle cx="12" cy="11" r="6" fill="#F4D58D"/><path d="M8 20h8" stroke="#6B5E62" stroke-width="2"/>' },
   { id: "mat", fun: 100, n: ["Barre mat", "Thảm tập barre", "바레 매트"], svg: '<rect x="3" y="14" width="18" height="5" rx="2.5" fill="#B04A5E"/><rect x="3" y="14" width="18" height="2" rx="1" fill="#8E3346"/>' },
-  { id: "lantern", krw: 3900, n: ["Autumn lantern set", "Bộ đèn lồng mùa thu", "가을 등불 세트"], svg: '<circle cx="8" cy="10" r="4" fill="#E9B44C"/><circle cx="16" cy="12" r="4" fill="#E98597"/><path d="M8 3v3M16 5v3" stroke="#6B5E62"/>' },
-  { id: "sofa", krw: 5900, n: ["Velvet sofa", "Sofa nhung", "벨벳 소파"], svg: '<rect x="3" y="10" width="18" height="7" rx="3" fill="#8E3346"/><rect x="5" y="7" width="14" height="5" rx="2" fill="#B04A5E"/><path d="M5 17v3M19 17v3" stroke="#2B2326" stroke-width="2"/>' },
-  { id: "lumi", krw: 1900, brand: "Lumi Skin", limited: 1, n: ["Lumi Skin vanity", "Bàn trang điểm Lumi Skin", "루미 스킨 화장대"], svg: '<rect x="5" y="12" width="14" height="8" rx="1.5" fill="#F7F1EA" stroke="#6B5E62"/><circle cx="12" cy="7" r="4.5" fill="#DDEFF2" stroke="#6B5E62"/>' }
+  { id: "lantern", krw: 1100, cat: "decor", n: ["Autumn lantern set", "Bộ đèn lồng mùa thu", "가을 등불 세트"], svg: '<circle cx="8" cy="10" r="4" fill="#E9B44C"/><circle cx="16" cy="12" r="4" fill="#E98597"/><path d="M8 3v3M16 5v3" stroke="#6B5E62"/>' },
+  { id: "wrapset", krw: 2200, cat: "outfit", n: ["Rose wrap outfit", "Bộ đồ wrap hồng", "로즈 랩 의상"], svg: '<path d="M7 4l5 3 5-3 3 5-3 2v9H7v-9L4 9z" fill="#E98597"/><path d="M12 7l-3 6h6z" fill="#B04A5E"/>' },
+  { id: "sofa", krw: 4400, cat: "theme", n: ["Velvet lounge theme", "Chủ đề phòng nhung", "벨벳 라운지 테마"], svg: '<rect x="3" y="10" width="18" height="7" rx="3" fill="#8E3346"/><rect x="5" y="7" width="14" height="5" rx="2" fill="#B04A5E"/><path d="M5 17v3M19 17v3" stroke="#2B2326" stroke-width="2"/>' },
+  { id: "lumi", free: 1, cat: "decor", brand: "Lumi Skin", limited: 1, n: ["Lumi Skin vanity", "Bàn trang điểm Lumi Skin", "루미 스킨 화장대"], svg: '<rect x="5" y="12" width="14" height="8" rx="1.5" fill="#F7F1EA" stroke="#6B5E62"/><circle cx="12" cy="7" r="4.5" fill="#DDEFF2" stroke="#6B5E62"/>' }
 ];
 /* state: preset IDs only (P2-B4); fun = own counter (P2-R3); demo = demo-bought items, kept apart from owned (P2-P3/P4); photo = derived look + consent (P2-F) */
 const P2S = { fun: 0, owned: [], placed: [], demo: [], char: Object.assign({}, P2_DEF), photo: null, consent: null };
@@ -401,7 +403,7 @@ function p2Earn(kind) { if (!P2()) return 0; const n = P2_EARN[kind] || 0; P2S.f
 const p2Item = id => P2_ITEMS.find(x => x.id === id);
 const p2Has = id => P2S.owned.includes(id) || P2S.demo.includes(id);
 const p2Svg = (it, s) => `<svg viewBox="0 0 24 24" width="${s || 40}" height="${s || 40}" aria-hidden="true">${it.svg}</svg>`;
-const p2Price = it => vnd(it.krw * 10); /* store-currency formatter (KRW display = seed / 10) */
+const p2Price = it => it.free ? p2t("free") : vnd(it.krw * 10); /* PO prices: decor ₩1,100 · outfit ₩2,200 · room theme ₩4,400; sponsored = free */ /* store-currency formatter (KRW display = seed / 10) */
 const p2Nm = it => L3(...it.n);
 const funIc = '<svg class="p2funic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
 const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
@@ -425,13 +427,13 @@ function p2DecoSheet(msg) {
 }
 function p2ShopSheet(msg) {
   if (!P2() || gated()) return;
-  const items = P2_ITEMS.filter(it => it.krw);
+  const items = P2_ITEMS.filter(it => it.krw || it.free);
   openSheet(sheetHd(p2t("shop")) + (msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : "") + `<p class="sub sm">${esc(p2t("noWin"))}</p><div class="stack" id="p2-shop">${items.map(it => { const has = p2Has(it.id);
     return `<div class="row top p2sk" data-v="${it.id}">${p2Svg(it)}<span class="grow sm"><b>${esc(p2Nm(it))}</b> <span class="tag p2demo">${esc(p2t("demo"))}</span>${it.limited ? ` <span class="tag">${esc(p2t("limited"))}</span>` : ""}<br><span class="sub">${it.brand ? `<span class="p2brand">${esc(p2t("offered", { b: it.brand }))}</span> · ` : ""}<span class="p2price">${esc(p2Price(it))}</span></span></span>${has ? `<span class="tag ok">${esc(p2t("demoItem"))}</span>` : `<button class="btn" data-act="p2checkout" data-v="${it.id}" aria-label="${esc(p2t("buyDemo", { p: p2Price(it) }) + ", " + p2Nm(it) + ", " + p2t("demo"))}">${esc(p2t("buyDemo", { p: p2Price(it) }))}</button>`}</div>`; }).join("")}</div>
     ${P2S.demo.length ? `<button class="btn ghost full" data-act="p2demoreset" style="margin-top:10px">${esc(p2t("resetDemo"))}</button>` : ""}`, p2t("shop"));
 }
 function p2Checkout(id) {
-  const it = p2Item(id); if (!P2() || gated() || !it || !it.krw) return;
+  const it = p2Item(id); if (!P2() || gated() || !it || !(it.krw || it.free)) return;
   openSheet(sheetHd(p2t("checkout")) + `<span class="tag p2demo" id="p2-demo">${esc(p2t("demo"))}</span><div class="card row" style="margin-top:8px">${p2Svg(it, 48)}<span class="grow"><b>${esc(p2Nm(it))}</b>${it.brand ? `<br><span class="sub sm p2brand">${esc(p2t("offered", { b: it.brand }))}</span>` : ""}</span><b class="p2price">${esc(p2Price(it))}</b></div><p class="sm" id="p2-paynote"><b>${esc(p2t("payNote"))}</b></p>
     <div class="stack"><button class="btn full" data-act="p2pay" data-v="${it.id}">${esc(p2t("confirmDemo"))}</button><button class="btn ghost full" data-act="p2shop">${esc(p2t("cancel"))}</button></div>`, p2t("checkout"));
 }
@@ -443,13 +445,13 @@ function p2Builder(msg) {
   return `<div class="chome" id="p2-builder" style="padding-top:0"><div class="cpic">${p2Char(150, c)}</div></div>${msg ? `<p class="card sm" id="p2-msg" role="status"><b>${esc(msg)}</b></p>` : ""}<p class="sub sm" id="p2-bnote">${esc(p2t("builderNote"))}</p>${P2S.photo ? `<p class="sm" id="p2-photoon">${esc(p2t("photoOn"))}</p>` : ""}
   <h2>${esc(p2t("hair"))}</h2>${opt("hair", P2_HAIR)}<h2>${esc(p2t("skin"))}</h2>${opt("skin", P2_SKIN)}<h2>${esc(p2t("outfit"))}</h2>${outs}
   <div class="stack" style="margin-top:14px"><button class="btn full" data-act="p2save">${esc(p2t("save"))}</button><button class="btn ghost full" data-act="p2cancel">${esc(p2t("cancel"))}</button><button class="btn ghost full" data-act="p2reset">${esc(p2t("reset"))}</button>
-  ${ageUnk ? `<p class="sub sm" id="p2-ageunk">${esc(p2t("ageUnk"))}</p>` : minor ? `<p class="sub sm" id="p2-minor">${esc(p2t("minor"))}</p>` : P2S.photo ? `<button class="btn sec full" data-act="p2delphoto">${esc(p2t("delPhoto"))}</button><button class="btn ghost full" data-act="p2withdraw">${esc(p2t("withdraw"))}</button>` : `<button class="btn sec full" data-act="p2photo">${esc(p2t("photoBtn"))}</button>`}</div>`;
+  ${ageUnk ? `<p class="sub sm" id="p2-ageunk">${esc(p2t("ageUnk"))}</p>` : minor ? `<p class="sub sm" id="p2-minor">${esc(p2t("minor"))}</p>` : P2S.photo ? `<button class="btn sec full" data-act="p2delphoto">${esc(p2t("delPhoto"))}</button><button class="btn ghost full" data-act="p2withdraw">${esc(p2t("withdraw"))}</button>` : `<button class="btn sec full" data-act="p2photo">${esc(p2t("photoBtn"))}</button><p class="sub sm" id="p2-pendpriv-b" style="margin:0;text-align:center">${esc(p2t("pendingPriv"))}</p>`}</div>`;
 }
 /* P2-F: step 1 consent (no picker exists yet), step 2 upload with the self-only check; the File is held in memory only and never read, uploaded or saved */
 let P2FILE = null, p2Pend = null; /* pending consent (memory only) */
 function p2Consent(err) {
   if (!P2() || gated() || !p2AgeOk()) return;
-  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-consent"><ul class="sm" style="padding-left:18px;margin:0 0 8px"><li id="p2-c-purpose">${esc(p2t("cPurpose"))}</li><li>${esc(p2t("cWhat"))}</li><li id="p2-del">${esc(p2t("cKeep"))}</li><li>${esc(p2t("cShare"))}</li><li>${esc(p2t("cDelete"))}</li></ul><p class="sub sm" id="p2-legal">${esc(p2t("cLegal"))}</p>
+  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-consent"><p class="tag p2demo" id="p2-pendpriv" style="display:inline-block;margin:0 0 8px">${esc(p2t("pendingPriv"))}</p><ul class="sm" style="padding-left:18px;margin:0 0 8px"><li id="p2-c-purpose">${esc(p2t("cPurpose"))}</li><li>${esc(p2t("cWhat"))}</li><li id="p2-del">${esc(p2t("cKeep"))}</li><li>${esc(p2t("cShare"))}</li><li>${esc(p2t("cDelete"))}</li></ul><p class="sub sm" id="p2-legal">${esc(p2t("cLegal"))}</p>
     <label class="row sm" style="min-height:44px"><input type="checkbox" id="p2-agree" class="cb44"><span class="grow">${esc(p2t("agree"))}</span></label>
     ${err ? `<p class="sm" id="p2-err" role="alert" style="color:#8E3346"><b>${esc(err)}</b></p>` : ""}<div class="p2two"><button class="btn sec" data-act="p2nothanks">${esc(p2t("noThanks"))}</button><button class="btn sec" data-act="p2agree">${esc(p2t("cont"))}</button></div></div>`, p2t("consentT"));
 }
@@ -458,7 +460,7 @@ function p2Upload(err, keepMe) {
   const live = $("#p2-upload"); if (live && err) { /* re-validate in place so the chosen file and checkbox survive */
     let e = $("#p2-err"); if (!e) { e = document.createElement("p"); e.className = "sm"; e.id = "p2-err"; e.setAttribute("role", "alert"); e.style.color = "#8E3346"; live.querySelector("[data-act=p2gen]").before(e); }
     e.innerHTML = `<b>${esc(err)}</b>`; return; }
-  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-upload"><p class="sm" id="p2-self"><b>${esc(p2t("selfOnly"))}</b></p><p class="sub sm" id="p2-mock">${esc(p2t("mock"))} ${esc(p2t("cKeep"))}</p>
+  openSheet(sheetHd(p2t("consentT")) + `<div id="p2-upload"><p class="tag p2demo" style="display:inline-block;margin:0 0 8px">${esc(p2t("pendingPriv"))}</p><p class="sm" id="p2-self"><b>${esc(p2t("selfOnly"))}</b></p><p class="sub sm" id="p2-mock">${esc(p2t("mock"))} ${esc(p2t("cKeep"))}</p>
     <label class="row sm" style="min-height:44px"><input type="checkbox" id="p2-isme" class="cb44" ${keepMe ? "checked" : ""}><span class="grow">${esc(p2t("isMe"))}</span></label>
     <label class="btn sec full" for="p2-file" style="display:flex;justify-content:center;align-items:center">${esc(p2t("pick"))}</label><input type="file" id="p2-file" accept="image/*" class="sr">
     ${err ? `<p class="sm" id="p2-err" role="alert" style="color:#8E3346"><b>${esc(err)}</b></p>` : ""}<button class="btn full" data-act="p2gen" style="margin-top:8px">${esc(p2t("gen"))}</button></div>`, p2t("consentT"));
@@ -481,7 +483,7 @@ document.addEventListener("click", e => {
   if (a === "p2deco") return p2DecoSheet();
   if (a === "p2shop") return p2ShopSheet();
   if (a === "p2checkout") return p2Checkout(v);
-  if (a === "p2pay") { const it = p2Item(v); if (!it || !it.krw || p2Has(v)) return; P2S.demo.push(v); p2Save(); render(); return p2ShopSheet(p2t("gotIt")); } /* demo only: no provider call, no receipt */
+  if (a === "p2pay") { const it = p2Item(v); if (!it || !(it.krw || it.free) || p2Has(v)) return; P2S.demo.push(v); p2Save(); render(); return p2ShopSheet(p2t("gotIt")); } /* demo only: no provider call, no receipt */
   if (a === "p2demoreset") { P2S.placed = P2S.placed.filter(x => !P2S.demo.includes(x)); P2S.demo = []; p2Save(); render(); return p2ShopSheet(); }
   if (a === "p2buyfun") { const it = p2Item(v); if (!it || p2Has(v)) return; if (P2S.fun < it.fun) return p2DecoSheet(p2t("needMore", { n: it.fun - P2S.fun })); P2S.fun = Math.max(0, P2S.fun - it.fun); P2S.owned.push(v); P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(p2t("gotIt")); }
   if (a === "p2place") { const i = P2S.placed.indexOf(v); if (i >= 0) P2S.placed.splice(i, 1); else if (p2Has(v)) P2S.placed.push(v); p2Save(); render(); return p2DecoSheet(); }
@@ -2873,7 +2875,7 @@ function pvTick(m, now) {
     const wk = dayKey(m, m.closedTo), had = (m.weekVisits[wk] || 0) > 0;
     if (had) {
       m.streak++; m.run++; if (m.run % 4 === 0 && m.freeze < 1) m.freeze = 1;
-      for (const ms of [4, 8, 12]) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); m.msWeek = Object.assign(m.msWeek || {}, { [ms]: wk }); note(m, "milestone", { n: ms }); }
+      for (const ms of [4, 8, 12]) if (m.streak === ms && !m.msReached.includes(ms)) { m.msReached.push(ms); if (P2()) p2Earn("streak"); m.msWeek = Object.assign(m.msWeek || {}, { [ms]: wk }); note(m, "milestone", { n: ms }); }
     } else if (m.freeze) { m.freeze = 0; note(m, "freezeUsed"); }
     else { if (m.streak) note(m, "streakReset"); m.streak = 0; m.run = 0; }
     m.closedTo += 7 * DAY;
