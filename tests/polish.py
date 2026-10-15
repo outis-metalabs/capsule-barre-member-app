@@ -38,7 +38,7 @@ with sync_playwright() as p:
     ok(f'{L} long thread: input stays docked above the tab bar while scrolled to top', (not k['long']) or (0 <= k['nt'] - k['ib'] < 80), k)
     # store page
     J("()=>{ST.tab='discover';ST.store='capsule';ST.page=null;render();window.scrollTo(0,0)}"); pg.wait_for_timeout(100)
-    sp = J("()=>{const b=document.querySelector('.sacts > [data-v=\"cici:store:capsule\"]'),a=[...document.querySelectorAll('.sact3 .sact')].map(x=>{const r=x.getBoundingClientRect();return [x.innerText.replace(/\\s+/g,' ').trim(),Math.round(r.width),Math.round(r.height),Math.round(r.top)]});return {bw:b?Math.round(b.getBoundingClientRect().width):0,cw:Math.round(document.querySelector('.sacts').getBoundingClientRect().width),a,call:document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')}}")
+    sp = J("()=>{const b=document.querySelector('.sacts > #st-book'),a=[...document.querySelectorAll('.sact3 .sact')].map(x=>{const r=x.getBoundingClientRect();return [x.innerText.replace(/\\s+/g,' ').trim(),Math.round(r.width),Math.round(r.height),Math.round(r.top)]});return {bw:b?Math.round(b.getBoundingClientRect().width):0,cw:Math.round(document.querySelector('.sacts').getBoundingClientRect().width),a,call:document.querySelector('.sact[data-act=callstore]')?.getAttribute('aria-label')}}")
     labels = {'ko': ['전화', '카카오톡', '지도'], 'en': ['Call', 'KakaoTalk', 'Map']}[L]
     ok(f'{L} store: full-width Book here', sp['bw'] == sp['cw'] and sp['bw'] > 300, sp)
     ok(f'{L} store: 3 equal icon+label buttons Call/KakaoTalk/Map, one row', [x[0] for x in sp['a']] == labels and len({x[1] for x in sp['a']}) == 1 and len({x[3] for x in sp['a']}) == 1 and all(x[2] >= 44 for x in sp['a']), sp)

@@ -81,8 +81,9 @@ with sync_playwright() as p:
   pg.locator('#th-cici .mchips .chip').last.click(); ok('NT-4 detail opens the existing openBook() sheet', pg.locator('.sheet [data-act=slot], .sheet [data-act=classpick]').count() > 0); pg.evaluate("closeSheet()")
   pg.close()
   # NT-3 store scope
-  pg = page(); J(pg, "go('store:capsule')"); pg.click('#view [data-act=go][data-v="cici:store:capsule"]')
-  ok('NT-3 Book here → removable store chip', pg.locator('#view [data-act=unscope]').count() == 1 and 'Capsule Barre' in pg.inner_text('#view [data-act=unscope]'))
+  pg = page(); J(pg, "go('store:capsule')"); pg.click('#st-book'); ok('NT-3 Book here → native booking sheet, no chat jump', J(pg, "ST.tab") != 'cici' and pg.locator('.sheet #bk-svcs').count() == 1)
+  pg.click('#bk-ask'); pg.wait_for_timeout(150)
+  ok('NT-3 Ask Cici (in sheet) → removable store chip', pg.locator('#view [data-act=unscope]').count() == 1 and 'Capsule Barre' in pg.inner_text('#view [data-act=unscope]'))
   send(pg, '내일 오전'); ok('NT-3 replies scoped to the store', J(pg, "(CH.cici.draft||{}).store") == 'capsule', J(pg, "CH.cici.draft"))
   pg.click('#view [data-act=unscope]'); ok('NT-3 chip removable', J(pg, "CH.cici.scope") is None and pg.locator('#view [data-act=unscope]').count() == 0)
   pg.close()
@@ -146,7 +147,7 @@ with sync_playwright() as p:
   pg.click('#top [data-act=back]'); ok('NT-20 Back → Home', J(pg, "ST.tab") == 'home' and J(pg, "ST.page") is None)
   J(pg, "()=>{__plat.B.forEach(b=>{if(b.status==='confirmed')b.status='cancelled'});render()}"); v = view(pg)
   ok('NT-16 none: nothingUp + Book a class', '아직 예약이 없어요' in v or J(pg, "t('nothingUp')") in v)
-  pg.click('#view [data-act=go][data-v="cici:book"]'); ok('NT-16 Book a class → Nari Book chip state', J(pg, "ST.tab") == 'cici' and nmsgs(pg)[-1]['kind'] == 'bookPrompt')
+  pg.click('#view #bk-start'); ok('NT-16 Book a class → native booking sheet (choose a place), no chat jump', J(pg, "ST.tab") != 'cici' and pg.locator('.sheet #bk-places .svc').count() >= 3)
   pg.close()
   # NT-17
   pg = page(); J(pg, "go('cici:book')"); ok('NT-17 Book opener → Cici Book chip state', J(pg, "ST.tab") == 'cici' and nmsgs(pg)[-1]['kind'] == 'bookPrompt')

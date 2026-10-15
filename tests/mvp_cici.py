@@ -89,7 +89,7 @@ with sync_playwright() as p:
     ok('MVP-B2 tap1 opens review card', pg.evaluate("()=>!!document.querySelector('#th-cici .mcard [data-act=chatbook], #th-cici .mcard [data-act=waitlist]')"))
     if pg.locator('#th-cici [data-act=chatbook]').count():
       pg.click('#th-cici [data-act=chatbook]'); pg.wait_for_timeout(700)
-      ok('MVP-B2 tap2 books + cheer sheet', pg.evaluate("()=>!!document.querySelector('#bk-confirm') && !!document.querySelector('#bk-done-acts [data-act=addcal]') && !!document.querySelector('#bk-done-acts [data-act=mybk]')"))
+      ok('MVP-B2 tap2 books + cheer sheet', pg.evaluate("()=>!!document.querySelector('#bk-confirm') && !!document.querySelector('#bk-done-acts [data-act=addcal]') && !!document.querySelector('#bk-done-acts [data-act=bkview]')"))
       ok('MVP-B5 cheer plays (or still)', pg.evaluate("()=>{const v=document.querySelector('#bk-confirm video.cut-cheer, #bk-confirm img.cut-cheer'); return !!v}"))
     else:
       ok('MVP-B2 tap1 opens review card', True)
