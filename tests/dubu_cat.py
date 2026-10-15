@@ -72,7 +72,7 @@ with sync_playwright() as p:
   J(g, "()=>{CH.cici.gate=false;render()}")
   ok('DB-C1 within 24h: hunger, treat counters and Feed hidden; calm only', J(g, "catCrisis() && !catHungry() && catMood()==='calm' && !document.querySelector('#cat-feed,#cat-card,#cat-feedbtn,[data-hungry]') && !/\\d/.test(document.querySelector('#cat-line').innerText)"))
   J(g, "()=>catFeed()"); ok('DB-C1 no happy moment in the window', J(g, "catDay().treats===2 && !ST.catEat"))
-  J(g, "()=>{P2S.cat.crisisAt=PV.now()-25*3600*1000;render()}"); ok('DB-C1 after 24h the Mochi prompts return', J(g, "!catCrisis() && !!document.querySelector('#cat-feed')"))
+  J(g, "()=>{P2S.cat.crisisAt=PV.now()-25*3600*1000;P2S.cat.crisisOk=PV.now();render()}"); ok('DB-C1 after 24h + re-engage the Mochi prompts return', J(g, "!catCrisis() && !!document.querySelector('#cat-feed')"))
   ok('DB-C2 crisis copy/no-number unchanged and no Dubu prompt in the Cici chat', J(g, "!/Mochi|모찌|Dubu|두부|tel:/.test(CH.cici.msgs.map(m=>m.text||'').join(' '))"))
   g.close()
   # DB-V

@@ -8,8 +8,8 @@ All images and videos here are official Cici art by the 3D Designer, made from t
 - Head box ≈ x 354–720, y 540–975 (image px); plain wall top-left down to ≈28% (the glass card sits there).
 - To swap: replace this file and update CICI_HOME in platform-app-v2.html (w, h, face box). The face-not-covered test reads that config.
 
-## cici-cat-petting.mp4 / .webm + cici-cat-poster.jpg (Mochi, 모찌; asset filenames still use "dubu" from the original delivery)
-- Official 3D Designer loop of Cici petting her cat Mochi (from cici_dubu_petting_tall, 720×1280, 6.5 s, no audio; mp4 792 KB, webm 314 KB). Supplied 2026-10-15.
+## cici-cat-petting.mp4 / cici-mochi-petting.* (remade) / .webm + cici-cat-poster.jpg (Mochi, 모찌; asset filenames still use "dubu" from the original delivery)
+- Official 3D Designer loop of Cici petting her cat Mochi (from cici_mochi_petting_tall (remade 2026-10-15; was cici_dubu_petting_tall), 720×1280, 6.5 s, no audio; mp4 792 KB, webm 314 KB). Supplied 2026-10-15.
 - The v2 Home background (muted, playsinline, loop; paused off-screen / tab hidden). The poster is the still fallback (reduced motion, Save-Data, load error).
 - Face ≈ 50% x, 42% y, head ≈ 29% of the height → CICI_HOME face box x 235–485, y 352–723 (image px). The face-not-covered test reads CICI_HOME.
 - Lively and napping loops don't exist yet: CICI_CAT.clips maps them to "petting" with CSS cues. To swap, add cici-cat-<name>.webm/.mp4 and point the mood at it.
