@@ -56,6 +56,25 @@ with sync_playwright() as p:
   ok('CB-10 webbook mapping: flow-01 = webbook lesson 13', J(g, "__plat.cueBook.getLesson('flow-01').bookNumber===13 && __plat.cueBook.getLesson('basic-01').positions[0].nameKr==='누워서 갈비뼈로 호흡 느끼기'"))
   ok('CB-10 invalid ids return null', J(g, "['one-01','basic-13','flow-00','basic-1','',null,'BASIC-01'].every(i=>__plat.cueBook.getLesson(i)===null)"))
 
+  # ---- PO decisions: draft EN names "EN · KR", hotlinked media only, slow 0.75, placeholder flag kept
+  en = J(g, r"""(()=>{const P=Object.values(CUE_BOOK_LESSONS).flatMap(l=>l.positions);return {n:P.length,
+    allEn:P.every(p=>typeof p.nameEn==='string'&&p.nameEn.trim()&&/^[\x20-\x7e]+$/.test(p.nameEn)), allDraft:P.every(p=>p.nameEnDraft===true),
+    fmt:P.every(p=>__plat.cueBook.positionLabel(p)===p.nameEn+' · '+p.nameKr), krOnly:__plat.cueBook.positionLabel({nameEn:null,nameKr:'가'})==='가'}})()""")
+  ok('PO every position has an English nameEn + nameEnDraft:true', en['n'] == 120 and en['allEn'] and en['allDraft'], en)
+  ok('PO positions render as "EN · KR" (KR only without EN)', en['fmt'] and en['krOnly'], en)
+  ok('PO lesson titles stay KR; titleEn only with titleEnDraft', J(g, "Object.values(CUE_BOOK_LESSONS).every(l=>l.titleLang==='kr'&&/[가-힣]/.test(l.title)&&(l.titleEn===null?l.titleEnDraft===false:l.titleEnDraft===true))"))
+  ok('PO all media URLs remote http(s) or placeholder://', J(g, r"""Object.values(CUE_BOOK_LESSONS).every(l=>l.positions.every(p=>/^https?:\/\//.test(p.image))&&l.cues.every(c=>[c.audioNormalUrl,c.audioSlowUrl].every(u=>/^https?:\/\//.test(u)||(c.audioPlaceholder&&u.startsWith('placeholder://')))))"""))
+  ok('PO slow rate stays 0.75; audioPlaceholder flag kept', J(g, "CUE_BOOK_SLOW_RATE===0.75 && Object.values(CUE_BOOK_LESSONS).every(l=>l.cues.every(c=>typeof c.audioPlaceholder==='boolean'&&c.audioPlaceholder===c.audioNormalUrl.startsWith('placeholder://')))"))
+  import subprocess, os
+  root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+  base = next((r for r in ('origin/main', 'main') if subprocess.run(['git', 'rev-parse', '-q', '--verify', r], cwd=root, capture_output=True).returncode == 0), None)
+  if base:
+    ch = subprocess.run(['git', 'diff', '--name-only', '--diff-filter=AM', base + '...HEAD'], cwd=root, capture_output=True, text=True).stdout.split()
+    ch += subprocess.run(['git', 'ls-files', '--others', '--exclude-standard', 'assets/cue-book'], cwd=root, capture_output=True, text=True).stdout.split()
+    med = [f for f in ch if re.search(r'\.(png|jpe?g|webp|gif|mp3|m4a|wav|ogg|aac|mp4|webm)$', f, re.I)]
+    ok('PO no binary media (webbook images/MP3s) in the branch diff', not med, med)
+  ok('PO assets/cue-book holds only lessons.js', sorted(os.listdir(os.path.join(root, 'assets', 'cue-book'))) == ['lessons.js'])
+
   # ---- CB-2: class -> lesson tagging
   bk = J(g, "(()=>{const b=B.find(x=>x.store==='capsule'&&!x.past&&x.status==='confirmed');return {id:b.id,store:b.store,svc:b.svc,d:b.d,m:b.m}})()")
   ok('CB-2 untagged session -> no lesson', J(g, f"__plat.cueBook.getLessonForBooking({bk['id']})===null && __plat.cueBook.forBooking({bk['id']}).lessonId===null"))

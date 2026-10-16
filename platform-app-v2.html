@@ -2990,6 +2990,8 @@ function cueBookLoad() {
 }
 function cueIsLessonId(id) { return typeof id === "string" && CUE_LESSON_RE.test(id) && (!CUE.lessons || !!CUE.lessons[id]); }
 function getLesson(id) { return cueOn() && CUE.lessons && cueIsLessonId(id) ? CUE.lessons[id] : null; }
+/* positions render as "EN · KR" (EN names are drafts, nameEnDraft:true); KR only when no EN name */
+function cuePositionLabel(p) { if (!p) return ""; return p.nameEn ? `${p.nameEn} · ${p.nameKr}` : (p.nameKr || ""); }
 function listLessons(track) { if (!cueOn() || !CUE.lessons) return []; return Object.values(CUE.lessons).filter(l => !track || l.track === track).sort((a, b) => a.bookNumber - b.bookNumber); }
 /* CB-2: studio side. Only class-kind stores, only real scheduled services. lessonId null/"" clears the tag. */
 function tagSession(store, svc, d, m, lessonId) {
@@ -3011,7 +3013,7 @@ function getLessonForBooking(bookingId) { const b = cueBk(bookingId); return b ?
 function storeConfirmedVisit(bookingId) { const b = cueBk(bookingId); if (!b) return false; try { const a = ME.att[b.id]; return !!(a && !a.reversed); } catch (e) { return false; } }
 /* one call for the UI: { booking, lessonId, lesson, storeConfirmedVisit } or null when off / no such booking */
 function cueBookForBooking(bookingId) { if (!cueOn()) return null; const b = cueBk(bookingId); if (!b) return null; const lessonId = lessonIdForSession(b.store, b.svc, b.d, b.m); return { bookingId: b.id, lessonId, lesson: getLesson(lessonId), storeConfirmedVisit: storeConfirmedVisit(b.id) }; }
-const CUE_API = { enabled: cueOn, load: cueBookLoad, isLessonId: cueIsLessonId, getLesson, listLessons, tagSession, lessonIdForSession, sessionKey: cueSessionKey, sessionKeyOf: cueKeyOf, getLessonForBooking, storeConfirmedVisit, forBooking: cueBookForBooking, _state: CUE };
+const CUE_API = { enabled: cueOn, positionLabel: cuePositionLabel, load: cueBookLoad, isLessonId: cueIsLessonId, getLesson, listLessons, tagSession, lessonIdForSession, sessionKey: cueSessionKey, sessionKeyOf: cueKeyOf, getLessonForBooking, storeConfirmedVisit, forBooking: cueBookForBooking, _state: CUE };
 const EVT = []; let TURN_SAFE = false;
 function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
 const gated = () => !!(CH.cici.gate && CH.cici.msgs.length);
