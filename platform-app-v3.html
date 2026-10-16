@@ -822,6 +822,10 @@ function catVarPath(base, name) { const look = catLook(); if (look === "kitten")
   return CAT_VAR[k] ? k : base; }
 function catRow() { /* the card's ONE secondary row; returns [text, feedButton] */
   const c = catDay(), d = MOCHI(), cr = catCrisis();
+  /* captions follow the clip actually playing: when this look has no clip for the slot, catLookAlias substitutes one and the line describes the substitute */
+  const raw = catClipName0(catMood()), sub = catLookAlias(raw) !== raw ? catLookAlias(raw) : null;
+  if (ST.catEat === "eat" && sub === "room-eat") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
+  if (ST.catMis === "water" && sub) return [L3(`Cici sipped water · ${d} cuddled on her lap`, `Cici nhấp ngụm nước · ${d} rúc vào lòng cô ấy`, `Cici는 물 한 모금 · ${d}는 무릎 위에서 꼭 안겼어요`), ""];
   if (ST.catEat === "eat") return [L3(`${d} munches her treat 🐟`, `${d} nhai món ăn vặt 🐟`, `${d}가 간식을 냠냠 🐟`), ""];
   if (ST.catEat === "feed") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
   if (ST.catEat === "pet") return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];

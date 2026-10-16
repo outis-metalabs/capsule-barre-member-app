@@ -23,7 +23,7 @@ def crops(frames, sw, d):
   return n
 with sync_playwright() as p:
   b = p.chromium.launch()
-  for L in ('en', 'ko'):
+  for L in ('en', 'ko', 'vi'):
     c = b.new_context(viewport={'width': 390, 'height': 844}); g = c.new_page(); E = []; NF = []; REQ = []
     g.on('pageerror', lambda e: E.append(str(e))); g.on('response', lambda r: (r.status >= 400 and NF.append((r.status, r.url))))
     g.on('request', lambda r: 'cici-real/' in r.url and REQ.append(r.url.split('/')[-1])); J = g.evaluate
@@ -46,6 +46,9 @@ with sync_playwright() as p:
       J(js); g.wait_for_timeout(ms); top = J(TOP); seen[nm] = top
       g.screenshot(path=f'{SH}/yc-{nm.split()[0]}-{L}-390.png')
       ok(f'[{t}] {nm}: -cat clip on top {top}', top and top[1].rsplit('.', 1)[0].endswith('-cat'), [top, J("catMood()")])
+      ln = J("document.querySelector('#cat-line').innerText")
+      if nm.startswith('mission'): ok(f'[{t}] water mission on petting-cat reads the cuddle line, not the bowl line: {ln!r}', ('Cici' in ln and ({'en':'lap','ko':'무릎','vi':'lòng'}[L] in ln)) and not any(w in ln for w in ('bowl','그릇','bát')), ln)
+      if nm.startswith('play'): ok(f'[{t}] play at streak 7 on lively-cat shows lively text, not "playing": {ln!r}', 'playing' not in ln and '놀아요' not in ln and J("ST.catEat===false&&catMood()==='play'"), ln)
       ok(f'[{t}] {nm}: 2D collar not doubled on baked-in collar', J(COLOFF))
     S = J("window.__s"); sw = check(S, t); print(f'  [{t}] switches: {[x[1:] for x in sw]}')
     print(f'  [{t}] face-crop frames: {crops(frames, sw, f"{SH}/frames-{L}")}')
