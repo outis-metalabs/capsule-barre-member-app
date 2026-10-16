@@ -35,13 +35,13 @@ with sync_playwright() as p:
   ok('V3-1 feed while hungry: eats at the bowl first (square close-up as a rounded card)', J(g, "ST.catEat==='eat'") and J(g, TOP) == 'eating' and J(g, "(()=>{const v=document.querySelector('.catvid.on.sq');if(!v)return false;const r=v.getBoundingClientRect();return Math.abs(r.width-r.height)<2&&r.width<340&&parseFloat(getComputedStyle(v).borderRadius)>=20})()"), [J(g, "ST.catEat"), J(g, TOP)])
   g.screenshot(path=f'{SH}/feed-eat.png'); g.wait_for_timeout(3500)
   ok('V3-1 ... then Cici pets her', J(g, "ST.catEat==='pet'") and J(g, TOP) == 'petting' and 'petting' in J(g, LINE).lower(), [J(g, "ST.catEat"), J(g, TOP), J(g, LINE)])
-  g.wait_for_timeout(2800); ok('V3-1 ... then the happy loop, hunger cleared, no popup', J(g, "ST.catEat==='play' && !catHungry() && !document.querySelector('.wtoast.in,.modal,.sheet')") and J(g, TOP) == 'room-happy', [J(g, "ST.catEat"), J(g, TOP)])
+  g.wait_for_timeout(2800); ok('V3-1 ... then the happy loop (room-play when on), hunger cleared, no popup', J(g, "ST.catEat==='play' && !catHungry() && !document.querySelector('.wtoast.in,.modal,.sheet')") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 happy-loop copy matches a content cat (eyes closed), not "playful"', 'playful' not in J(g, LINE).lower(), J(g, LINE))
   g.wait_for_timeout(3200); ok('V3-1 back to the mood loop', J(g, "!ST.catEat && catMood()!=='hungry'"))
   # not hungry: PR #37 eat clip plays once, then happy
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;P2S.cat.treats=1;P2S.cat.earned=1;render()}"); g.wait_for_timeout(500); J(g, "()=>document.querySelector('#cat-feed').click()"); g.wait_for_timeout(500)
   ok('V3-1 feed when not hungry: fish arc, then Mochi eats from Cici\'s hand (room-eat, once)', J(g, "ST.catEat==='feed'") and J(g, TOP) == 'room-eat' and J(g, "(()=>{const v=document.querySelector('.catvid[data-clip=\"room-eat\"]');return !!v&&!v.loop})()"), [J(g, "ST.catEat"), J(g, TOP)])
-  g.wait_for_timeout(4600); ok('V3-1 ... then happy', J(g, "ST.catEat==='play'") and J(g, TOP) == 'room-happy', [J(g, "ST.catEat"), J(g, TOP)])
+  g.wait_for_timeout(4600); ok('V3-1 ... then happy (room-play when on)', J(g, "ST.catEat==='play'") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 toast sits under the glass card on Home (never over the greeting)', J(g, "(()=>{const t=document.querySelector('#toast'),c=document.querySelector('#hb-bubble');if(!t||t.hidden)return 'hidden';return t.getBoundingClientRect().top>=c.getBoundingClientRect().bottom})()") in (True, 'hidden'))
 
   # 2. Streak moods

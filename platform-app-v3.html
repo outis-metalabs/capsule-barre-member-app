@@ -774,7 +774,7 @@ const CAT_CLIPS = { stretch: "assets/cici-real/cici-room-stretch_tall", water: "
 const CAT_SQ = { eating: 1, water: 1 }; /* square close-ups: shown letterboxed (contain) over the room gradient, never cover-cropped */
 const CAT_ROOM = { water: true, stretch: true, happy: true, eat: true }; /* tall Cici+Mochi room clips in the repo today; eat = Mochi eats her fish from Cici's hand (PR #37), plays once in the feed sequence */
 /* v3 SLOT FLAGS: flip to true in the same commit that adds the file (like HANA_RIV) — no HEAD probes, so the console stays free of 404s. ?catprobe=1 probes instead, for a quick local check. */
-const CAT_OPT = { "room-play": false, "room-waterbowl": false, "napping-bed": false, "hungry-room": false };
+const CAT_OPT = { "room-play": true, "room-waterbowl": false, "napping-bed": false, "hungry-room": false };
 const CAT_LOOK_READY = { cat: false, fluffy: false }; /* true once the -cat / -fluffy variants of the clips exist (see docs/mochi-v3-videos.md) */
 const CAT_PROBE = (() => { try { return new URLSearchParams(location.search).get("catprobe") === "1"; } catch (e) { return false; } })();
 function catProbe(name, store, key) { if (typeof fetch !== "function" || !catMotionOk()) return; /* no probe (or clip traffic) under reduced motion / Save-Data */
@@ -848,7 +848,7 @@ function catFab() { /* game-style Feed button in the room (user 2026-10-16). Hid
 const CAT_ANCH = { /* measured on the 390×844 Home (2026-10-16): head = Mochi's head centre, neck = where a collar sits (body/neck junction, steadier than the head), w = collar width; all fractions of the 720×1280 frame. neck:null = no collar on this clip (Mochi moves too much); close = close-up (no bed) */
   petting: { head: [0.64, 0.70], neck: [0.625, 0.758], w: 0.23 }, "room-happy": { head: [0.64, 0.71], neck: [0.625, 0.758], w: 0.23 }, "room-water": { head: [0.64, 0.71], neck: [0.625, 0.758], w: 0.23 },
   lively: { head: [0.667, 0.665], neck: [0.655, 0.757], w: 0.21 }, react: { head: [0.657, 0.675], neck: [0.652, 0.75], w: 0.21 }, napping: { head: [0.657, 0.735], neck: [0.636, 0.77], w: 0.23 }, /* lively/react: Mochi's head bobs, so the collar sits at the chest line, which stays put */
-  "room-stretch": { head: [0.66, 0.68], neck: null }, "room-eat": { head: [0.64, 0.70], neck: null }, "room-play": { head: [0.64, 0.70], neck: null }, "room-waterbowl": { head: [0.64, 0.70], neck: null }, "hungry-room": { head: [0.64, 0.70], neck: null }, "napping-bed": { head: [0.30, 0.84], neck: null },
+  "room-stretch": { head: [0.66, 0.68], neck: null }, "room-eat": { head: [0.64, 0.70], neck: null }, "room-play": { head: [0.60, 0.695], neck: [0.615, 0.745], w: 0.22 }, "room-waterbowl": { head: [0.64, 0.70], neck: null }, "hungry-room": { head: [0.64, 0.70], neck: null }, "napping-bed": { head: [0.30, 0.84], neck: null },
   hungry: { head: [0.40, 0.39], neck: null, close: 1 }, eating: { head: [0.62, 0.52], neck: null, close: 1 }, water: { head: [0.42, 0.50], neck: null, close: 1 } };
 const CAT_BED = [0.21, 0.845, 0.24]; /* the floor strip left of the bench (the only floor on screen): x, y, width (frame fractions); only on room (lap) clips */
 function catFrameXY(fx, fy, vid) { /* frame fraction → px inside #v2-hero for the given <video> (cover or contain, with its object-position) */
@@ -930,6 +930,7 @@ function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}
       if (oneShot) nxt.addEventListener("ended", () => { catXfadeTo(catClipName(catMood()), { loop: true }); }, { once: true });
     }, ms + 40);
   };
+  if (!aligned) tap = true; /* clips that don't share the petting first frame (e.g. lively -> room-play): soft blur dip, never a cream dip or blend */
   if (tap) { /* user tap (Feed): react now with a soft blur dip — never an opacity blend of two sharp clips.
      ~100ms blur 0→14px (+slight brightness) on the video layer, swap clips at peak blur (instant, one video visible), ~160ms blur back to 0 */
     catXfadeTo.pend = null; const t0 = performance.now(); catXfadeTo.tapAt = t0; clearTimeout(catFadeT);
