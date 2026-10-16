@@ -355,7 +355,7 @@ body.v2home header.top .brand .nm{display:none}body.v2home header.top .brand spa
 body.v2home header.top .icb{background:rgba(255,255,255,.85);border-radius:999px}
 body.v2home main{padding-top:0}
 .v2hero{position:relative;margin:0 -16px;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;padding-top:64px;box-sizing:border-box;background:linear-gradient(#F3E6DC,#EEDFD3)}
-.v2hero .v2card{position:relative;z-index:2;margin:8px 0 0 16px;width:min(272px,calc(100% - 32px));padding:14px 12px 12px 16px;display:block;border-radius:22px}
+.v2hero .v2card{position:relative;z-index:2;margin:8px 0 0 16px;width:min(312px,calc(100% - 32px));padding:14px 12px 12px 16px;display:block;border-radius:22px}
 .v2hero .v2card::after{display:none}
 .v2card .hbhi{margin:0 0 4px;font-size:13px;font-weight:700;color:#6B5E62}
 .v2card .v2row{display:flex;align-items:center;gap:8px}.v2card .hbt{flex:1;margin:0;font-size:18px;font-weight:800;line-height:1.3;color:#2B2324}
@@ -496,6 +496,18 @@ body.v2home .toast.undercard{top:var(--toast-top,calc(64px + env(safe-area-inset
 /* v3 Today sheet: missions → Mochi → next class → level; one view */
 .sheet.v2sheet .dmc{margin-top:0}.dmc .mis.done .mt{text-decoration:none;color:rgba(255,255,255,.92)} /* the check says it's done; no strikethrough fighting the Mochi line */
 .misok{display:flex;min-width:0}.misok .mistx{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== Showcase (?show=1): presentation frame on wide screens; the app itself is untouched ===== */
+@media (min-width:900px){
+body.showcase::after{content:"";position:fixed;top:0;bottom:0;left:50%;width:430px;transform:translateX(-50%);border-radius:44px;box-shadow:0 0 0 10px #1d1418,0 0 0 12px #3a2a30,0 0 150px 60px rgba(233,133,151,.26),0 0 0 9999px #120c10;pointer-events:none;z-index:900}
+.showbrand{position:fixed;z-index:950;top:50%;right:calc(50% + 215px + 76px);transform:translateY(-50%);width:300px;color:#FBE9ED;animation:fadein .9s ease both}
+.showbrand .sb-logo{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#E98597,#B04A5E);color:#fff;font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(233,133,151,.35)}
+.showbrand h1{font-size:46px;margin:14px 0 2px;letter-spacing:-.02em;color:#fff}.showbrand .sb-sub{margin:0;font-size:16px;color:#D9B8C0}
+.showbrand ul{list-style:none;padding:0;margin:24px 0 0;display:grid;gap:12px;font-size:15.5px;color:#F3DCE1}.showbrand li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#E98597;margin-right:10px;vertical-align:middle}
+.showbrand .sb-tag{display:inline-block;margin-top:28px;padding:6px 12px;border-radius:999px;background:rgba(233,133,151,.18);color:#F3C9D2;font-size:12.5px;font-weight:700;letter-spacing:.04em}
+}
+@media (max-width:899px){.showbrand{display:none}}
+body.boot .v2card{animation:showcard .6s cubic-bezier(.2,.9,.3,1.1) both}body.boot .v2act{animation:showpop .5s cubic-bezier(.2,.9,.3,1.3) both}body.boot .v2act:nth-child(2){animation-delay:.12s}body.boot .v2act:nth-child(3){animation-delay:.24s}
+@keyframes showcard{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}@keyframes showpop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 .catrow2{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:12px 14px}.catrow2 .catthumb{flex:none;width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid #F3C9D2;background:#FBE9ED;position:relative}.catrow2 .catthumb img{display:block;width:100%;height:100%;object-fit:cover;object-position:62% 74%;transform:scale(2.3);transform-origin:62% 74%}.catrow2 .catthumb.close img{object-position:50% 50%;transform:none} /* panel: the thumb shows Mochi, not Cici's face */.catrow2 .btn{min-height:44px;flex:none}
 .catrow2[data-hungry] .catthumb{box-shadow:0 0 0 3px #FBE9ED,0 0 0 5px #E98597}
 .sheetrows{margin-top:10px}.sheetrows .svc{min-height:56px}.glass.v2sheet .svc{background:rgba(255,255,255,.62)} /* Home: the toast sits under the glass card, never over the greeting */
@@ -4352,7 +4364,22 @@ function checkJumps() {
   return { ok: !bad.length, bad };
 }
 window.checkJumps = checkJumps;
-p2Load(); if (P2()) render();
+/* ===== Showcase (?show=1): investor demo preset — curated state on every load, demo clips prefetched, presentation frame + brand panel on wide screens (docs/investor-demo.md) ===== */
+const SHOW = (() => { try { const q = new URLSearchParams(location.search).get("show"); return q === "1" || q === "true" || q === "investor"; } catch (e) { return false; } })();
+function showcaseInit() {
+  if (!SHOW || !P2()) return;
+  document.body.classList.add("showcase", "boot"); setTimeout(() => document.body.classList.remove("boot"), 900); /* one entrance only: later refreshes (treat arrival) must not pop the circles in again */
+  try { const dk = dayKey(ME, PV.now()); delete ME.days[dk]; } catch (e) {}
+  P2S.dm = null; P2S.cat = Object.assign(P2S.cat || {}, { demoHour: 12, treats: 1, earned: 1, fresh: 1, fed: 0, crisisAt: 0, crisisOk: 0 });
+  if (ME) { ME.streak = 7; ME.paused = false; } ST.miss.rest = false; ST.catEat = false; ST.catReact = null; ST.catMis = null; ST.catGrew = false; CH.cici.gate = false;
+  ST.tab = "home"; ST.page = null; ST.store = null; p2Save();
+  const names = ["room-play", "room-eat", "petting", "lively", "room-waitbowl", "room-waterbowl", "room-stretch", "react", "hungry-room", "napping", "room-happy"], seen = new Set();
+  names.forEach(n => { try { if (!CAT_CLIPS[n] && !CICI_CAT.clips[n] && n !== "petting") return; const src = catClipSrc(catLookAlias(n)); [src.webm, src.poster].forEach(u => { if (seen.has(u)) return; seen.add(u); const l = document.createElement("link"); l.rel = "prefetch"; l.href = u; l.className = "showpre"; document.head.appendChild(l); }); } catch (e) {} });
+  const b = document.createElement("aside"); b.className = "showbrand"; b.setAttribute("aria-hidden", "true");
+  b.innerHTML = `<div class="sb-logo">C</div><h1>Cici</h1><p class="sb-sub">${esc(L3("Capsule Barre · member app", "Capsule Barre · ứng dụng hội viên", "Capsule Barre · 회원 앱"))}</p><ul><li>${esc(L3("One companion across every store", "Một người bạn đồng hành ở mọi cửa hàng", "모든 매장을 잇는 하나의 동반자"))}</li><li>${esc(L3("Book in three taps, undo in one", "Đặt trong ba chạm, hoàn tác trong một", "세 번 탭으로 예약, 한 번으로 되돌리기"))}</li><li>${esc(L3("Mochi grows with every visit", "Mochi lớn lên theo từng lượt đến", "방문할수록 자라는 모찌"))}</li></ul><p class="sb-tag">${esc(L3("Live demo · v3", "Demo trực tiếp · v3", "라이브 데모 · v3"))}</p>`;
+  document.body.appendChild(b);
+}
+p2Load(); showcaseInit(); if (P2()) render();
 window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, G_ITEMS, G_STAGES, gState, gStats, gHint, gSimVisit, gDaysOff, gUnmapped, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
