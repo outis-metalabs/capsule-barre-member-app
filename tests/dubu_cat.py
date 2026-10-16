@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 U = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8897/platform-app-v2.html'
 SH = sys.argv[2] if len(sys.argv) > 2 else '/workspace/hana-shots/cat-dubu'; os.makedirs(SH, exist_ok=True)
 R = []; ok = lambda n, c, d='': (R.append(bool(c)), print(('PASS ' if c else 'FAIL ') + n + ('' if c else f' :: {str(d)[:300]}')))
-FRESH = "()=>{const dk=dayKey(ME,PV.now());delete ME.days[dk];P2S.dm=null;P2S.cat={};ST.miss.rest=false;ST.catEat=false;CH.cici.gate=false;render()}"
+FRESH = "()=>{const dk=dayKey(ME,PV.now());delete ME.days[dk];P2S.dm=null;P2S.cat={};ST.miss.rest=false;ST.catEat=false;CH.cici.gate=false;CAT_ROOM.eat=false;render()}"  # petting path; eat path in feed_eat.py
 LED = "()=>JSON.stringify({l:ME.ledger.length,s:ME.streak,md:ME.misDay,mw:ME.misWeek,lv:ME.level,lp:ME.ledger.reduce((a,r)=>a+r.life,0),g:gState().stage})"
 SAD = re.compile(r"sad|cry|sick|forgot|forget|lonely|starv|hungry and|guilt|슬퍼|울어|아파|잊|배고파 죽|buồn|khóc|ốm|quên", re.I)
 with sync_playwright() as p:

@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 U = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8897/platform-app-v2.html'
 SH = sys.argv[2] if len(sys.argv) > 2 else '/workspace/hana-shots/no-popups'; os.makedirs(SH, exist_ok=True)
 R = []; ok = lambda n, c, d='': (R.append(bool(c)), print(('PASS ' if c else 'FAIL ') + n + ('' if c else f' :: {str(d)[:300]}')))
-FRESH = "()=>{const dk=dayKey(ME,PV.now());delete ME.days[dk];P2S.dm=null;P2S.cat={};ST.miss.rest=false;ST.catEat=false;ST.catReact=null;CH.cici.gate=false;ME.streak=12;ME.paused=false;P2S.cat.demoHour=18;P2S.cat.treats=1;closeSheet();render()}"
+FRESH = "()=>{const dk=dayKey(ME,PV.now());delete ME.days[dk];P2S.dm=null;P2S.cat={};ST.miss.rest=false;ST.catEat=false;ST.catReact=null;CH.cici.gate=false;ME.streak=12;ME.paused=false;P2S.cat.demoHour=18;P2S.cat.treats=1;CAT_ROOM.eat=false;closeSheet();render()}"  # petting path; the eat path is covered by feed_eat.py
 WATCH = "()=>{window.__pop=0;new MutationObserver(()=>{if(document.querySelector('#cat-clip,#cat-eat,.cateat,.catclip,.cateatx'))window.__pop++}).observe(document.body,{childList:true,subtree:true})}"
 RECT = "s=>{const e=document.querySelector(s);if(!e||e.hidden)return null;const r=e.getBoundingClientRect();return [r.top,r.bottom,r.left,r.right]}"
 with sync_playwright() as p:

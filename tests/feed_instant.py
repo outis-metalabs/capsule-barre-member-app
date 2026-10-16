@@ -1,4 +1,4 @@
-"""Feed reacts within ~250ms with a soft blur dip (PR36 r2): ~100ms blur 0→14px on the video layer, instant swap to the clip at 0 at peak blur,
+"""Feed reacts within ~250ms with a soft blur dip (fix/feed-eat: ~70ms blur 0→8px, ~120ms back; PR36 had 14px) on the video layer, instant swap to the clip at 0 at peak blur,
 ~160ms blur back. Only one video visible at any frame — never an opacity blend of two sharp clips. Passive mood changes keep loop-end timing.
 Also captures every painted frame 0–400ms after the tap (CDP screencast). Usage: feed_instant.py [base_url] [shots_dir]"""
 import sys, os, json, base64
@@ -16,24 +16,24 @@ def analyse(S, tap, t):
   ok(f'[{t}] only one video visible on every frame (no opacity blend)', not two, two[:2])
   vis = top
   react = next((s[0] - tap for s in S if vis(s) and vis(s)[3] > 0.5), None)
-  sw = next((i for i, s in enumerate(S) if vis(s) and vis(s)[0] == 'petting'), None)
+  sw = next((i for i, s in enumerate(S) if vis(s) and vis(s)[0] in ('petting','room-eat')), None)
   ok(f'[{t}] Mochi reacts (blur starts) < 300ms', react is not None and react < 300, react)
   bas = max(vis(S[sw - 1])[3], vis(S[sw])[3]) if sw else 0
-  ok(f'[{t}] swap at peak blur (≥10px), petting from its first frame', sw is not None and bas >= 10 and vis(S[sw])[2] < 0.25, [sw, bas, sw and vis(S[sw])])
-  sharp = next((s[0] - tap for s in S[sw:] if vis(s) and vis(s)[0] == 'petting' and vis(s)[3] < 0.3), None) if sw else None
-  ok(f'[{t}] petting sharp again < 450ms', sharp is not None and sharp < 450, sharp)
+  ok(f'[{t}] swap at peak blur (≥6px), incoming (eat or petting) clip from its first frame', sw is not None and bas >= 6 and vis(S[sw])[2] < 0.25, [sw, bas, sw and vis(S[sw])])
+  sharp = next((s[0] - tap for s in S[sw:] if vis(s) and vis(s)[0] in ('petting','room-eat') and vis(s)[3] < 0.3), None) if sw else None
+  ok(f'[{t}] incoming clip sharp again < 450ms', sharp is not None and sharp < 450, sharp)
   print(f'  [{t}] reaction {react and round(react)}ms, swap at {sw and round(S[sw][0]-tap)}ms (blur {bas:.1f}px), sharp at {sharp and round(sharp)}ms')
 with sync_playwright() as p:
   b = p.chromium.launch()
   for L in ('en', 'ko'):
-    for run in range(6):  # runs 0-4: tap at 5 points of the 4.04s hungry loop; run 5: every-frame capture
+    for run in range(5):  # tap at 5 points of the 4.04s hungry loop; every painted frame captured on each
       c = b.new_context(viewport={'width': 390, 'height': 844}); g = c.new_page(); E = []; g.on('pageerror', lambda e: E.append(str(e)))
       q = '?phase2=1'; g.goto(U + q); g.evaluate('localStorage.clear()'); g.goto(U + q); g.wait_for_timeout(500); J = g.evaluate
       J(f"()=>{{setLang('{L}');ST.tab='home';ST.page=null;render()}}"); J(FRESH); g.wait_for_timeout(1500 + (run % 5) * 790); t = f'{L}-390-r{run}'
       ok(f'[{t}] hungry room clip playing before the tap', J("(document.querySelector('.catvid.on')||{}).dataset.clip===(CAT_ROOM.hungry?'room-hungry':'petting')"))
       ht = J("(document.querySelector('.catvid.on')||{}).currentTime")
       frames = []
-      if run == 5:
+      if True:
         cdp = c.new_cdp_session(g)
         cdp.on('Page.screencastFrame', lambda e: (frames.append((e['metadata']['timestamp'], e['data'])), cdp.send('Page.screencastFrameAck', {'sessionId': e['sessionId']})))
         cdp.send('Page.startScreencast', {'format': 'png', 'everyNthFrame': 1}); g.wait_for_timeout(400)
@@ -42,9 +42,9 @@ with sync_playwright() as p:
       g.wait_for_timeout(1200); S = J("window.__s"); tap = J("window.__tap"); print(f'  [{t}] tapped at hungry t={ht:.2f}s')
       analyse(S, tap, t)
       if run == 0: json.dump(S, open(f'{SH}/opacity-blur-trace-{L}.json', 'w'))
-      if run == 5:
+      if True:
         cdp.send('Page.stopScreencast'); tw = J("window.__tapW") / 1000
-        d = f'{SH}/frames-{L}'; os.makedirs(d, exist_ok=True); [os.remove(os.path.join(d, x)) for x in os.listdir(d)]
+        d = f'{SH}/frames-{L}-tap{run}'; os.makedirs(d, exist_ok=True); [os.remove(os.path.join(d, x)) for x in os.listdir(d)]
         sel = [(ts, dat) for ts, dat in frames if -0.02 <= ts - tw <= 0.42]
         for i, (ts, dat) in enumerate(sel): open(f'{d}/{i:03d}_{max(0,int((ts - tw) * 1000)):03d}ms.png', 'wb').write(base64.b64decode(dat))
         ok(f'[{t}] captured ≥10 painted frames in 0–400ms', len(sel) >= 10, len(sel)); print(f'  [{t}] {len(sel)} frames captured')

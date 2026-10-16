@@ -464,8 +464,8 @@ body.v2home .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto}
 @keyframes hbfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.catfab[data-state=hungry]{animation:none!important}#cici-real .cathbub{animation:none!important;transition:none}.sheet.glass.closing{transition:none}}
 .v2bg .catvid{transform-origin:50% 40%}
-.v2bg.blurdip .catvid{filter:blur(14px) brightness(1.08);transform:scale(1.04);transition:filter 100ms ease-in,transform 100ms ease-in,opacity 0s!important}
-.v2bg.blurout .catvid{filter:none;transform:none;transition:filter 160ms ease-out,transform 160ms ease-out,opacity 0s!important}
+.v2bg.blurdip .catvid{filter:blur(8px) brightness(1.05);transform:scale(1.02);transition:filter 70ms ease-in,transform 70ms ease-in,opacity 0s!important}
+.v2bg.blurout .catvid{filter:none;transform:none;transition:filter 120ms ease-out,transform 120ms ease-out,opacity 0s!important}
 </style>
 </head>
 <body>
@@ -744,9 +744,9 @@ const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real
   eat: "assets/cici-real/dubu-eating", fadeMs: 400 };
   /* Official loops (tall): petting default; lively / napping / hungry / react wired. No overlays: feed crossfades the scene to react ~3 s; missions confirm inline. Crossfade CICI_CAT.fadeMs (300–500). */
 const CAT_CLIPS = { stretch: "assets/cici-real/cici-room-stretch_tall", water: "assets/cici-real/mochi-water",
-  "room-hungry": "assets/cici-real/cici-room-hungry_tall", "room-water": "assets/cici-real/cici-room-water_tall", "room-stretch": "assets/cici-real/cici-room-stretch_tall", "room-happy": "assets/cici-real/cici-room-happy_tall" };
+  "room-hungry": "assets/cici-real/cici-room-hungry_tall", "room-water": "assets/cici-real/cici-room-water_tall", "room-stretch": "assets/cici-real/cici-room-stretch_tall", "room-happy": "assets/cici-real/cici-room-happy_tall", "room-eat": "assets/cici-real/cici-room-eat_tall" };
 /* ROOM SLOT (3D Designer): tall Cici+Mochi room clips drop in as cici-room-<k>_tall.webm/.mp4 (+ -poster.jpg). Used only when the file exists; else hungry/happy keep the room loop and missions use the small PiP bubble. */
-const CAT_ROOM = { hungry: false, water: false, stretch: false, happy: false };
+const CAT_ROOM = { hungry: false, water: false, stretch: false, happy: false, eat: false }; /* eat: optional Mochi-eats clip for the feed sequence (starts/ends on the petting first frame) */
 function catRoomProbe() { if (typeof fetch !== "function" || !catMotionOk()) return; /* no probe (or clip traffic) under reduced motion / Save-Data */ Object.keys(CAT_ROOM).forEach(k => { fetch(CAT_CLIPS["room-" + k] + ".mp4", { method: "HEAD" }).then(r => { if (r.ok && !CAT_ROOM[k]) { CAT_ROOM[k] = true; if (typeof catSyncMood === "function" && !ST.catMis && !ST.catEat) catSyncMood(); } }).catch(() => {}); }); }
 setTimeout(catRoomProbe, 0); /* official mission clips, played full-screen in the room */
 const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
@@ -772,6 +772,7 @@ function catMood() { /* react > eating > crisis calm > hungry > napping > lively
 function catRow() { /* the card's ONE secondary row; returns [text, feedButton] */
   const c = catDay(), d = MOCHI(), cr = catCrisis();
   if (ST.catEat === "play") return [L3(`${d} is playful!`, `${d} đang vui đùa!`, `${d} 신나게 놀아요!`), ""];
+  if (ST.catEat === true && CAT_ROOM.eat && catMotionOk()) return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
   if (ST.catEat) return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];
   if (ST.catMis) return [ST.catMis === "water" ? (CAT_ROOM.water ? L3(`Cici is sipping water, ${d} on her lap`, `Cici đang uống nước, ${d} trên đùi cô ấy`, `Cici가 물 마셔요, ${d}는 무릎 위에`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
@@ -850,16 +851,16 @@ function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}
      ~100ms blur 0→14px (+slight brightness) on the video layer, swap clips at peak blur (instant, one video visible), ~160ms blur back to 0 */
     catXfadeTo.pend = null; const t0 = performance.now(); catXfadeTo.tapAt = t0; clearTimeout(catFadeT);
     fig.classList.remove("blurout"); void fig.offsetWidth; fig.classList.add("blurdip");
-    const swap = () => { const wait = Math.max(0, 100 - (performance.now() - t0));
+    const swap = () => { const wait = Math.max(0, 70 - (performance.now() - t0));
       catFadeT = setTimeout(() => { try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
         /* keep the blurred outgoing clip up until the incoming one has painted its first frame (no empty frame at the swap) */
         let done = false; const flip = () => { if (done) return; done = true;
         [cur, nxt].forEach(v => v.style.transition = "none"); nxt.style.opacity = "1"; nxt.classList.add("on"); /* incoming sits on top (z2); the covered outgoing clip is hidden two frames later so the swap never shows an empty frame */
         requestAnimationFrame(() => requestAnimationFrame(() => { cur.style.opacity = "0"; cur.classList.remove("on"); cur.pause(); }));
         catFront = back; requestAnimationFrame(() => { fig.classList.add("blurout"); fig.classList.remove("blurdip");
-          catFadeT = setTimeout(() => { fig.classList.remove("blurout"); nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; cur.style.transition = ""; nxt.style.transition = ""; }, 180); }); };
+          catFadeT = setTimeout(() => { fig.classList.remove("blurout"); nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; cur.style.transition = ""; nxt.style.transition = ""; }, 140); }); };
         if (nxt.requestVideoFrameCallback) nxt.requestVideoFrameCallback(() => requestAnimationFrame(flip)); else nxt.addEventListener("seeked", flip, { once: true });
-        setTimeout(flip, 120); }, wait); };
+        setTimeout(flip, 100); }, wait); };
     if (nxt.readyState >= 2) swap(); else nxt.addEventListener("loadeddata", swap, { once: true }); return; }
   const start = () => { const d = cur.duration, t0 = cur.currentTime, left = (isFinite(d) && d > 0 && !cur.paused) ? (d - t0) * 1000 : 0;
     if (!aligned) return go(true);
@@ -901,12 +902,18 @@ function catEatShow() { /* DB-T5 (no popup): crossfade the Home scene to the hap
   clearTimeout(catEatShow.t); clearTimeout(catReact.t); ST.catReact = null; ST.catEat = true;
   { const bw = document.getElementById("cat-room-bowl"); if (bw) bw.remove(); }
   const fig = document.getElementById("cici-real");
-  if (fig) { fig.dataset.mood = "eating"; fig.className = "v2bg cat-eating"; if (catMotionOk()) catXfadeTo("petting", { loop: true, tap: true });
+  if (fig) { fig.dataset.mood = "eating"; fig.className = "v2bg cat-eating"; if (catMotionOk()) catXfadeTo(CAT_ROOM.eat ? "room-eat" : "petting", { loop: !CAT_ROOM.eat, tap: true });
     let sp = fig.querySelector(".catspark"); if (!sp) { sp = document.createElement("span"); sp.className = "catspark"; sp.setAttribute("aria-hidden", "true"); sp.textContent = "♥ 🐟"; fig.appendChild(sp); }
     requestAnimationFrame(() => sp.classList.add("on")); setTimeout(() => sp.classList.remove("on"), 1600); }
   /* sequence: fish lands -> Cici pets her (petting) -> playful (lively) -> happy mood loop; every step a ~400ms crossfade */
-  catEatShow.t = setTimeout(() => { ST.catEat = "play"; if (catMotionOk()) catXfadeTo(CAT_ROOM.happy ? "room-happy" : "lively", { loop: true, tap: !!CAT_ROOM.happy }); catRefreshUi();
-    catEatShow.t = setTimeout(() => { ST.catEat = false; catSyncMood(); catRefreshUi(); }, 3000); }, 2600); }
+  /* sequence: fish arc -> eat clip (if present, plays once) or petting -> happy -> mood loop; clip switches use the tap blur dip */
+  let hp = false; const toHappy = () => { if (hp || !ST.catEat) return; hp = true; clearTimeout(catEatShow.t);
+    ST.catEat = "play"; if (catMotionOk()) catXfadeTo(CAT_ROOM.happy ? "room-happy" : "lively", { loop: true, tap: !!CAT_ROOM.happy }); catRefreshUi();
+    catEatShow.t = setTimeout(() => { ST.catEat = false; catSyncMood(); catRefreshUi(); }, 3000); };
+  if (CAT_ROOM.eat && catMotionOk() && fig) { /* happy when the eat clip ends; safety cap 6s */
+    const hook = () => { const v = fig.querySelector('.catvid[data-clip="room-eat"]'); if (v) v.addEventListener("ended", toHappy, { once: true }); };
+    setTimeout(hook, 0); catEatShow.t = setTimeout(toHappy, 6000); }
+  else catEatShow.t = setTimeout(toHappy, 2600); }
 function catNudge() { /* empty state: never a dead button — nudge + open missions */
   toast(L3("Do a mission to earn a treat", "Làm một nhiệm vụ để nhận ăn vặt", "미션을 하면 간식이 생겨요")); if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) try { el.focus({ preventScroll: true }); } catch (e) {} }
 function catRefreshUi() { { const a = document.getElementById("v2-acts"); if (a && V2HOME()) { const sq = !!a.querySelector(".squish"); const w = document.createElement("div"); w.innerHTML = v2Acts(); a.replaceWith(w.firstElementChild); if (sq) { const f = document.getElementById("cat-feed") || document.getElementById("cat-fab-empty"); if (f) f.classList.add("squish"); } } } /* update the card line / sheet in place, never re-render the scene (a re-render would hard-cut the video) */
