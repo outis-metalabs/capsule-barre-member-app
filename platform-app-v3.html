@@ -427,7 +427,7 @@ body.v2home:has(#stretch-chip) .v2acts,body.v2home:has(#stretch-chip) .toast{vis
 .misok{display:inline-flex;width:100%;align-items:center;gap:6px;font-size:13px;font-weight:650;color:#6B5E62;margin-top:4px;text-decoration:none}.dmc .misok{color:#fff}
 .misok .misthumb{flex:none;width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid #F3C9D2;background:#FBE9ED}
 body.v2home .v2pull{bottom:calc(112px + env(safe-area-inset-bottom,0px))} /* clear gap above the floating bar (bar top = 86px) */
-body.v2home .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:70;left:12px;right:88px;width:auto;max-width:none;transform:none}
+body.v2home .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:70;left:calc(50% - min(50%,215px) + 12px);right:auto;width:calc(min(100%,430px) - 100px);max-width:none;transform:none} /* inside the 430px app column (desktop too), clear of the action circles on the right */
 .v2circ .catbadge{background:#B04A5E!important;color:#fff!important} /* always above the swipe pill and the bar, never behind */
 body.v2home:has(.sheet) .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto} /* over an open sheet the toast sits at the top so it never covers the row you just ticked */
 @media (prefers-reduced-motion:reduce){.catbowl{animation:none!important}}
@@ -841,7 +841,7 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   if (c.treats > 0) return [L3(`${d} has ${c.treats} treat${c.treats > 1 ? "s" : ""} waiting`, `${d} có ${c.treats} món ăn vặt`, `${d} 간식 ${c.treats}개`), ""];
   const st = ME ? ME.streak : 0, mo = catMood();
   const mt = { lively: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`), play: catPlayOn() ? L3(`${d} is playing`, `${d} đang nô đùa`, `${d}가 놀아요`) : L3(`${d} purrs — you're on a roll`, `${d} rừ rừ — bạn đang rất đều`, `${d} 골골송 — 아주 잘하고 있어요`),
-    napping: catBedOn() ? L3(`${d} is napping in her bed`, `${d} đang ngủ trong giường`, `${d}가 침대에서 낮잠 중`) : L3(`${d} is napping on Cici's lap`, `${d} đang ngủ trên đùi Cici`, `${d}가 Cici 무릎에서 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
+    napping: catClipName("napping") === "napping-bed" ? L3(`${d} is napping in her bed`, `${d} đang ngủ trong giường`, `${d}가 침대에서 낮잠 중`) : catBedOn() ? L3(`${d} is napping on Cici's lap · her bed is ready`, `${d} đang ngủ trên đùi Cici · giường đã sẵn sàng`, `${d}가 Cici 무릎에서 낮잠 중 · 침대는 준비됐어요`) : L3(`${d} is napping on Cici's lap`, `${d} đang ngủ trên đùi Cici`, `${d}가 Cici 무릎에서 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
   return [(st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
 }
 function v2Acts() { /* pet-game action circles over the room (user 2026-10-16): Missions, Next class / Check in, Feed. Max 3; right edge, clear of both faces. */
@@ -2071,8 +2071,9 @@ function openSheet(html, label) {
   if (!$(".sheet")) lastFocus = document.activeElement;
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" data-act="bgclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}</div></div>`;
   const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); try { (f || sh).focus({ preventScroll: true }); } catch (e) {} /* never scroll the page behind (iOS showed a black strip + resized the room) */
+  { const tt = $("#toast"); if (tt && !tt.hidden && typeof toastPlace === "function") toastPlace(tt); } /* a toast shown just before the sheet moves to the sheet position */
 }
-function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } const g0 = $(".sheet.glass"); if (g0 && typeof catMotionOk === "function" && catMotionOk()) sheetGhostOut(g0); $("#sheetRoot").innerHTML = ""; if (!had) return; try { if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus({ preventScroll: true }); else $("#view").focus({ preventScroll: true }); } catch (e) {} }
+function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } const g0 = $(".sheet.glass"); if (g0 && typeof catMotionOk === "function" && catMotionOk()) sheetGhostOut(g0); $("#sheetRoot").innerHTML = ""; if (!had) return; { const tt = $("#toast"); if (tt && !tt.hidden && typeof toastPlace === "function") toastPlace(tt); } try { if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus({ preventScroll: true }); else $("#view").focus({ preventScroll: true }); } catch (e) {} }
 function sheetGhostOut(sh) { /* glass panel close: the live sheet is removed at once (state stays simple); a non-interactive copy slides down ~220ms */
   const bg = sh.parentElement, cs = getComputedStyle(sh).transform, gb = bg.cloneNode(true); gb.className = "sheetghost-bg glass"; gb.removeAttribute("data-act"); gb.setAttribute("aria-hidden", "true"); gb.inert = true;
   const gs = gb.firstElementChild; gs.className = sh.className.replace(/\bsheet\b/, "sheetghost").replace(/\b(dragging|closing)\b/g, ""); gs.removeAttribute("role"); gs.removeAttribute("id"); gs.querySelectorAll("[id]").forEach(e => e.removeAttribute("id"));

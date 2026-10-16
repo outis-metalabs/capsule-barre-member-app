@@ -58,7 +58,7 @@ with sync_playwright() as p:
     vids = [r for r in REQ if r.endswith(('.mp4', '.webm'))]
     ok(f'[{t}] no kitten video requested after reaching Bud', all(r.rsplit('.', 1)[0].endswith('-cat') for r in vids), vids)
     ok(f'[{t}] no 404s', not NF, NF[:3]); ok(f'[{t}] no page errors', not E, E[:2])
-    print(f'  [{t}] line: {J("document.querySelector(\'#cat-line\').innerText")!r}'); c.close()
+    line = J("document.querySelector('#cat-line').innerText"); print(f'  [{t}] line: {line!r}'); c.close()
   c = b.new_context(viewport={'width': 390, 'height': 844}, reduced_motion='reduce'); g = c.new_page(); J = g.evaluate
   g.goto(U); J('localStorage.clear()'); g.goto(U); g.wait_for_timeout(900); J(FRESH)
   J("()=>{ME.ledger.push({id:'T9',delta:0,life:2500,reason:'t',t:PV.now()});render()}"); g.wait_for_timeout(1500)
