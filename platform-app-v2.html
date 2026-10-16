@@ -751,7 +751,7 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   const c = catDay(), d = MOCHI(), cr = catCrisis();
   if (ST.catEat === "play") return [L3(`${d} is playful!`, `${d} đang vui đùa!`, `${d} 신나게 놀아요!`), ""];
   if (ST.catEat) return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];
-  if (ST.catMis) return [ST.catMis === "water" ? L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`), ""];
+  if (ST.catMis) return [ST.catMis === "water" ? (CAT_ROOM.water ? L3(`Cici is sipping water, ${d} on her lap`, `Cici đang uống nước, ${d} trên đùi cô ấy`, `Cici가 물 마셔요, ${d}는 무릎 위에`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   const fb = ""; /* the room has the big game Feed button (catFab); no tiny chip in the card */
   if (catHungry()) {
@@ -896,8 +896,10 @@ function catItemsCard() { /* sheet only: stage chip + owned items; locked growth
   <div class="sm sub" id="cat-stage">${esc(gT("stage"))} · ${esc(nm)}</div></div><span class="tag" id="cat-stage-tag">${esc(nm)}</span></div>
   ${owned.length ? `<div class="stack" id="cat-items">${rows}</div>` : `<div class="stack" id="cat-items" hidden></div>`}${tip}</section>`; }
 /* Mission moments (MC-K, no popups since 2026-10-16): after Done the row shows a quiet inline line with a tiny round Mochi still (≤64px). No overlay, no dim, no X. Hidden in crisis (MC-K4). */
+function catMisLine(k) { const m = MOCHI(); if (k === "water") return CAT_ROOM.water ? L3(`Cici sipped with you · ${m} licked her lips`, `Cici uống cùng bạn · ${m} liếm môi`, `Cici도 같이 물 마셨어요 · ${m}는 입맛 다셔요`) : L3(`${m} drank too`, `${m} cũng uống nước`, `${m}도 물 마셨어요`);
+  return CAT_ROOM.stretch ? L3(`${m} stretched on Cici's lap`, `${m} vươn vai trên đùi Cici`, `${m}도 Cici 무릎에서 기지개 켰어요`) : L3(`${m} stretched with you`, `${m} giãn cơ cùng bạn`, `${m}도 같이 스트레칭했어요`); }
 function catMisOk(k) { if (!P2() || catCrisis() || !CAT_CLIPS[k]) return "";
-  const tx = k === "water" ? L3(`${MOCHI()} drank too`, `${MOCHI()} cũng uống nước`, `${MOCHI()}도 물 마셨어요`) : L3(`${MOCHI()} stretched with you`, `${MOCHI()} giãn cơ cùng bạn`, `${MOCHI()}도 같이 스트레칭했어요`);
+  const tx = k === "water" ? catMisLine("water") : catMisLine("stretch");
   return `<span class="misok" data-k="${k}"><img class="misthumb" src="${CAT_CLIPS[k]}-poster.jpg" width="28" height="28" alt="" loading="lazy">${esc(tx)}</span>`; }
 function catMisPlay(kind, ms) { /* mission moment in the room: tall room clip if it exists, else a small PiP bubble near Mochi over the room loop. Never a modal: no dim, no X, non-blocking. */
   if (!P2() || catCrisis() || !CAT_CLIPS[kind]) return false; closeSheet(); clearTimeout(catMisPlay.t); ST.catMis = kind;
@@ -914,7 +916,7 @@ function catPipHide(now) { const o = document.getElementById("cat-pip"); if (!o)
 function catMisEnd() { clearTimeout(catMisPlay.t); catPipHide(); if (!ST.catMis) return; ST.catMis = null; catSyncMood(); catRefreshUi(); }
 function catMisToast(r, nm, dm, kind, earned) { /* ONE message after a mission: points · Mochi line · treat (no win card, no confetti unless the 3/3 bonus) */
   const parts = [r.pts ? L3(`+${r.pts} points`, `+${r.pts} điểm`, `+${r.pts}포인트`) : r.msg ? pvT(r.msg) : nm];
-  if (!catCrisis()) parts.push(kind === "water" ? L3(`${MOCHI()} drank too`, `${MOCHI()} cũng uống nước`, `${MOCHI()}도 물 마셨어요`) : L3(`${MOCHI()} stretched too`, `${MOCHI()} cũng giãn cơ`, `${MOCHI()}도 스트레칭했어요`));
+  if (!catCrisis()) parts.push(kind === "water" ? catMisLine("water") : catMisLine("stretch"));
   if (earned && !catCrisis()) parts.push(L3("🐟 +1 treat", "🐟 +1 ăn vặt", "🐟 간식 +1"));
   if (dm && dm.bonus) parts.push(L3(`All 3 done: +${DM_BONUS} bonus!`, `Xong cả 3: +${DM_BONUS} thưởng!`, `3개 모두 완료: 보너스 +${DM_BONUS}!`));
   WINQ.length = 0; { const w = $("#wintoast"); if (w) { w.classList.remove("in"); w.hidden = true; } } toastCut = null;

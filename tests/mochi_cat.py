@@ -1,5 +1,6 @@
 """Mochi (모찌) the cat — full scope. One check group per BA AC id in mochi-cat-ba-ac.md (MC-H/T/M/C/V/G/I/K/X).
 Usage: mochi_cat.py [base_url] [shots_dir]"""
+ROOT = __import__("os").path.dirname(__import__("os").path.dirname(__import__("os").path.abspath(__file__)))
 import sys, os, re, glob, subprocess
 from playwright.sync_api import sync_playwright
 U = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8897/platform-app-v2.html'
@@ -50,7 +51,7 @@ with sync_playwright() as p:
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=1;render()}"); g.click('#cat-feed', force=True); g.wait_for_timeout(300)
   ok('MC-T5 feed uses treat, clears hunger, happy moment', J(g, "catDay().treats===0 && !catHungry() && !document.querySelector('#cat-eat') && document.querySelector('#cici-real').dataset.mood==='eating'"))
   J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('MC-T6 0 treats: on-ramp (no dead Feed) + missions/Book', J(g, """!!document.querySelector('#cat-card[data-ramp="1"] #cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"""))
-  SRC = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read()
+  SRC = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','platform-app-v2.html'), encoding='utf8').read()
   calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
   ok('MC-T7 treats only from mission/visit/demo', sorted(set(calls)) == ['demo', 'mission', 'visit'], calls)
   # MC-T8 no clawback: treat kept when we just leave it (no reverse path removes treats)
@@ -100,7 +101,7 @@ with sync_playwright() as p:
     J(g, "()=>{ST.tab='home';render()}"); g.wait_for_timeout(300)
     st = J(g, "[!!document.querySelector('.catvid.on, #cat-video-a, #cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]")
     ok(f'MC-V3 {nm}: still, no video, no clip download', st == [False, True, False] and not any(re.search(r'\.(mp4|webm)', u) for u in req), [st, req[-3:]]); c.close()
-  for f in sorted(glob.glob('/tmp/hot/assets/cici-real/cici-cat-petting.*') + glob.glob('/tmp/hot/assets/cici-real/cici-mochi-petting.*')):
+  for f in sorted(glob.glob(ROOT+'/assets/cici-real/cici-cat-petting.*') + glob.glob(ROOT+'/assets/cici-real/cici-mochi-petting.*')):
     if f.endswith('.jpg'): continue
     o = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration:stream=codec_type', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout.split()
     dur = float([x for x in o if re.match(r'^[\d.]+$', x)][0])
@@ -126,14 +127,14 @@ with sync_playwright() as p:
   before = J(g, LED); J(g, "()=>{catEquip('m_collar')}"); after = J(g, LED)
   ok('MC-I3 equip toggles with no points/stage/streak change', J(g, "!!catItemOn('m_collar')") and before == after)
   ok('MC-I2 no Buy button for collar/bed', J(g, "document.querySelectorAll('#cat-items [data-act=buy],#cat-items [data-act=p2pay]').length===0"))
-  html = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read()
+  html = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','platform-app-v2.html'), encoding='utf8').read()
   ok('MC-I4 items have no shop/premium path', 'm_collar' in html and not re.search(r'm_collar[^\n]{0,80}pts|buy.*m_collar', html))
   g.close()
 
   # MC-K
   g = page(); J(g, FRESH)
   J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(400)
-  ok('MC-K1 stretch: Mochi copies the stretch in the room + timer chip, no popup', J(g, "!!document.querySelector('#stretch-chip #stl') && (()=>{const o=document.querySelector('#cat-pip[data-kind=stretch]');if(!o)return false;const r=o.getBoundingClientRect();return r.width>=96&&r.width<=120&&!o.querySelector('button')&&(document.querySelector('.catvid.on')||{}).dataset.clip!=='stretch'&&!document.querySelector('.sheet-bg')})() && !document.querySelector('#cat-clip,.cateat')"))
+  ok('MC-K1 stretch: Mochi copies the stretch in the room + timer chip, no popup', J(g, "!!document.querySelector('#stretch-chip #stl') && (CAT_ROOM.stretch ? ((document.querySelector('.catvid.on')||{}).dataset.clip==='room-stretch'&&!document.querySelector('#cat-pip')&&!document.querySelector('.sheet-bg')) : (()=>{const o=document.querySelector('#cat-pip[data-kind=stretch]');if(!o)return false;const r=o.getBoundingClientRect();return r.width>=96&&r.width<=120&&!o.querySelector('button')&&(document.querySelector('.catvid.on')||{}).dataset.clip!=='stretch'&&!document.querySelector('.sheet-bg')})()) && !document.querySelector('#cat-clip,.cateat')"))
   J(g, "()=>{stretchStop();closeSheet();dmMark('water');openHomeSheet()}"); g.wait_for_timeout(300)
   ok('MC-K2 water done: inline "Mochi drank too" line in the row', J(g, "!!document.querySelector('#home-dm .mis[data-m=water] .misok') && !document.querySelector('#cat-clip')"))
   J(g, "()=>{closeSheet();crisisReply(CH.cici,'x');render();openHomeSheet()}")

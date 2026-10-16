@@ -1,5 +1,6 @@
 """Mochi (모찌) the cat (was Dubu), v2 phase2 only. One check group per BA AC id in dubu-cat-ba-ac.md (DB-H/T/M/C/V/X). File path kept as dubu_cat.py.
 Usage: dubu_cat.py [base_url] [shots_dir]"""
+ROOT = __import__("os").path.dirname(__import__("os").path.dirname(__import__("os").path.abspath(__file__)))
 import sys, os, re
 from playwright.sync_api import sync_playwright
 U = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8897/platform-app-v2.html'
@@ -57,7 +58,7 @@ with sync_playwright() as p:
   J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('DB-T6 0 treats: on-ramp CTAs (no dead Feed)', J(g, "!!document.querySelector('#cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"))
   J(g, "()=>{setLang('en');render();openHomeSheet()}"); g.wait_for_timeout(200); ok('DB-T6 EN on-ramp copy', 'mission' in (J(g, "(document.querySelector('#cat-hint')||{}).innerText") or '').lower()); J(g, "()=>{setLang('ko');render()}")
   # DB-T7
-  SRC = open('/tmp/hot/platform-app-v2.html', encoding='utf8').read(); calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
+  SRC = open(ROOT+'/platform-app-v2.html', encoding='utf8').read(); calls = re.findall(r'catEarn\("(\w+)"\)', SRC)
   ok('DB-T7 treats only from missions/visits (+demo): no buy/gift/premium path grants treats', sorted(set(calls)) == ['demo', 'mission', 'visit'], calls)
   # DB-M
   J(g, FRESH); ok('DB-M1 active streak -> lively', J(g, "ME.streak>0 && !isPaused(ME) ? catMood()==='lively' : true"), J(g, "[ME.streak,isPaused(ME),catMood()]"))
@@ -98,7 +99,7 @@ with sync_playwright() as p:
     J(g, "()=>{ST.tab='home';render()}"); g.wait_for_timeout(300)
     st = J(g, "[!!document.querySelector('.catvid.on, #cat-video-a, #cat-video'), !!document.querySelector('#cici-real img'), catMotionOk()]"); ok(f'DB-V3 {nm}: still image, no video element, no clip downloaded', st == [False, True, False] and not any(re.search(r'\.(mp4|webm)', u) for u in req), [st, req[-5:]]); c.close()
   import glob, subprocess
-  for f in sorted(glob.glob('/tmp/hot/assets/cici-real/*.mp4') + glob.glob('/tmp/hot/assets/cici-real/*.webm')):
+  for f in sorted(glob.glob(ROOT+'/assets/cici-real/*.mp4') + glob.glob(ROOT+'/assets/cici-real/*.webm')):
     o = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration:stream=codec_type', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout.split()
     dur = float([x for x in o if re.match(r'^[\d.]+$', x)][0]); name=os.path.basename(f); lim=(5.5,8) if 'petting' in name else (2,8)
     ok(f'DB-V1 {os.path.basename(f)} <=2.5 MB, {lim[0]}-8 s, no audio track', os.path.getsize(f) <= 2.5e6 and lim[0] <= dur <= lim[1] and 'audio' not in o, [os.path.getsize(f), dur, o])
