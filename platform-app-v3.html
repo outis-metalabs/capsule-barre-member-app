@@ -775,7 +775,13 @@ const CAT_SQ = { eating: 1, water: 1 }; /* square close-ups: shown letterboxed (
 const CAT_ROOM = { water: true, stretch: true, happy: true, eat: true }; /* tall Cici+Mochi room clips in the repo today; eat = Mochi eats her fish from Cici's hand (PR #37), plays once in the feed sequence */
 /* v3 SLOT FLAGS: flip to true in the same commit that adds the file (like HANA_RIV) — no HEAD probes, so the console stays free of 404s. ?catprobe=1 probes instead, for a quick local check. */
 const CAT_OPT = { "room-play": true, "room-waterbowl": false, "napping-bed": false, "hungry-room": false };
-const CAT_LOOK_READY = { cat: false, fluffy: false }; /* true once the -cat / -fluffy variants of the clips exist (see docs/mochi-v3-videos.md) */
+const CAT_LOOK_READY = { cat: true, fluffy: false };
+/* clips that exist for each look; anything else is aliased to a clip of the SAME look (catLookAlias) so Mochi never changes age mid-session */
+const CAT_LOOK_HAS = { cat: ["petting", "lively", "napping", "react", "hungry", "room-happy", "room-eat", "room-stretch", "stretch"] };
+const CAT_LOOK_ALIAS = { "room-play": "lively", "room-water": "petting", water: "petting", eating: "room-eat", "room-waterbowl": "petting", "hungry-room": "hungry", "napping-bed": "napping" };
+const catLookHas = n => { const l = catLook(); return l === "kitten" || !CAT_LOOK_READY[l] || (CAT_LOOK_HAS[l] || []).includes(n); };
+const catLookAlias = n => catLookHas(n) ? n : (CAT_LOOK_ALIAS[n] && catLookHas(CAT_LOOK_ALIAS[n]) ? CAT_LOOK_ALIAS[n] : "petting");
+const catPlayOn = () => CAT_OPT["room-play"] && catLookHas("room-play"); /* true once the -cat / -fluffy variants of the clips exist (see docs/mochi-v3-videos.md) */
 const CAT_PROBE = (() => { try { return new URLSearchParams(location.search).get("catprobe") === "1"; } catch (e) { return false; } })();
 function catProbe(name, store, key) { if (typeof fetch !== "function" || !catMotionOk()) return; /* no probe (or clip traffic) under reduced motion / Save-Data */
   fetch(CAT_CLIPS[name] + ".mp4", { method: "HEAD" }).then(r => { if (r.ok && !store[key]) { store[key] = true; if (typeof catSyncMood === "function" && !ST.catMis && !ST.catEat) catSyncMood(); } }).catch(() => {}); }
@@ -810,8 +816,8 @@ const catLookIdx = () => { const s = catStage(); return s >= 4 ? 2 : s >= 2 ? 1 
 const catLook = () => CAT_LOOKS[catLookIdx()][0];
 const catLookNm = (i) => { const l = CAT_LOOKS[i == null ? catLookIdx() : i]; return L3(l[1], l[2], l[3]); };
 const CAT_VAR = {}; /* look variants: <clip path>-<look>.webm/.mp4 (+ -poster.jpg); kitten = the base file. Used when CAT_LOOK_READY[look] (or found by ?catprobe=1). */
-function catVarPath(base) { const look = catLook(); if (look === "kitten") return base; const k = base + "-" + look;
-  if (CAT_LOOK_READY[look]) return k;
+function catVarPath(base, name) { const look = catLook(); if (look === "kitten") return base; const k = base + "-" + look;
+  if (CAT_LOOK_READY[look]) return name == null || (CAT_LOOK_HAS[look] || []).includes(name) ? k : base;
   if (CAT_PROBE && CAT_VAR[k] == null) { CAT_VAR[k] = false; if (typeof fetch === "function" && catMotionOk()) fetch(k + ".mp4", { method: "HEAD" }).then(r => { if (r.ok) { CAT_VAR[k] = true; if (!ST.catMis && !ST.catEat && typeof catSyncMood === "function") catSyncMood(true); } }).catch(() => {}); }
   return CAT_VAR[k] ? k : base; }
 function catRow() { /* the card's ONE secondary row; returns [text, feedButton] */
@@ -819,7 +825,7 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   if (ST.catEat === "eat") return [L3(`${d} munches her treat 🐟`, `${d} nhai món ăn vặt 🐟`, `${d}가 간식을 냠냠 🐟`), ""];
   if (ST.catEat === "feed") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
   if (ST.catEat === "pet") return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];
-  if (ST.catEat) return [CAT_OPT["room-play"] ? L3(`${d} is playing!`, `${d} đang nô đùa!`, `${d}가 신나게 놀아요!`) : L3(`${d} is purring, happy and full`, `${d} rừ rừ, vui và no`, `${d}가 배부르게 골골송`), ""];
+  if (ST.catEat) return [catPlayOn() ? L3(`${d} is playing!`, `${d} đang nô đùa!`, `${d}가 신나게 놀아요!`) : L3(`${d} is purring, happy and full`, `${d} rừ rừ, vui và no`, `${d}가 배부르게 골골송`), ""];
   if (ST.catMis) return [ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? L3(`Cici sips, ${d} laps from her bowl`, `Cici nhấp nước, ${d} liếm nước trong bát`, `Cici는 물 한 모금, ${d}는 그릇에서 할짝`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   if (ST.catGrew) return [L3(`${d} grew into a ${catLookNm().toLowerCase()}! ✨`, `${d} đã lớn thành ${catLookNm().toLowerCase()}! ✨`, `${d}가 ${catLookNm()}로 자랐어요! ✨`), ""];
@@ -827,7 +833,7 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   if (c.fresh > 0) return [L3(`A treat from today's visit is waiting for ${d}`, `Một món ăn vặt từ lượt đến hôm nay đang chờ ${d}`, `오늘 방문으로 받은 간식이 ${d}를 기다려요`), ""];
   if (c.treats > 0) return [L3(`${d} has ${c.treats} treat${c.treats > 1 ? "s" : ""} waiting`, `${d} có ${c.treats} món ăn vặt`, `${d} 간식 ${c.treats}개`), ""];
   const st = ME ? ME.streak : 0, mo = catMood();
-  const mt = { lively: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`), play: CAT_OPT["room-play"] ? L3(`${d} is playing`, `${d} đang nô đùa`, `${d}가 놀아요`) : L3(`${d} purrs — you're on a roll`, `${d} rừ rừ — bạn đang rất đều`, `${d} 골골송 — 아주 잘하고 있어요`),
+  const mt = { lively: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`), play: catPlayOn() ? L3(`${d} is playing`, `${d} đang nô đùa`, `${d}가 놀아요`) : L3(`${d} purrs — you're on a roll`, `${d} rừ rừ — bạn đang rất đều`, `${d} 골골송 — 아주 잘하고 있어요`),
     napping: catBedOn() ? L3(`${d} is napping in her bed`, `${d} đang ngủ trong giường`, `${d}가 침대에서 낮잠 중`) : L3(`${d} is napping on Cici's lap`, `${d} đang ngủ trên đùi Cici`, `${d}가 Cici 무릎에서 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
   return [(st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
 }
@@ -882,8 +888,9 @@ function catTreatArrive() { /* play the arrival moment once per fresh visit trea
   const c = P2S.cat; if (!c || !(c.fresh > 0) || !V2HOME() || catCrisis() || !document.getElementById("cat-feed")) return;
   if (catTreatFx()) { c.fresh = 0; catSave(); setTimeout(catRefreshUi, 950); } }
 function catMotionOk() { try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return false; const cn = navigator.connection; if (cn && cn.saveData) return false; } catch (e) {} return true; }
-function catClipSrc(name) { const b = catVarPath(CAT_CLIPS[name] || CICI_CAT.base + name); return { webm: b + ".webm", mp4: b + ".mp4", poster: b + "-poster.jpg" }; }
-function catClipName(mood) {
+function catClipSrc(name) { const b = catVarPath(CAT_CLIPS[name] || CICI_CAT.base + name, name); return { webm: b + ".webm", mp4: b + ".mp4", poster: b + "-poster.jpg" }; }
+function catClipName(mood) { return catLookAlias(catClipName0(mood)); }
+function catClipName0(mood) {
   if (mood === "mission" && ST.catMis) return ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? "room-waterbowl" : "water") : (CAT_ROOM.stretch ? "room-stretch" : "petting");
   if (mood === "eating") return ST.catEat === "eat" ? "eating" : ST.catEat === "feed" ? "room-eat" : ST.catEat === "pet" ? "petting" : (CAT_OPT["room-play"] ? "room-play" : CAT_ROOM.happy ? "room-happy" : "lively");
   if (mood === "hungry") return CAT_OPT["hungry-room"] ? "hungry-room" : "hungry";
@@ -904,6 +911,7 @@ let catIO = null, catFadeT = 0, catFront = "a";
 function catVids() { return [document.getElementById("cat-video-a"), document.getElementById("cat-video-b")].filter(Boolean); }
 function catFrontVid() { return document.getElementById("cat-video-" + catFront); }
 function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}) { /* smooth crossfade; no black flash */
+  clipName = catLookAlias(clipName);
   const fig = document.getElementById("cici-real"); if (!fig || !catMotionOk()) return;
   const back = catFront === "a" ? "b" : "a";
   let cur = document.getElementById("cat-video-" + catFront), nxt = document.getElementById("cat-video-" + back);
@@ -991,7 +999,7 @@ function catWearSync(show) { const layer = document.getElementById("cat-layer");
   const v = catFrontVid() || layer.parentElement.querySelector("img.catstill"); const clip = v ? v.dataset.clip : ""; const a = CAT_ANCH[clip];
   let col = layer.querySelector(".catcollar"), bed = layer.querySelector(".catbed");
   if (show === false) { if (col) col.classList.remove("on"); if (bed) bed.classList.remove("on"); return; }
-  const wantCol = catCollarOn() && a && a.neck && clip !== "napping-bed", wantBed = catBedOn() && a && !a.close && clip !== "napping-bed";
+  const wantCol = catCollarOn() && a && a.neck && clip !== "napping-bed" && !(v && /-(cat|fluffy)\.(webm|mp4)/.test(v.currentSrc || "")) /* young/fluffy clips have the collar baked in */, wantBed = catBedOn() && a && !a.close && clip !== "napping-bed";
   if (wantCol) { const p = catFrameXY(a.neck[0], a.neck[1], v); if (p) { if (!col) { col = document.createElement("span"); col.className = "catwear catcollar"; col.innerHTML = '<svg viewBox="0 0 100 44" aria-hidden="true"><path d="M5 10 C 22 42, 78 42, 95 10" fill="none" stroke="#C85C73" stroke-width="7" stroke-linecap="round"/><path d="M5 10 C 22 42, 78 42, 95 10" fill="none" stroke="#F6B8C4" stroke-width="2.5" stroke-linecap="round" opacity=".8"/><circle cx="50" cy="35" r="6.5" fill="#E9B44C" stroke="#B88A2E" stroke-width="1.2"/><circle cx="50" cy="37" r="1.4" fill="#8A6420"/></svg>'; layer.appendChild(col); }
       const w = a.w * p[2]; col.style.width = w + "px"; col.style.height = w * .44 + "px"; col.style.left = p[0] + "px"; col.style.top = p[1] + "px"; requestAnimationFrame(() => col.classList.add("on")); } }
   else if (col) col.classList.remove("on");
@@ -1010,7 +1018,7 @@ function catEatShow(hungry) { /* no popup: the scene itself tells the story — 
     catRefreshUi(); catEatShow.t = setTimeout(next, ms); };
   const spark = () => { if (!fig) return; const [x, y] = catHeadXY(); let sp = fig.querySelector(".catspark"); if (!sp) { sp = document.createElement("span"); sp.className = "catspark"; sp.setAttribute("aria-hidden", "true"); sp.textContent = "♥ 🐟"; fig.appendChild(sp); }
     sp.style.left = Math.max(12, x - 70) + "px"; sp.style.top = (y - 56) + "px"; requestAnimationFrame(() => sp.classList.add("on")); setTimeout(() => sp.classList.remove("on"), 1600); };
-  const play = () => step("play", CAT_OPT["room-play"] ? "room-play" : CAT_ROOM.happy ? "room-happy" : "lively", 3000, !!(CAT_OPT["room-play"] || CAT_ROOM.happy), () => { ST.catEat = false; if (fig) delete fig.dataset.phase; catSyncMood(); catRefreshUi(); });
+  const play = () => step("play", catPlayOn() ? "room-play" : CAT_ROOM.happy ? "room-happy" : "lively", 3000, !!(catPlayOn() || CAT_ROOM.happy), () => { ST.catEat = false; if (fig) delete fig.dataset.phase; catSyncMood(); catRefreshUi(); });
   const pet = () => { step("pet", "petting", 2600, true, play); setTimeout(spark, 350); };
   const feed = () => { /* PR #37 eat clip: Mochi takes the fish from Cici's hand, plays once (safety cap 6 s), then happy */
     step("feed", "room-eat", 6000, true, play); setTimeout(() => { const v = fig && fig.querySelector('.catvid[data-clip="room-eat"]'); if (v) { v.loop = false; v.addEventListener("ended", () => { if (ST.catEat === "feed") { clearTimeout(catEatShow.t); play(); } }, { once: true }); } }, 150); };
