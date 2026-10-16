@@ -779,7 +779,9 @@ const CAT_LOOK_READY = { cat: true, fluffy: false };
 /* clips that exist for each look; anything else is aliased to a clip of the SAME look (catLookAlias) so Mochi never changes age mid-session */
 const CAT_LOOK_HAS = { cat: ["petting", "lively", "napping", "react", "hungry", "room-happy", "room-eat", "room-stretch", "stretch"] };
 const CAT_LOOK_ALIAS = { "room-play": "lively", "room-water": "petting", water: "petting", eating: "room-eat", "room-waterbowl": "petting", "hungry-room": "hungry", "napping-bed": "napping" };
-const catLookHas = n => { const l = catLook(); return l === "kitten" || !CAT_LOOK_READY[l] || (CAT_LOOK_HAS[l] || []).includes(n); };
+/* clip look: never younger than the previous stage. Until a look's clips are ready, keep the newest ready older look (Shine stays young cat until CAT_LOOK_READY.fluffy). */
+const catClipLook = () => { const l = catLook(); if (l === "fluffy" && !CAT_LOOK_READY.fluffy) return CAT_LOOK_READY.cat ? "cat" : "kitten"; if (l === "cat" && !CAT_LOOK_READY.cat) return "kitten"; return l; };
+const catLookHas = n => { const l = catClipLook(); return l === "kitten" || !CAT_LOOK_READY[l] || (CAT_LOOK_HAS[l] || []).includes(n); };
 const catLookAlias = n => catLookHas(n) ? n : (CAT_LOOK_ALIAS[n] && catLookHas(CAT_LOOK_ALIAS[n]) ? CAT_LOOK_ALIAS[n] : "petting");
 const catPlayOn = () => CAT_OPT["room-play"] && catLookHas("room-play"); /* true once the -cat / -fluffy variants of the clips exist (see docs/mochi-v3-videos.md) */
 const CAT_PROBE = (() => { try { return new URLSearchParams(location.search).get("catprobe") === "1"; } catch (e) { return false; } })();
@@ -812,11 +814,12 @@ function catMood() { /* mission > react > eating phases > crisis calm > hungry >
   return catOnRoll() ? "play" : "lively"; }
 /* ---- growth look (MC-G, v3): same Seed→Shine track as Cici; kitten (Seed, Sprout) → cat (Bud, Blossom) → fluffy cat (Shine). Never goes down. ---- */
 const CAT_LOOKS = [["kitten", "Kitten", "Mèo con", "아기 고양이"], ["cat", "Young cat", "Mèo nhỡ", "청소년 고양이"], ["fluffy", "Fluffy cat", "Mèo bông", "복슬 고양이"]];
-const catLookIdx = () => { const s = catStage(); return s >= 4 ? 2 : s >= 2 ? 1 : 0; };
+const catLookIdx = () => { const s = catStage(); let i = s >= 4 ? 2 : s >= 2 ? 1 : 0; /* the card, growth track and "grew" moment name the look actually shown: a look whose clips aren't ready yet is held back (Shine = young cat until CAT_LOOK_READY.fluffy), never shown younger */
+  while (i > 0 && !CAT_LOOK_READY[["kitten", "cat", "fluffy"][i]]) i--; return i; };
 const catLook = () => CAT_LOOKS[catLookIdx()][0];
 const catLookNm = (i) => { const l = CAT_LOOKS[i == null ? catLookIdx() : i]; return L3(l[1], l[2], l[3]); };
 const CAT_VAR = {}; /* look variants: <clip path>-<look>.webm/.mp4 (+ -poster.jpg); kitten = the base file. Used when CAT_LOOK_READY[look] (or found by ?catprobe=1). */
-function catVarPath(base, name) { const look = catLook(); if (look === "kitten") return base; const k = base + "-" + look;
+function catVarPath(base, name) { const look = catClipLook(); if (look === "kitten") return base; const k = base + "-" + look;
   if (CAT_LOOK_READY[look]) return name == null || (CAT_LOOK_HAS[look] || []).includes(name) ? k : base;
   if (CAT_PROBE && CAT_VAR[k] == null) { CAT_VAR[k] = false; if (typeof fetch === "function" && catMotionOk()) fetch(k + ".mp4", { method: "HEAD" }).then(r => { if (r.ok) { CAT_VAR[k] = true; if (!ST.catMis && !ST.catEat && typeof catSyncMood === "function") catSyncMood(true); } }).catch(() => {}); }
   return CAT_VAR[k] ? k : base; }

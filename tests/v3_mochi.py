@@ -84,12 +84,13 @@ with sync_playwright() as p:
   J(g, "()=>{catEquip('m_collar')}"); TO(3); g.wait_for_timeout(1200)
   ok('V3-4 Blossom -> still young cat, bed granted (next reward) and on the floor (visible, above the tab bar)', J(g, "catStage()===3 && catLook()==='cat' && catItemOwned('m_bed') && catItemOn('m_bed')") and J(g, "(()=>{const b=document.querySelector('#cat-layer .catbed');if(!b||!b.classList.contains('on'))return false;const r=b.getBoundingClientRect(),n=document.querySelector('nav.tabs,#tabs').getBoundingClientRect();return r.left>=0&&r.top>600&&r.top<n.top})()"), J(g, "[catStage(),P2S.cat.owned]"))
   TO(4); g.wait_for_timeout(1200)
-  ok('V3-4 Shine -> fluffy look, collar + bed kept, no new item', J(g, "catLook()==='fluffy' && catItemOwned('m_collar') && catItemOwned('m_bed') && P2S.cat.owned.length===2"), J(g, "P2S.cat.owned"))
-  ok('V3-4 look variants are a drop-in slot (-cat / -fluffy) behind CAT_LOOK_READY', "CAT_LOOK_READY" in SRC and 'catVarPath' in SRC and J(g, "catClipSrc('lively').mp4.endsWith('cici-cat-lively.mp4')"))
+  ok('V3-4 Shine -> stays young cat until CAT_LOOK_READY.fluffy (never younger), -cat clip, collar + bed kept, no new item', J(g, "catLook()==='cat' && catStage()===4 && [...document.querySelectorAll('video[id^=cat-video]')].some(v=>/-cat\\.(webm|mp4)/.test(v.currentSrc)) && catItemOwned('m_collar') && catItemOwned('m_bed') && P2S.cat.owned.length===2"), J(g, "P2S.cat.owned"))
+  ok('V3-4 look variants are a drop-in slot (-cat / -fluffy) behind CAT_LOOK_READY', "CAT_LOOK_READY" in SRC and 'catVarPath' in SRC and J(g, "catClipSrc('lively').mp4.endsWith('cici-cat-lively-cat.mp4')"))
   J(g, "()=>{P2S.cat.demoHour=18;render()}"); g.wait_for_timeout(1800)
-  ok('V3-4 hungry room clip: no collar (Mochi moves too much there); bed may sit on the floor of this tall room shot', J(g, TOP) == 'hungry-room' and J(g, "!document.querySelector('#cat-layer .catcollar.on')"), [J(g, TOP), J(g, "[...document.querySelectorAll('#cat-layer .on')].map(e=>e.className)")])
+  ok('V3-4 Shine hungry: young-cat hungry clip (room-hungrybowl is kitten-only), no 2D collar', J(g, TOP) == 'hungry' and J(g, "!document.querySelector('#cat-layer .catcollar.on')"), [J(g, TOP), J(g, "[...document.querySelectorAll('#cat-layer .on')].map(e=>e.className)")])
 
-  # 5. Missions with Mochi
+  # 5. Missions with Mochi (kitten stage again: fresh member)
+  J(g, 'localStorage.clear()'); g.goto(U); g.wait_for_timeout(900); J(g, "()=>{setLang('en');ST.tab='home';ST.page=null;render()}")
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render();stretchSheet()}"); g.wait_for_timeout(1800)
   ok('V3-5 stretch: room clip (Mochi stretches on the lap) + timer chip, no sheet', J(g, TOP) == 'room-stretch' and J(g, "!!document.querySelector('#stretch-chip #stl') && !document.querySelector('.sheet')"))
   J(g, "()=>finishStretch()"); g.wait_for_timeout(300); ok('V3-5 stretch done: one toast with points · Mochi line · treat', J(g, "(()=>{const t=document.querySelector('#toast');return !t.hidden&&/\\+10/.test(t.innerText)&&/Mochi/.test(t.innerText)&&/treat/.test(t.innerText)})()"), J(g, "document.querySelector('#toast').innerText"))
