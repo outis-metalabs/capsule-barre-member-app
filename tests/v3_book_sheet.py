@@ -37,7 +37,7 @@ with sync_playwright() as p:
     J("closeSheet()"); J("()=>{Object.keys(S).forEach(k=>S[k].joined=false);render()}"); g.click('#tabs .tfab'); g.wait_for_timeout(400)
     ok(f'[{L}] new member (no places): nearby list with Join & book, no dead-end text', J("!!document.querySelector('#bk-noplace') && document.querySelectorAll('#bk-more-places .svc').length===4 && document.querySelectorAll('#bk-again .svc').length===0"))
     g.click('#bk-more-places .svc >> nth=0'); g.wait_for_timeout(400)
-    ok(f'[{L}] tapping a nearby place opens Join & book with the next slot', J("!!document.querySelector('.sheet #jb-go, .sheet [data-act=dobook]')"))
+    ok(f'[{L}] tapping a nearby place opens the normal picker (service or times); joining folds into the confirm (PO review)', J("!!document.querySelector('.sheet #bk-slots, .sheet #bk-svcs')"))
     if L == 'ko': g.screenshot(path=f'{SH}/book-new-ko.png')
     ok(f'[{L}] no page errors', not E, E[:2]); c.close()
   b.close()
