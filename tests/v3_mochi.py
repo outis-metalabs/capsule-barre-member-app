@@ -27,7 +27,7 @@ with sync_playwright() as p:
 
   # 1. Hunger at the bowl
   J(g, "()=>{P2S.cat.demoHour=18;render()}"); g.wait_for_timeout(900)
-  ok('V3-1 hungry after 18:00 -> Mochi by her empty bowl (official close-up), no thought bubble, no bowl badge', J(g, "catHungry() && catMood()==='hungry'") and J(g, TOP) == 'hungry' and J(g, "!document.querySelector('#cici-real .cathbub') && !document.querySelector('#cat-room-bowl')"), [J(g, TOP)])
+  ok('V3-1 hungry after 18:00 -> Cici + Mochi by her empty bowl (room-hungrybowl clip), no thought bubble, no bowl badge', J(g, "catHungry() && catMood()==='hungry'") and J(g, TOP) == 'hungry-room' and J(g, "!document.querySelector('#cici-real .cathbub') && !document.querySelector('#cat-room-bowl')"), [J(g, TOP)])
   for L in ('en', 'vi', 'ko'):
     J(g, f"()=>{{setLang('{L}');render()}}"); tx = J(g, LINE); ok(f'V3-1 [{L}] hunger copy is gentle, never sad: "{tx[:40]}"', tx and not SAD.search(tx), tx)
   J(g, "()=>{setLang('en');render()}"); g.screenshot(path=f'{SH}/hungry.png')
@@ -35,13 +35,13 @@ with sync_playwright() as p:
   ok('V3-1 feed while hungry: eats at the bowl first (square close-up as a rounded card)', J(g, "ST.catEat==='eat'") and J(g, TOP) == 'eating' and J(g, "(()=>{const v=document.querySelector('.catvid.on.sq');if(!v)return false;const r=v.getBoundingClientRect();return Math.abs(r.width-r.height)<2&&r.width<340&&parseFloat(getComputedStyle(v).borderRadius)>=20})()"), [J(g, "ST.catEat"), J(g, TOP)])
   g.screenshot(path=f'{SH}/feed-eat.png'); g.wait_for_timeout(3500)
   ok('V3-1 ... then Cici pets her', J(g, "ST.catEat==='pet'") and J(g, TOP) == 'petting' and 'petting' in J(g, LINE).lower(), [J(g, "ST.catEat"), J(g, TOP), J(g, LINE)])
-  g.wait_for_timeout(2800); ok('V3-1 ... then the happy loop, hunger cleared, no popup', J(g, "ST.catEat==='play' && !catHungry() && !document.querySelector('.wtoast.in,.modal,.sheet')") and J(g, TOP) == 'room-happy', [J(g, "ST.catEat"), J(g, TOP)])
+  g.wait_for_timeout(2800); ok('V3-1 ... then the happy loop (room-play when on), hunger cleared, no popup', J(g, "ST.catEat==='play' && !catHungry() && !document.querySelector('.wtoast.in,.modal,.sheet')") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 happy-loop copy matches a content cat (eyes closed), not "playful"', 'playful' not in J(g, LINE).lower(), J(g, LINE))
   g.wait_for_timeout(3200); ok('V3-1 back to the mood loop', J(g, "!ST.catEat && catMood()!=='hungry'"))
   # not hungry: PR #37 eat clip plays once, then happy
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;P2S.cat.treats=1;P2S.cat.earned=1;render()}"); g.wait_for_timeout(500); J(g, "()=>document.querySelector('#cat-feed').click()"); g.wait_for_timeout(500)
   ok('V3-1 feed when not hungry: fish arc, then Mochi eats from Cici\'s hand (room-eat, once)', J(g, "ST.catEat==='feed'") and J(g, TOP) == 'room-eat' and J(g, "(()=>{const v=document.querySelector('.catvid[data-clip=\"room-eat\"]');return !!v&&!v.loop})()"), [J(g, "ST.catEat"), J(g, TOP)])
-  g.wait_for_timeout(4600); ok('V3-1 ... then happy', J(g, "ST.catEat==='play'") and J(g, TOP) == 'room-happy', [J(g, "ST.catEat"), J(g, TOP)])
+  g.wait_for_timeout(4600); ok('V3-1 ... then happy (room-play when on)', J(g, "ST.catEat==='play'") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 toast sits under the glass card on Home (never over the greeting)', J(g, "(()=>{const t=document.querySelector('#toast'),c=document.querySelector('#hb-bubble');if(!t||t.hidden)return 'hidden';return t.getBoundingClientRect().top>=c.getBoundingClientRect().bottom})()") in (True, 'hidden'))
 
   # 2. Streak moods
@@ -73,25 +73,29 @@ with sync_playwright() as p:
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(300)
   ok('V3-4 kitten at Seed/Sprout; sheet card shows the look', J(g, "catLook()==='kitten'") and J(g, "(()=>{openHomeSheet();const t=document.querySelector('#cat-grow').innerText;closeSheet();return /Kitten/.test(t)})()"))
   J(g, "()=>{openHomeSheet()}"); ok('V3-4 growth track Kitten → Young cat → Fluffy cat with the current one marked', J(g, "(()=>{const c=[...document.querySelectorAll('#cat-looks .chip')];return c.length===3&&c[0].classList.contains('on')&&c[0].getAttribute('aria-current')==='true'})()")); J(g, "()=>closeSheet()")
-  J(g, "()=>{ME.ledger.push({id:'T9',delta:0,life:2500,reason:'t',t:PV.now()});render()}"); g.wait_for_timeout(600)
-  ok('V3-4 Bud/Blossom -> young cat look; collar granted at Blossom and shown in the room', J(g, "catLook()==='cat' && catItemOwned('m_collar') && catItemOn('m_collar')") and J(g, "(()=>{const c=document.querySelector('#cat-layer .catcollar');return !!c&&c.classList.contains('on')&&c.getBoundingClientRect().width>60})()"), J(g, "[catStage(),catLook(),P2S.cat.owned,P2S.cat.worn]"))
-  COL = "(()=>{const c=document.querySelector('#cat-layer .catcollar');if(!c)return null;const r=c.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]})()"
-  cxy = J(g, COL); ok('V3-4 collar anchored on Mochi (right of centre, lower half), not on Cici', bool(cxy) and 220 < cxy[0] < 330 and 560 < cxy[1] < 700, cxy)
+  TO = lambda n: J(g, f"()=>{{let i=0;while(gState().stage<{n}&&i++<200)ME.ledger.push({{id:'TS'+i+'_'+Math.random(),delta:0,life:100,reason:'t',t:PV.now()}});render()}}")
+  TO(2); g.wait_for_timeout(2100)
+  ok('V3-4 Bud -> young cat look; collar granted AT BUD; -cat clip has the collar baked in, so NO 2D overlay', J(g, "catStage()===2 && catLook()==='cat' && catItemOwned('m_collar') && catItemOn('m_collar') && !catItemOwned('m_bed')") and J(g, "[...document.querySelectorAll('video[id^=cat-video]')].some(v=>/-cat\\.(webm|mp4)/.test(v.currentSrc)&&getComputedStyle(v).opacity>0.5)") and J(g, "(()=>{const c=document.querySelector('#cat-layer .catcollar');return !c||!c.classList.contains('on')})()"), J(g, "[catStage(),catLook(),P2S.cat.owned]"))
+  J(g, "()=>{openHomeSheet()}"); HINT = J(g, "(document.querySelector('#cat-locked-hint')||{}).innerText||''"); J(g, "()=>closeSheet()")
+  ok('V3-4 sheet hint: collar at Bud, bed at Blossom', 'Collar at Bud, bed at Blossom' in HINT, HINT)
   ok('V3-4 one-time "grew" moment in the card, no modal', J(g, "ST.catGrew===true && /grew/i.test(document.querySelector('#cat-line').innerText) && !document.querySelector('.modal,.wtoast.in')"), J(g, LINE))
   g.screenshot(path=f'{SH}/grew-collar.png')
   J(g, "()=>{catEquip('m_collar')}"); g.wait_for_timeout(400); ok('V3-4 Take off hides the collar in place (no re-render)', J(g, "!catItemOn('m_collar') && !document.querySelector('#cat-layer .catcollar.on')"))
-  J(g, "()=>{catEquip('m_collar');ME.ledger.push({id:'T10',delta:0,life:3500,reason:'t',t:PV.now()});render()}"); g.wait_for_timeout(600)
-  ok('V3-4 Shine -> fluffy look, bed granted and on the floor (visible, above the tab bar)', J(g, "catLook()==='fluffy' && catItemOwned('m_bed')") and J(g, "(()=>{const b=document.querySelector('#cat-layer .catbed');if(!b||!b.classList.contains('on'))return false;const r=b.getBoundingClientRect(),n=document.querySelector('nav.tabs,#tabs').getBoundingClientRect();return r.left>=0&&r.top>600&&r.top<n.top})()"), J(g, "(()=>{const b=document.querySelector('#cat-layer .catbed');return b&&[b.className,b.getBoundingClientRect()]})()"))
-  ok('V3-4 look variants are a drop-in slot (-cat / -fluffy) behind CAT_LOOK_READY', "CAT_LOOK_READY" in SRC and 'catVarPath' in SRC and J(g, "catClipSrc('lively').mp4.endsWith('cici-cat-lively.mp4')"))
-  J(g, "()=>{P2S.cat.demoHour=18;render()}"); g.wait_for_timeout(800)
-  ok('V3-4 no collar/bed on the close-ups (Mochi moves too much there)', J(g, TOP) == 'hungry' and J(g, "!document.querySelector('#cat-layer .catcollar.on') && !document.querySelector('#cat-layer .catbed.on')"))
+  J(g, "()=>{catEquip('m_collar')}"); TO(3); g.wait_for_timeout(1200)
+  ok('V3-4 Blossom -> still young cat, bed granted (next reward) and on the floor (visible, above the tab bar)', J(g, "catStage()===3 && catLook()==='cat' && catItemOwned('m_bed') && catItemOn('m_bed')") and J(g, "(()=>{const b=document.querySelector('#cat-layer .catbed');if(!b||!b.classList.contains('on'))return false;const r=b.getBoundingClientRect(),n=document.querySelector('nav.tabs,#tabs').getBoundingClientRect();return r.left>=0&&r.top>600&&r.top<n.top})()"), J(g, "[catStage(),P2S.cat.owned]"))
+  TO(4); g.wait_for_timeout(1200)
+  ok('V3-4 Shine -> stays young cat until CAT_LOOK_READY.fluffy (never younger), -cat clip, collar + bed kept, no new item', J(g, "catLook()==='cat' && catStage()===4 && [...document.querySelectorAll('video[id^=cat-video]')].some(v=>/-cat\\.(webm|mp4)/.test(v.currentSrc)) && catItemOwned('m_collar') && catItemOwned('m_bed') && P2S.cat.owned.length===2"), J(g, "P2S.cat.owned"))
+  ok('V3-4 look variants are a drop-in slot (-cat / -fluffy) behind CAT_LOOK_READY', "CAT_LOOK_READY" in SRC and 'catVarPath' in SRC and J(g, "catClipSrc('lively').mp4.endsWith('cici-cat-lively-cat.mp4')"))
+  J(g, "()=>{P2S.cat.demoHour=18;render()}"); g.wait_for_timeout(1800)
+  ok('V3-4 Shine hungry: young-cat hungry clip (room-hungrybowl is kitten-only), no 2D collar', J(g, TOP) == 'hungry' and J(g, "!document.querySelector('#cat-layer .catcollar.on')"), [J(g, TOP), J(g, "[...document.querySelectorAll('#cat-layer .on')].map(e=>e.className)")])
 
-  # 5. Missions with Mochi
-  J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render();stretchSheet()}"); g.wait_for_timeout(600)
+  # 5. Missions with Mochi (kitten stage again: fresh member)
+  J(g, 'localStorage.clear()'); g.goto(U); g.wait_for_timeout(900); J(g, "()=>{setLang('en');ST.tab='home';ST.page=null;render()}")
+  J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render();stretchSheet()}"); g.wait_for_timeout(1800)
   ok('V3-5 stretch: room clip (Mochi stretches on the lap) + timer chip, no sheet', J(g, TOP) == 'room-stretch' and J(g, "!!document.querySelector('#stretch-chip #stl') && !document.querySelector('.sheet')"))
   J(g, "()=>finishStretch()"); g.wait_for_timeout(300); ok('V3-5 stretch done: one toast with points · Mochi line · treat', J(g, "(()=>{const t=document.querySelector('#toast');return !t.hidden&&/\\+10/.test(t.innerText)&&/Mochi/.test(t.innerText)&&/treat/.test(t.innerText)})()"), J(g, "document.querySelector('#toast').innerText"))
-  J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(500); J(g, "()=>document.querySelector('[data-act=dmwater]').click()"); g.wait_for_timeout(700)
-  ok('V3-5 water: Mochi laps from her bowl in the room (close-up card), sheet closed', J(g, TOP) == 'water' and J(g, "!document.querySelector('.sheet') && !document.querySelector('#cat-pip')") and 'bowl' in J(g, LINE).lower(), [J(g, TOP), J(g, LINE)])
+  J(g, "()=>{openHomeSheet()}"); g.wait_for_timeout(500); J(g, "()=>document.querySelector('[data-act=dmwater]').click()"); g.wait_for_timeout(1800)
+  ok('V3-5 water: room-waterbowl clip, caption = Cici holds her water while Mochi laps from her bowl (no sip), sheet closed', J(g, TOP) == 'room-waterbowl' and 'holds her water' in J(g, LINE) and 'sip' not in J(g, LINE).lower() and J(g, "!document.querySelector('.sheet') && !document.querySelector('#cat-pip')") and 'bowl' in J(g, LINE).lower(), [J(g, TOP), J(g, LINE)])
   g.screenshot(path=f'{SH}/water.png'); g.wait_for_timeout(4200)
   ok('V3-5 water ends: back to the mood loop; mission row shows the quiet inline line', J(g, "!ST.catMis") and J(g, "(()=>{openHomeSheet();const r=document.querySelector('#home-dm .mis[data-m=water] .misok');const t=r&&r.innerText;closeSheet();return !!t&&/bowl/i.test(t)})()"))
   ok('V3-5 slots for the combined Cici+Mochi water clip and the play clip exist', J(g, "'room-waterbowl' in CAT_OPT && 'room-play' in CAT_OPT && 'napping-bed' in CAT_OPT"))
@@ -104,7 +108,7 @@ with sync_playwright() as p:
 
   # reduced motion: still image, overlays still placed, no fx
   g = page(reduced=True); J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;render()}"); g.wait_for_timeout(400)
-  ok('REDUCED MOTION: hungry shows the bowl poster still (no video), no animation', J(g, "(()=>{const i=document.querySelector('#cici-real img.catstill');return !!i&&/hungry-poster/.test(i.getAttribute('src'))&&!document.querySelector('#cici-real video')})()"))
+  ok('REDUCED MOTION: hungry shows the bowl poster still (no video), no animation', J(g, "(()=>{const i=document.querySelector('#cici-real img.catstill');return !!i&&/hungrybowl_tall-poster/.test(i.getAttribute('src'))&&!document.querySelector('#cici-real video')})()"), J(g, "[...document.querySelectorAll('#cici-real img,#cici-real video')].map(e=>e.tagName+' '+e.className+' '+(e.getAttribute('src')||e.poster))"))
   J(g, "()=>{P2S.cat.treats=1;catRefreshUi();document.querySelector('#cat-feed').click()}"); g.wait_for_timeout(300)
   ok('REDUCED MOTION: feed works without the fx', J(g, "catDay().treats===0 && !document.querySelector('.catfish,.catheart')"))
   ok('no page errors (reduced motion)', not g.E, g.E[:3]); g.close()
