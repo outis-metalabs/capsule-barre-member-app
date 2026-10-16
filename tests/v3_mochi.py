@@ -32,8 +32,11 @@ with sync_playwright() as p:
     J(g, f"()=>{{setLang('{L}');render()}}"); tx = J(g, LINE); ok(f'V3-1 [{L}] hunger copy is gentle, never sad: "{tx[:40]}"', tx and not SAD.search(tx), tx)
   J(g, "()=>{setLang('en');render()}"); g.screenshot(path=f'{SH}/hungry.png')
   J(g, "()=>{P2S.cat.treats=1;P2S.cat.earned=1;catRefreshUi()}"); J(g, "()=>document.querySelector('#cat-feed').click()"); g.wait_for_timeout(700)
-  ok('V3-1 feed while hungry: eats at the bowl first (square close-up as a rounded card)', J(g, "ST.catEat==='eat'") and J(g, TOP) == 'eating' and J(g, "(()=>{const v=document.querySelector('.catvid.on.sq');if(!v)return false;const r=v.getBoundingClientRect();return Math.abs(r.width-r.height)<2&&r.width<340&&parseFloat(getComputedStyle(v).borderRadius)>=20})()"), [J(g, "ST.catEat"), J(g, TOP)])
-  g.screenshot(path=f'{SH}/feed-eat.png'); g.wait_for_timeout(3500)
+  ok('V3-1 feed while hungry: Mochi takes the fish from Cici\'s hand in the room (one consistent cat; the square close-up is only a fallback)', J(g, "ST.catEat==='feed'") and J(g, TOP) == 'room-eat' and ('finally' in J(g, LINE).lower()), [J(g, "ST.catEat"), J(g, TOP), J(g, LINE)])
+  g.screenshot(path=f'{SH}/feed-eat.png')
+  for _ in range(16):
+    if J(g, "ST.catEat==='pet'"): break
+    g.wait_for_timeout(400)
   ok('V3-1 ... then Cici pets her', J(g, "ST.catEat==='pet'") and J(g, TOP) == 'petting' and 'petting' in J(g, LINE).lower(), [J(g, "ST.catEat"), J(g, TOP), J(g, LINE)])
   g.wait_for_timeout(2800); ok('V3-1 ... then the happy loop (room-play when on), hunger cleared, no popup', J(g, "ST.catEat==='play' && !catHungry() && !document.querySelector('.wtoast.in,.modal,.sheet')") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 happy-loop copy matches a content cat (eyes closed), not "playful"', 'playful' not in J(g, LINE).lower(), J(g, LINE))

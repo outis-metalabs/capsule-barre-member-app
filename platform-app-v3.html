@@ -115,7 +115,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .slot .chev,.bkmore .chev,.bkopts .chev{font-size:22px;line-height:1;color:var(--rasp);margin-left:2px}.slot .chev{font-weight:700} /* v3: a slot reads as a tappable row, not a notice */
 .bkopts{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 12px}.bkopts summary{list-style:none;gap:8px}.bkopts summary::-webkit-details-marker{display:none}
 .bkopts summary .sm{color:var(--ink);font-weight:500}.bkopts[open] summary .chev{transform:rotate(90deg)}.bkopts .chev{transition:transform .15s}.bkopts[open]{padding-bottom:12px}.bkopts .opt:first-of-type{margin-top:4px}
-.slot[disabled]{opacity:.6;cursor:not-allowed}
+.slot[disabled]{opacity:.6;cursor:not-allowed}.slot.full .tm{color:var(--sub)}.slot.mine{background:var(--tint);border-color:#F6B8C4}.catlooks button.chip{font:inherit;cursor:pointer}
 .opt{margin:12px 0 4px;font-size:13px;font-weight:700;color:var(--sub)}
 .sheet-bg{position:fixed;inset:0;background:rgba(43,35,38,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .sheet{background:var(--cream);width:100%;max-width:430px;max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 16px 22px;box-shadow:0 -8px 30px rgba(0,0,0,.12)}
@@ -261,7 +261,8 @@ body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))}
 .ghint{margin:6px 0 10px}.gdemo{margin-top:10px;text-align:left}.gdemo summary{min-height:44px;display:flex;align-items:center;font-weight:650;cursor:pointer}
 @keyframes gpulse{0%,100%{opacity:.85;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.06)}}@keyframes gtw{0%,100%{opacity:.35}50%{opacity:1}}@keyframes gpop{0%{transform:scale(calc(var(--gsc,1)*.9))}60%{transform:scale(calc(var(--gsc,1)*1.06))}100%{transform:scale(var(--gsc,1))}}
 @media (prefers-reduced-motion:reduce){.gaura,.gspark,.gzz,.gfig.gup .cpic{animation:none}}
-body:has(#bk-confirm) .toast{top:calc(10px + env(safe-area-inset-top));bottom:auto} /* PR22: on the booking confirmation the Undo toast sits at the top, never over Add to calendar / the action buttons */ /* on the Cici tab the toast sits above the docked input */
+body:has(#bk-confirm) .toast{display:none} /* panel: the success sheet has its own Undo; the toast only covered the header */
+body:has(#view .bkrow) .toast{top:calc(64px + env(safe-area-inset-top));bottom:auto} /* panel: on My bookings the Undo toast sat on the next card's buttons */ /* PR22: on the booking confirmation the Undo toast sits at the top, never over Add to calendar / the action buttons */ /* on the Cici tab the toast sits above the docked input */
 .scene .who{color:#8E3346}
 .msg{border-radius:20px}.msg.n{border:0;box-shadow:0 3px 12px rgba(176,74,94,.08)}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
@@ -400,7 +401,7 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 .catspark{position:absolute;left:58%;top:44%;z-index:1;pointer-events:none;font-size:22px;opacity:0;transform:translateY(6px);transition:opacity .4s ease,transform .9s ease}
 .catspark.on{opacity:.9;transform:translateY(-14px)}
 @media (prefers-reduced-motion:reduce){.catspark{transition:none;transform:none}}
-.v2mis{margin:2px 0 0;font-size:13px;font-weight:650;color:#5E5154;line-height:1.35}.v2mis b{color:#B04A5E}#v2-next{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media (max-width:380px){.v2hero .v2card .hbsec{display:none}}@media (max-height:700px){.v2hero .v2card .hbhi{font-size:12px;margin:0;line-height:1.2}.v2hero .v2card #v2-next{font-size:12px;margin:0}.v2hero .v2card .hbgo{min-height:44px}}.v2nx{display:flex;align-items:center;justify-content:space-between;gap:8px}.v2ci{min-height:44px;padding:0 14px}
+.v2mis{margin:2px 0 0;font-size:13px;font-weight:650;color:#5E5154;line-height:1.35}.v2mis b{color:#B04A5E}#v2-next{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}@media (max-width:380px){.v2hero .v2card .hbsec{display:none}}@media (max-height:700px){.v2hero .v2card .hbhi{font-size:12px;margin:0;line-height:1.2}.v2hero .v2card #v2-next{font-size:12px;margin:0}.v2hero .v2card .hbgo{min-height:44px}}.v2nx{display:flex;align-items:center;justify-content:space-between;gap:8px}.v2ci{min-height:44px;padding:0 14px}
 .v2acts{position:absolute;right:12px;bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;flex-direction:column;gap:10px;align-items:center}
 .v2act{display:flex;flex-direction:column;align-items:center;gap:3px;width:64px}
 .v2cap{font-size:11.5px;font-weight:750;color:#2B2324;background:rgba(255,255,255,.9);border-radius:999px;padding:1px 7px;white-space:nowrap;max-width:76px;overflow:hidden;text-overflow:ellipsis}
@@ -495,7 +496,7 @@ body.v2home .toast.undercard{top:var(--toast-top,calc(64px + env(safe-area-inset
 /* v3 Today sheet: missions → Mochi → next class → level; one view */
 .sheet.v2sheet .dmc{margin-top:0}.dmc .mis.done .mt{text-decoration:none;color:rgba(255,255,255,.92)} /* the check says it's done; no strikethrough fighting the Mochi line */
 .misok{display:flex;min-width:0}.misok .mistx{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.catrow2{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:12px 14px}.catrow2 .catthumb{flex:none;width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #F3C9D2;background:#FBE9ED}.catrow2 .btn{min-height:44px;flex:none}
+.catrow2{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:12px 14px}.catrow2 .catthumb{flex:none;width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid #F3C9D2;background:#FBE9ED;position:relative}.catrow2 .catthumb img{display:block;width:100%;height:100%;object-fit:cover;object-position:62% 74%;transform:scale(2.3);transform-origin:62% 74%}.catrow2 .catthumb.close img{object-position:50% 50%;transform:none} /* panel: the thumb shows Mochi, not Cici's face */.catrow2 .btn{min-height:44px;flex:none}
 .catrow2[data-hungry] .catthumb{box-shadow:0 0 0 3px #FBE9ED,0 0 0 5px #E98597}
 .sheetrows{margin-top:10px}.sheetrows .svc{min-height:56px}.glass.v2sheet .svc{background:rgba(255,255,255,.62)} /* Home: the toast sits under the glass card, never over the greeting */
 @media (prefers-reduced-motion:reduce){.catwear{transition:none}.catfab.pop{animation:none!important}}
@@ -715,7 +716,7 @@ function gHero() { /* Home in phase2 (P2-G7): Cici large (stage art + mood pose)
   ${up ? `<div class="card gstageup" id="g-stageup" role="status"><b>${esc(gT("grew", { s: nm }))}</b><br><span class="sub sm">${esc(gT("grewSub"))}</span></div>` : ""}
   ${CICI_REAL ? `<div class="card gcomp" id="g-comp">` : ""}<p class="gstage" id="g-stage"><span class="tag">${esc(gT("stage"))} · ${esc(nm)}</span> <span class="${CICI_REAL ? "vh" : "sub sm"}" id="g-mood">${esc(gT("line_" + g.mood))}</span>${CICI_REAL ? gWear() : ""}</p>
   ${CICI_REAL ? "" : gWear()}
-  <div class="gbars" id="g-bars">${bars}</div><p class="sm ghint" id="g-hint">${esc(gHint(g))}</p>${CICI_REAL ? "</div>" : ""}
+  <div class="gbars" id="g-bars">${bars}</div><p class="sm sub" id="g-stats-how" style="margin:12px 0 6px;line-height:1.35">${esc(L3("+1 per confirmed visit: barre · pickleball → Strength, yoga · spa → Calm, hair · nails · skin → Glow.", "+1 mỗi lượt đến được xác nhận: barre · pickleball → Sức mạnh, yoga · spa → Bình yên, tóc · nail · da → Rạng rỡ.", "방문 확인마다 +1: 바레·피클볼 → 근력, 요가·스파 → 평온, 헤어·네일·피부 → 광채."))}</p><p class="sm ghint" id="g-hint">${esc(gHint(g))}</p>${CICI_REAL ? "</div>" : ""}
   ${gDemo()}</section>`; /* v2: no full-width Book CTA here; the raised centre button in the tab bar books */
 }
 /* ===== Home bubble + daily missions (phase2 only; crisis: neither renders, P2-X3/X4) ===== */
@@ -839,23 +840,24 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   if (ST.catEat === "eat" && sub === "room-eat") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
   if (ST.catMis === "water" && sub) return [L3(`Cici sipped water · ${d} cuddled on her lap`, `Cici nhấp ngụm nước · ${d} rúc vào lòng cô ấy`, `Cici는 물 한 모금 · ${d}는 무릎 위에서 꼭 안겼어요`), ""];
   if (ST.catEat === "eat") return [L3(`${d} munches her treat 🐟`, `${d} nhai món ăn vặt 🐟`, `${d}가 간식을 냠냠 🐟`), ""];
-  if (ST.catEat === "feed") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
+  if (ST.catEat === "feed") return [ST.catEatHungry ? L3(`${d} is eating her fish from Cici's hand — finally!`, `${d} đang ăn cá từ tay Cici — cuối cùng cũng được ăn!`, `${d}가 Cici 손에서 생선을 먹어요 — 드디어!`) : L3(`${d} wasn't hungry, but who says no to a fish`, `${d} không đói, nhưng cá thì không thể từ chối`, `${d}는 배가 안 고팠지만 생선은 못 참죠`), ""];
   if (ST.catEat === "pet") return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];
   if (ST.catEat) return [catPlayOn() ? L3(`${d} is playing!`, `${d} đang nô đùa!`, `${d}가 신나게 놀아요!`) : L3(`${d} is purring, happy and full`, `${d} rừ rừ, vui và no`, `${d}가 배부르게 골골송`), ""];
   if (ST.catMis) return [ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? L3(`Cici holds her water, ${d} laps from her bowl`, `Cici cầm cốc nước, ${d} liếm nước trong bát`, `Cici는 물컵을 들고, ${d}는 그릇에서 할짝`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   if (ST.catGrew) return [L3(`${d} grew into a ${catLookNm().toLowerCase()}! ✨`, `${d} đã lớn thành ${catLookNm().toLowerCase()}! ✨`, `${d}가 ${catLookNm()}로 자랐어요! ✨`), ""];
-  if (catHungry()) return [c.treats > 0 ? L3(`${d} is waiting by her bowl — tap Feed`, `${d} đang đợi bên bát — chạm Cho ăn`, `${d}가 밥그릇 옆에서 기다려요 — 간식 주기`) : L3(`${d} is waiting by her bowl`, `${d} đang đợi bên bát`, `${d}가 밥그릇 옆에서 기다려요`), ""];
+  if (catHungry()) return [c.treats > 0 ? L3(`${d} is waiting by her bowl · tap Feed`, `${d} đang đợi bên bát · chạm Cho ăn`, `${d}가 밥그릇 옆에서 기다려요 · 간식 주기`) : L3(`${d} is waiting by her bowl`, `${d} đang đợi bên bát`, `${d}가 밥그릇 옆에서 기다려요`), ""];
   if (c.fresh > 0) return [L3(`A treat from today's visit is waiting for ${d}`, `Một món ăn vặt từ lượt đến hôm nay đang chờ ${d}`, `오늘 방문으로 받은 간식이 ${d}를 기다려요`), ""];
   if (c.treats > 0) return [L3(`${d} has ${c.treats} treat${c.treats > 1 ? "s" : ""} waiting`, `${d} có ${c.treats} món ăn vặt`, `${d} 간식 ${c.treats}개`), ""];
-  const st = ME ? ME.streak : 0, mo = catMood();
+  if (ST.catReact) return [L3(`${d} is happy to see you ♡`, `${d} rất vui khi thấy bạn ♡`, `${d}가 반가워해요 ♡`), ""]; /* panel: a tap on Mochi now answers in the line too */
+  const st = ME ? ME.streak : 0, mo = catMood(), restTag = ST.miss && ST.miss.rest ? L3("Rest day · ", "Ngày nghỉ · ", "쉬는 날 · ") : "";
   const mt = { lively: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`), play: catPlayOn() ? L3(`${d} is playing`, `${d} đang nô đùa`, `${d}가 놀아요`) : L3(`${d} purrs — you're on a roll`, `${d} rừ rừ — bạn đang rất đều`, `${d} 골골송 — 아주 잘하고 있어요`),
     napping: catClipName("napping") === "napping-bed" ? L3(`${d} is napping in her bed`, `${d} đang ngủ trong giường`, `${d}가 침대에서 낮잠 중`) : catBedOn() ? L3(`${d} is napping on Cici's lap · her bed is ready`, `${d} đang ngủ trên đùi Cici · giường đã sẵn sàng`, `${d}가 Cici 무릎에서 낮잠 중 · 침대는 준비됐어요`) : L3(`${d} is napping on Cici's lap`, `${d} đang ngủ trên đùi Cici`, `${d}가 Cici 무릎에서 낮잠 중`), calm: L3(`${d} is purring`, `${d} đang rừ rừ`, `${d} 골골송`) }[mo] || "";
-  return [(st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
+  return [restTag + (st ? L3(`${st}-day streak`, `Chuỗi ${st} ngày`, `${st}일 연속`) + " · " : "") + mt, ""];
 }
 function v2Acts() { /* pet-game action circles over the room (user 2026-10-16): Missions, Next class / Check in, Feed. Max 3; right edge, clear of both faces. */
   const d = dmDay(), left = DM_KEYS.filter(k => !d.done[k]).length, nb = upcoming()[0];
-  const circ = (id, act, extra, icon, badge, cap, al) => `<div class="v2act"><button type="button" class="catfab v2circ" id="${id}" data-act="${act}"${extra} aria-label="${esc(al)}">${icon}${badge != null ? `<span class="catbadge" aria-hidden="true">${badge}</span>` : ""}</button><span class="v2cap" aria-hidden="true">${esc(cap)}</span></div>`;
+  const circ = (id, act, extra, icon, badge, cap, al) => `<div class="v2act"><button type="button" class="catfab v2circ" id="${id}" data-act="${act}"${extra} aria-label="${esc(al)}">${icon}${badge != null ? `<span class="catbadge" aria-hidden="true">${badge}</span>` : ""}</button><span class="v2cap" aria-hidden="true" data-act="${act}"${extra}>${esc(cap)}</span></div>`;
   const mis = circ("v2-pull", "hbsheet", ' data-state="ready"', ic("check", "s"), left || null, L3("Missions", "Nhiệm vụ", "미션"), L3(`Today's missions, ${left} left`, `Nhiệm vụ hôm nay, còn ${left}`, `오늘의 미션, ${left}개 남음`));
   let cls = "";
   if (nb) { const due = nb.d === todayIdx(), v = svcOf(nb.store, nb.svc);
@@ -904,7 +906,7 @@ function catTreatArrive() { /* play the arrival moment once per fresh visit trea
   const c = P2S.cat; if (!c || !(c.fresh > 0) || !V2HOME() || catCrisis() || !document.getElementById("cat-feed")) return;
   if (catTreatFx()) { c.fresh = 0; catSave(); setTimeout(catRefreshUi, 950); } }
 function catMotionOk() { try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return false; const cn = navigator.connection; if (cn && cn.saveData) return false; } catch (e) {} return true; }
-function catClipSrc(name) { const b = catVarPath(CAT_CLIPS[name] || CICI_CAT.base + name, name); return { webm: b + ".webm", mp4: b + ".mp4", poster: b + "-poster.jpg" }; }
+function catClipSrc(name) { const b = catVarPath(CAT_CLIPS[name] || CICI_CAT.base + name, name); return { webm: b + ".webm", mp4: b + ".mp4", poster: b === CICI_CAT.base + "petting" ? CICI_CAT.poster : b + "-poster.jpg" }; } /* panel: the kitten petting still is cici-cat-poster.jpg */
 function catClipName(mood) { return catLookAlias(catClipName0(mood)); }
 function catClipName0(mood) {
   if (mood === "mission" && ST.catMis) return ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? "room-waterbowl" : "water") : (CAT_ROOM.stretch ? "room-stretch" : "petting");
@@ -984,9 +986,9 @@ function catSyncMood(soft) { const fig = document.getElementById("cici-real"); i
   if (!catMotionOk()) { catWearSync(); return; } catXfadeTo(catClipName(mo), { loop: true }); }
 function catReact(kind) { /* tap = Mochi's react clip plays through (~3 s); long-press = a longer loop of it — no clutter (MC-K4/crisis quiet) */
   if (!V2HOME() || catCrisis() || ST.catEat || ST.catMis) return;
-  catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood();
+  catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood(); try { const [x, y] = catHeadXY(); catHearts(x, y, kind === "long" ? 5 : 3); } catch (e) {}
   const ms = kind === "long" ? 4800 : 2900;
-  clearTimeout(catReact.t); catReact.t = setTimeout(() => { ST.catReact = null; catSyncMood(); }, ms);
+  catRefreshUi(); clearTimeout(catReact.t); catReact.t = setTimeout(() => { ST.catReact = null; catSyncMood(); catRefreshUi(); }, ms);
 }
 function catWire() { /* pause off-screen / hidden; tap & long-press reactions; keep crossfade front in sync; v3: overlays, stage-up moment, treat arrival */
   if (catIO) { catIO.disconnect(); catIO = null; }
@@ -1036,10 +1038,10 @@ function catEatShow(hungry) { /* no popup: the scene itself tells the story — 
     sp.style.left = Math.max(12, x - 70) + "px"; sp.style.top = (y - 56) + "px"; requestAnimationFrame(() => sp.classList.add("on")); setTimeout(() => sp.classList.remove("on"), 1600); };
   const play = () => step("play", catPlayOn() ? "room-play" : CAT_ROOM.happy ? "room-happy" : "lively", 3000, !!(catPlayOn() || CAT_ROOM.happy), () => { ST.catEat = false; if (fig) delete fig.dataset.phase; catSyncMood(); catRefreshUi(); });
   const pet = () => { step("pet", "petting", 2600, true, play); setTimeout(spark, 350); };
-  const feed = () => { /* PR #37 eat clip: Mochi takes the fish from Cici's hand, plays once (safety cap 6 s), then happy */
-    step("feed", "room-eat", 6000, true, play); setTimeout(() => { const v = fig && fig.querySelector('.catvid[data-clip="room-eat"]'); if (v) { v.loop = false; v.addEventListener("ended", () => { if (ST.catEat === "feed") { clearTimeout(catEatShow.t); play(); } }, { once: true }); } }, 150); };
-  if (hungry && mv) step("eat", "eating", 3600, true, pet); /* hungry: she eats at her bowl, then Cici pets her */
-  else if (CAT_ROOM.eat && mv) feed(); else pet(); }
+  const feed = nx => { /* PR #37 eat clip: Mochi takes the fish from Cici's hand, plays once (safety cap 6 s), then on (hungry: Cici pets her first) */
+    step("feed", "room-eat", 6000, true, nx); setTimeout(() => { const v = fig && fig.querySelector('.catvid[data-clip="room-eat"]'); if (v) { v.loop = false; v.addEventListener("ended", () => { if (ST.catEat === "feed") { clearTimeout(catEatShow.t); nx(); } }, { once: true }); } }, 150); };
+  ST.catEatHungry = !!hungry; /* panel 2026-10-16: the room shot (Cici hand-feeds) is used hungry or not — the square close-up showed a different-looking cat without Cici; it stays as the fallback when the room clip is missing */
+  if (CAT_ROOM.eat && mv) feed(hungry ? pet : play); else if (hungry && mv) step("eat", "eating", 3600, true, pet); else pet(); }
 function catNudge() { /* empty state: never a dead button — nudge + open missions */
   toast(L3("Do a mission or visit a store to earn a treat", "Làm một nhiệm vụ hoặc đến cửa hàng để nhận ăn vặt", "미션을 하거나 매장을 방문하면 간식이 생겨요")); if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) try { el.focus({ preventScroll: true }); } catch (e) {} }
 function catRefreshUi() { { const a = document.getElementById("v2-acts"); if (a && V2HOME()) { const sq = !!a.querySelector(".squish"); const w = document.createElement("div"); w.innerHTML = v2Acts(); a.replaceWith(w.firstElementChild); if (sq) { const f = document.getElementById("cat-feed") || document.getElementById("cat-fab-empty"); if (f) f.classList.add("squish"); } } } /* update the card line / sheet in place, never re-render the scene (a re-render would hard-cut the video) */
@@ -1047,7 +1049,7 @@ function catRefreshUi() { { const a = document.getElementById("v2-acts"); if (a 
   const cc = document.getElementById("cat-card"); if (cc) { const w = document.createElement("div"); w.innerHTML = catCard(); if (w.firstElementChild) cc.replaceWith(w.firstElementChild); else cc.remove(); }
   const cg = document.getElementById("cat-grow"); if (cg) { const w = document.createElement("div"); w.innerHTML = catItemsCard(); if (w.firstElementChild) cg.replaceWith(w.firstElementChild); else cg.remove(); }
   catWearSync(); }
-function catFeed() { if (catCrisis()) return; const c = catDay(); if (c.treats <= 0) return catNudge();
+function catFeed() { if (catCrisis() || ST.catEat) return; const c = catDay(); if (c.treats <= 0) return catNudge(); /* panel: no double-spend while the feed scene plays */
   if ($(".sheet") && V2HOME()) closeSheet(); /* v3: feeding from the sheet closes it first so the moment is visible */
   const hungry = catHungry(); catFeedFx(); c.treats--; c.fed++; c.fresh = 0; catSave(); ST.catEat = hungry ? "eat" : "pet";
   if (document.getElementById("cici-real")) catRefreshUi(); else render(); catEatShow(hungry);
@@ -1069,6 +1071,15 @@ function catGrantItems() { /* grant on reaching stage; never for sale (MC-I1/I5 
   if (ch) catSave(); }
 function catEquip(id) { if (catCrisis() || !catItemOwned(id)) return; const c = P2S.cat; c.worn = c.worn || {}; c.worn[id] = !c.worn[id]; catSave();
   if (document.getElementById("cici-real")) { catRefreshUi(); if (!ST.catEat && !ST.catMis) catSyncMood(); } else render(); } /* in place: the room updates without a hard cut */
+function catGrowHow() { /* panel 2026-10-16 ("never tells me how to grow her"): points to the next stage + what changes Mochi's look */
+  const st = catStage(), d = MOCHI(), lf = typeof life === "function" && ME ? life(ME) : 0, nx = LVL[st + 1];
+  const nextLookSt = st < 2 ? 2 : st < 4 ? 4 : null, need = nx != null ? Math.max(0, nx - lf) : 0;
+  const how = L3(`Visits and missions earn points for both of you.`, `Lượt đến và nhiệm vụ cộng điểm cho cả hai.`, `방문과 미션으로 둘 다 포인트가 쌓여요.`);
+  const line = nx == null ? L3(`${d} is at the top of the track.`, `${d} đã ở cuối hành trình.`, `${d}는 마지막 단계예요.`)
+    : L3(`${fmtN(need)} points to ${L3(...G_STAGES[st + 1])}${nextLookSt ? ` · ${d} becomes a ${catLookNm(nextLookSt >= 4 ? 2 : 1).toLowerCase()} at ${L3(...G_STAGES[nextLookSt])}` : ""}.`,
+         `Còn ${fmtN(need)} điểm đến ${L3(...G_STAGES[st + 1])}${nextLookSt ? ` · ${d} thành ${catLookNm(nextLookSt >= 4 ? 2 : 1).toLowerCase()} ở ${L3(...G_STAGES[nextLookSt])}` : ""}.`,
+         `${L3(...G_STAGES[st + 1])}까지 ${fmtN(need)}포인트${nextLookSt ? ` · ${L3(...G_STAGES[nextLookSt])}에서 ${catLookNm(nextLookSt >= 4 ? 2 : 1)}가 돼요` : ""}.`);
+  return `<p class="sm" id="cat-grow-how" style="margin:8px 0 0"><b>${esc(line)}</b><br><span class="sub">${esc(how)}</span></p>`; }
 function catItemsCard() { /* sheet only: growth track (kitten → cat → fluffy) + owned items; locked growth collapsed (panel: short sheet) */
   if (catCrisis()) return ""; catGrantItems();
   const st = catStage(), nm = catStageNm(), d = MOCHI(), li = catLookIdx();
@@ -1078,7 +1089,8 @@ function catItemsCard() { /* sheet only: growth track (kitten → cat → fluffy
     const on = catItemOn(it.id);
     return `<div class="row catitem" data-id="${it.id}" data-locked="0"><span class="caticon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40">${it.svg}</svg></span><span class="grow sm"><b>${esc(L3(...it.n))}</b><br><span class="sub">${esc(on ? L3("In the room", "Đang ở trong phòng", "방에 있어요") : L3("Put away", "Đã cất", "보관 중"))}</span></span><button class="btn sec" data-act="catequip" data-v="${it.id}" aria-pressed="${on}">${esc(on ? L3("Take off", "Gỡ", "해제") : L3("Put on", "Đeo", "착용"))}</button></div>`;
   }).join("");
-  const track = `<div class="catlooks" id="cat-looks" role="list" aria-label="${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}">${CAT_LOOKS.map((l, i) => `<span class="chip${i === li ? " on" : ""}${i < li ? " past" : ""}" role="listitem" aria-current="${i === li}">${esc(catLookNm(i))}<span class="sub">${esc(i === 0 ? L3("Seed · Sprout", "Hạt mầm · Chồi", "씨앗 · 새싹") : i === 1 ? L3("Bud · Blossom", "Nụ · Nở hoa", "꽃봉오리 · 만개") : L3("Shine", "Tỏa sáng", "샤인"))}</span></span>`).join("")}</div>`;
+  const soon = i => i === 2 && !CAT_LOOK_READY.fluffy ? " · " + L3("coming soon", "sắp có", "준비 중") : "";
+  const track = `<div class="catlooks" id="cat-looks" role="list" aria-label="${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}">${CAT_LOOKS.map((l, i) => `<button type="button" class="chip${i === li ? " on" : ""}${i < li ? " past" : ""}" role="listitem" aria-current="${i === li}" data-act="catlookinfo" data-v="${i}">${esc(catLookNm(i))}<span class="sub">${esc((i === 0 ? L3("Seed · Sprout", "Hạt mầm · Chồi", "씨앗 · 새싹") : i === 1 ? L3("Bud · Blossom", "Nụ · Nở hoa", "꽃봉오리 · 만개") : L3("Shine", "Tỏa sáng", "샤인")) + soon(i))}</span></button>`).join("")}</div>${catGrowHow()}`;
   const tip = locked.length ? `<p class="sm sub" id="cat-locked-hint" style="margin-top:8px">${esc(L3(`${d} grows with Cici. Collar at Bud, bed at Blossom — earned only, never for sale.`, `${d} lớn lên cùng Cici. Vòng cổ ở Nụ hoa, giường ở Nở hoa — chỉ nhận được, không bán.`, `${d}는 Cici와 함께 자라요. 목걸이는 꽃봉오리, 침대는 만개에서 — 획득 전용, 판매하지 않아요.`))}</p>` : `<p class="sm sub" style="margin-top:8px">${esc(L3("Earned only — never for sale.", "Chỉ nhận được — không bán.", "획득 전용 — 판매하지 않아요."))}</p>`;
   return `<section class="card catgrow" id="cat-grow" data-stage="${st}" data-look="${catLook()}" data-owned="${owned.length}"><div class="row" style="gap:8px"><div class="grow"><b>${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}</b>
   <div class="sm sub" id="cat-stage">${esc(gT("stage"))} · ${esc(nm)} · ${esc(catLookNm())}</div></div><span class="tag" id="cat-stage-tag">${esc(nm)}</span></div>${track}
@@ -1097,7 +1109,9 @@ function catMisPlay(kind, ms) { /* mission moment in the room: stretch = tall ro
   if (!document.getElementById("cici-real")) { ST.tab = "home"; ST.page = null; ST.store = null; render(); }
   const fig = document.getElementById("cici-real"); if (fig) { fig.dataset.mood = "mission-" + kind; if (catMotionOk()) catXfadeTo(catClipName("mission"), { loop: true, tap: kind === "water" && !CAT_OPT["room-waterbowl"] }); }
   catRefreshUi(); if (ms) catMisPlay.t = setTimeout(catMisEnd, ms); return true; }
-function catMisEnd() { clearTimeout(catMisPlay.t); if (!ST.catMis) return; ST.catMis = null; catSyncMood(); catRefreshUi(); }
+function catMisEnd() { clearTimeout(catMisPlay.t); if (!ST.catMis) return; ST.catMis = null; catSyncMood(); catRefreshUi(); catSheetReturn(); }
+function catSheetReturn() { /* panel 2026-10-16 (하은): finishing a mission from the Today sheet no longer costs a reopen tap — the sheet slides back once the moment has played, while missions remain */
+  if (!ST.sheetReturn || ST.catMis) return; ST.sheetReturn = false; const d = dmDay(); if (V2HOME() && !$(".sheet") && DM_KEYS.some(k => !d.done[k])) openHomeSheet(); }
 function catMisToast(r, nm, dm, kind, earned) { /* ONE message after a mission: points · Mochi line · treat (no win card, no confetti unless the 3/3 bonus) */
   const parts = [r.pts ? L3(`+${r.pts} points`, `+${r.pts} điểm`, `+${r.pts}포인트`) : r.msg ? pvT(r.msg) : nm];
   if (!catCrisis()) parts.push(kind === "water" ? catMisLine("water") : catMisLine("stretch"));
@@ -1838,7 +1852,7 @@ function resFree(sid, rid, d, m, len, ignore) {
   if (busy(sid + rid + d + ":" + m)) return false;
   return !B.some(b => b.id !== ignore && b.status === "confirmed" && b.store === sid && b.d === d && b.rids.includes(rid) && m < b.m + b.len && b.m < m + len);
 }
-function priceFor(s, svc, m, len, o) { if (s.kind === "rental") return (m >= 1020 ? 280000 : 200000) * len / 60 + (o.paddles || 0) * 30000; return svc.price; }
+function priceFor(s, svc, m, len, o) { if (s.kind === "rental") { let p = 0; for (let t = m; t < m + len; t += 30) p += (t >= 1020 ? 280000 : 200000) / 2; return p + (o.paddles || 0) * 30000; } return svc.price; } /* panel: each half hour at its own rate */
 function slotsFor(sid, vid, d, o = {}) {
   const s = S[sid], svc = svcOf(sid, vid), out = []; if (!svc || d < 0) return out;
   const minM = Math.max(0, nowMin() + 30 - d * 1440);
@@ -1872,7 +1886,7 @@ const passFor = (sid, vid) => (WALLET[sid] || []).find(p => p.left > 0 && (!p.sv
 /* ===== full EN / VI / KO layer: UI literals, Cici's replies, store content, notifications ===== */
 const TRD = {
   "Service": ["Dịch vụ", "서비스"], "When": ["Thời gian", "일시"], "Court": ["Sân", "코트"], "With": ["Người làm", "담당"], "(store time)": ["(giờ cửa hàng)", "(매장 시간)"],
-  " now, taken off the total": [" ngay, trừ vào tổng", " 지금 결제, 합계에서 차감"], "Past the free window": ["Đã qua hạn hủy miễn phí", "무료 취소 기한 지남"], "(sample)": ["(mẫu)", "(샘플)"],
+  " now, taken off the total": [" ngay, trừ vào tổng", " 지금 결제, 합계에서 차감"], "Past the free window": ["Đã qua hạn hủy miễn phí", "지났어요"], "(sample)": ["(mẫu)", "(샘플)"],
   "Done": ["Xong", "완료"], "XP comes when you show up, not for booking.": ["XP được tính khi bạn đến, không phải khi đặt.", "XP는 예약이 아니라 방문할 때 쌓여요."],
   "Day": ["Ngày", "날짜"], "Therapist": ["Kỹ thuật viên", "테라피스트"], "Staff": ["Nhân viên", "담당자"], "Anyone": ["Ai cũng được", "누구나"], "Room": ["Phòng", "룸"], "Any room": ["Phòng bất kỳ", "아무 룸"],
   "Any court": ["Sân bất kỳ", "아무 코트"], "Time block": ["Thời lượng", "이용 시간"], "Players": ["Người chơi", "인원"], "None": ["Không", "없음"], "2 paddles": ["2 vợt", "패들 2개"], "4 paddles": ["4 vợt", "패들 4개"],
@@ -1903,7 +1917,7 @@ const TRD = {
   "Show this at the desk. It works offline.": ["Đưa mã này ở quầy. Dùng được khi không có mạng.", "데스크에 보여 주세요. 오프라인에서도 돼요."], "Demo: the store marks you attended": ["Demo: cửa hàng xác nhận bạn đã đến", "데모: 매장이 참석 처리"],
   "Slow breaths. Roll your shoulders, reach up, fold gently.": ["Thở chậm. Xoay vai, vươn lên, gập người nhẹ nhàng.", "천천히 숨 쉬어요. 어깨를 돌리고, 위로 뻗고, 부드럽게 숙여요."], "Stop if anything hurts.": ["Dừng lại nếu thấy đau.", "아프면 멈추세요."], "Finish (demo: skip the timer)": ["Hoàn thành (demo: bỏ qua hẹn giờ)", "완료 (데모: 타이머 건너뛰기)"],
   "The policy is saved with your booking, so a later change never surprises you.": ["Chính sách được lưu cùng lịch đặt, nên thay đổi sau này không làm bạn bất ngờ.", "정책이 예약과 함께 저장돼서 나중에 바뀌어도 놀랄 일이 없어요."], "free": ["miễn phí", "무료"], "Free": ["Miễn phí", "무료"], "Late cancel": ["Hủy muộn", "늦은 취소"],
-  "You're inside the free window.": ["Bạn còn trong hạn hủy miễn phí.", "무료 취소 기간 안이에요."], " The class goes back on your pass.": [" Buổi học được trả lại vào gói.", " 수업이 이용권으로 돌아가요."],
+  "You're inside the free window.": ["Bạn còn trong hạn hủy miễn phí.", "지금 취소하면 수수료가 없어요."], " The class goes back on your pass.": [" Buổi học được trả lại vào gói.", " 수업이 이용권으로 돌아가요."],
   "Nothing is booked until you tap the button.": ["Chưa có gì được đặt cho đến khi bạn chạm nút.", "버튼을 누르기 전에는 예약되지 않아요."], "Not a real phone call": ["Không phải cuộc gọi thật", "실제 전화가 아니에요"], "Connecting…": ["Đang kết nối…", "연결 중…"], "Connected": ["Đã kết nối", "연결됨"],
   /* store content (stores keep their own text in each language) */
   "Ballet-inspired, low-impact. All levels.": ["Lấy cảm hứng từ ballet, nhẹ nhàng. Mọi trình độ.", "발레에서 온 저충격 운동. 모든 레벨."], "Machine class, 8 reformers.": ["Lớp tập máy, 8 reformer.", "기구 수업, 리포머 8대."], "Slow mobility and stretching.": ["Vận động chậm và giãn cơ.", "천천히 하는 가동성·스트레칭."],
@@ -1947,7 +1961,7 @@ const TRD = {
   
   "Demo: added to Cici's look. No real money used.": ["Demo: đã thêm vào phong cách Cici. Không dùng tiền thật.", "데모: " + CICI_KO + " 스타일에 추가했어요. 실제 돈은 쓰지 않았어요."], "Not enough coins yet. Missions earn coins. (Coin packs are a placeholder, no real purchase.)": ["Chưa đủ xu. Làm nhiệm vụ để nhận xu. (Gói xu chỉ là chỗ giữ, không mua thật.)", "코인이 부족해요. 미션으로 모을 수 있어요. (코인 팩은 자리 표시용, 실제 구매 없음)"],
   "Calls the store's phone (demo).": ["Gọi điện cho cửa hàng (demo).", "매장에 전화 (데모)."], "Opens the store's KakaoTalk chat (demo).": ["Mở chat KakaoTalk của cửa hàng (demo).", "매장 카카오톡 채팅 열기 (데모)."], "Opens the store's Zalo chat (demo).": ["Mở chat Zalo của cửa hàng (demo).", "매장 Zalo 채팅 열기 (데모)."], "Opens directions (demo).": ["Mở chỉ đường (demo).", "길찾기 열기 (데모)."],
-  "Teacher": ["Giáo viên", "강사"], "Free cancel ended": ["Hết hạn hủy miễn phí", "무료 취소 기간 종료"], "spots open": ["chỗ trống", "자리 있음"],
+  "Teacher": ["Giáo viên", "강사"], "Free cancel ended": ["Hết hạn hủy miễn phí", "무료 취소 기한 지남"], "spots open": ["chỗ trống", "자리 있음"],
   [vnd(100000) + " added to your next visit"]: [vnd(100000) + " cộng vào lần đến sau", "다음 방문 시 " + vnd(100000) + " 추가"],
   "Reminder: grip socks are needed on the reformer. The desk has spares.": ["Nhắc nhở: cần vớ chống trượt khi tập reformer. Quầy có sẵn.", "알림: 리포머 수업에는 논슬립 양말이 필요해요. 데스크에 여분이 있어요."],
   "Linh is back from holiday on Thursday.": ["Linh nghỉ lễ xong, thứ năm đi làm lại.", "린 디자이너가 목요일에 휴가에서 돌아와요."],
@@ -1978,7 +1992,7 @@ const FRAG = [
   [/^(\d\d:\d\d)(?: with (.+?))? isn't open (.+?)\. Nearest open times:$/, (m, a, w, d) => [`${a}${w ? " với " + w : ""} ${d} đã kín. Giờ gần nhất còn trống:`, `${d} ${a}${w ? " (" + w + ")" : ""}은(는) 마감이에요. 가장 가까운 시간:`]],
   [/^Nothing open (.+?)\. Other times that day:$/, (m, a) => { const p = a.replace(/ (morning|afternoon|evening|noon)/, (x, k) => " " + PERN[k][0]); const k2 = a.replace(/ (morning|afternoon|evening|noon)/, (x, k) => " " + PERN[k][1]); return [`Không còn chỗ ${p.replace(/ with /, " với ")}. Giờ khác trong ngày:`, `${k2} 예약 가능 없음. 그날 다른 시간:`]; }],
   [/^(.+?), (.+?) at (.+?)\. Which time\?$/, (m, a, d, s) => { let dp = d, dk = d; for (const k in PERN) { dp = dp.replace(" " + k, " " + PERN[k][0]); dk = dk.replace(" " + k, " " + PERN[k][1]); } return [`${nN(a)}, ${dp} ở ${s}. Bạn chọn giờ nào?`, `${s} ${nN(a)}, ${dk}. 몇 시로 할까요?`]; }],
-  [/^Booked: (.+?) at (.+?), (.+?)\. It's in My bookings\.$/, (m, a, s, w) => [`Đã đặt: ${N(a)} ở ${s}, ${w}. Đã có trong Lịch của tôi.`, `예약됨: ${s} ${N(a)}, ${w}. 내 예약에 있어요.`]],
+  [/^(?:Booked|Đã đặt|예약됨): (.+?) at (.+?), (.+?)\. It's in My bookings\.$/, (m, a, s, w) => [`Đã đặt: ${N(a)} ở ${s}, ${w}. Đã có trong Lịch của tôi.`, `예약됨: ${s} ${N(a)}, ${w}. 내 예약에 있어요.`]],
   [/^Sent to (.+?)\. Replies land in your inbox\.$/, (m, s) => [`Đã gửi đến ${s}. Trả lời sẽ về hộp thư.`, `${s}에 보냈어요. 답장은 받은 메시지로 와요.`]],
   [/^(.+?)'s info doesn't say\. Want me to ask them\?$/, (m, s) => [`Thông tin của ${s} chưa có. Mình hỏi giúp nhé?`, `${s} 정보에는 없어요. 대신 물어볼까요?`]],
   [/^(Booked|Đã đặt|예약됨): (.+?) · (.+)$/, (m, b, a, s) => [`Đã đặt: ${N(a)} · ${s}`, `예약됨: ${N(a)} · ${s}`]],
@@ -1994,7 +2008,7 @@ function trS(s) {
   if (L === "en" || s == null) return s; s = String(s);
   if (TRD[s] || TRD[nb(s)]) return tr(s); if (NAMES[s]) return NAMES[s][LI()];
   if (s.includes("\n")) return s.split("\n").map(trS).join("\n");
-  for (const [re, f] of FRAG) { const m = s.match(re); if (m) return f(...m)[LI()]; }
+  for (const [re, f] of FRAG) { const m = s.match(re); if (m) { const o = f(...m)[LI()]; return L === "ko" ? kFix(o) : o; } }
   const m2 = s.match(/^(.+?): (.+)$/); if (m2 && NAMES[m2[1]]) return N(m2[1]) + ": " + m2[2];
   const m3 = s.match(/^(.+?) · (.+)$/); if (m3 && (NAMES[m3[1]] || TRD[m3[1]])) return trS(m3[1]) + " · " + trS(m3[2]);
   return s;
@@ -2053,7 +2067,15 @@ function deliver() {
 }
 const WHY = { type: ["Muted type", "Đã tắt loại này", "꺼 둔 유형"], store: ["Store muted", "Đã tắt cửa hàng", "매장 알림 끔"], friend: ["Friends are opt-in on both sides", "Bạn bè cần cả hai bên đồng ý", "친구 알림은 양쪽 모두 동의해야 해요"], winback: ["Win-backs stop after 2 ignored", "Ngừng sau 2 lần bị bỏ qua", "2번 무시되면 중단"], day: ["Daily cap: 1 suggestion a day", "Giới hạn: 1 gợi ý mỗi ngày", "하루 추천 1개 제한"], week: ["Weekly cap: 3 a week across places", "Giới hạn chung: 3 mỗi tuần", "전체 주 3개 제한"],
   storeweek: ["Store cap: 2 a week per place", "Giới hạn: 2 mỗi tuần cho mỗi nơi", "매장당 주 2개 제한"], optin: ["Off until you opt in for this place", "Tắt cho đến khi bạn đồng ý nhận từ nơi này", "이 매장 수신에 동의하기 전까지 꺼짐"] };
-const L3 = (en, vi, ko) => L === "vi" ? vi : L === "ko" ? ko : en;
+/* panel 2026-10-16: Korean particles after Latin names / digits are resolved, never shown as "이(가)". Batchim: Hangul final consonant; digits 0 1 3 6 7 8; Latin words ending in n/m/l or a vowel+b/p/k (Club, Lab, Shop). */
+function kBatchim(w) { const m = String(w).replace(/[\s"'“”’)\]»]+$/, "").match(/([가-힣A-Za-z0-9])[^가-힣A-Za-z0-9]*$/); if (!m) return false; const ch = m[1];
+  if (/[가-힣]/.test(ch)) return (ch.charCodeAt(0) - 0xAC00) % 28 !== 0; if (/\d/.test(ch)) return /[013678]/.test(ch);
+  const t = String(w).replace(/[\s"'“”’)\]»]+$/, ""); return /[nml]$/i.test(t) || /[aeiou][bpk]$/i.test(t); }
+function kFix(str) { if (typeof str !== "string" || str.indexOf("(") < 0) return str;
+  return str.replace(/([^\s(]+?)(이\(가\)|은\(는\)|을\(를\)|와\(과\)|\(으\)로|으로\(로\)|과\(와\)|가\(이\)|는\(은\)|를\(을\))/g, (m, w, j) => { const b = kBatchim(w);
+    const J = { "이(가)": b ? "이" : "가", "가(이)": b ? "이" : "가", "은(는)": b ? "은" : "는", "는(은)": b ? "은" : "는", "을(를)": b ? "을" : "를", "를(을)": b ? "을" : "를", "와(과)": b ? "과" : "와", "과(와)": b ? "과" : "와" }[j];
+    if (J) return w + J; const rl = /[가-힣]$/.test(w) && (w.charCodeAt(w.length - 1) - 0xAC00) % 28 === 8; return w + (b && !rl ? "으로" : "로"); }); }
+const L3 = (en, vi, ko) => L === "vi" ? vi : L === "ko" ? kFix(ko) : en;
 function vNotif() {
   const list = deliver(), sent = list.filter(r => !r.why), held = list.filter(r => r.why);
   const card = r => { const n = r.n, sid = n.s; return `<div class="card row top">${sid ? logo(sid) : `<span class="slogo" style="background:#B04A5E" aria-hidden="true">C</span>`}<div class="grow"><div class="row sm"><b class="grow">${sid ? esc(S[sid].name) : "Cici"}</b><span class="sub">${esc(fDay(n.day))} ${fTime(r.at)}</span></div><div class="sm">${esc(n.tx[L === "vi" ? 1 : L === "ko" ? 2 : 0])}</div>${n.type === "reminder" && sid && upcoming().some(b => b.store === sid) ? `<button class="link" data-act="go" data-v="bookings:up:${upcoming().find(b => b.store === sid).id}:page:notif">${L3("See booking", "Xem lịch", "예약 보기")}</button>` : sid && S[sid] && !n.friend ? `<button class="link nbook" data-act="bk" data-s="${sid}" data-from="notif">${esc(L3("Book", "Đặt lịch", "예약"))}</button>` : ""}
@@ -2080,7 +2102,7 @@ function openSheet(html, label) {
   if (!$(".sheet")) lastFocus = document.activeElement;
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" data-act="bgclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}</div></div>`;
   const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); try { (f || sh).focus({ preventScroll: true }); } catch (e) {} /* never scroll the page behind (iOS showed a black strip + resized the room) */
-  { const tt = $("#toast"); if (tt && !tt.hidden && typeof toastPlace === "function") toastPlace(tt); } /* a toast shown just before the sheet moves to the sheet position */
+  { const tt = $("#toast"); if (tt && !tt.hidden && typeof toastPlace === "function") { if (Date.now() - (+tt.dataset.at || 0) > 600) { tt.hidden = true; toastUndo = null; } else toastPlace(tt); } } /* a toast shown with this sheet moves to the sheet position; an older one is done (panel: the booked toast was covering the cancel dialog) */
 }
 function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } const g0 = $(".sheet.glass"); if (g0 && typeof catMotionOk === "function" && catMotionOk()) sheetGhostOut(g0); $("#sheetRoot").innerHTML = ""; if (!had) return; { const tt = $("#toast"); if (tt && !tt.hidden && typeof toastPlace === "function") toastPlace(tt); } try { if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus({ preventScroll: true }); else $("#view").focus({ preventScroll: true }); } catch (e) {} }
 function sheetGhostOut(sh) { /* glass panel close: the live sheet is removed at once (state stays simple); a non-interactive copy slides down ~220ms */
@@ -2097,7 +2119,7 @@ function toast(msg, undo) {
   const el = $("#toast"); clearTimeout(toastT); toastUndo = undo || null;
   el.innerHTML = `<span class="tx">${esc(trS(msg))}</span>` + (undo ? `<button data-act="toastundo">${t("undo")}</button>` : "");
   el.classList.remove("win"); if (toastCut && !undo) { const n = toastCut; toastCut = null; el.hidden = true; clearTimeout(toastT); return showWin(msg, n); } toastCut = null;
-  el.hidden = false; toastT = setTimeout(() => { el.hidden = true; toastUndo = null; el.classList.remove("win"); }, undo ? 7000 : 3500);
+  el.hidden = false; el.dataset.at = Date.now(); toastT = setTimeout(() => { el.hidden = true; toastUndo = null; el.classList.remove("win"); }, undo ? 7000 : 3500);
   toastPlace(el);
 }
 function toastPlace(el) { /* v3 Home: sit under the glass card (never over the greeting); elsewhere the CSS position applies */
@@ -2118,7 +2140,7 @@ const capTx = c => c.full ? L3(`Full · ${c.cap}/${c.cap}`, `Đã đầy · ${c.
 function draftRows(x) {
   const s = S[x.store], v = svcOf(x.store, x.svc), pass = x.usePass ? (WALLET[x.store] || []).find(p => p.id === x.usePass) : null;
   const who = x.rids.map(r => resName(x.store, r)).join(" + ");
-  let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${x.len} ${L3("min","phút","분")} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
+  let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${fMin(x.len)} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
   const priceTxt = pass ? `${vnd(0)} <span class="sub sm">· ${esc(L3(`1 from your ${pass.t} (${pass.left} left)`, `1 buổi từ ${tr(pass.t)} (còn ${pass.left})`, `${tr(pass.t)}에서 1회 차감 (${pass.left}회 남음)`))}, ${esc(t("storeOnly", { s: s.name }))}</span>`
     : (v.from ? L3("from ", "từ ", "") + vnd(x.price) + L3("", "", "부터") + ` <span class="sub sm">(${esc(L3(v.why, "tùy độ dài tóc; thợ sẽ xác nhận", "머리 길이에 따라 달라요. 디자이너가 확인해요"))})</span>` : vnd(x.price));
   const P = x.pol || s.policy, free = freeNow(x.store, x.d, x.m, x.pol); /* a booked card shows the policy saved with the booking; a draft shows the store's current rule */
@@ -2143,7 +2165,7 @@ let PEND = null;
 function openConfirm(x) {
   if (gated()) return; /* MVP-B7: no review card in a crisis/urgent turn */
   completeDraft(x); PEND = x; track("booking_review_open", { via: "sheet" }); const s = S[x.store];
-  const mv = x.move ? B.find(b => b.id === x.move) : null;
+  const mv = x.move ? B.find(b => b.id === x.move) : null; if (mv) x.usePass = mv.usePass || null; /* panel: the review of a move shows the pass, not a cash total */
   const lbl = mv ? t("move") : (s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm"));
   const lateMove = mv && !freeNow(mv.store, mv.d, mv.m);
   openSheet(sheetHd(mv ? t("reschedule") : t("confirmTitle")) + storeBar(x.store) + (mv ? "" : bkStep("step3")) +
@@ -2165,6 +2187,8 @@ function doBook(x, quiet) {
     return b;
   }
   const s = S[x.store];
+  if (!quiet) { const dup = B.find(b => b.status === "confirmed" && b.store === x.store && b.svc === x.svc && b.d === x.d && b.m === x.m); /* panel (하은): the identical class was bookable twice and took a second pass session */
+    if (dup) { closeSheet(); render(); toast(L3("You already have this booking.", "Bạn đã đặt buổi này rồi.", "이미 예약된 시간이에요.")); manage(dup); return null; } }
   if (!quiet) { let ok = true; try { const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : s.kind === "class" ? {} : { staff: x.rids[0], room: x.rids[1] }; ok = slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0); } catch (e) {}
     if (!ok) { takenSheet(x); return null; } }
   const b = { id: BID++, status: "confirmed", source: x.source || "app", store: x.store, svc: x.svc, d: x.d, m: x.m, len: x.len, rids: x.rids, price: x.price, party: x.party || 0, paddles: x.paddles || 0, dep: s.policy.dep || 0, usePass: x.usePass || null, pol: Object.assign({}, s.policy) };
@@ -2200,7 +2224,7 @@ function success(b, undo) {
   const cheerAlt = L3("Cici cheering", "Cici reo mừng", "응원하는 " + CICI_KO);
   const calm = gated(); /* MVP-B7/A6: no cheer in a crisis/urgent turn */ const media = calm ? "" : cut("cheer", { alt: cheerAlt, eager: 1, once: 1 }); if (!calm) setTimeout(() => celebrate(false), 50);
   openSheet(sheetHd(t("booked")) + `<div class="card scene" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`)}</p>` : ""}<p class="sub sm">${esc(bkT("saved"))}</p><p class="sm" id="bk-earn"><b>${esc(bkT("earnDone", { n: earnEst(), s: S[b.store].name }))}</b></p></div></div>` +
-    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm"); return m ? `<div class="contact" id="bk-map">${m}</div>` : ""; })()}<button class="btn sec full" data-act="close">${tr("Done")}</button><button class="btn ghost full" data-act="addcal" data-id="${b.id}">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</button><button class="btn ghost full" data-act="succundo">${t("undo")}</button></div>`, t("booked"));
+    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm"); return m ? `<div class="contact" id="bk-map">${m}</div>` : ""; })()}<button class="btn sec full" data-act="close">${tr("Done")}</button><div class="sact3"><button class="btn ghost" data-act="addcal" data-id="${b.id}">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</button><button class="btn ghost" data-act="succundo">${t("undo")}</button></div></div>`, t("booked"));
   succUndo = undo;
 }
 
@@ -2233,7 +2257,7 @@ function placeStep() {
 function svcStep(sid) {
   if (gated()) { toast(jbT("crisis")); return; }
   const s = S[sid], cls = s.kind === "class";
-  const rows = s.svcs.map(v => { const pass = s.kind !== "rental" && passFor(sid, v.id); return `<button class="svc" data-act="bkpick" data-s="${sid}" data-v="${v.id}"><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${s.kind !== "rental" && v.len ? v.len + " " + L3("min", "phút", "분") + " · " : ""}${pass ? esc(tr("Pass")) : priceLabel(v)}</span></span><span aria-hidden="true">›</span></button>`; }).join("");
+  const rows = s.svcs.map(v => { const pass = s.kind !== "rental" && passFor(sid, v.id); return `<button class="svc" data-act="bkpick" data-s="${sid}" data-v="${v.id}"><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${s.kind !== "rental" && v.len ? fMin(v.len) + " · " : ""}${pass ? esc(tr("Pass")) : priceLabel(v)}</span></span><span aria-hidden="true">›</span></button>`; }).join("");
   openSheet(sheetHd(bkT("title", { s: s.name })) + storeBar(sid) + bkStep(cls ? "step1c" : "step1") + `<div class="opt">${esc(bkT(cls ? "pickCls" : "pickSvc"))}</div><div class="stack" id="bk-svcs">${rows}</div>` + bkAsk(sid), bkT("title", { s: s.name }));
 }
 /* ----- tap booking sheet (≤3 taps: service or Book-again → slot → confirm) ----- */
@@ -2250,31 +2274,35 @@ function renderBook(fresh) {
   const sid = BS.store, s = S[sid], v = svcOf(sid, BS.svc);
   if (!fresh) { const dt = $(".sheet #bk-opts"); if (dt) BS.optsOpen = dt.open; }
   let h = sheetHd(BS.move ? t("reschedule") : N(v.n)) + storeBar(sid) + (BS.move ? "" : bkStep("step2") + (s.svcs.length > 1 ? `<button class="link" data-act="bksvc" data-s="${sid}" id="bk-change">${esc(bkT("change"))}</button>` : ""));
-  h += `<p class="sub sm" style="margin:8px 0 0">${esc(tr(v.desc || ""))}${s.kind !== "rental" ? " · " + v.len + " " + L3("min", "phút", "분") + " · " + priceLabel(v) : ""}</p>`;
+  h += `<p class="sub sm" style="margin:8px 0 0">${esc(tr(v.desc || ""))}${s.kind !== "rental" ? " · " + fMin(v.len) + " · " + priceLabel(v) : ""}</p>`;
   h += `<div class="opt">${tr("Day")}</div><div class="scroll" role="group" aria-label="${tr("Day")}">` + [0, 1, 2, 3, 4, 5, 6].map(d => `<button class="chip" aria-pressed="${d === BS.d}" data-act="bs" data-k="d" data-v="${d}">${esc(fDay(d))}</button>`).join("") + `</div>`;
-  if (s.kind === "appt" && s.staff.length) h += `<div class="opt">${sid === "spa" ? tr("Therapist") : tr("Staff")}</div>` + chipSet("staff", sid === "spa" ? tr("Therapist") : tr("Staff"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, x.n])), BS.staff);
-  if (s.kind === "class" && (s.staff || []).length > 1) h += `<div class="opt">${tr("Teacher")}</div>` + chipSet("staff", tr("Teacher"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, x.n])), BS.staff);
+  if (s.kind === "appt" && s.staff.length) h += `<div class="opt">${sid === "spa" ? tr("Therapist") : tr("Staff")}</div>` + chipSet("staff", sid === "spa" ? tr("Therapist") : tr("Staff"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, resName(sid, x.id)])), BS.staff);
+  if (s.kind === "class" && (s.staff || []).length > 1) h += `<div class="opt">${tr("Teacher")}</div>` + chipSet("staff", tr("Teacher"), [["any", tr("Anyone")]].concat(s.staff.map(x => [x.id, resName(sid, x.id)])), BS.staff); /* panel: chips in the member's script, like the rows */
   if (s.rooms) h += `<div class="opt">${tr("Room")}</div>` + chipSet("room", tr("Room"), [["any", tr("Any room")]].concat(s.rooms.map(x => [x.id, x.n])), BS.room);
   if (s.kind === "rental") { /* v3: court / block / players / paddles fold into one line so the open times stay above the fold (user 2026-10-16: "I can not book by myself") */
-    const lenL = { 60: tr("60 min"), 90: tr("90 min"), 120: tr("2 hours") }[BS.len] || BS.len + " " + L3("min", "phút", "분");
+    const lenL = fMin(BS.len);
     const sum = [BS.court === "any" ? tr("Any court") : resName(sid, BS.court), lenL, L3(`${BS.party} players`, `${BS.party} người chơi`, `${BS.party}명`), BS.paddles ? tr(`${BS.paddles} paddles`) : L3("No paddles", "Không thuê vợt", "패들 없음")].join(" · ");
-    h += `<details class="bkopts" id="bk-opts"${BS.optsOpen ? " open" : ""}><summary><span class="opt" style="margin:0">${L3("Options", "Tuỳ chọn", "옵션")}</span><span class="grow sm">${esc(sum)}</span><span class="chev" aria-hidden="true">›</span></summary>`;
-    h += `<div class="opt">${tr("Court")}</div>` + chipSet("court", tr("Court"), [["any", tr("Any court")]].concat(s.courts.map(x => [x.id, x.n])), BS.court);
-    h += `<div class="opt">${tr("Time block")}</div>` + chipSet("len", tr("Time block"), [[60, tr("60 min")], [90, tr("90 min")], [120, tr("2 hours")]], BS.len);
+    h += `<details class="bkopts" id="bk-opts"${BS.optsOpen ? " open" : ""}><summary><span class="opt" style="margin:0 10px 0 0">${L3("Options", "Tuỳ chọn", "옵션")}</span><span class="grow sm">${esc(sum)}</span><span class="chev" aria-hidden="true">›</span></summary>`;
+    h += `<div class="opt">${tr("Court")}</div>` + chipSet("court", tr("Court"), [["any", tr("Any court")]].concat(s.courts.map(x => [x.id, resName(sid, x.id)])), BS.court);
+    h += `<div class="opt">${tr("Time block")}</div>` + chipSet("len", tr("Time block"), [[60, fMin(60)], [90, fMin(90)], [120, fMin(120)]], BS.len);
     h += `<div class="opt">${tr("Players")}</div>` + chipSet("party", tr("Players"), [[2, "2"], [3, "3"], [4, "4"]], BS.party);
     h += `<div class="opt">${L3(`Paddle rental · ${vnd(30000)} each`, `Thuê vợt · ${vnd(30000)} mỗi cây`, `패들 대여 · 개당 ${vnd(30000)}`)}</div>` + chipSet("paddles", L3("Paddles", "Vợt", "패들"), [[0, tr("None")], [2, tr("2 paddles")], [4, tr("4 paddles")]], BS.paddles) + `</details>`;
   }
   const list = slotsFor(sid, BS.svc, BS.d, bsOpts());
-  const pass = s.kind !== "rental" && !BS.move && passFor(sid, BS.svc);
-  h += `<div class="opt">${tr("Open times · total and free-cancel on each")}</div><div class="stack" role="list" id="bk-slots">`;
-  if (!list.length) h += `<p class="sub">${tr("Nothing open")} ${esc(fDay(BS.d))}. ${tr("Try another day above.")}</p>`;
+  const mvb = BS.move ? B.find(b => b.id === BS.move) : null; /* panel: a moved pass booking stays on the pass — the picker said ₩25,000 */
+  const pass = s.kind !== "rental" && (mvb ? (mvb.usePass ? ((WALLET[sid] || []).find(p => p.id === mvb.usePass) || { t: "pass", left: "" }) : false) : passFor(sid, BS.svc));
+  h += `<div class="opt">${esc(L3("Open times", "Giờ trống", "예약 가능 시간"))}</div><div class="stack" role="list" id="bk-slots">`;
+  if (!list.length) h += `<p class="sub">${esc(L3(`Nothing open ${fDay(BS.d)}.`, `Không còn chỗ ${fDay(BS.d)}.`, `${fDay(BS.d)} · 예약 가능한 시간이 없어요.`))} ${tr("Try another day above.")}</p>`;
   for (const z of list) {
     const full = s.kind === "class" && z.left <= 0; const who = z.rids.map(r => resName(sid, r)).join(" + ");
-    h += `<div role="listitem"><button class="slot" data-act="slot" data-m="${z.m}" ${full ? "disabled" : ""} aria-label="${fTime(z.m)}, ${esc(who)}, ${full ? tr("Full") : (pass ? L3("uses 1 from your pass", "dùng 1 buổi từ gói", "이용권 1회 사용") : vnd(z.price))}">
-      <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span>${s.kind === "class" ? ` · <span class="sub sm">${full ? tr("Full") : z.left + " " + tr("spots open")}</span>` : ""}<br><span class="sub sm">${fCancel(sid, BS.d, z.m)}</span></span>
-      <span style="font-weight:750">${full ? "" : (pass ? tr("Pass") : vnd(z.price))}</span>${full ? "" : `<span class="chev" aria-hidden="true">›</span>`}</button></div>`;
+    const mine = !BS.move && B.find(b => b.status === "confirmed" && b.store === sid && b.svc === BS.svc && b.d === BS.d && b.m === z.m); /* panel: the same class twice was bookable */
+    if (mine) { h += `<div role="listitem"><button class="slot mine" data-act="managebk" data-id="${mine.id}" aria-label="${fTime(z.m)}, ${esc(who)}, ${esc(L3("already booked · manage", "đã đặt · quản lý", "이미 예약함 · 관리"))}">
+      <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span><br><span class="sub sm">${esc(L3("You're booked here", "Bạn đã đặt giờ này", "이미 예약한 시간이에요"))}</span></span><span class="tag ok">${esc(L3("Booked", "Đã đặt", "예약됨"))}</span><span class="chev" aria-hidden="true">›</span></button></div>`; continue; }
+    h += `<div role="listitem"><button class="slot${full ? " full" : ""}" data-act="slot" data-m="${z.m}" aria-label="${fTime(z.m)}, ${esc(who)}, ${full ? L3("full · join the waitlist", "đã đầy · vào danh sách chờ", "마감 · 대기 신청") : (pass ? L3("uses 1 from your pass", "dùng 1 buổi từ gói", "이용권 1회 사용") : vnd(z.price))}">
+      <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span>${s.kind === "class" ? ` · <span class="sub sm">${full ? tr("Full") : z.left + " " + tr("spots open")}</span>` : ""}<br><span class="sub sm">${full ? esc(L3("Join the waitlist · we'll tell you if a spot opens", "Vào danh sách chờ · báo khi có chỗ", "대기 신청 · 자리가 나면 알려드려요")) : fCancel(sid, BS.d, z.m)}</span></span>
+      <span style="font-weight:750">${full ? esc(L3("Waitlist", "Chờ", "대기")) : (pass ? tr("Pass") : vnd(z.price))}</span><span class="chev" aria-hidden="true">›</span></button></div>`;
   }
-  if (list.filter(z => !(s.kind === "class" && z.left <= 0)).length <= 2) { /* a thin day (e.g. tonight's last court) also points at the next day with more open times */
+  if (list.filter(z => !(s.kind === "class" && z.left <= 0)).length <= 2 && !BS.move) { /* a thin day (e.g. tonight's last court) also points at the next day with more open times */
     for (let d2 = BS.d + 1; d2 < 7; d2++) { const n = slotsFor(sid, BS.svc, d2, bsOpts()).filter(z => z.left !== 0); if (n.length > list.length) { h += `<div role="listitem"><button class="svc bkmore" data-act="bs" data-k="d" data-v="${d2}" id="bk-more"><span class="grow"><b>${esc(fDay(d2))}</b><br><span class="sub sm">${esc(L3(`${n.length} open times from ${fTime(n[0].m)}`, `${n.length} giờ trống từ ${fTime(n[0].m)}`, `${fTime(n[0].m)}부터 ${n.length}개 가능`))}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`; break; } }
   }
   h += `</div>` + bkAsk(sid);
@@ -2325,7 +2353,7 @@ function parse(raw) {
   { const KW = { "일요일": 0, "월요일": 1, "화요일": 2, "수요일": 3, "목요일": 4, "금요일": 5, "토요일": 6 }; for (const k in KW) if (s.includes(k)) { p.d = /다음 ?주/.test(s) ? nextOff(1) + ((KW[k] + 6) % 7) : nextOrToday(KW[k]); break; } }
   if (p.d == null && /다음 ?주/.test(s)) p.nextWeek = true; if (p.d == null && /주말/.test(s)) p.weekend = true;
   if (/오전|아침/.test(s)) p.period = "morning"; else if (/오후/.test(s)) p.period = "afternoon"; else if (/저녁|밤/.test(s)) p.period = "evening"; else if (/점심/.test(s)) p.period = "noon";
-  if ((m = s.match(/(\d{1,2}) ?시(?: ?(\d{1,2}) ?분| ?반)?/))) { let hh = +m[1]; if (hh < 12 && (/오후|저녁|밤/.test(s) || hh <= 7)) hh += 12; p.m = hh * 60 + (m[2] ? +m[2] : /반/.test(m[0]) ? 30 : 0); s = s.replace(m[0], " "); }
+  if ((m = s.match(/(\d{1,2}) ?시(?: ?(\d{1,2}) ?분| ?반)?/))) { let hh = +m[1]; const mk = /오전|아침|오후|저녁|밤|점심/.test(s); if (hh < 12 && (/오후|저녁|밤/.test(s) || (!mk && hh <= 4))) hh += 12; if (!mk && hh >= 5 && hh <= 11) p.assumed = true; /* panel: "7시" → 07:00 (not 19:00); Cici confirms how she read it */ p.m = hh * 60 + (m[2] ? +m[2] : /반/.test(m[0]) ? 30 : 0); s = s.replace(m[0], " "); }
   if (/예약/.test(s)) p.bookWord = true;
   /* party size */
   if ((m = s.match(/\bfor (\d{1,2}|two|three|four|five|six)\b(?!\s*(:|am|pm|h\b|hours?|hrs?|mins?|minutes|tieng|gio|phut))/))) { p.party = NUM[m[1]] || +m[1]; cut(m[0]); }
@@ -2408,6 +2436,18 @@ function urgentReply(c) { TURN_SAFE = true; catCrisisMark(); EVT.push({ e: "safe
 function sosOpen(cid) { const c = CH[cid]; c.gate = true; catCrisisMark(); c.draft = null; c.ask = null; c.queue = null; c.pend = null;
   say(c, L3("I'm here. Which is closest?", "Mình ở đây. Điều nào đúng nhất?", "제가 여기 있어요. 어느 쪽인가요?"), { care: 1, nosos: 1, chips: [chip(L3("Someone is hurt or unwell", "Có người bị thương hoặc không khỏe", "누군가 다쳤거나 아파요"), { act: "sosu" }), chip(L3("I'm not okay", "Mình không ổn", "제가 괜찮지 않아요"), { act: "sosx" })] });
   render(); scrollThread(cid); }
+const LOW_RE = /힘들|지쳐|지쳤|지친|우울|슬퍼|슬프|외로|무기력|번아웃|피곤해|지겨워|눈물|\b(tired|exhausted|burn(?:ed|t)?[ -]?out|sad|lonely|down|stressed|overwhelmed|drained|worn out)\b|mệt|buồn|cô đơn|kiệt sức|chán/i;
+const MOCHI_Q = /모찌|두부|\bmochi\b|\bdubu\b/i;
+function lowReply(c) { /* a calm middle tier: acknowledge, no pressure, one gentle option, and the Korean 24h line only as an open door */
+  c.draft = null; c.ask = null;
+  const tx = L3("That sounds like a lot. Rest counts too — nothing here has to happen today. If you'd like something gentle, I can set a 1-minute stretch or find a quiet spa slot. And if it ever feels heavier than tired, talking to someone you trust helps; in Korea 1393 answers 24 hours a day.",
+    "Nghe có vẻ bạn đang rất mệt. Nghỉ ngơi cũng là một việc tốt — hôm nay không phải làm gì cả. Nếu muốn nhẹ nhàng, mình có thể bật giãn cơ 1 phút hoặc tìm một giờ spa yên tĩnh. Nếu lúc nào thấy nặng hơn cả mệt, hãy nói với người bạn tin tưởng nhé.",
+    "많이 지쳤군요. 쉬는 것도 오늘의 할 일이에요 — 아무것도 안 해도 괜찮아요. 가볍게 숨 고르고 싶으면 1분 스트레칭을 켜 드리거나 조용한 스파 시간을 찾아볼게요. 혹시 피곤함보다 더 무겁게 느껴지면 믿을 수 있는 사람에게 이야기해 주세요. 1393은 24시간 들어 줘요.");
+  return say(c, tx, { care: 1, chips: [chip(L3("1-minute stretch", "Giãn cơ 1 phút", "1분 스트레칭"), { act: "lowstretch" }), chip(L3("A quiet spa slot", "Giờ spa yên tĩnh", "조용한 스파 시간"), { set: { store: "spa" }, fresh: true }), chip(L3("Just listening is enough", "Chỉ cần nghe mình thôi", "그냥 들어줘"), { act: "lowlisten" })] }); }
+function mochiReply(c) { const d = MOCHI(), cd = catDay(), h = catHungry();
+  const st = ST.catEat ? L3(`${d} is eating right now 🐟`, `${d} đang ăn 🐟`, `${d}는 지금 간식 먹는 중이에요 🐟`) : h ? L3(`${d} is a little hungry — she's waiting by her bowl.`, `${d} hơi đói — đang đợi bên bát.`, `${d}가 조금 배고파요 — 밥그릇 옆에서 기다리고 있어요.`) : L3(`${d} is fine — she's on Cici's lap.`, `${d} ổn — đang nằm trên đùi Cici.`, `${d}는 잘 있어요 — Cici 무릎 위에 있어요.`);
+  const tr2 = cd.treats > 0 ? L3(`You have ${cd.treats} treat${cd.treats > 1 ? "s" : ""} to give her.`, `Bạn có ${cd.treats} món ăn vặt cho bé.`, `줄 수 있는 간식이 ${cd.treats}개 있어요.`) : L3("A mission or a store visit earns her a treat.", "Một nhiệm vụ hoặc một lượt đến cửa hàng sẽ có ăn vặt.", "미션을 하거나 매장을 방문하면 간식이 생겨요.");
+  return say(c, st + " " + tr2, { chips: cd.treats > 0 ? [chip(L3("Feed her", "Cho ăn", "간식 주기"), { act: "mochifeed" })] : [chip(L3("Today's missions", "Nhiệm vụ hôm nay", "오늘의 미션"), { act: "mochimis" })] }); }
 function fallbackReply(c) {
   return say(c, L3("Sorry, I didn't quite get that. What would you like to do?", "Xin lỗi, mình chưa hiểu lắm. Bạn muốn làm gì?", "잘 이해하지 못했어요. 무엇을 도와드릴까요?"), { fb: 1, chips: [chip(L3("Book something", "Đặt lịch", "예약하기"), { act: "fbbook" }), chip(L3("Ask about the studio", "Hỏi về cửa hàng", "매장에 대해 묻기"), { act: "fbask" }), chip(L3("Someone is hurt / I need help", "Có người bị thương / Tôi cần giúp", "누가 다쳤어요 / 도움이 필요해요"), { act: "sos" })] });
 }
@@ -2448,6 +2488,8 @@ function reply(c, text) {
   /* a risk word outside a clear service phrase overrides claim, skin, booking and the fallback: gentle check-in with the crisis copy */
   const skipRisk = c.skipRisk; c.skipRisk = false;
   if (!skipRisk && sf !== "help" && riskWord(text)) return riskCheckIn(c, text);
+  if (!sf && LOW_RE.test(text)) return lowReply(c); /* panel 2026-10-16: "요즘 너무 지쳐" used to get the fallback with an injury chip */
+  if (!sf && P2() && MOCHI_Q.test(text)) return mochiReply(c);
   if (sf === "claim" && bodyClaim(text)) return say(c, L3("I can't promise results, and a class or treatment can't fix or cure a health condition. For a health condition, please check with a medical professional or your instructor first.", "Mình không thể hứa trước kết quả, và lớp tập hay liệu trình không chữa khỏi được bệnh lý. Với vấn đề sức khỏe, hãy hỏi ý kiến chuyên gia y tế hoặc huấn luyện viên của bạn trước nhé.", "결과를 약속드릴 수 없고, 수업이나 관리로 질환을 고치거나 완치할 수는 없어요. 건강 문제라면 먼저 전문 의료진이나 담당 강사와 상의해 주세요."), { care: 1 });
   if (sf === "crisis") return say(c, CRISIS_COPY[L] || CRISIS_COPY.en, OD_RE.test(fold(text)) || OD_RE.test(vnL(text)) ? { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: L3("Too much medicine can be dangerous even if they feel okay right now.", "Uống quá nhiều thuốc có thể nguy hiểm kể cả khi lúc này vẫn thấy ổn.", "지금 괜찮아 보여도 약을 너무 많이 먹으면 위험할 수 있어요.") } } : { care: 1 });
   if (sf === "urgent") return say(c, "Thanks for telling me. " + SAFE_URGENT, { care: 1, card: { kicker: "Get help now", title: "Get medical help right away", body: "Stop now, and tell the staff nearby." } });
@@ -2642,7 +2684,7 @@ function advance(c) {
   if (!x.svc) {
     if (s.kind === "rental" || s.svcs.length === 1) x.svc = s.svcs[0].id;
     else if (x.store === "spa" && x.len) x.svc = x.len >= 90 ? "aroma90" : "aroma60";
-    else { c.ask = "svc"; return say(c, `Which one at ${s.name}?`, { chips: s.svcs.map(v => chip(v.n + " · " + priceLabel(v), { set: { svc: v.id } })) }); }
+    else { c.ask = "svc"; return say(c, `Which one at ${s.name}?`, { chips: s.svcs.map(v => chip(N(v.n) + " · " + priceLabel(v), { set: { svc: v.id } })) }); }
   }
   if (x.staff && !(s.staff || []).some(st => st.id === x.staff)) delete x.staff;
   const v = svcOf(x.store, x.svc), who = x.staff ? " with " + resName(x.store, x.staff) : "";
@@ -2687,6 +2729,10 @@ function chatChip(cid, mi, ci) {
   if (v.act === "beardjoin") { joinBookSheet("barber", nextFree("barber", "mcut"), "mcut"); return; }
   if (v.act === "riskok") { c.skipRisk = true; c.gate = false; c.care = false; catCrisisReengage(); try { reply(c, v.q); } catch (e) { console.warn(e); } render(); scrollThread(cid); return; }
   if (v.act === "fbbook") { c.fails = 0; say(c, t("whatBook"), { chips: exampleChips() }); render(); scrollThread(cid); return; }
+  if (v.act === "lowstretch") { stretchSheet(); return; }
+  if (v.act === "lowlisten") { say(c, L3("I'm here. Take your time — write whenever you want, or just leave it here.", "Mình ở đây. Cứ từ từ — muốn viết lúc nào cũng được, hoặc để đó cũng được.", "여기 있을게요. 천천히 — 쓰고 싶을 때 쓰고, 그냥 두어도 괜찮아요."), { care: 1 }); render(); scrollThread(cid); return; }
+  if (v.act === "mochifeed") { ST.tab = "home"; ST.page = null; ST.store = null; render(); setTimeout(() => { const f = document.getElementById("cat-feed"); if (f) f.click(); }, 250); return; }
+  if (v.act === "mochimis") { ST.tab = "home"; ST.page = null; ST.store = null; render(); setTimeout(openHomeSheet, 250); return; }
   if (v.act === "fbask") { say(c, L3("Ask me about opening hours, prices, parking, what to bring, or your passes.", "Bạn có thể hỏi giờ mở cửa, giá, chỗ gửi xe, cần mang gì, hoặc gói của bạn.", "영업시간, 가격, 주차, 준비물, 이용권에 대해 물어보세요."), { chips: [chip(L3("Opening hours", "Giờ mở cửa", "영업시간"), { say: L3("what time do you open", "mấy giờ mở cửa", "몇 시에 열어요?") }), chip(L3("Prices", "Giá", "가격"), { say: L3("prices", "giá bao nhiêu", "가격") }), chip(L3("My passes", "Gói của tôi", "내 이용권"), { say: L3("my pass balance", "gói của tôi còn mấy buổi", "이용권 몇 회 남았어?") })] }); render(); scrollThread(cid); return; }
   if (v.act === "aslot") { const x = completeDraft(Object.assign({}, v.x)); say(c, againLine(x), { confirm: x, chips: againAlts(v.i, x) }); render(); scrollThread(cid); return; }
   if (v.act === "againmore") { const [sid, vid, o] = AGAIN[v.i]; c.msgs.pop(); openBook(sid, vid, Object.assign({}, o)); return; }
@@ -2767,7 +2813,7 @@ function homeLevelBar() {
 }
 function upRow(b) {
   const s = S[b.store], v = svcOf(b.store, b.svc);
-  const res = b.rids.map(r => resName(b.store, r)).join(" + ") + (b.party ? " · " + trS(b.party + " players") : "");
+  const res = b.rids.map(r => resName(b.store, r)).join(" + ") + (b.party ? " · " + trS(b.party + " players") : "") + rentalBits(b);
   const st = b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
   return `<div class="up" role="listitem">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}${b.source !== "app" ? ` <span class="tag">${tr(b.source === "voice" ? "by call" : "by chat")}</span>` : ""}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} · ${esc(res)}</div>
@@ -2800,10 +2846,10 @@ function homeSheetHtml() { /* v3 Today sheet (user 2026-10-16): answers the tap 
 }
 function catSheetRow() { /* ONE row for Mochi in the Today sheet: state line + Feed (ids kept: #cat-card / #cat-feedbtn). No on-ramp buttons: the missions are right above. */
   if (catCrisis()) return ""; catGrantItems(); const c = catDay(), d = MOCHI(), h = catHungry(), n = c.treats;
-  const line = h ? (n ? L3(`${d} is waiting by her bowl — feed her`, `${d} đang đợi bên bát — cho ăn nhé`, `${d}가 밥그릇 옆에서 기다려요 — 간식 주세요`) : L3(`${d} is waiting by her bowl · a mission above earns a treat`, `${d} đang đợi bên bát · làm một nhiệm vụ ở trên để có ăn vặt`, `${d}가 밥그릇 옆에서 기다려요 · 위 미션을 하면 간식이 생겨요`))
+  const line = h ? (n ? L3(`${d} is waiting by her bowl · feed her`, `${d} đang đợi bên bát · cho ăn nhé`, `${d}가 밥그릇 옆에서 기다려요 · 간식 주세요`) : L3(`${d} is waiting by her bowl · a mission above earns a treat`, `${d} đang đợi bên bát · làm một nhiệm vụ ở trên để có ăn vặt`, `${d}가 밥그릇 옆에서 기다려요 · 위 미션을 하면 간식이 생겨요`))
     : n ? L3(`${n} treat${n > 1 ? "s" : ""} waiting`, `${n} món ăn vặt đang chờ`, `간식 ${n}개 대기 중`) : L3(`No treats yet · a mission above earns one`, `Chưa có ăn vặt · làm một nhiệm vụ ở trên để nhận`, `아직 간식이 없어요 · 위 미션을 하면 생겨요`);
   const poster = catClipSrc(catClipName(h ? "hungry" : "calm")).poster;
-  return `<section class="card catrow2" id="cat-card" data-mood="${catMood()}" data-treats="${n}"${h ? ' data-hungry="1"' : ""}><img class="catthumb" src="${poster}" width="44" height="44" alt="" loading="lazy"><div class="grow"><b>${esc(d)}</b><div class="sm sub" id="cat-st">${esc(line)}</div></div>${n ? `<button class="btn sec" id="cat-feedbtn" data-act="catfeed">${esc(L3("Feed", "Cho ăn", "간식 주기"))}</button>` : ""}</section>`; }
+  return `<section class="card catrow2" id="cat-card" data-mood="${catMood()}" data-treats="${n}"${h ? ' data-hungry="1"' : ""}><span class="catthumb${h ? " close" : ""}"><img src="${poster}" width="44" height="44" alt="" loading="lazy"></span><div class="grow"><b>${esc(d)}</b><div class="sm sub" id="cat-st">${esc(line)}</div></div>${n ? `<button class="btn sec" id="cat-feedbtn" data-act="catfeed">${esc(L3("Feed", "Cho ăn", "간식 주기"))}</button>` : ""}</section>`; }
 function nextClassRow() { const up = upcoming(), b = up[0];
   if (!b) return `<button class="svc" data-act="bk" data-from="home" id="home-next"><span class="grow"><b>${esc(t("nothingUp"))}</b><br><span class="sub sm">${esc(t("chipBook"))}</span></span>${ic("chev")}</button>`;
   const v = svcOf(b.store, b.svc);
@@ -2863,7 +2909,7 @@ function vStore(sid) {
   const s = S[sid]; INBOX.forEach(m => { if (m.s === sid) m.unread = false; });
   const mine = upcoming().filter(b => b.store === sid), w = WALLET[sid] || [], msgs = INBOX.filter(m => m.s === sid);
   let h = `<div class="card">${s.photo ? `<div class="cover hero">${shopImg(sid, "himg", true)}<span class="hsample">${t("sample")}</span></div>` : `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag">${t("sample")}</span> <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm">${tr("Open now")}</div></div></div>
-  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="bk" data-s="${sid}" id="st-book">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button><button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button></div>` : `<div class="stack" style="width:100%"><button class="btn full" data-act="jbook" data-v="${sid}" id="st-jbook">${esc(jbT("btn", s.name))}</button><button class="btn ghost full" data-act="join" data-v="${sid}">${t("join")} ${esc(s.name)}</button></div>`}</div></div>`;
+  <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="bk" data-s="${sid}" id="st-book">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button>${mapUrls(sid) ? mapLinks(sid, "store").replace(/class="btn (sec|ghost) bkmap"/g, 'class="btn ghost sact bkmap"') : `<button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>`}</div>` : `<div class="stack" style="width:100%"><button class="btn full" data-act="jbook" data-v="${sid}" id="st-jbook">${esc(jbT("btn", s.name))}</button><button class="btn ghost full" data-act="join" data-v="${sid}">${esc(L3(`Join ${s.name}`, `Tham gia ${s.name}`, `${s.name} 가입하기`))}</button></div>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${esc(jbT("hint", s.name))}</p>`}<div class="stack">`;
   if (s.kind === "class") {
@@ -2933,7 +2979,7 @@ function nextReward() {
   return nx ? { txt: pvT("nextLevel", { n: fmtN(nx - lf), m: lv + 1 }), pct: Math.round(100 * (lf - LVL[lv - 1]) / (nx - LVL[lv - 1])) } : { txt: lvlName(5), pct: 100 };
 }
 const YOU_PAGES = ["wallet", "vouchers", "settings", "points", "look", "p2char", "growth"];
-const youTitle = p => p === "p2char" ? p2t("builder") : p === "growth" ? L3("Cici & Mochi", "Cici & Mochi", "Cici & Mochi") : p === "look" ? t("wardrobe") : p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
+const youTitle = p => p === "p2char" ? p2t("builder") : p === "growth" ? L3("Cici & Mochi", "Cici & Mochi", "Cici와 모찌") : p === "look" ? t("wardrobe") : p === "wallet" ? t("wallet") : p === "points" ? L3("Points", "Điểm", "포인트") : p === "vouchers" ? L3("Vouchers", "Ưu đãi", "쿠폰") : L3("Settings", "Cài đặt", "설정");
 function vYou() {
   /* MVP-Y1: profile (name, lifetime points, streak, level) + tiles Wallet · My bookings · Cici's look (+ Vouchers only when realRewards is on, A1) */
   const m = ME, lv = lvlOf(m), pts = fmtPts(life(m));
@@ -3187,7 +3233,7 @@ const JBT = {
   none: ["No free slots this week. Open the store to see other days.", "Tuần này hết chỗ. Mở cửa hàng để xem ngày khác.", "이번 주는 빈 시간이 없어요. 매장에서 다른 날을 확인해 주세요."],
   crisis: ["Booking is paused for now. I'm here if you want to talk.", "Tạm dừng đặt lịch lúc này. Mình vẫn ở đây nếu bạn muốn trò chuyện.", "지금은 예약을 잠시 멈췄어요. 이야기하고 싶으면 여기 있어요."]
 };
-const jbT = (k, sn) => L3(...JBT[k]).replace(/\{s\}/g, sn || "");
+const jbT = (k, sn) => kFix(L3(...JBT[k]).replace(/\{s\}/g, sn || ""));
 let JBX = null;
 const KW2 = { nails: /\b(nails?|manicure|mani\w*|pedicure|gel|lam mong|son gel|mong tay|mong chan)\b|네일|매니큐어|페디큐어/, yoga: /\b(yoga)\b|요가/ };
 function unjoinedHit(s, text) { return ORDER0.find(id => !S[id].joined && ((KW2[id] && (KW2[id].test(s) || KW2[id].test(vnL(text)))) || (S[id].names && S[id].names.test(s)))) || null; }
@@ -3210,7 +3256,7 @@ function joinAndBook() {
 }
 function joinConsent(sid) {
   const s = S[sid];
-  openSheet(sheetHd(t("join") + " " + s.name) + storeBar(sid) + `<div class="stack" style="margin-top:12px"><label class="row sm"><input type="checkbox" checked disabled style="width:22px;height:22px"><span class="grow">${L3(`Share my name and phone with ${esc(s.name)} for bookings`, `Chia sẻ tên và số điện thoại với ${esc(s.name)} để đặt lịch`, `예약을 위해 ${esc(s.name)}에 이름과 전화번호 공유`)} <span class="sub">(${L3("needed to book", "cần để đặt lịch", "예약에 필요")})</span></span></label>
+  openSheet(sheetHd(L3(`Join ${s.name}`, `Tham gia ${s.name}`, `${s.name} 가입하기`)) + storeBar(sid) + `<div class="stack" style="margin-top:12px"><label class="row sm"><input type="checkbox" checked disabled style="width:22px;height:22px"><span class="grow">${L3(`Share my name and phone with ${esc(s.name)} for bookings`, `Chia sẻ tên và số điện thoại với ${esc(s.name)} để đặt lịch`, `예약을 위해 ${esc(s.name)}에 이름과 전화번호 공유`)} <span class="sub">(${L3("needed to book", "cần để đặt lịch", "예약에 필요")})</span></span></label>
   <label class="row sm"><input id="optin" type="checkbox" style="width:22px;height:22px"><span class="grow">${L3(`Get offers from ${esc(s.name)}`, `Nhận ưu đãi từ ${esc(s.name)}`, `${esc(s.name)} 혜택 받기`)} <span class="sub">(${L3("optional, off by default", "tùy chọn, mặc định tắt", "선택, 기본 꺼짐")})</span></span></label>
   <p class="sub sm">${L3(`If ${esc(s.name)} already has your number, your history links only after you join.`, `Nếu ${esc(s.name)} đã có số của bạn, lịch sử chỉ liên kết sau khi bạn tham gia.`, `${esc(s.name)}에 번호가 있어도 가입한 뒤에만 기록이 연결돼요.`)}</p><button class="btn full" data-act="joinok" data-v="${sid}">${t("join")}</button><button class="btn ghost full" data-act="close">${tr("Not now")}</button></div>`, t("join"));
 }
@@ -3254,7 +3300,7 @@ function stretchSheet() { /* stretch opens its timer sheet directly */
   if (V2HOME() || (P2() && !catCrisis() && CICI_REAL)) { if (catMisPlay("stretch")) return stretchChip(); }
   stretchSheetOpen(); /* crisis / non-room: plain timer sheet */
 }
-function finishStretch() { clearInterval(stretchT); { const c = document.getElementById("stretch-chip"); if (c) c.remove(); } const inRoom = ST.catMis === "stretch"; if (inRoom) ST.catMis = null; const e0 = catDay().earned, r = pvMission(ME, "stretch"); ST.miss.stretch = true; const dm = dmMark("stretch"); closeSheet(); if (inRoom && document.getElementById("cici-real")) { catSyncMood(); catRefreshUi(); } else render(); if (P2()) catMisToast(r, t("mStretch"), dm, "stretch", catDay().earned > e0); else { if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, t("mStretch"), dm)); } }
+function finishStretch() { clearInterval(stretchT); { const c = document.getElementById("stretch-chip"); if (c) c.remove(); } const inRoom = ST.catMis === "stretch"; if (inRoom) ST.catMis = null; const e0 = catDay().earned, r = pvMission(ME, "stretch"); ST.miss.stretch = true; const dm = dmMark("stretch"); closeSheet(); if (inRoom && document.getElementById("cici-real")) { catSyncMood(); catRefreshUi(); } else render(); if (P2()) catMisToast(r, t("mStretch"), dm, "stretch", catDay().earned > e0); else { if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, t("mStretch"), dm)); } if (inRoom && ST.sheetReturn) setTimeout(catSheetReturn, 900); else ST.sheetReturn = false; }
 function dmToast(r, nm, dm) { const a = r.pts ? pvT("earnMission", { n: r.pts, mission: nm }) : r.msg ? pvT(r.msg) : ""; return dm && dm.bonus ? (a ? a + " " : "") + L3(`All 3 done: +${DM_BONUS} bonus!`, `Xong cả 3: +${DM_BONUS} thưởng!`, `3개 모두 완료: 보너스 +${DM_BONUS}!`) : a; }
 function manage(b) {
   if (!b) return; const s = S[b.store], P = bkPol(b), free = bkFree(b), st = bkStarted(b) || b.status !== "confirmed";
@@ -3391,8 +3437,10 @@ function bkActs(b) {
   return h;
 }
 const bkPrice = b => { const p = b.usePass ? (WALLET[b.store] || []).find(q => q.id === b.usePass) : null; return p ? vnd(0) + " · " + esc(tr(p.t)) : vnd(b.price); };
+const fMin = n => L3(`${n} min`, `${n} phút`, `${n}분`);
+const rentalBits = b => S[b.store].kind === "rental" ? ` · ${fMin(b.len)}${b.paddles ? " · " + L3(b.paddles + " paddles", b.paddles + " vợt", "패들 " + b.paddles + "개") : ""}` : ""; /* panel: the court card dropped 90분 / 패들 */
 function bkRowUp(b) {
-  const s = S[b.store], v = svcOf(b.store, b.svc), res = b.rids.map(r => resName(b.store, r)).join(" + ");
+  const s = S[b.store], v = svcOf(b.store, b.svc), res = b.rids.map(r => resName(b.store, r)).join(" + ") + rentalBits(b);
   const st = b.req ? "" : b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} <span class="sub">${tzTag()}</span>${res ? " · " + esc(res) : ""}</div><div class="sm">${bkPrice(b)} · <span class="sub">${esc(fCancelB(b))}</span></div>
@@ -3594,9 +3642,13 @@ document.addEventListener("click", e => {
     case "msgfrom": { const b = bk(d.id); closeSheet(); ST.page = null; ST.store = b.store; render(); const ta = $("#sm-" + b.store); if (ta) { ta.scrollIntoView(); ta.focus(); } break; }
     case "checkin": checkin(bk(d.id)); break;
     case "attend": attend(bk(d.id)); break;
-    case "stretch": stretchSheet(); break;
-    case "dmwater": { if (!P2() || gated()) break; const e0 = catDay().earned, r = pvMission(ME, "water"), dm = dmMark("water"); if (!catMisPlay("water", 4200)) { render(); const hd = $("#home-dm"); if (hd) { const w = document.createElement("div"); w.innerHTML = dmCard(); hd.replaceWith(w.firstElementChild); } } else catRefreshUi(); catMisToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm, "water", catDay().earned > e0); break; }
-    case "catfeed": case "catnudge": case "cattime": case "cattreat": case "catreset": case "catcrisis": case "catcrisisoff": case "catequip": catAct(a, d.v); break;
+    case "stretch": ST.sheetReturn = !!$(".sheet #home-dm"); stretchSheet(); break;
+    case "dmwater": { if (!P2() || gated()) break; ST.sheetReturn = !!$(".sheet #home-dm"); const e0 = catDay().earned, r = pvMission(ME, "water"), dm = dmMark("water"); if (!catMisPlay("water", 4200)) { render(); const hd = $("#home-dm"); if (hd) { const w = document.createElement("div"); w.innerHTML = dmCard(); hd.replaceWith(w.firstElementChild); } } else catRefreshUi(); catMisToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm, "water", catDay().earned > e0); break; }
+    case "catlookinfo": { const i = +d.v, li = catLookIdx(); const need = i === 0 ? null : i === 1 ? 2 : 4; const d2 = MOCHI();
+  toast(i === li ? L3(`${d2} is a ${catLookNm(i).toLowerCase()} now`, `${d2} đang là ${catLookNm(i).toLowerCase()}`, `${d2}는 지금 ${catLookNm(i)}예요`) : i < li ? L3(`${d2} was a ${catLookNm(i).toLowerCase()} — she grew!`, `${d2} từng là ${catLookNm(i).toLowerCase()} — đã lớn rồi!`, `${d2}는 ${catLookNm(i)}였어요 — 자랐어요!`)
+    : i === 2 && !CAT_LOOK_READY.fluffy ? L3(`Fluffy cat is coming soon — ${d2} stays a young cat at Shine for now`, `Mèo bông sắp có — ở Tỏa sáng ${d2} vẫn là mèo nhỡ`, `복슬 고양이는 준비 중 — 샤인에서도 당분간 청소년 고양이예요`)
+    : L3(`${catLookNm(i)} from ${L3(...G_STAGES[need])} (${fmtN(LVL[need])} points)`, `${catLookNm(i)} từ ${L3(...G_STAGES[need])} (${fmtN(LVL[need])} điểm)`, `${L3(...G_STAGES[need])}(${fmtN(LVL[need])}포인트)부터 ${catLookNm(i)}`)); break; }
+case "catfeed": case "catnudge": case "cattime": case "cattreat": case "catreset": case "catcrisis": case "catcrisisoff": case "catequip": catAct(a, d.v); break;
     case "hbsheet": openHomeSheet(); break;
     case "sheetgo": closeSheet(); ST.tab = d.t || "you"; ST.page = d.v || null; ST.store = null; render(); window.scrollTo(0, 0); try { $("#view").focus({ preventScroll: true }); } catch (e) {} break; /* v3 Today sheet rows: leave the sheet, open the page */
     case "hbmis": { if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }
@@ -3763,7 +3815,7 @@ function pvMigrate(m, old) {
   if (m.migrated) return false; m.migrated = true;
   row(m, { reason: "migration", life: old.xp, src: "xp", note: "lifetime" });
   row(m, { reason: "legacy_coins", legacy: old.coins, src: "coins", note: "dropped (single points balance)" }); /* PO: old coins are dropped, not converted; audit record only, delta 0 */
-  m.streak = old.days != null ? old.days : (old.weeks || 0) * 4; streakSeed(m); m.lvlSeen = lvlOf(m); note(m, "migrated"); return true;
+  m.streak = old.days != null ? old.days : (old.weeks || 0) * 4; streakSeed(m); m.lvlSeen = lvlOf(m); if (!old.seeded) note(m, "migrated"); /* panel: the sample member never saw "XP" — no migration banner for seeded data */ return true;
 }
 /* weekly roll (§2): runs at each Sun 23:59 home time that has passed */
 function pvTick(m, now) { /* daily roll: each passed day with no visit/mission uses the week's 1 free rest day, else the streak resets */
@@ -3981,7 +4033,7 @@ function setFlag(on, now) { /* U1. Turning on: one-time coin conversion at U8 ×
 }
 /* ---- demo seed: Mina migrates from xp 640 / coins 120 / 3 weeks -> seeded as a 12-day streak (days rule); demo vouchers use U2–U8 recommended defaults ---- */
 function pvSeed() {
-  const m = pvMember("mina", { name: "Mina" }); pvMigrate(m, { xp: ST.xp0, coins: ST.coins0, days: ST.days }); for (const sid in S) if (S[sid].visits > 0) m.visited[sid] = true; /* past visits from before points */
+  const m = pvMember("mina", { name: "Mina" }); pvMigrate(m, { xp: ST.xp0, coins: ST.coins0, days: ST.days, seeded: true }); for (const sid in S) if (S[sid].visits > 0) m.visited[sid] = true; /* past visits from before points */
   const D = { demo: true }; /* labelled "Demo data" in the UI */
   [{ store: "capsule", title: ["10% off any class", "Giảm 10% một buổi tập bất kỳ", "모든 수업 10% 할인"], type: "percent", value: 10, max: 50000, cost: 500, stock: 50, terms: ["One class at this store. Max 50.000 ₫ off.", "Một buổi tại cửa hàng này. Giảm tối đa 50.000 ₫.", "이 매장 수업 1회. 최대 50.000 ₫ 할인."] },
    { store: "salon", title: ["Free hair mask with any cut", "Tặng ủ tóc khi cắt tóc", "커트 시 헤어 마스크 무료"], type: "addon", value: "Hair mask", cost: 400, minLevel: 2, stock: 30, terms: ["With any cut at this store.", "Kèm bất kỳ dịch vụ cắt tóc nào tại cửa hàng này.", "이 매장의 모든 커트와 함께."] },
@@ -4111,9 +4163,9 @@ const MVP = { storeConfirm: (() => { const q = new URLSearchParams(location.sear
 function storeAppBtn() {
   let h = "";
   if (MVP.storeConfirm || DEMO_MODE) h += `<h2>${L3("Store confirm", "Xác nhận cửa hàng", "매장 확인")}</h2><div class="stack"><button class="svc" data-act="pvconfirm" id="mvp-confirm">${ic("check")}<span class="grow"><b>${L3("Mark a visit attended", "Xác nhận khách đã đến", "방문 확인하기")}</b><br><span class="sub sm">${esc(L3("Staff confirms a booking so the member earns points.", "Nhân viên xác nhận buổi đặt để khách nhận điểm.", "직원이 예약을 확인해야 포인트가 적립돼요."))}</span></span>${ic("chev")}</button>
-  <label class="row sm" style="min-height:44px"><input type="checkbox" id="mvp-sc" data-act="mvpflag" ${MVP.storeConfirm ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: store confirm screen (OQ7)", "Demo: màn xác nhận cửa hàng (OQ7)", "데모: 매장 확인 화면 (OQ7)")}</span></label></div>`;
+  ${DEMO_MODE ? `<label class="row sm" style="min-height:44px"><input type="checkbox" id="mvp-sc" data-act="mvpflag" ${MVP.storeConfirm ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: store confirm screen", "Demo: màn xác nhận cửa hàng", "데모: 매장 확인 화면")}</span></label>` : ""}</div>`;
   if (DEMO_MODE) h += `<h2>${L3("Store app (demo)", "Ứng dụng cửa hàng (demo)", "매장 앱 (데모)")}</h2><div class="stack"><button class="svc" data-act="pvstore">${ic("info")}<span class="grow"><b>${L3("Open the full staff view", "Mở toàn bộ màn hình nhân viên", "전체 직원 화면 열기")}</b><br><span class="sub sm">${L3("Validate vouchers, publish rewards, audit. Staff screens are English only.", "Kiểm ưu đãi, đăng ưu đãi, nhật ký. Chỉ tiếng Anh.", "쿠폰 확인, 리워드 등록, 감사. 영어만.")}</span></span>${ic("chev")}</button>
-  <label class="row sm" style="min-height:44px"><input type="checkbox" id="pv-flag" data-act="pvflag" ${PV.flag ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: turn on real rewards (U1 not decided yet)", "Demo: bật ưu đãi thật (U1 chưa quyết định)", "데모: 실제 리워드 켜기 (U1 미결정)")}</span></label></div>`;
+  <label class="row sm" style="min-height:44px"><input type="checkbox" id="pv-flag" data-act="pvflag" ${PV.flag ? "checked" : ""} class="cb44"><span class="grow">${L3("Demo: turn on real rewards", "Demo: bật ưu đãi thật", "데모: 실제 리워드 켜기")}</span></label></div>`;
   return h;
 }
 /* OQ7 minimal confirm: pending bookings for the selected store + Mark attended / Scan. No voucher publish, no audit. */
@@ -4137,7 +4189,7 @@ function questSheet() { if (!FLAGS.quest) return go("tab:home"); openSheet(sheet
 function wardrobeSheet() { openSheet(sheetHd(t("wardrobe")) + `<div id="wdsheet">${wardrobe().replace(/^<h2>.*?<\/h2>/, "")}</div>`, t("wardrobe")); }
 function histSheet() {
   const lab = r => ({ visit: L3("Visit", "Lượt đến", "방문"), spend_room: L3("Cici's room · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Phòng Cici · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src), "Cici의 방 · " + (p2Item(r.src) ? p2Nm(p2Item(r.src)) : r.src)), streak_bonus: L3("Streak bonus", "Thưởng chuỗi ngày", "연속 기록 보너스"), newplace: L3("First visit bonus", "Thưởng lần đầu", "첫 방문 보너스"), mission: L3("Mission", "Nhiệm vụ", "미션"), claim: pvT("pointsTab"), claim_cancel: pvT("pointsTab"), migration: L3("Migration", "Chuyển đổi", "전환"), legacy_coins: L3("Earlier balance · not carried over", "Số dư cũ · không chuyển sang", "이전 잔액 · 이월되지 않음"), daily_cap: L3("Visit · daily limit", "Lượt đến · giới hạn ngày", "방문 · 일일 한도"), newplace_cap: L3("First visit · monthly limit", "Lần đầu · giới hạn tháng", "첫 방문 · 월 한도"), expired: L3("Expired", "Hết hạn", "만료") }[r.reason] || (r.reason.startsWith("reversed") ? L3("Reversed", "Đã trừ", "차감") : r.reason));
-  openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level", "cấp", "레벨")) + " +" + fmtN(r.life) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</b></div>`).join("")}</div>`, pvT("history"));
+  openSheet(sheetHd(pvT("history")) + `<div class="card stack" id="pv-hist">${ME.ledger.slice().reverse().map(r => `<div class="row sm pv-row" data-reason="${esc(r.reason)}"><span class="grow"><b>${esc(lab(r))}</b>${r.store ? " · " + esc(storeNm(r.store)) : ""}<br><span class="sub">${esc(fDateP(r.t))}${r.life && !r.delta ? " · " + esc(L3("level points", "điểm cấp", "레벨 포인트")) : ""}${r.legacy ? " · " + fmtN(r.legacy) + (r.legacy && ME.legacyClosed ? " ✓" : "") : ""}</span></span><b>${r.delta ? (r.delta > 0 ? "+" : "") + fmtN(r.delta) : r.life ? "+" + fmtN(r.life) : "—"}</b></div>`).join("")}</div>`, pvT("history")); /* panel: rows with no balance change showed a bold 0 */
 }
 function claimSheet(id) {
   const v = PV.defs.find(x => x.id === id), now = PV.now();
