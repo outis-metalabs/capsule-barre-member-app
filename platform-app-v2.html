@@ -388,7 +388,7 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 .v2bg.cat-lively img{animation:catlive 6s ease-in-out infinite}.v2bg.cat-napping img{filter:saturate(.85) brightness(.97)}.v2bg.cat-eating img{animation:cateat .6s ease-in-out 3}
 @keyframes catlive{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}@keyframes cateat{50%{transform:scale(1.02)}}
 @media (prefers-reduced-motion:reduce){.catrow[data-hungry] .catfeed,.v2bg img{animation:none!important}}
-.v2bg.cat-lively video{animation:catlive 6s ease-in-out infinite;filter:saturate(1.08)}.v2bg.cat-napping video{filter:saturate(.72) brightness(.92) contrast(.96)}
+.v2bg.cat-lively video{filter:saturate(1.08)}.v2bg.cat-napping video{filter:saturate(.72) brightness(.92) contrast(.96)}
 @media (prefers-reduced-motion:reduce){.v2bg video{animation:none!important}}
 .catbowl{display:inline-block;margin-right:4px;animation:catnudge 2.4s ease-in-out infinite}
 .catgrow .caticon{flex:none;width:44px;height:44px;display:grid;place-items:center;background:#FBE9ED;border-radius:12px}
@@ -446,12 +446,21 @@ body.v2home:has(.sheet) .toast{top:calc(64px + env(safe-area-inset-top,0px));bot
 .catfeed.catmis{background:#FFF3F5}
 
 /* PR35 panel r1 (2026-10-16) */
-.sheet-bg.glass{background:transparent;animation:none}
-.sheet.glass{background:rgba(255,248,246,.74);-webkit-backdrop-filter:blur(18px) saturate(1.1);backdrop-filter:blur(18px) saturate(1.1);border:1px solid rgba(255,255,255,.7);box-shadow:0 -10px 30px rgba(60,30,40,.16);padding-top:0;touch-action:pan-x}
-.sheet.glass .gldrag{display:flex;align-items:center;justify-content:center;width:100%;height:44px;min-height:44px;border:0;background:transparent;cursor:grab;touch-action:none;padding:0;margin:0 0 2px}
-.sheet.glass .gldrag::before{content:"";width:44px;height:5px;border-radius:3px;background:rgba(94,81,84,.45)}
-.sheet.glass .glhd{margin:0 0 8px;font-size:18px}.sheet.glass .v2handle{display:none}
-.sheet.glass.dragging{transition:none}.sheet.glass.closing{transition:transform .2s ease;transform:translateY(100%)}
+.glass:is(.sheet-bg,.sheetghost-bg){background:transparent;animation:none}
+.sheetghost-bg{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+.glass.v2sheet{width:100%;max-width:430px;max-height:min(70dvh,640px);overflow:auto;overscroll-behavior:contain;background:rgba(250,243,240,.46);-webkit-backdrop-filter:blur(22px) saturate(1.25);backdrop-filter:blur(22px) saturate(1.25);border:1px solid rgba(255,255,255,.6);border-bottom:0;border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(60,30,40,.14);padding-top:0;touch-action:pan-y;will-change:transform;animation:glassup 280ms cubic-bezier(.22,.8,.24,1)}
+.glass.v2sheet.opened{animation:none}
+.sheetghost.v2sheet{margin:0;padding:0 16px calc(28px + env(safe-area-inset-bottom,0px))}
+@keyframes glassup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheetghost.glass{animation:none;transition:transform 220ms cubic-bezier(.5,0,.75,0)}.sheetghost.glass.out{transform:translateY(100%)!important}
+.glass.v2sheet .card:not(.dmc){background:rgba(255,255,255,.62)}
+.glass.v2sheet .gldrag{display:flex;align-items:center;justify-content:center;width:100%;height:44px;min-height:44px;border:0;background:transparent;cursor:grab;touch-action:none;padding:0;margin:0 0 2px}
+.glass.v2sheet .gldrag::before{content:"";width:44px;height:5px;border-radius:3px;background:rgba(94,81,84,.45)}
+.glass.v2sheet .glhd{margin:0 0 8px;font-size:18px}.glass.v2sheet .v2handle{display:none}
+.sheet.glass.dragging{animation:none;transition:none}.sheet.glass:not(.dragging){transition:transform .18s ease}
+html:has(body.v2home){background:#F3E7E3}body.v2home{background:#F3E7E3}
+.dmc .mis.done .mt{color:rgba(255,255,255,.78);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.55);opacity:1}
+@media (prefers-reduced-motion:reduce){.glass.v2sheet{animation:none}.sheetghost-bg{display:none}}
 .catfab[data-state=hungry]{animation:fabpulse 4s ease-in-out infinite}
 @keyframes fabpulse{0%,82%,100%{transform:none}88%{transform:scale(1.07)}94%{transform:scale(.98)}}
 .stchip{left:auto;right:10px;bottom:auto;top:37%;width:88px;flex-direction:column;align-items:stretch;gap:4px;padding:8px;border-radius:20px;text-align:center}
@@ -1944,9 +1953,17 @@ let lastFocus = null;
 function openSheet(html, label) {
   if (!$(".sheet")) lastFocus = document.activeElement;
   $("#sheetRoot").innerHTML = `<div class="sheet-bg" data-act="bgclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}</div></div>`;
-  const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); (f || sh).focus();
+  const sh = $(".sheet"); const f = sh.querySelector("button:not([disabled]),input:not([disabled]),textarea,[href]"); try { (f || sh).focus({ preventScroll: true }); } catch (e) {} /* never scroll the page behind (iOS showed a black strip + resized the room) */
 }
-function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } $("#sheetRoot").innerHTML = ""; if (!had) return; if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus(); else $("#view").focus(); }
+function closeSheet() { try { p2Pend = null; } catch (e) {} const had = !!$(".sheet"); if (had && PEND && $("[data-act=dobook],#rv-wait")) { track("booking_abandon", { step: "review" }); PEND = null; } const g0 = $(".sheet.glass"); if (g0 && typeof catMotionOk === "function" && catMotionOk()) sheetGhostOut(g0); $("#sheetRoot").innerHTML = ""; if (!had) return; try { if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus({ preventScroll: true }); else $("#view").focus({ preventScroll: true }); } catch (e) {} }
+function sheetGhostOut(sh) { /* glass panel close: the live sheet is removed at once (state stays simple); a non-interactive copy slides down ~220ms */
+  const bg = sh.parentElement, cs = getComputedStyle(sh).transform, gb = bg.cloneNode(true); gb.className = "sheetghost-bg glass"; gb.removeAttribute("data-act"); gb.setAttribute("aria-hidden", "true"); gb.inert = true;
+  const gs = gb.firstElementChild; gs.className = sh.className.replace(/\bsheet\b/, "sheetghost").replace(/\b(dragging|closing)\b/g, ""); gs.removeAttribute("role"); gs.removeAttribute("id"); gs.querySelectorAll("[id]").forEach(e => e.removeAttribute("id"));
+  gs.style.transform = cs === "none" ? "translateY(0)" : cs;
+  /* the copy lives in a shadow root so document queries (.misok, [data-act], .sheet …) never see it */
+  const host = document.createElement("div"); host.className = "sheetghost-host"; host.setAttribute("aria-hidden", "true"); const sr = host.attachShadow({ mode: "open" });
+  document.querySelectorAll("style").forEach(st => sr.appendChild(st.cloneNode(true))); sr.appendChild(gb); document.body.appendChild(host); gs.scrollTop = sh.scrollTop;
+  requestAnimationFrame(() => { gs.classList.add("out"); setTimeout(() => host.remove(), 260); }); }
 const sheetHd = title => `<div class="hd"><h2>${esc(title)}</h2><button class="icb" data-act="close" aria-label="${t("close")}">${ic("x")}</button></div>`;
 let toastT = null, toastUndo = null;
 function toast(msg, undo) {
@@ -2646,13 +2663,13 @@ function homeSheetHtml() { /* missions, next class, growth, room, Mochi — open
     `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + catCard() + catItemsCard() + catDemo();
 }
 function sheetSwipe(sh) { /* glass panel: drag down from the handle (or anywhere when scrolled to top) to close */
-  let y0 = null, dy = 0; const done = () => { sh.classList.remove("dragging"); if (dy > 80) { sh.classList.add("closing"); setTimeout(closeSheet, catMotionOk() ? 200 : 0); } else sh.style.transform = ""; y0 = null; dy = 0; };
+  let y0 = null, dy = 0; const done = () => { sh.classList.remove("dragging"); if (dy > 80) closeSheet(); else sh.style.transform = ""; y0 = null; dy = 0; };
   sh.addEventListener("pointerdown", e => { if (!e.target.closest(".gldrag") && sh.scrollTop > 0) return; if (e.target.closest("button:not(.gldrag),a,input")) return; y0 = e.clientY; dy = 0; });
   sh.addEventListener("pointermove", e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); if (dy > 4) { sh.classList.add("dragging"); sh.style.transform = `translateY(${dy}px)`; } });
   sh.addEventListener("pointerup", done); sh.addEventListener("pointercancel", done); }
 function openHomeSheet() { const tl = L3("Today", "Hôm nay", "오늘"), gl = V2HOME();
   openSheet((gl ? `<button type="button" class="gldrag" data-act="close" aria-label="${esc(L3("Close (swipe down)", "Đóng (vuốt xuống)", "닫기 (아래로 밀기)"))}"></button><h2 class="glhd">${esc(tl)}</h2>` : sheetHd(tl)) + `<div id="home-sheet" class="v2sheet">${homeSheetHtml()}</div>`, tl);
-  const sh = $(".sheet"); if (sh) { sh.classList.add("v2sheet"); if (gl) { sh.classList.add("glass"); sh.parentElement.classList.add("glass"); sheetSwipe(sh); } }
+  const sh = $(".sheet"); if (sh) { sh.classList.add("v2sheet"); if (gl) { sh.classList.add("glass"); sh.parentElement.classList.add("glass"); sheetSwipe(sh); sh.addEventListener("animationend", () => sh.classList.add("opened"), { once: true }); if (!catMotionOk()) sh.classList.add("opened"); } }
   const m = $("#home-dm"); if (m) try { m.focus({ preventScroll: true }); } catch (e) {}
 }
 function vHome() {
