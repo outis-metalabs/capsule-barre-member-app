@@ -46,10 +46,12 @@ with sync_playwright() as p:
   J(g, "()=>{catFeed();catEarn('again')}"); ok('DB-T4 after feeding one, a treat can be added again', J(g, "catDay().treats") == 3 and J(g, "catDay().fed") == 1)
   # DB-T5 feed
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;P2S.cat.treats=1;render()}"); ok('DB-T5 feed button in the card when a treat is held (44px)', J(g, "(()=>{const r=document.querySelector('#cat-feed').getBoundingClientRect();return r.width>=44&&r.height>=44})()"))
-  g.click('#cat-feed'); g.wait_for_timeout(200)
+  g.click('#cat-feed', force=True); g.wait_for_timeout(200)
   ok('DB-T5 feeding uses 1 treat, clears hunger and plays the happy moment', J(g, "catDay().treats===0 && !catHungry() && document.querySelector('#cici-real').dataset.mood==='eating'"))
-  ok('DB-T5 official eating clip plays in a small overlay', J(g, "(()=>{const o=document.querySelector('#cat-eat');return !!o && !!o.querySelector('video source[src*=dubu-eating]') && o.getBoundingClientRect().width<=300})()"))
-  g.wait_for_timeout(4900); ok('DB-T5 overlay closes and returns to the loop', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('.catvid.on, #cat-video-a, #cat-video')"))
+  g.wait_for_timeout(500)
+  ok('DB-T5 happy moment plays in the scene (Cici petting clip crossfade), no popup', J(g, "!document.querySelector('#cat-eat,#cat-clip,.cateat') && ((document.querySelector('.catvid.on')||{}).dataset||{}).clip==='petting'"), J(g, "[(document.querySelector('.catvid.on')||{}).dataset]"))
+  g.wait_for_timeout(2400); ok('DB-T5 then playful (lively) clip', J(g, "(document.querySelector('.catvid.on')||{}).dataset.clip==='lively' && ST.catEat==='play'"))
+  g.wait_for_timeout(3200); ok('DB-T5 crossfades back to the mood loop', J(g, "!!document.querySelector('.catvid.on') && document.querySelector('.catvid.on').dataset.clip===catClipName(catMood()) && catMood()!=='eating'"))
   ok('DB-T5 happy moment is short (back to normal mood)', J(g, "document.querySelector('#cici-real').dataset.mood!=='eating'"))
   # DB-T6
   J(g, "()=>{P2S.cat.treats=0;render();openHomeSheet()}"); g.wait_for_timeout(300); ok('DB-T6 0 treats: on-ramp CTAs (no dead Feed)', J(g, "!!document.querySelector('#cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"))

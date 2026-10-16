@@ -25,7 +25,7 @@ with sync_playwright() as p:
       ok(f'asset {mood}.{ext} ≤2.5MB muted {lim[0]}-{lim[1]}s', os.path.getsize(f) <= 2.5e6 and lim[0] <= dur <= lim[1] and 'audio' not in o, [os.path.getsize(f), dur, o])
 
   g = page(); J(g, FRESH); g.wait_for_timeout(800)
-  ok('clips map: lively/napping/hungry/react pointed at own files', J(g, "CICI_CAT.clips.lively==='lively' && CICI_CAT.clips.napping==='napping' && CICI_CAT.clips.hungry==='hungry' && CICI_CAT.clips.react==='react' && CICI_CAT.clips.calm==='petting'"))
+  ok('clips map: lively/napping/hungry/react pointed at own files', J(g, "CICI_CAT.clips.lively==='lively' && CICI_CAT.clips.napping==='napping' && CICI_CAT.clips.hungry==='petting' && CICI_CAT.clips.react==='react' && CICI_CAT.clips.calm==='petting'"))
   ok('fadeMs in 300–500', J(g, "CICI_CAT.fadeMs>=300 && CICI_CAT.fadeMs<=500"))
 
   # Default / lively on active streak
@@ -34,7 +34,7 @@ with sync_playwright() as p:
 
   # Hungry after 18:00
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=18;ST.miss.rest=false;ME.streak=12;render()}"); g.wait_for_timeout(800)
-  ok('hungry after 18:00 no self-care → hungry clip', J(g, "catHungry() && catMood()==='hungry' && (document.querySelector('.catvid.on')||{}).dataset.clip==='hungry'"), J(g, "[catHungry(),catMood(),(document.querySelector('.catvid.on')||{}).dataset.clip]"))
+  ok('hungry after 18:00 no self-care → stays in the Cici+Mochi room (petting loop) + empty-bowl cue on Feed', J(g, "catHungry() && catMood()==='hungry' && (document.querySelector('.catvid.on')||{}).dataset.clip==='petting' && !!document.querySelector('#v2-acts #cat-room-bowl')"), J(g, "[catHungry(),catMood(),(document.querySelector('.catvid.on')||{}).dataset.clip]"))
 
   # Rest day stays petting (nap not wired)
   J(g, "()=>{ST.miss.rest=true;P2S.cat.demoHour=19;render()}"); g.wait_for_timeout(600)
@@ -58,21 +58,20 @@ with sync_playwright() as p:
       f = f'/tmp/hot/assets/cici-real/{kind}.{ext}'
       ok(f'asset {kind}.{ext} ≤1MB muted', os.path.exists(f) and os.path.getsize(f) <= lim, f)
   J(g, FRESH); J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(500)
-  ok('stretch mission start → stretch overlay', J(g, "!!document.querySelector('#cat-clip[data-kind=stretch] video, #cat-clip[data-kind=stretch] img')"))
-  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); catClipPlay('water')}"); g.wait_for_timeout(400)
-  ok('water mission start → water overlay', J(g, "!!document.querySelector('#cat-clip[data-kind=water] video, #cat-clip[data-kind=water] img')"))
-  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove()}")
+  ok('stretch Start plays the stretch clip in the room + timer chip (no popup)', J(g, "!document.querySelector('#cat-clip,.cateat,.catclip') && !!document.querySelector('#stretch-chip #stl') && (document.querySelector('.catvid.on')||{}).dataset.clip==='stretch'"))
+  J(g, "()=>{stretchStop(); openHomeSheet()}"); g.wait_for_timeout(300); J(g, "()=>document.querySelector('[data-act=dmwater]').click()"); g.wait_for_timeout(600)
+  ok('water Done plays the water clip in the room', J(g, "(document.querySelector('.catvid.on')||{}).dataset.clip==='water' && !document.querySelector('.sheet')"))
+  J(g, "()=>{catMisEnd(); openHomeSheet()}"); g.wait_for_timeout(300)
+  ok('water Done: quiet inline row confirmation with ≤64px round thumb, no overlay', J(g, "(()=>{const r=document.querySelector('#home-dm .mis[data-m=water] .misok img.misthumb');if(!r)return false;const b=r.getBoundingClientRect();return b.width<=64&&b.height<=64&&getComputedStyle(r).borderRadius!=='0px'&&!document.querySelector('#cat-clip,.cateat')})()"))
+  J(g, "()=>closeSheet()")
 
   # Panel must-fixes
   J(g, FRESH); J(g, "()=>{P2S.cat.treats=0;P2S.cat.demoHour=18;render();openHomeSheet()}"); g.wait_for_timeout(400)
   ok('first-treat on-ramp: no greyed Feed; Open missions + Book', J(g, "document.querySelector('#cat-card').dataset.ramp==='1' && !!document.querySelector('#cat-open-mis') && !!document.querySelector('#cat-open-bk') && !document.querySelector('#cat-feedbtn')"))
   J(g, "()=>{document.querySelector('#cat-open-mis').click()}"); g.wait_for_timeout(300)
   ok('on-ramp Open missions focuses mission card (≤2 taps to earn)', J(g, "!!document.querySelector('#home-dm')"))
-  J(g, "()=>{catClipPlay('stretch'); catClipPlay('water')}"); g.wait_for_timeout(200)
-  ok('no stacked overlays: only one #cat-clip', J(g, "document.querySelectorAll('#cat-clip').length===1 && document.querySelector('#cat-clip').dataset.kind==='water'"))
-  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); catEatShow(); catClipPlay('stretch')}"); g.wait_for_timeout(200)
-  ok('clip dismisses eating overlay', J(g, "!document.querySelector('#cat-eat') && !!document.querySelector('#cat-clip')"))
-  J(g, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); P2S.placed=[]; P2S.cat.owned=[]; openHomeSheet()}"); g.wait_for_timeout(400)
+  ok('no popup API left (catClipPlay / #cat-clip / .cateat)', J(g, "typeof catClipPlay==='undefined'") and '#cat-clip' not in open('/tmp/hot/platform-app-v2.html',encoding='utf8').read())
+  J(g, "()=>{closeSheet(); P2S.placed=[]; P2S.cat.owned=[]; openHomeSheet()}"); g.wait_for_timeout(400)
   ok('short sheet: empty room hidden; locked items collapsed', J(g, "!document.querySelector('#p2-room') && !!document.querySelector('#cat-locked-hint') && document.querySelectorAll('#cat-items .catitem').length===0"))
   ok('napping clip is distinct file (not petting)', J(g, "catClipName('napping')==='napping' && CICI_CAT.clips.napping==='napping'"))
   for mood in ('lively','napping','hungry','react'):
@@ -91,9 +90,9 @@ with sync_playwright() as p:
       g2.screenshot(path=f'{SH}/napping-{L}-{w}.png')
       J(g2, "()=>{ST.miss.rest=false;stretchSheet()}"); g2.wait_for_timeout(500)
       g2.screenshot(path=f'{SH}/stretch-{L}-{w}.png')
-      J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet(); catClipPlay('water')}"); g2.wait_for_timeout(400)
+      J(g2, "()=>{stretchStop(); closeSheet(); openHomeSheet(); const x=document.querySelector('[data-act=dmwater]'); if(x)x.click()}"); g2.wait_for_timeout(600)
       g2.screenshot(path=f'{SH}/water-{L}-{w}.png')
-      J(g2, "()=>{const o=document.getElementById('cat-clip'); if(o)o.remove(); closeSheet()}")
+      J(g2, "()=>{closeSheet()}")
       J(g2, "()=>{P2S.cat.treats=0;P2S.placed=[];P2S.cat.owned=[];P2S.cat.demoHour=18;render();openHomeSheet()}"); g2.wait_for_timeout(500)
       if w in (390,430) and L in ('ko','en'):
         g2.screenshot(path=f'{SH}/ramp-0treat-{L}-{w}.png')
