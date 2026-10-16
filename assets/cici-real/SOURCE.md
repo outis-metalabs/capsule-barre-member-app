@@ -1,31 +1,39 @@
 # assets/cici-real — sources
 
-All images and videos here are official Cici art by the 3D Designer, made from the user's character sheet (supplied 2026-10-15).
+All images and videos here are official Cici / Mochi art by the 3D Designer, made from the user's character sheet (supplied 2026-10-15 onward).
 
-## cici-home.webp (original notes)
-- Official full-screen Home image, tall native 1080×1920 (from cici_home_tall.jpg), WebP quality 82.
-- Used full-bleed on the platform-app-v2.html Home (object-fit cover, object-position 50% 35%).
-- Head box ≈ x 354–720, y 540–975 (image px); plain wall top-left down to ≈28% (the glass card sits there).
-- To swap: replace this file and update CICI_HOME in platform-app-v2.html (w, h, face box). The face-not-covered test reads that config.
+## cici-cat-petting.mp4 / .webm + cici-cat-poster.jpg (default Home loop)
+- Preferred petting loop: `cici_mochi_petting_loop_tall` (also available as `_wide`). 720×1280, ~6.1 s, muted, ≤0.8 MB.
+- Default Home background (muted, playsinline, loop; paused off-screen / tab hidden). Poster = still fallback (reduced motion, Save-Data, load error).
+- Face ≈ 50% x, 42% y, head ≈ 29% of height → CICI_HOME face box x 235–485, y 352–723 (image px).
 
-## cici-cat-petting.mp4 / cici-mochi-petting.* (remade) / .webm + cici-cat-poster.jpg (Mochi, 모찌; asset filenames still use "dubu" from the original delivery)
-- Official 3D Designer loop of Cici petting her cat Mochi (from cici_mochi_petting_loop_tall (seamless loop, 2026-10-15); earlier remade stills from cici_mochi_petting_tall, 720×1280, 6.5 s, no audio; mp4 792 KB, webm 314 KB). Supplied 2026-10-15.
-- The v2 Home background (muted, playsinline, loop; paused off-screen / tab hidden). The poster is the still fallback (reduced motion, Save-Data, load error).
-- Face ≈ 50% x, 42% y, head ≈ 29% of the height → CICI_HOME face box x 235–485, y 352–723 (image px). The face-not-covered test reads CICI_HOME.
-- Lively and napping loops don't exist yet: CICI_CAT.clips maps them to "petting" with CSS cues. To swap, add cici-cat-<name>.webm/.mp4 and point the mood at it.
+## Mood loops (tall → `cici-cat-<mood>.*`)
+| Mood | Source | When |
+|---|---|---|
+| **lively** | `cici-cat-lively_tall` | Active (non-paused) streak |
+| **napping** | `cici-cat-napping_tall` | Rest day / paused / broken streak |
+| **hungry** | `cici-cat-hungry_tall` | After 18:00 home time, no self-care (not rest/paused) |
+| **react** | `cici-cat-react_tall` | Tap / long-press the character |
+| calm / eating (Home loop) | petting | Crisis calm; between feed overlay |
+
+Crossfade between Home loops: ~400 ms dual-video opacity fade (`CICI_CAT.fadeMs`).
+
+## Mission clips (square overlays, ≤1 MB)
+| Clip | Source | When |
+|---|---|---|
+| **mochi-stretch** | `mochi-stretch_square` (also wide available) | Stretch mission **starts** |
+| **mochi-water** | `mochi-water_square` (also wide available) | Drink-water mission **starts** |
+
+One-shot overlay, then back to the Home loop. Still under reduced motion / Save-Data. Suppressed in crisis.
 
 ## dubu-eating.mp4 / .webm + dubu-eating-poster.jpg
-- Official 3D Designer clip of Mochi eating (from dubu_eating_1x1, 720×720, 4 s, no audio). Plays in a small overlay after Feed, then the Home loop resumes.
+- Official eating clip (from `dubu_eating_1x1`, 720×720, ~4 s). Feed overlay, then back to the Home loop.
 
-## cici-home.webp (previous still)
-- No longer referenced by the Home (the Mochi/petting poster replaced it); kept as an official fallback image.
+## cici-sitting.webp / cici-home.webp
+- Sitting cut-out for Cici's room; earlier tall still kept as fallback (Home uses the petting poster).
 
-## cici-sitting.webp
-- Official transparent cut-out of Cici sitting (446×594); the small Cici in Cici's room on the v2 Home sheet.
+(The earlier AI-generated stand-in `cici-real-studio.webp` was removed.)
 
-(The earlier AI-generated stand-in render cici-real-studio.webp was removed: wrong face, not official.)
-
-
-## Clip gaps (ask 3D Designer)
-- Needed for smooth mood switches: `cici-cat-lively`, `cici-cat-napping`, `cici-cat-hungry`, `cici-cat-react` (720×1280, 6–8s, ≤2.5MB, muted), plus mission `mochi-stretch` / `mochi-water` (≤1MB).
-- Until they arrive, Home crossfades the petting loop with CSS mood cues.
+## Panel review (2026-10-16)
+Full set wired: petting + lively + napping + hungry + react + stretch + water + eating.
+Panel must-fixes on #32: first-treat on-ramp, one overlay at a time, short sheet (hide empty room / collapse locked growth).

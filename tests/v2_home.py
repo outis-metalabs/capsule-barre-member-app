@@ -37,7 +37,7 @@ with sync_playwright() as p:
       J = g.evaluate
       g.click('#hb-bubble .hbgo'); g.wait_for_timeout(500)
       ok(f'{k} glass card opens Today sheet overlay', J("!!document.querySelector('.sheet #home-sheet')"))
-      ok(f'{k} sheet holds stage+stats, missions, next class, level and room', J("['#g-comp','#g-bars','#home-dm','#home-next','#home-lvl','#p2-room'].every(s=>document.querySelector('#home-sheet '+s))"))
+      ok(f'{k} sheet holds stage+stats, missions, next class, level (+ room if decorated)', J("['#g-comp','#g-bars','#home-dm','#home-next','#home-lvl'].every(s=>document.querySelector('#home-sheet '+s)) && (!!document.querySelector('#home-sheet #p2-room') || !(P2S.placed||[]).length)"))
       if w in (390, 430) and L != 'vi': g.screenshot(path=f'{SH}/sheet-{L}-{w}.png')
       J("()=>{typeof closeSheet==='function'&&closeSheet()}"); g.wait_for_timeout(200)
       g.click('#v2-pull'); g.wait_for_timeout(400)
