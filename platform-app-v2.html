@@ -2965,7 +2965,55 @@ function cancelAsk(b) {
 /* OQ defaults (spec §10) used until the user decides: OQ-1 label "Cici" in every language (user decision); OQ-2 4 tabs, Book again = 2 taps with an editable pre-picked slot; OQ-3 per-store policy wins, a late reschedule follows the cancel rule;
    OQ-4 ratings private, publicRatings off; OQ-5 0 points; OQ-6 rating notes and Ask-the-studio notes are safety-scanned; OQ-7 "Talk to Cici (demo)" in overflow only; OQ-8 store phone field + emergency blocklist, no number = no button;
    OQ-9 Past = 12 months, rating/edit window 14 days; OQ-10 store messages stay in the Inbox; OQ-11 analytics carry event names only, safety turns only safety_turn{type} */
-const FLAGS = { publicRatings: false, quest: false, phase2: (() => { try { const q = new URLSearchParams(location.search).get("phase2"); return q === "1" || q === "true"; } catch (e) { return false; } })() }; /* Phase 2: off by default, ?phase2=1 */ /* PO 2026-10-14: Quest · Journey is out of the MVP; code kept, unreachable while false */
+const FLAGS = { publicRatings: false, quest: false, cueBook: (() => { try { const q = new URLSearchParams(location.search).get("cueBook"); return q === "1" || q === "true"; } catch (e) { return false; } })(), phase2: (() => { try { const q = new URLSearchParams(location.search).get("phase2"); return q === "1" || q === "true"; } catch (e) { return false; } })() }; /* Phase 2: off by default, ?phase2=1 */ /* PO 2026-10-14: Quest · Journey is out of the MVP; code kept, unreachable while false */
+/* ===== Cue Book with Cici: foundation (CB-1, CB-2, CB-10). Behind FLAGS.cueBook, OFF by default, ?cueBook=1 turns it on.
+   CB-1: while off, nothing renders, nothing is fetched (lessons.js is never requested), no localStorage key is read or written.
+   CB-10: lesson content lives in assets/cue-book/lessons.js (generated from the webbook), loaded lazily by cueBookLoad().
+   CB-2: a studio tags a class SESSION (store + service + day + start minute) with a lessonId; untagged sessions have no lesson.
+   UI API (window.__plat.cueBook): see PR / scripts/cue_book_extract.py. ===== */
+const CUE_LESSON_RE = /^(basic|flow)-(0[1-9]|1[0-2])$/; /* basic-01..basic-12, flow-01..flow-12 (1:1 track is out of scope) */
+const CUE_SRC = "assets/cue-book/lessons.js", CUE_KEY = "cb.cueTags";
+const CUE = { lessons: null, tags: {}, loading: null, tagsLoaded: false };
+const cueOn = () => { try { return !!FLAGS.cueBook; } catch (e) { return false; } };
+function cueSessionKey(store, svc, d, m) { return [store, svc, d, m].join(":"); }
+const cueKeyOf = b => (b ? cueSessionKey(b.store, b.svc, b.d, b.m) : null);
+function cueTagsLoad() { if (CUE.tagsLoaded || !cueOn()) return; CUE.tagsLoaded = true; try { const o = JSON.parse(localStorage.getItem(CUE_KEY) || "{}"); for (const k in o) if (CUE_LESSON_RE.test(o[k])) CUE.tags[k] = o[k]; } catch (e) {} }
+function cueTagsSave() { if (!cueOn()) return; try { localStorage.setItem(CUE_KEY, JSON.stringify(CUE.tags)); } catch (e) {} }
+/* lazy-load the content map; resolves to the map, or null when the flag is off / the file fails */
+function cueBookLoad() {
+  if (!cueOn()) return Promise.resolve(null);
+  if (CUE.lessons) return Promise.resolve(CUE.lessons);
+  if (window.CUE_BOOK_LESSONS) { CUE.lessons = window.CUE_BOOK_LESSONS; return Promise.resolve(CUE.lessons); }
+  if (!CUE.loading) CUE.loading = new Promise(res => { const el = document.createElement("script"); el.src = CUE_SRC; el.async = true;
+    el.onload = () => { CUE.lessons = window.CUE_BOOK_LESSONS || null; res(CUE.lessons); }; el.onerror = () => { CUE.loading = null; res(null); }; document.head.appendChild(el); });
+  return CUE.loading;
+}
+function cueIsLessonId(id) { return typeof id === "string" && CUE_LESSON_RE.test(id) && (!CUE.lessons || !!CUE.lessons[id]); }
+function getLesson(id) { return cueOn() && CUE.lessons && cueIsLessonId(id) ? CUE.lessons[id] : null; }
+/* positions render as "EN · KR" (EN names are drafts, nameEnDraft:true); KR only when no EN name */
+function cuePositionLabel(p) { if (!p) return ""; return p.nameEn ? `${p.nameEn} · ${p.nameKr}` : (p.nameKr || ""); }
+function listLessons(track) { if (!cueOn() || !CUE.lessons) return []; return Object.values(CUE.lessons).filter(l => !track || l.track === track).sort((a, b) => a.bookNumber - b.bookNumber); }
+/* CB-2: studio side. Only class-kind stores, only real scheduled services. lessonId null/"" clears the tag. */
+function tagSession(store, svc, d, m, lessonId) {
+  if (!cueOn()) return { ok: false, err: "off" };
+  const s = S[store]; if (!s) return { ok: false, err: "store" };
+  if (s.kind !== "class") return { ok: false, err: "not_class" };
+  if (!(s.svcs || []).some(v => v.id === svc)) return { ok: false, err: "svc" };
+  if (!Number.isInteger(d) || !Number.isInteger(m) || m < 0 || m >= 1440) return { ok: false, err: "time" };
+  cueTagsLoad(); const k = cueSessionKey(store, svc, d, m);
+  if (lessonId == null || lessonId === "") { delete CUE.tags[k]; cueTagsSave(); return { ok: true, key: k, lessonId: null }; }
+  if (!cueIsLessonId(lessonId)) return { ok: false, err: "lesson" };
+  CUE.tags[k] = lessonId; cueTagsSave(); return { ok: true, key: k, lessonId };
+}
+function lessonIdForSession(store, svc, d, m) { if (!cueOn()) return null; cueTagsLoad(); return CUE.tags[cueSessionKey(store, svc, d, m)] || null; }
+const cueBk = id => B.find(b => b.id === id || String(b.id) === String(id)) || null;
+/* member side: the lesson for a booking's class session, or null (flag off, unknown booking, untagged, map not loaded) */
+function getLessonForBooking(bookingId) { const b = cueBk(bookingId); return b ? getLesson(lessonIdForSession(b.store, b.svc, b.d, b.m)) : null; }
+/* true only when the studio confirmed the visit through the points engine (ME.att, not reversed) */
+function storeConfirmedVisit(bookingId) { const b = cueBk(bookingId); if (!b) return false; try { const a = ME.att[b.id]; return !!(a && !a.reversed); } catch (e) { return false; } }
+/* one call for the UI: { booking, lessonId, lesson, storeConfirmedVisit } or null when off / no such booking */
+function cueBookForBooking(bookingId) { if (!cueOn()) return null; const b = cueBk(bookingId); if (!b) return null; const lessonId = lessonIdForSession(b.store, b.svc, b.d, b.m); return { bookingId: b.id, lessonId, lesson: getLesson(lessonId), storeConfirmedVisit: storeConfirmedVisit(b.id) }; }
+const CUE_API = { enabled: cueOn, positionLabel: cuePositionLabel, load: cueBookLoad, isLessonId: cueIsLessonId, getLesson, listLessons, tagSession, lessonIdForSession, sessionKey: cueSessionKey, sessionKeyOf: cueKeyOf, getLessonForBooking, storeConfirmedVisit, forBooking: cueBookForBooking, _state: CUE };
 const EVT = []; let TURN_SAFE = false;
 function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
 const gated = () => !!(CH.cici.gate && CH.cici.msgs.length);
@@ -3990,7 +4038,7 @@ function checkJumps() {
 }
 window.checkJumps = checkJumps;
 p2Load(); if (P2()) render();
-window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, G_ITEMS, G_STAGES, gState, gStats, gHint, gSimVisit, gDaysOff, gUnmapped, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
+window.__plat = { CICI_ALIAS_RE, p2Pending: () => p2Pend, P2S, P2_ITEMS, P2T, P2_AGE_MIN, P2_MS_BONUS, p2BuyRoom, p2Bal, G_ITEMS, G_STAGES, gState, gStats, gHint, gSimVisit, gDaysOff, gUnmapped, p2Room, p2DecoSheet, p2ShopSheet, p2Checkout, p2Consent, p2Upload, p2Wipe,  PV, BKREG, STAFF_TX, sT, checkinCode, scanCheckin, staffMark, confirmSheet, MVP, CICI_KO, CICI, ciciNm, outfitBadge, wearNm, outfitNm, outfitIdx, homeHour, maybeUnlock, confirmSheet, takenSheet, capInfo, migrateCiciThread, walletSheet, depositSheet, fxMoneyTxt, policyLine, cancelB, uncancelB, lateTerms, attend, saveThread, loadThread, go, sysBack, openBookings, migrateThreads, migrateOnLoad, setStorePhone, isEmergencyNum, storeRatings, publicAvg, RATINGS, FLAGS, cueBook: CUE_API, EVT, bkUpcoming, bkPastList, bkOutcome, moveBooking, askStudioSend, gated, setNow: v => { NOWX = v; }, nowMin: () => nowMin(), deadline, freeNow, SAFETY_LOG, S, B, ST, CH, parse, chatSend, slotsFor, WALLET, INBOX, isHealth, reply, safety, intentOf, multiSplit, deliver, NSET, DF, discList, upcoming, chatChip, AGAIN, IMPORT, selfTest, PV, pv: { ME: () => ME, pvMember, pvMigrate, pvTick, pvBook, confirmVisit, markAttended, markNoShow, reverseVisit, pvMission, pendingFor, publish, editDef, validateDraft, eligibility, claim, cancelClaim, useCode, validateCode, redeem, setFlag, bal, life, lvlOf, mult, fmtPts, fmtMoney, weekKey, dayKey, weekStart, dayStart, streakHit, MS_DAYS, pointsWarn, voucherWarns, BKREG, pvT } };
 </script>
 </body>
 </html>
