@@ -2513,7 +2513,7 @@ function importCard() {
 }
 function homeSheetHtml() { /* missions, next class, growth, room, Mochi — opened as a bottom sheet, not scrolled under Home */
   const up = upcoming(), title = L3("Today", "Hôm nay", "오늘");
-  return `<span class="v2handle" aria-hidden="true"></span>` + gHero() + notesCard() +
+  return `<span class="v2handle" aria-hidden="true"></span>` + gHero() + notesCard() + cueHomeCard() +
     `<h2>${t("missions")}</h2>${dmCard()}<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>` +
     `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + catCard() + catItemsCard() + catDemo();
 }
@@ -2527,7 +2527,7 @@ function vHome() {
   if (V2HOME()) { track("home_open"); /* v2: fixed viewport Home — sheet opens from the glass card / pull cue, not by scrolling */
     return v2Hero(); }
   const up = upcoming(); track("home_open");
-  return (P2() && !gated() ? gHero() : heroScene()) + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
+  return (P2() && !gated() ? gHero() : heroScene()) + notesCard() + cueHomeCard() + homeLevelBar() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${P2() && !gated() ? dmCard() : missionsCard()}` +
     `<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>`;
 }
@@ -3012,6 +3012,46 @@ function storeConfirmedVisit(bookingId) { const b = cueBk(bookingId); if (!b) re
 /* one call for the UI: { booking, lessonId, lesson, storeConfirmedVisit } or null when off / no such booking */
 function cueBookForBooking(bookingId) { if (!cueOn()) return null; const b = cueBk(bookingId); if (!b) return null; const lessonId = lessonIdForSession(b.store, b.svc, b.d, b.m); return { bookingId: b.id, lessonId, lesson: getLesson(lessonId), storeConfirmedVisit: storeConfirmedVisit(b.id) }; }
 const CUE_API = { enabled: cueOn, load: cueBookLoad, isLessonId: cueIsLessonId, getLesson, listLessons, tagSession, lessonIdForSession, sessionKey: cueSessionKey, sessionKeyOf: cueKeyOf, getLessonForBooking, storeConfirmedVisit, forBooking: cueBookForBooking, _state: CUE };
+/* ===== Cue Book with Cici: member UI (CB-3..CB-6, CB-8) on top of the foundation above. Uses only CUE_API.
+   Section on an upcoming tagged booking (CB-3); practice card after a store-confirmed visit, Home 2 days / My bookings 14 days (CB-4);
+   one player, Normal/Slow (slow = same file at CUE_BOOK_SLOW_RATE), never autoplays, placeholders never play (CB-5/6). ===== */
+const CUEUI_STR = {
+  en: { cueTitle: "Today's cues with Cici", cuePractice: "Practise today's cues with Cici", cuePracticeSub: "From your class on {d}", cueNormal: "Normal", cueSlow: "Slow", cuePlayN: "Play cue {n} normal", cuePlayS: "Play cue {n} slow", cueSoon: "Audio coming soon", cueErr: "Audio didn't play. The cue text is still here.", cueOffline: "You're offline, so the audio can't load.", cueRetry: "Retry" },
+  vi: { cueTitle: "Gợi ý động tác hôm nay cùng Cici", cuePractice: "Luyện lại gợi ý hôm nay cùng Cici", cuePracticeSub: "Từ buổi tập ngày {d}", cueNormal: "Bình thường", cueSlow: "Chậm", cuePlayN: "Play cue {n} normal", cuePlayS: "Play cue {n} slow", cueSoon: "Sắp có âm thanh", cueErr: "Không phát được âm thanh. Nội dung gợi ý vẫn ở đây.", cueOffline: "Bạn đang ngoại tuyến nên chưa tải được âm thanh.", cueRetry: "Thử lại" },
+  ko: { cueTitle: "Cici와 함께하는 오늘의 큐", cuePractice: "Cici와 오늘의 큐 복습하기", cuePracticeSub: "{d} 수업에서", cueNormal: "보통", cueSlow: "느리게", cuePlayN: "Play cue {n} normal", cuePlayS: "Play cue {n} slow", cueSoon: "오디오 준비 중", cueErr: "오디오를 재생하지 못했어요. 큐 내용은 그대로 있어요.", cueOffline: "오프라인이라 오디오를 불러올 수 없어요.", cueRetry: "다시 시도" }
+}; /* CB-6: accessible names are the fixed English strings from the spec in every language. VI/KO copy needs native review. Cici stays Latin in KO. */
+for (const k in CUEUI_STR) Object.assign(STR[k], CUEUI_STR[k]);
+const CUE_HOME_DAYS = 2, CUE_KEEP_DAYS = 14;
+function cueFor(b) { /* CB-2: flag off / untagged / map not loaded -> null. Kicks off the lazy load once, then re-renders. */
+  if (!cueOn() || !b) return null; const r = CUE_API.forBooking(b.id); if (!r || !r.lessonId) return null;
+  if (!r.lesson && !CUE.lessons && !CUE.uiWait) { CUE.uiWait = 1; cueBookLoad().then(m => { if (m) render(); }); }
+  return r.lesson && r.lesson.positions && r.lesson.positions.length ? r : null;
+}
+const cuePracticeOk = (b, days) => { const r = cueFor(b); if (!r || !r.storeConfirmedVisit) return false; const a = ME.att[b.id]; return !!a && PV.now() - a.t <= days * DAY; };
+const cuePosName = p => p.nameEn ? p.nameEn + " · " + p.nameKr : p.nameKr; /* PO: "EN · KR"; KR only while nameEn is null */
+function cueList(b) {
+  const r = cueFor(b); if (!r) return ""; const L0 = r.lesson; let n = 0;
+  return `<ol class="cuelist stack" style="list-style:none;padding:0;margin:8px 0 0">` + L0.positions.map((p, i) => `<li class="cuepos" data-pos="${i}"><div class="row top"><img src="${esc(p.image)}" alt="${esc(p.nameKr)}" width="64" height="64" loading="lazy" style="border-radius:10px;object-fit:cover;flex:none"><b class="grow">${i + 1}. ${esc(cuePosName(p))}</b></div>` +
+    L0.cues.filter(c => c.position === i).map(c => { n++; const ph = !!c.audioPlaceholder, dis = ph ? " disabled" : "";
+      return `<div class="cue" data-n="${n}"><span class="cue-en" lang="en">${esc(c.en)}</span><br><span class="cue-ko sub" lang="ko">${esc(c.kr)}</span><div class="acts wrap"><button class="btn sec" data-act="cueplay" data-b="${b.id}" data-n="${n}" data-sp="normal" aria-label="${esc(t("cuePlayN", { n }))}"${dis}>${esc(t("cueNormal"))}</button><button class="btn ghost" data-act="cueplay" data-b="${b.id}" data-n="${n}" data-sp="slow" aria-label="${esc(t("cuePlayS", { n }))}"${dis}>${esc(t("cueSlow"))}</button></div><div class="sm sub cuest" role="status" aria-live="polite">${ph ? esc(t("cueSoon")) : ""}</div></div>`; }).join("") + `</li>`).join("") + `</ol>`;
+}
+const cueSection = b => b.status === "confirmed" && !bkStarted(b) && cueFor(b) ? `<section class="cuebook" aria-label="${esc(t("cueTitle"))}"><h3 style="margin:10px 0 0">${esc(t("cueTitle"))}</h3>${cueList(b)}</section>` : "";
+const cuePracticeCard = (b, id) => `<section class="card cuepractice" id="${id}" aria-label="${esc(t("cuePractice"))}"><b>${esc(t("cuePractice"))}</b><div class="sm sub">${esc(t("cuePracticeSub", { d: fDayAbs(b.d) }))}</div>${cueList(b)}</section>`;
+function cueHomeCard() { if (!cueOn()) return ""; const b = B.filter(x => cuePracticeOk(x, CUE_HOME_DAYS)).sort((x, y) => bkAbs(y) - bkAbs(x))[0]; return b ? cuePracticeCard(b, "cue-home") : ""; }
+const CUEP = { a: null, el: null };
+function cueStop() { if (CUEP.a) { CUEP.a.onerror = null; try { CUEP.a.pause(); } catch (e) {} } CUEP.a = null; }
+function cuePlay(btn) {
+  const b = cueBk(btn.dataset.b), r = cueFor(b); if (!r || btn.disabled) return;
+  const c = r.lesson.cues.filter(x => x.position >= 0).sort((x, y) => x.position - y.position)[+btn.dataset.n - 1]; if (!c || c.audioPlaceholder) return; /* never a fake sound */
+  cueStop(); const st = btn.closest(".cue").querySelector(".cuest"); st.textContent = ""; CUEP.el = btn;
+  const fail = () => { if (CUEP.el !== btn) return; cueStop(); const off = navigator.onLine === false;
+    st.innerHTML = esc(t(off ? "cueOffline" : "cueErr")) + (off ? ` <button class="link" data-act="cueretry">${esc(t("cueRetry"))}</button>` : ""); };
+  const slow = btn.dataset.sp === "slow", a = new Audio(slow ? c.audioSlowUrl || c.audioNormalUrl : c.audioNormalUrl); CUEP.a = a;
+  if (slow) a.playbackRate = window.CUE_BOOK_SLOW_RATE || .75;
+  a.onerror = fail; const pr = a.play(); if (pr && pr.catch) pr.catch(fail);
+}
+document.addEventListener("click", e => { const el = e.target.closest("[data-act=cueplay],[data-act=cueretry]"); if (!el) return;
+  if (el.dataset.act === "cueplay") return cuePlay(el); const q = el.closest(".cue").querySelector(`[data-act=cueplay][data-sp=${CUEP.el ? CUEP.el.dataset.sp : "normal"}]`); if (q) cuePlay(q); });
 const EVT = []; let TURN_SAFE = false;
 function track(name, props) { if (TURN_SAFE && name !== "safety_turn") return; EVT.push(Object.assign({ e: name, ts: Date.now() }, props || {})); }
 const gated = () => !!(CH.cici.gate && CH.cici.msgs.length);
@@ -3133,7 +3173,7 @@ function bkRowUp(b) {
   const st = b.req ? "" : b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} <span class="sub">${tzTag()}</span>${res ? " · " + esc(res) : ""}</div><div class="sm">${bkPrice(b)} · <span class="sub">${esc(fCancelB(b))}</span></div>
-  <div class="acts wrap">${bkActs(b)}${mapLinks(b.store, "up")}</div></div></div>`;
+  <div class="acts wrap">${bkActs(b)}${mapLinks(b.store, "up")}</div>${cueSection(b)}</div></div>`;
 }
 const fCancelB = b => { const P = bkPol(b); if (bkFree(b)) return t("freeCancel") + " " + fDeadline(b.store, b.d, b.m, P); return P.studio ? t("askStudio") : tr("Free cancel ended"); };
 function bkRowPast(b) {
@@ -3143,7 +3183,7 @@ function bkRowPast(b) {
   const rateB = canRate(b) ? `<button class="btn sec" data-act="rate" data-id="${b.id}" aria-label="${r ? t("rateEdit") : t("rate")}: ${esc(N(v.n))}, ${esc(s.name)}">${r ? t("rateEdit") + " · " + "★".repeat(r.stars) : t("rate")}</button>` : r && !r.hidden ? `<button class="btn ghost" data-act="rate" data-id="${b.id}">${"★".repeat(r.stars)} · ${t("rateDelete")}</button>` : "";
   const again = o.k === "attended" ? `<button class="btn ghost" data-act="pastagain" data-id="${b.id}" aria-label="${t("bookAgain")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("bookAgain")}</button>` : "";
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${tag}${ptsTxt}</div>
-  <div class="sm"><b>${esc(s.name)}</b> · ${fDayAbs(b.d)} ${fTime(b.m)} <span class="sub">${tzTag()}</span></div>${r && r.held ? `<div class="sm sub">${esc(t("rateHeld"))}</div>` : ""}<div class="acts wrap">${rateB}${again}${mapLinks(b.store, "past")}</div></div></div>`;
+  <div class="sm"><b>${esc(s.name)}</b> · ${fDayAbs(b.d)} ${fTime(b.m)} <span class="sub">${tzTag()}</span></div>${r && r.held ? `<div class="sm sub">${esc(t("rateHeld"))}</div>` : ""}<div class="acts wrap">${rateB}${again}${mapLinks(b.store, "past")}</div>${cuePracticeOk(b, CUE_KEEP_DAYS) ? cuePracticeCard(b, "cue-bk-" + b.id) : ""}</div></div>`;
 }
 const fDayAbs = d => d >= 0 ? fDay(d) : new Intl.DateTimeFormat(LOC[L], { weekday: "short", day: "numeric", month: "short" }).format(dDate(d));
 function vBookings() {
