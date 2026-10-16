@@ -463,6 +463,9 @@ body.v2home .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto}
 #cici-real.cat-hungry .cathbub{opacity:1;animation:hbfloat 3.2s ease-in-out infinite}
 @keyframes hbfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.catfab[data-state=hungry]{animation:none!important}#cici-real .cathbub{animation:none!important;transition:none}.sheet.glass.closing{transition:none}}
+.v2bg .catvid{transform-origin:50% 40%}
+.v2bg.blurdip .catvid{filter:blur(14px) brightness(1.08);transform:scale(1.04);transition:filter 100ms ease-in,transform 100ms ease-in,opacity 0s!important}
+.v2bg.blurout .catvid{filter:none;transform:none;transition:filter 160ms ease-out,transform 160ms ease-out,opacity 0s!important}
 </style>
 </head>
 <body>
@@ -818,7 +821,7 @@ function catMedia(alt) { /* dual-video stage for ~400ms crossfades; still under 
 let catIO = null, catFadeT = 0, catFront = "a";
 function catVids() { return [document.getElementById("cat-video-a"), document.getElementById("cat-video-b")].filter(Boolean); }
 function catFrontVid() { return document.getElementById("cat-video-" + catFront); }
-function catXfadeTo(clipName, { loop = true, oneShot = false } = {}) { /* smooth crossfade; no black flash */
+function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}) { /* smooth crossfade; no black flash */
   const fig = document.getElementById("cici-real"); if (!fig || !catMotionOk()) return;
   const back = catFront === "a" ? "b" : "a";
   let cur = document.getElementById("cat-video-" + catFront), nxt = document.getElementById("cat-video-" + back);
@@ -834,7 +837,7 @@ function catXfadeTo(clipName, { loop = true, oneShot = false } = {}) { /* smooth
   const AL = n => n === "petting" || /^room-/.test(n || ""), aligned = AL(cur.dataset.clip) && AL(clipName), MAXW = 1500;
   const go = (dip) => { catXfadeTo.pend = null;
     try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
-    requestAnimationFrame(() => { if (dip) { cur.style.transition = "opacity 140ms ease-in"; nxt.style.transition = "opacity 180ms ease-out 140ms"; }
+    requestAnimationFrame(() => { if (dip === true) { cur.style.transition = "opacity 140ms ease-in"; nxt.style.transition = "opacity 180ms ease-out 140ms"; }
       else if (dip === "loop") { nxt.style.transition = "opacity 160ms linear"; cur.style.transition = "opacity 160ms linear"; }
       else { nxt.style.transition = `opacity ${ms}ms ease`; cur.style.transition = `opacity ${ms}ms ease`; }
       nxt.style.opacity = "1"; cur.style.opacity = "0"; nxt.classList.add("on"); cur.classList.remove("on"); });
@@ -843,6 +846,21 @@ function catXfadeTo(clipName, { loop = true, oneShot = false } = {}) { /* smooth
       if (oneShot) nxt.addEventListener("ended", () => { catXfadeTo(catClipName(catMood()), { loop: true }); }, { once: true });
     }, ms + 40);
   };
+  if (tap) { /* user tap (Feed): react now with a soft blur dip — never an opacity blend of two sharp clips.
+     ~100ms blur 0→14px (+slight brightness) on the video layer, swap clips at peak blur (instant, one video visible), ~160ms blur back to 0 */
+    catXfadeTo.pend = null; const t0 = performance.now(); catXfadeTo.tapAt = t0; clearTimeout(catFadeT);
+    fig.classList.remove("blurout"); void fig.offsetWidth; fig.classList.add("blurdip");
+    const swap = () => { const wait = Math.max(0, 100 - (performance.now() - t0));
+      catFadeT = setTimeout(() => { try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
+        /* keep the blurred outgoing clip up until the incoming one has painted its first frame (no empty frame at the swap) */
+        let done = false; const flip = () => { if (done) return; done = true;
+        [cur, nxt].forEach(v => v.style.transition = "none"); nxt.style.opacity = "1"; nxt.classList.add("on"); /* incoming sits on top (z2); the covered outgoing clip is hidden two frames later so the swap never shows an empty frame */
+        requestAnimationFrame(() => requestAnimationFrame(() => { cur.style.opacity = "0"; cur.classList.remove("on"); cur.pause(); }));
+        catFront = back; requestAnimationFrame(() => { fig.classList.add("blurout"); fig.classList.remove("blurdip");
+          catFadeT = setTimeout(() => { fig.classList.remove("blurout"); nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; cur.style.transition = ""; nxt.style.transition = ""; }, 180); }); };
+        if (nxt.requestVideoFrameCallback) nxt.requestVideoFrameCallback(() => requestAnimationFrame(flip)); else nxt.addEventListener("seeked", flip, { once: true });
+        setTimeout(flip, 120); }, wait); };
+    if (nxt.readyState >= 2) swap(); else nxt.addEventListener("loadeddata", swap, { once: true }); return; }
   const start = () => { const d = cur.duration, t0 = cur.currentTime, left = (isFinite(d) && d > 0 && !cur.paused) ? (d - t0) * 1000 : 0;
     if (!aligned) return go(true);
     if (left > MAXW + 150) return go(true);
@@ -883,11 +901,11 @@ function catEatShow() { /* DB-T5 (no popup): crossfade the Home scene to the hap
   clearTimeout(catEatShow.t); clearTimeout(catReact.t); ST.catReact = null; ST.catEat = true;
   { const bw = document.getElementById("cat-room-bowl"); if (bw) bw.remove(); }
   const fig = document.getElementById("cici-real");
-  if (fig) { fig.dataset.mood = "eating"; fig.className = "v2bg cat-eating"; if (catMotionOk()) catXfadeTo("petting", { loop: true });
+  if (fig) { fig.dataset.mood = "eating"; fig.className = "v2bg cat-eating"; if (catMotionOk()) catXfadeTo("petting", { loop: true, tap: true });
     let sp = fig.querySelector(".catspark"); if (!sp) { sp = document.createElement("span"); sp.className = "catspark"; sp.setAttribute("aria-hidden", "true"); sp.textContent = "♥ 🐟"; fig.appendChild(sp); }
     requestAnimationFrame(() => sp.classList.add("on")); setTimeout(() => sp.classList.remove("on"), 1600); }
   /* sequence: fish lands -> Cici pets her (petting) -> playful (lively) -> happy mood loop; every step a ~400ms crossfade */
-  catEatShow.t = setTimeout(() => { ST.catEat = "play"; if (catMotionOk()) catXfadeTo(CAT_ROOM.happy ? "room-happy" : "lively", { loop: true }); catRefreshUi();
+  catEatShow.t = setTimeout(() => { ST.catEat = "play"; if (catMotionOk()) catXfadeTo(CAT_ROOM.happy ? "room-happy" : "lively", { loop: true, tap: !!CAT_ROOM.happy }); catRefreshUi();
     catEatShow.t = setTimeout(() => { ST.catEat = false; catSyncMood(); catRefreshUi(); }, 3000); }, 2600); }
 function catNudge() { /* empty state: never a dead button — nudge + open missions */
   toast(L3("Do a mission to earn a treat", "Làm một nhiệm vụ để nhận ăn vặt", "미션을 하면 간식이 생겨요")); if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) try { el.focus({ preventScroll: true }); } catch (e) {} }

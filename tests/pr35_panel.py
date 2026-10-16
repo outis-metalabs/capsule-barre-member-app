@@ -44,7 +44,7 @@ with sync_playwright() as p:
         # both on the shared petting first frame: each within 0.25s of its start or its end
         near = lambda v: v[2] < 0.25 or (v[3] and v[3] - v[2] < 0.25)
         AL = lambda n: n == 'petting' or (n or '').startswith('room-')
-        if not (AL(a[0]) and AL(bb[0]) and near(a) and near(bb)) and min(a[1], bb[1]) > 0.15: bad.append(s)
+        if not (AL(a[0]) and AL(bb[0]) and near(a) and near(bb)) and min(a[1], bb[1]) > 0.15 and min(a[1], bb[1]) < 0.99: bad.append(s)  # both opaque = the top one covers the other (swap frame), not a blend
     ok(f'[{t}] feed: no overlap of two different poses (loop-point switch / dip)', not bad, bad[:3])
     g.screenshot(path=f'{SH}/happy-after-feed-{t}.png')
     # stretch
