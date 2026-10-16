@@ -463,7 +463,9 @@ body.v2home .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto}
 #cici-real.cat-hungry .cathbub{opacity:1;animation:hbfloat 3.2s ease-in-out infinite}
 @keyframes hbfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.catfab[data-state=hungry]{animation:none!important}#cici-real .cathbub{animation:none!important;transition:none}.sheet.glass.closing{transition:none}}
-.v2bg img.catpost{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none}
+.v2bg .catvid{transform-origin:50% 40%}
+.v2bg.blurdip .catvid{filter:blur(14px) brightness(1.08);transform:scale(1.04);transition:filter 100ms ease-in,transform 100ms ease-in,opacity 0s!important}
+.v2bg.blurout .catvid{filter:none;transform:none;transition:filter 160ms ease-out,transform 160ms ease-out,opacity 0s!important}
 </style>
 </head>
 <body>
@@ -844,16 +846,21 @@ function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}
       if (oneShot) nxt.addEventListener("ended", () => { catXfadeTo(catClipName(catMood()), { loop: true }); }, { once: true });
     }, ms + 40);
   };
-  if (tap) { /* user tap (Feed): react now. Fade the cat area ~120ms to the shared first-frame poster, then start the clip at 0 and fade in ~160ms */
-    catXfadeTo.pend = null; let po = fig.querySelector("img.catpost"); if (!po) { po = document.createElement("img"); po.className = "catpost"; po.alt = ""; po.setAttribute("aria-hidden", "true"); fig.insertBefore(po, fig.firstChild); }
-    po.src = CICI_CAT.poster; po.style.objectPosition = cur.style.objectPosition || getComputedStyle(cur).objectPosition; po.hidden = false;
-    cur.style.transition = "opacity 120ms ease-in"; cur.style.opacity = "0"; const t0 = performance.now(); catXfadeTo.tapAt = t0;
-    const fin = () => { try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
-      const wait = Math.max(0, 120 - (performance.now() - t0));
-      clearTimeout(catFadeT); catFadeT = setTimeout(() => { cur.classList.remove("on"); cur.pause(); nxt.style.transition = "opacity 160ms ease-out"; nxt.classList.add("on");
-        requestAnimationFrame(() => { nxt.style.opacity = "1"; });
-        catFadeT = setTimeout(() => { nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; po.hidden = true; catFront = back; }, 200); }, wait); };
-    if (nxt.readyState >= 2) fin(); else nxt.addEventListener("loadeddata", fin, { once: true }); return; }
+  if (tap) { /* user tap (Feed): react now with a soft blur dip — never an opacity blend of two sharp clips.
+     ~100ms blur 0→14px (+slight brightness) on the video layer, swap clips at peak blur (instant, one video visible), ~160ms blur back to 0 */
+    catXfadeTo.pend = null; const t0 = performance.now(); catXfadeTo.tapAt = t0; clearTimeout(catFadeT);
+    fig.classList.remove("blurout"); void fig.offsetWidth; fig.classList.add("blurdip");
+    const swap = () => { const wait = Math.max(0, 100 - (performance.now() - t0));
+      catFadeT = setTimeout(() => { try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
+        /* keep the blurred outgoing clip up until the incoming one has painted its first frame (no empty frame at the swap) */
+        let done = false; const flip = () => { if (done) return; done = true;
+        [cur, nxt].forEach(v => v.style.transition = "none"); nxt.style.opacity = "1"; nxt.classList.add("on"); /* incoming sits on top (z2); the covered outgoing clip is hidden two frames later so the swap never shows an empty frame */
+        requestAnimationFrame(() => requestAnimationFrame(() => { cur.style.opacity = "0"; cur.classList.remove("on"); cur.pause(); }));
+        catFront = back; requestAnimationFrame(() => { fig.classList.add("blurout"); fig.classList.remove("blurdip");
+          catFadeT = setTimeout(() => { fig.classList.remove("blurout"); nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; cur.style.transition = ""; nxt.style.transition = ""; }, 180); }); };
+        if (nxt.requestVideoFrameCallback) nxt.requestVideoFrameCallback(() => requestAnimationFrame(flip)); else nxt.addEventListener("seeked", flip, { once: true });
+        setTimeout(flip, 120); }, wait); };
+    if (nxt.readyState >= 2) swap(); else nxt.addEventListener("loadeddata", swap, { once: true }); return; }
   const start = () => { const d = cur.duration, t0 = cur.currentTime, left = (isFinite(d) && d > 0 && !cur.paused) ? (d - t0) * 1000 : 0;
     if (!aligned) return go(true);
     if (left > MAXW + 150) return go(true);
