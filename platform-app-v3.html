@@ -2261,10 +2261,22 @@ function bookSheet(sid, o = {}) {
   if (s.svcs.length === 1) return openBook(sid, s.svcs[0].id);
   svcStep(sid);
 }
-function placeStep() {
+function placeStep() { /* design review 2026-10-16: the centre Book button opens a smart sheet — Book again (one tap to the review) → My places with the next open slot and pass balance → More places near you (join & book in one go). A member with no places sees the nearby list instead of a dead end. */
   if (gated()) { toast(jbT("crisis")); return; }
   const ids = joinedIds();
-  openSheet(sheetHd(bkT("placeT")) + `<div class="opt">${esc(bkT("place"))}</div><div class="stack" id="bk-places">${ids.map(sid => `<button class="svc" data-act="bk" data-s="${sid}">${logo(sid)}<span class="grow"><b>${esc(S[sid].name)}</b><br><span class="sub sm">${esc(N(S[sid].area))}</span></span></button>`).join("") || `<p class="sub sm">${esc(bkT("noPlace"))}</p><button class="btn full" data-act="go" data-v="tab:discover">${esc(bkT("discover"))}</button>`}</div>`, bkT("placeT"));
+  const again = AGAIN.map(([sid, vid, o, l], i) => ({ i, sid, vid, l, z: S[sid].joined ? againSlots(i, 1)[0] : null })).filter(a => a.z).slice(0, 3);
+  const row = (sid, sub, act, extra, tag) => `<button class="svc" data-act="${act}"${extra}>${logo(sid)}<span class="grow"><b>${esc(S[sid].name)}</b><br><span class="sub sm">${sub}</span></span>${tag ? `<span class="tag ok">${esc(tag)}</span>` : ""}${ic("chev")}</button>`;
+  let h = "";
+  if (again.length) h += `<div class="opt">${esc(t("bookAgain"))}</div><div class="stack" id="bk-again">${again.map(a => { const pass = S[a.sid].kind !== "rental" && passFor(a.sid, a.vid);
+    return `<button class="svc" data-act="againgo" data-i="${a.i}">${logo(a.sid)}<span class="grow"><b>${esc(N(a.l))}</b><br><span class="sub sm">${esc(S[a.sid].name)} · ${fWhen(a.z.d, a.z.m)}${pass ? " · " + esc(L3(`${pass.left} left on your pass`, `còn ${pass.left} buổi trong gói`, `이용권 ${pass.left}회 남음`)) : ""}</span></span>${ic("chev")}</button>`; }).join("")}</div>`;
+  h += `<div class="opt">${esc(ids.length ? t("myPlaces") : L3("Places near you", "Nơi gần bạn", "내 주변 매장"))}</div><div class="stack" id="bk-places">`;
+  if (ids.length) h += ids.map(sid => { const nf = nextFree(sid, null), pass = (WALLET[sid] || []).find(p => p.left > 0 && !p.credit);
+    return row(sid, (nf ? esc(L3(`Next open · ${fWhen(nf.d, nf.m)}`, `Trống gần nhất · ${fWhen(nf.d, nf.m)}`, `가장 빠른 시간 · ${fWhen(nf.d, nf.m)}`)) : esc(N(S[sid].area))) + (pass ? ` · ${esc(L3(`${pass.left} left`, `còn ${pass.left}`, `${pass.left}회 남음`))}` : ""), "bk", ` data-s="${sid}"`); }).join("");
+  else h += `<p class="sub sm" id="bk-noplace">${esc(L3("You haven't joined a place yet — pick one below and book your first visit in one go.", "Bạn chưa tham gia nơi nào — chọn một nơi bên dưới và đặt buổi đầu tiên luôn.", "아직 가입한 매장이 없어요 — 아래에서 골라 첫 방문까지 한 번에 예약해요."))}</p>`;
+  h += `</div>`;
+  const more = Object.keys(S).filter(sid => !S[sid].joined && DISC[sid]).sort((a, b) => DISC[a].km - DISC[b].km).slice(0, ids.length ? 2 : 4);
+  if (more.length) h += `<div class="opt">${esc(L3("More places near you", "Thêm nơi gần bạn", "주변의 다른 매장"))}</div><div class="stack" id="bk-more-places">${more.map(sid => row(sid, `${esc(N(S[sid].area))} · ${DISC[sid].km} km`, "jbook", ` data-v="${sid}"`, L3("Join & book", "Tham gia & đặt", "가입하고 예약"))).join("")}<button class="btn ghost full" data-act="go" data-v="tab:discover">${esc(bkT("discover"))}</button></div>`;
+  openSheet(sheetHd(bkT("placeT")) + h, bkT("placeT"));
 }
 function svcStep(sid) {
   if (gated()) { toast(jbT("crisis")); return; }
@@ -3638,6 +3650,7 @@ document.addEventListener("click", e => {
     case "nfriend": NSET.friendOptIn = el.checked; NSET.types.friend = el.checked; saveN(); render(); { const f = $(`[data-act="nfriend"]`); if (f) f.focus(); } break;
     case "cheer": toast(L3("Cheer sent to Mai!", "Đã gửi cổ vũ cho Mai!", "마이에게 응원을 보냈어요!")); break;
     case "again": { const [sid, vid, o] = AGAIN[+d.i]; openBook(sid, vid, Object.assign({}, o)); break; }
+    case "againgo": { const [sid, vid, o] = AGAIN[+d.i], z = againSlots(+d.i, 1)[0]; if (!z) { openBook(sid, vid, Object.assign({}, o)); break; } track("booking_review_open", { via: "again" }); openConfirm(completeDraft(Object.assign({}, z))); break; }
     case "svc": if (S[d.s] && !S[d.s].joined) { joinBookSheet(d.s, nextFree(d.s, d.v), d.v); break; } openBook(d.s, d.v); break;
     case "classpick": { const z = slotsFor(d.s, d.v, +d.d).find(q => q.m === +d.m); if (!z) { toast(jbT("gone")); break; } const x = Object.assign({}, z, { store: d.s, svc: d.v }); if (S[d.s] && !S[d.s].joined) joinBookSheet(d.s, x, d.v); else openConfirm(x); break; }
     case "jbook": joinBookSheet(d.v, nextFree(d.v), null); break;
