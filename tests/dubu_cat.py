@@ -51,7 +51,7 @@ with sync_playwright() as p:
   ok('DB-T5 feeding uses 1 treat, clears hunger and plays the happy moment', J(g, "catDay().treats===0 && !catHungry() && document.querySelector('#cici-real').dataset.mood==='eating'"))
   g.wait_for_timeout(500)
   ok('DB-T5 happy moment plays in the scene (Cici petting clip crossfade), no popup', J(g, "!document.querySelector('#cat-eat,#cat-clip,.cateat') && ((document.querySelector('.catvid.on')||{}).dataset||{}).clip==='petting'"), J(g, "[(document.querySelector('.catvid.on')||{}).dataset]"))
-  g.wait_for_timeout(2400); ok('DB-T5 then playful (lively) clip', J(g, "(document.querySelector('.catvid.on')||{}).dataset.clip==='lively' && ST.catEat==='play'"))
+  g.wait_for_timeout(2400); ok('DB-T5 then playful (lively) clip', J(g, "(document.querySelector('.catvid.on')||{}).dataset.clip===(CAT_ROOM.happy?'room-happy':'lively') && ST.catEat==='play'"))
   g.wait_for_timeout(3200); ok('DB-T5 crossfades back to the mood loop', J(g, "!!document.querySelector('.catvid.on') && document.querySelector('.catvid.on').dataset.clip===catClipName(catMood()) && catMood()!=='eating'"))
   ok('DB-T5 happy moment is short (back to normal mood)', J(g, "document.querySelector('#cici-real').dataset.mood!=='eating'"))
   # DB-T6

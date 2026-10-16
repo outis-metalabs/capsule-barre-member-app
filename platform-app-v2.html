@@ -444,6 +444,25 @@ body.v2home:has(.sheet) .toast{top:calc(64px + env(safe-area-inset-top,0px));bot
 .v2bg{touch-action:manipulation;cursor:pointer}
 .catramp .btn,.catramp .btn.sec{min-height:44px;flex:1 1 auto}
 .catfeed.catmis{background:#FFF3F5}
+
+/* PR35 panel r1 (2026-10-16) */
+.sheet-bg.glass{background:transparent;animation:none}
+.sheet.glass{background:rgba(255,248,246,.74);-webkit-backdrop-filter:blur(18px) saturate(1.1);backdrop-filter:blur(18px) saturate(1.1);border:1px solid rgba(255,255,255,.7);box-shadow:0 -10px 30px rgba(60,30,40,.16);padding-top:0;touch-action:pan-x}
+.sheet.glass .gldrag{display:flex;align-items:center;justify-content:center;width:100%;height:44px;min-height:44px;border:0;background:transparent;cursor:grab;touch-action:none;padding:0;margin:0 0 2px}
+.sheet.glass .gldrag::before{content:"";width:44px;height:5px;border-radius:3px;background:rgba(94,81,84,.45)}
+.sheet.glass .glhd{margin:0 0 8px;font-size:18px}.sheet.glass .v2handle{display:none}
+.sheet.glass.dragging{transition:none}.sheet.glass.closing{transition:transform .2s ease;transform:translateY(100%)}
+.catfab[data-state=hungry]{animation:fabpulse 4s ease-in-out infinite}
+@keyframes fabpulse{0%,82%,100%{transform:none}88%{transform:scale(1.07)}94%{transform:scale(.98)}}
+.stchip{left:auto;right:10px;bottom:auto;top:37%;width:88px;flex-direction:column;align-items:stretch;gap:4px;padding:8px;border-radius:20px;text-align:center}
+.stchip .sttx b,.stchip .sttx .sm{display:none}.stchip #stl{font-size:20px}
+.stchip .btn{padding:0 6px;font-size:14px}.stchip .stx{min-width:0;font-size:13px}
+body.v2home:has(#stretch-chip) #hb-bubble{opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
+body.v2home .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto}
+#cici-real .cathbub svg{transform:scaleX(-1)}#cici-real .cathbub{position:absolute;left:30%;top:53%;z-index:3;width:58px;height:50px;pointer-events:none;opacity:0;transition:opacity .4s ease}
+#cici-real.cat-hungry .cathbub{opacity:1;animation:hbfloat 3.2s ease-in-out infinite}
+@keyframes hbfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.catfab[data-state=hungry]{animation:none!important}#cici-real .cathbub{animation:none!important;transition:none}.sheet.glass.closing{transition:none}}
 </style>
 </head>
 <body>
@@ -712,7 +731,7 @@ function v2Card() { /* ONE glass card: name greeting, one bold line with a berry
 const CICI_HOME = { src: "assets/cici-real/cici-cat-poster.jpg", w: 720, h: 1280, face: [235, 352, 485, 723], pos: [0.5, 0.35] }; /* official tall image (3D Designer); head box in image px; object-position */
 function v2Hero() {
   const pull = L3("Today's sheet", "Bảng hôm nay", "오늘의 시트");
-  return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg cat-${catMood()}" id="cici-real" data-mood="${catMood()}">${catMedia(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}</figure>${v2Acts()}</section>`;
+  return `<section class="v2hero" id="v2-hero" aria-label="${esc(ciciNm())}">${v2Card()}<figure class="v2bg cat-${catMood()}" id="cici-real" data-mood="${catMood()}"><span class="cathbub" aria-hidden="true"><svg viewBox="0 0 58 50" width="58" height="50"><circle cx="8" cy="44" r="3.5" fill="#fff" opacity=".92"/><circle cx="15" cy="36" r="5" fill="#fff" opacity=".92"/><rect x="14" y="2" width="42" height="34" rx="17" fill="#fff" opacity=".94"/><ellipse cx="35" cy="15" rx="12" ry="3" fill="#FBE9ED" stroke="#B04A5E" stroke-width="1.4"/><path d="M23 15c0 7 5.4 12 12 12s12-5 12-12" fill="#F6B8C4" stroke="#B04A5E" stroke-width="1.4"/></svg></span>${catMedia(L3("Cici waving hello in a bright Seoul studio", "Cici vẫy tay chào trong studio sáng ở Seoul", "밝은 서울 스튜디오에서 손 흔드는 " + CICI_KO))}</figure>${v2Acts()}</section>`;
 }
 /* ===== Cici's cat Mochi (모찌), phase2 v2 only (P2-C). Formerly Dubu; asset paths still use dubu-* filenames. No points: treats never touch the ledger, points or mission caps. ===== */
 /* VIDEO SLOT: drop official 3D Designer loops in assets/cici-real/ as cici-cat-<mood>.webm/.mp4 (+ cici-cat-poster.webp) and list the moods here.
@@ -721,7 +740,7 @@ const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real
   clips: { calm: "petting", lively: "lively", napping: "napping", hungry: "petting", react: "react", eating: "petting" },
   eat: "assets/cici-real/dubu-eating", fadeMs: 400 };
   /* Official loops (tall): petting default; lively / napping / hungry / react wired. No overlays: feed crossfades the scene to react ~3 s; missions confirm inline. Crossfade CICI_CAT.fadeMs (300–500). */
-const CAT_CLIPS = { stretch: "assets/cici-real/mochi-stretch", water: "assets/cici-real/mochi-water",
+const CAT_CLIPS = { stretch: "assets/cici-real/cici-room-stretch_tall", water: "assets/cici-real/mochi-water",
   "room-hungry": "assets/cici-real/cici-room-hungry_tall", "room-water": "assets/cici-real/cici-room-water_tall", "room-stretch": "assets/cici-real/cici-room-stretch_tall", "room-happy": "assets/cici-real/cici-room-happy_tall" };
 /* ROOM SLOT (3D Designer): tall Cici+Mochi room clips drop in as cici-room-<k>_tall.webm/.mp4 (+ -poster.jpg). Used only when the file exists; else hungry/happy keep the room loop and missions use the small PiP bubble. */
 const CAT_ROOM = { hungry: false, water: false, stretch: false, happy: false };
@@ -804,20 +823,33 @@ function catXfadeTo(clipName, { loop = true, oneShot = false } = {}) { /* smooth
   const back = catFront === "a" ? "b" : "a";
   let cur = document.getElementById("cat-video-" + catFront), nxt = document.getElementById("cat-video-" + back);
   if (!cur || !nxt) return;
-  if ((cur.dataset.clip || "") === clipName && cur.classList.contains("on") && !oneShot) { cur.loop = loop; return; }
+  if ((cur.dataset.clip || "") === clipName && cur.classList.contains("on") && !oneShot) { cur.loop = loop; clearTimeout(catXfadeTo.wait); cancelAnimationFrame(catXfadeTo.wait); catXfadeTo.pend = null; return; }
   const src = catClipSrc(clipName), ms = Math.max(300, Math.min(500, CICI_CAT.fadeMs || 400));
   const apply = v => { const w = v.querySelector('source[type="video/webm"]'), m = v.querySelector('source[type="video/mp4"]');
     if (w) w.src = src.webm; if (m) m.src = src.mp4; v.dataset.clip = clipName; v.muted = true; v.loop = loop; v.load(); };
+  clearTimeout(catXfadeTo.wait); cancelAnimationFrame(catXfadeTo.wait); if (catXfadeTo.pend === clipName) return; catXfadeTo.pend = clipName;
   apply(nxt); nxt.classList.add("swap"); nxt.style.opacity = "0";
-  const start = () => {
-    const p = nxt.play(); if (p && p.catch) p.catch(() => {});
-    requestAnimationFrame(() => { nxt.style.transition = `opacity ${ms}ms ease`; cur.style.transition = `opacity ${ms}ms ease`;
+  /* no double face: room clips share the petting first frame, so switch at the outgoing loop point (≤150ms to its end / wrap);
+     if that is too far off (or the clips don't share a frame) dip quickly through the room instead of overlapping two poses */
+  const AL = n => n === "petting" || /^room-/.test(n || ""), aligned = AL(cur.dataset.clip) && AL(clipName), MAXW = 1500;
+  const go = (dip) => { catXfadeTo.pend = null;
+    try { nxt.currentTime = 0; } catch (e) {} const p = nxt.play(); if (p && p.catch) p.catch(() => {});
+    requestAnimationFrame(() => { if (dip) { cur.style.transition = "opacity 140ms ease-in"; nxt.style.transition = "opacity 180ms ease-out 140ms"; }
+      else if (dip === "loop") { nxt.style.transition = "opacity 160ms linear"; cur.style.transition = "opacity 160ms linear"; }
+      else { nxt.style.transition = `opacity ${ms}ms ease`; cur.style.transition = `opacity ${ms}ms ease`; }
       nxt.style.opacity = "1"; cur.style.opacity = "0"; nxt.classList.add("on"); cur.classList.remove("on"); });
     clearTimeout(catFadeT); catFadeT = setTimeout(() => {
       cur.pause(); nxt.classList.remove("swap"); cur.style.opacity = ""; nxt.style.opacity = ""; catFront = back;
       if (oneShot) nxt.addEventListener("ended", () => { catXfadeTo(catClipName(catMood()), { loop: true }); }, { once: true });
     }, ms + 40);
   };
+  const start = () => { const d = cur.duration, t0 = cur.currentTime, left = (isFinite(d) && d > 0 && !cur.paused) ? (d - t0) * 1000 : 0;
+    if (!aligned) return go(true);
+    if (left > MAXW + 150) return go(true);
+    /* watch the outgoing clip frame by frame; switch at ≤90ms to its end or the moment it wraps, then a short fade so both sit on the shared frame */
+    let prev = cur.currentTime; const tick = () => { if (catXfadeTo.pend !== clipName) return; const tt = cur.currentTime;
+      if (cur.paused || tt < prev - 0.5 || d - tt <= 0.09) { cur.loop = false; return go("loop"); } prev = tt; catXfadeTo.wait = requestAnimationFrame(tick); };
+    tick(); };
   if (nxt.readyState >= 2) start(); else nxt.addEventListener("loadeddata", start, { once: true });
 }
 function catSyncMood() { const fig = document.getElementById("cici-real"); if (!fig || ST.catMis) return;
@@ -855,7 +887,7 @@ function catEatShow() { /* DB-T5 (no popup): crossfade the Home scene to the hap
     let sp = fig.querySelector(".catspark"); if (!sp) { sp = document.createElement("span"); sp.className = "catspark"; sp.setAttribute("aria-hidden", "true"); sp.textContent = "♥ 🐟"; fig.appendChild(sp); }
     requestAnimationFrame(() => sp.classList.add("on")); setTimeout(() => sp.classList.remove("on"), 1600); }
   /* sequence: fish lands -> Cici pets her (petting) -> playful (lively) -> happy mood loop; every step a ~400ms crossfade */
-  catEatShow.t = setTimeout(() => { ST.catEat = "play"; if (catMotionOk()) catXfadeTo("lively", { loop: true }); catRefreshUi();
+  catEatShow.t = setTimeout(() => { ST.catEat = "play"; if (catMotionOk()) catXfadeTo(CAT_ROOM.happy ? "room-happy" : "lively", { loop: true }); catRefreshUi();
     catEatShow.t = setTimeout(() => { ST.catEat = false; catSyncMood(); catRefreshUi(); }, 3000); }, 2600); }
 function catNudge() { /* empty state: never a dead button — nudge + open missions */
   toast(L3("Do a mission to earn a treat", "Làm một nhiệm vụ để nhận ăn vặt", "미션을 하면 간식이 생겨요")); if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) try { el.focus({ preventScroll: true }); } catch (e) {} }
@@ -2595,9 +2627,14 @@ function homeSheetHtml() { /* missions, next class, growth, room, Mochi — open
     `<h2>${t("missions")}</h2>${dmCard()}<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="bk" id="bk-start">${t("chipBook")}</button>`}</div>` +
     `<h2>${esc(L3("Level", "Cấp độ", "레벨"))}</h2>` + homeLevelBar() + p2Room() + catCard() + catItemsCard() + catDemo();
 }
-function openHomeSheet() {
-  openSheet(sheetHd(L3("Today", "Hôm nay", "오늘")) + `<div id="home-sheet" class="v2sheet">${homeSheetHtml()}</div>`, L3("Today", "Hôm nay", "오늘"));
-  const sh = $(".sheet"); if (sh) sh.classList.add("v2sheet");
+function sheetSwipe(sh) { /* glass panel: drag down from the handle (or anywhere when scrolled to top) to close */
+  let y0 = null, dy = 0; const done = () => { sh.classList.remove("dragging"); if (dy > 80) { sh.classList.add("closing"); setTimeout(closeSheet, catMotionOk() ? 200 : 0); } else sh.style.transform = ""; y0 = null; dy = 0; };
+  sh.addEventListener("pointerdown", e => { if (!e.target.closest(".gldrag") && sh.scrollTop > 0) return; if (e.target.closest("button:not(.gldrag),a,input")) return; y0 = e.clientY; dy = 0; });
+  sh.addEventListener("pointermove", e => { if (y0 == null) return; dy = Math.max(0, e.clientY - y0); if (dy > 4) { sh.classList.add("dragging"); sh.style.transform = `translateY(${dy}px)`; } });
+  sh.addEventListener("pointerup", done); sh.addEventListener("pointercancel", done); }
+function openHomeSheet() { const tl = L3("Today", "Hôm nay", "오늘"), gl = V2HOME();
+  openSheet((gl ? `<button type="button" class="gldrag" data-act="close" aria-label="${esc(L3("Close (swipe down)", "Đóng (vuốt xuống)", "닫기 (아래로 밀기)"))}"></button><h2 class="glhd">${esc(tl)}</h2>` : sheetHd(tl)) + `<div id="home-sheet" class="v2sheet">${homeSheetHtml()}</div>`, tl);
+  const sh = $(".sheet"); if (sh) { sh.classList.add("v2sheet"); if (gl) { sh.classList.add("glass"); sh.parentElement.classList.add("glass"); sheetSwipe(sh); } }
   const m = $("#home-dm"); if (m) try { m.focus({ preventScroll: true }); } catch (e) {}
 }
 function vHome() {

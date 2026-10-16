@@ -54,7 +54,7 @@ with sync_playwright() as p:
 
   # Mission slots not inventing new stretch/water files in CICI map
   # Mission clips
-  for kind, lim in [('mochi-stretch', 1e6), ('mochi-water', 1e6)]:
+  for kind, lim in [('cici-room-stretch_tall', 1e6), ('mochi-water', 1e6)]:
     for ext in ('mp4', 'webm'):
       f = ROOT+f'/assets/cici-real/{kind}.{ext}'
       ok(f'asset {kind}.{ext} ≤1MB muted', os.path.exists(f) and os.path.getsize(f) <= lim, f)

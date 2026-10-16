@@ -21,7 +21,7 @@ Crossfade between Home loops: ~400 ms dual-video opacity fade (`CICI_CAT.fadeMs`
 ## Mission clips (square overlays, ≤1 MB)
 | Clip | Source | When |
 |---|---|---|
-| **mochi-stretch** | `mochi-stretch_square` (also wide available) | Stretch mission **starts** |
+| **cici-room-stretch_tall** | 3D Designer native-tall room loop (old cropped `mochi-stretch` removed 2026-10-16) | Stretch mission (in the room) |
 | **mochi-water** | `mochi-water_square` (also wide available) | Drink-water mission **starts** |
 
 One-shot overlay, then back to the Home loop. Still under reduced motion / Save-Data. Suppressed in crisis.
