@@ -774,7 +774,7 @@ const CAT_CLIPS = { stretch: "assets/cici-real/cici-room-stretch_tall", water: "
 const CAT_SQ = { eating: 1, water: 1 }; /* square close-ups: shown letterboxed (contain) over the room gradient, never cover-cropped */
 const CAT_ROOM = { water: true, stretch: true, happy: true, eat: true }; /* tall Cici+Mochi room clips in the repo today; eat = Mochi eats her fish from Cici's hand (PR #37), plays once in the feed sequence */
 /* v3 SLOT FLAGS: flip to true in the same commit that adds the file (like HANA_RIV) — no HEAD probes, so the console stays free of 404s. ?catprobe=1 probes instead, for a quick local check. */
-const CAT_OPT = { "room-play": true, "room-waterbowl": false, "napping-bed": false, "hungry-room": false };
+const CAT_OPT = { "room-play": true, "room-waterbowl": true, "napping-bed": true, "hungry-room": true };
 const CAT_LOOK_READY = { cat: true, fluffy: false };
 /* clips that exist for each look; anything else is aliased to a clip of the SAME look (catLookAlias) so Mochi never changes age mid-session */
 const CAT_LOOK_HAS = { cat: ["petting", "lively", "napping", "react", "hungry", "room-happy", "room-eat", "room-stretch", "stretch"] };
@@ -830,7 +830,7 @@ function catRow() { /* the card's ONE secondary row; returns [text, feedButton] 
   if (ST.catEat === "feed") return [L3(`${d} is eating her fish from Cici's hand`, `${d} đang ăn cá từ tay Cici`, `${d}가 Cici 손에서 생선을 먹어요`), ""];
   if (ST.catEat === "pet") return [L3(`Cici is petting ${d}. Purr…`, `Cici đang vuốt ve ${d}. Rừ rừ…`, `Cici가 ${d}를 쓰다듬어요. 골골…`), ""];
   if (ST.catEat) return [catPlayOn() ? L3(`${d} is playing!`, `${d} đang nô đùa!`, `${d}가 신나게 놀아요!`) : L3(`${d} is purring, happy and full`, `${d} rừ rừ, vui và no`, `${d}가 배부르게 골골송`), ""];
-  if (ST.catMis) return [ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? L3(`Cici sips, ${d} laps from her bowl`, `Cici nhấp nước, ${d} liếm nước trong bát`, `Cici는 물 한 모금, ${d}는 그릇에서 할짝`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
+  if (ST.catMis) return [ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? L3(`Cici holds her water, ${d} laps from her bowl`, `Cici cầm cốc nước, ${d} liếm nước trong bát`, `Cici는 물컵을 들고, ${d}는 그릇에서 할짝`) : L3(`${d} is lapping from her bowl`, `${d} đang liếm nước trong bát`, `${d}가 그릇에서 물을 할짝여요`)) : (CAT_ROOM.stretch ? L3(`Cici stretches up, ${d} stretches on her lap`, `Cici vươn tay, ${d} vươn vai trên đùi cô ấy`, `Cici가 팔을 쭉, ${d}도 무릎 위에서 기지개`) : L3(`${d} is stretching with you`, `${d} đang giãn cơ cùng bạn`, `${d}도 같이 스트레칭해요`)), ""];
   if (cr) return [L3(`${d} is curled up beside you`, `${d} đang cuộn tròn bên bạn`, `${d}가 곁에 웅크리고 있어요`), ""];
   if (ST.catGrew) return [L3(`${d} grew into a ${catLookNm().toLowerCase()}! ✨`, `${d} đã lớn thành ${catLookNm().toLowerCase()}! ✨`, `${d}가 ${catLookNm()}로 자랐어요! ✨`), ""];
   if (catHungry()) return [c.treats > 0 ? L3(`${d} is waiting by her bowl — tap Feed`, `${d} đang đợi bên bát — chạm Cho ăn`, `${d}가 밥그릇 옆에서 기다려요 — 간식 주기`) : L3(`${d} is waiting by her bowl`, `${d} đang đợi bên bát`, `${d}가 밥그릇 옆에서 기다려요`), ""];
@@ -908,7 +908,7 @@ function catVidEl(id, name, on, alt, pos) {
 }
 function catMedia(alt) { /* dual-video stage for ~400ms crossfades; still under reduced motion / Save-Data */
   const mo = catMood(), name = catClipName(mo), pos = `object-position:${CICI_HOME.pos[0] * 100}% ${CICI_HOME.pos[1] * 100}%`;
-  if (!catMotionOk()) { const a = CAT_ANCH[name], s = catClipSrc(name); return `<img class="catstill${CAT_SQ[name] ? " sq" : ""}" src="${a && a.close ? s.poster : CICI_HOME.src}" width="${CICI_HOME.w}" height="${CICI_HOME.h}" style="${pos}" alt="${esc(alt)}" data-clip="${name}">`; }
+  if (!catMotionOk()) { const a = CAT_ANCH[name], s = catClipSrc(name); return `<img class="catstill${CAT_SQ[name] ? " sq" : ""}" src="${a && (a.close || name === "hungry-room" || name === "room-waterbowl") ? s.poster : CICI_HOME.src}" /* bowl scenes keep their own still so the state still reads */ width="${CICI_HOME.w}" height="${CICI_HOME.h}" style="${pos}" alt="${esc(alt)}" data-clip="${name}">`; }
   return catVidEl("cat-video-a", name, true, alt, pos) + catVidEl("cat-video-b", name, false, alt, pos);
 }
 let catIO = null, catFadeT = 0, catFront = "a";
@@ -1044,10 +1044,10 @@ function catFeed() { if (catCrisis()) return; const c = catDay(); if (c.treats <
 /* ===== Mochi growth (MC-G): same Seed→Shine track and lifetime points as Cici; never goes down (gMax). ===== */
 const catStage = () => { const g = typeof gState === "function" ? gState() : { stage: 0 }; return g.stage; }; /* shares Cici track (OQ-M1 default) */
 const catStageNm = () => L3(...G_STAGES[catStage()]);
-/* Earned-only cat items (MC-I). OQ-M2 default (PO 2026-10-15): collar at Blossom (stage index 3), bed at Shine (stage index 4). No price, ever. */
+/* Earned-only cat items (MC-I). OQ-M2 default (PO 2026-10-15): collar at Bud (stage index 2, when Mochi grows into the young cat; the -cat clips have it baked in), bed at Blossom (stage index 3). User 2026-10-16. Shine: no item yet (fluffy look is its reward). No price, ever. */
 const CAT_ITEMS = [
-  { id: "m_collar", need: ["stage", 3], n: ["Soft collar", "Vòng cổ mềm", "부드러운 목걸이"], svg: '<circle cx="12" cy="12" r="7" fill="none" stroke="#B04A5E" stroke-width="2.5"/><circle cx="12" cy="19" r="2" fill="#E9B44C"/>' },
-  { id: "m_bed", need: ["stage", 4], n: ["Cosy bed", "Giường ấm", "포근한 침대"], svg: '<ellipse cx="12" cy="16" rx="9" ry="4" fill="#F6B8C4"/><path d="M4 16c0-6 4-10 8-10s8 4 8 10" fill="#FBE9ED" stroke="#B04A5E"/>' }
+  { id: "m_collar", need: ["stage", 2], n: ["Soft collar", "Vòng cổ mềm", "부드러운 목걸이"], svg: '<circle cx="12" cy="12" r="7" fill="none" stroke="#B04A5E" stroke-width="2.5"/><circle cx="12" cy="19" r="2" fill="#E9B44C"/>' },
+  { id: "m_bed", need: ["stage", 3], n: ["Cosy bed", "Giường ấm", "포근한 침대"], svg: '<ellipse cx="12" cy="16" rx="9" ry="4" fill="#F6B8C4"/><path d="M4 16c0-6 4-10 8-10s8 4 8 10" fill="#FBE9ED" stroke="#B04A5E"/>' }
 ];
 function catItemOwned(id) { return !!(P2S.cat && P2S.cat.owned && P2S.cat.owned.includes(id)); }
 function catItemOn(id) { return !!(P2S.cat && P2S.cat.worn && P2S.cat.worn[id]); }
@@ -1067,15 +1067,18 @@ function catItemsCard() { /* sheet only: growth track (kitten → cat → fluffy
     return `<div class="row catitem" data-id="${it.id}" data-locked="0"><span class="caticon" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40">${it.svg}</svg></span><span class="grow sm"><b>${esc(L3(...it.n))}</b><br><span class="sub">${esc(on ? L3("In the room", "Đang ở trong phòng", "방에 있어요") : L3("Put away", "Đã cất", "보관 중"))}</span></span><button class="btn sec" data-act="catequip" data-v="${it.id}" aria-pressed="${on}">${esc(on ? L3("Take off", "Gỡ", "해제") : L3("Put on", "Đeo", "착용"))}</button></div>`;
   }).join("");
   const track = `<div class="catlooks" id="cat-looks" role="list" aria-label="${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}">${CAT_LOOKS.map((l, i) => `<span class="chip${i === li ? " on" : ""}${i < li ? " past" : ""}" role="listitem" aria-current="${i === li}">${esc(catLookNm(i))}<span class="sub">${esc(i === 0 ? L3("Seed · Sprout", "Hạt mầm · Chồi", "씨앗 · 새싹") : i === 1 ? L3("Bud · Blossom", "Nụ · Nở hoa", "꽃봉오리 · 만개") : L3("Shine", "Tỏa sáng", "샤인"))}</span></span>`).join("")}</div>`;
-  const tip = locked.length ? `<p class="sm sub" id="cat-locked-hint" style="margin-top:8px">${esc(L3(`${d} grows with Cici. Collar at Blossom, bed at Shine — earned only, never for sale.`, `${d} lớn lên cùng Cici. Vòng cổ ở Nở hoa, giường ở Tỏa sáng — chỉ nhận được, không bán.`, `${d}는 Cici와 함께 자라요. 목걸이는 만개, 침대는 샤인에서 — 획득 전용, 판매하지 않아요.`))}</p>` : `<p class="sm sub" style="margin-top:8px">${esc(L3("Earned only — never for sale.", "Chỉ nhận được — không bán.", "획득 전용 — 판매하지 않아요."))}</p>`;
+  const tip = locked.length ? `<p class="sm sub" id="cat-locked-hint" style="margin-top:8px">${esc(L3(`${d} grows with Cici. Collar at Bud, bed at Blossom — earned only, never for sale.`, `${d} lớn lên cùng Cici. Vòng cổ ở Nụ hoa, giường ở Nở hoa — chỉ nhận được, không bán.`, `${d}는 Cici와 함께 자라요. 목걸이는 꽃봉오리, 침대는 만개에서 — 획득 전용, 판매하지 않아요.`))}</p>` : `<p class="sm sub" style="margin-top:8px">${esc(L3("Earned only — never for sale.", "Chỉ nhận được — không bán.", "획득 전용 — 판매하지 않아요."))}</p>`;
   return `<section class="card catgrow" id="cat-grow" data-stage="${st}" data-look="${catLook()}" data-owned="${owned.length}"><div class="row" style="gap:8px"><div class="grow"><b>${esc(L3(`${d}'s growth`, `Phát triển của ${d}`, `${d}의 성장`))}</b>
   <div class="sm sub" id="cat-stage">${esc(gT("stage"))} · ${esc(nm)} · ${esc(catLookNm())}</div></div><span class="tag" id="cat-stage-tag">${esc(nm)}</span></div>${track}
   ${owned.length ? `<div class="stack" id="cat-items" style="margin-top:10px">${rows}</div>` : `<div class="stack" id="cat-items" hidden></div>`}${tip}</section>`; }
 /* Mission moments (MC-K, no popups since 2026-10-16): after Done the row shows a quiet inline line with a tiny round Mochi still (≤64px). No overlay, no dim, no X. Hidden in crisis (MC-K4). */
-function catMisLine(k) { const m = MOCHI(); if (k === "water") return CAT_OPT["room-waterbowl"] ? L3(`Cici sipped with you · ${m} lapped from her bowl`, `Cici uống cùng bạn · ${m} liếm nước trong bát`, `Cici도 같이 물 마셨어요 · ${m}는 그릇에서 할짝`) : L3(`${m} lapped from her bowl too`, `${m} cũng liếm nước trong bát`, `${m}도 그릇에서 물을 할짝였어요`);
+function catMisClip(k) { const raw = k === "water" ? (CAT_OPT["room-waterbowl"] ? "room-waterbowl" : "water") : (CAT_ROOM.stretch ? "room-stretch" : "stretch"); return [raw, catLookAlias(raw)]; }
+function catMisLine(k) { const m = MOCHI(), [raw, act] = catMisClip(k); /* line follows the clip actually shown (cat-stage substitution) */
+  if (k === "water" && act !== raw) return L3(`Cici sipped water · ${m} cuddled on her lap`, `Cici nhấp ngụm nước · ${m} rúc vào lòng cô ấy`, `Cici는 물 한 모금 · ${m}는 무릎 위에서 꼭 안겼어요`);
+  if (k === "water") return CAT_OPT["room-waterbowl"] ? L3(`Cici held her water with you · ${m} lapped from her bowl`, `Cici cầm cốc nước cùng bạn · ${m} liếm nước trong bát`, `Cici도 물컵을 들고 함께 · ${m}는 그릇에서 할짝`) : L3(`${m} lapped from her bowl too`, `${m} cũng liếm nước trong bát`, `${m}도 그릇에서 물을 할짝였어요`);
   return CAT_ROOM.stretch ? L3(`${m} stretched on Cici's lap`, `${m} vươn vai trên đùi Cici`, `${m}도 Cici 무릎에서 기지개 켰어요`) : L3(`${m} stretched with you`, `${m} giãn cơ cùng bạn`, `${m}도 같이 스트레칭했어요`); }
 function catMisOk(k) { if (!P2() || catCrisis() || !CAT_CLIPS[k]) return "";
-  const tx = k === "water" ? catMisLine("water") : catMisLine("stretch"), b = k === "water" ? (CAT_OPT["room-waterbowl"] ? CAT_CLIPS["room-waterbowl"] : CAT_CLIPS.water) : (CAT_ROOM.stretch ? CAT_CLIPS["room-stretch"] : CAT_CLIPS.stretch);
+  const tx = k === "water" ? catMisLine("water") : catMisLine("stretch"), b = (n => catVarPath(CAT_CLIPS[n] || CICI_CAT.base + n, n))(catMisClip(k)[1]);
   return `<span class="misok" data-k="${k}"><img class="misthumb" src="${b}-poster.jpg" width="28" height="28" alt="" loading="lazy">${esc(tx)}</span>`; }
 function catMisPlay(kind, ms) { /* mission moment in the room: stretch = tall room clip; water = Mochi lapping at her bowl (close-up, or the Cici+Mochi room clip when it exists). Never a modal. */
   if (!P2() || catCrisis() || !CAT_CLIPS[kind]) return false; closeSheet(); clearTimeout(catMisPlay.t); ST.catMis = kind;
