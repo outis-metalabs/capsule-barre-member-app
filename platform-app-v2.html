@@ -900,7 +900,7 @@ function catMisLine(k) { const m = MOCHI(); if (k === "water") return CAT_ROOM.w
   return CAT_ROOM.stretch ? L3(`${m} stretched on Cici's lap`, `${m} vươn vai trên đùi Cici`, `${m}도 Cici 무릎에서 기지개 켰어요`) : L3(`${m} stretched with you`, `${m} giãn cơ cùng bạn`, `${m}도 같이 스트레칭했어요`); }
 function catMisOk(k) { if (!P2() || catCrisis() || !CAT_CLIPS[k]) return "";
   const tx = k === "water" ? catMisLine("water") : catMisLine("stretch");
-  return `<span class="misok" data-k="${k}"><img class="misthumb" src="${CAT_CLIPS[k]}-poster.jpg" width="28" height="28" alt="" loading="lazy">${esc(tx)}</span>`; }
+  return `<span class="misok" data-k="${k}"><img class="misthumb" src="${CAT_ROOM[k] ? CAT_CLIPS["room-" + k] : CAT_CLIPS[k]}-poster.jpg" width="28" height="28" alt="" loading="lazy">${esc(tx)}</span>`; }
 function catMisPlay(kind, ms) { /* mission moment in the room: tall room clip if it exists, else a small PiP bubble near Mochi over the room loop. Never a modal: no dim, no X, non-blocking. */
   if (!P2() || catCrisis() || !CAT_CLIPS[kind]) return false; closeSheet(); clearTimeout(catMisPlay.t); ST.catMis = kind;
   if (!document.getElementById("cici-real")) { ST.tab = "home"; ST.page = null; ST.store = null; render(); }
