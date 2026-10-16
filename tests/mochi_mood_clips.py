@@ -58,9 +58,9 @@ with sync_playwright() as p:
       f = f'/tmp/hot/assets/cici-real/{kind}.{ext}'
       ok(f'asset {kind}.{ext} ≤1MB muted', os.path.exists(f) and os.path.getsize(f) <= lim, f)
   J(g, FRESH); J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(500)
-  ok('stretch Start plays the stretch clip in the room + timer chip (no popup)', J(g, "!document.querySelector('#cat-clip,.cateat,.catclip') && !!document.querySelector('#stretch-chip #stl') && (document.querySelector('.catvid.on')||{}).dataset.clip==='stretch'"))
+  ok('stretch Start plays the stretch clip in the room + timer chip (no popup)', J(g, "!document.querySelector('#cat-clip,.cateat,.catclip') && !!document.querySelector('#stretch-chip #stl') && (()=>{const o=document.querySelector('#cat-pip[data-kind=stretch]');if(!o)return false;const r=o.getBoundingClientRect();return r.width>=96&&r.width<=120&&!o.querySelector('button')&&(document.querySelector('.catvid.on')||{}).dataset.clip!=='stretch'&&!document.querySelector('.sheet-bg')})()"))
   J(g, "()=>{stretchStop(); openHomeSheet()}"); g.wait_for_timeout(300); J(g, "()=>document.querySelector('[data-act=dmwater]').click()"); g.wait_for_timeout(600)
-  ok('water Done plays the water clip in the room', J(g, "(document.querySelector('.catvid.on')||{}).dataset.clip==='water' && !document.querySelector('.sheet')"))
+  ok('water Done plays the water clip in the room', J(g, "(()=>{const o=document.querySelector('#cat-pip[data-kind=water]');if(!o)return false;const r=o.getBoundingClientRect();return r.width>=96&&r.width<=120&&!o.querySelector('button')&&(document.querySelector('.catvid.on')||{}).dataset.clip!=='water'&&!document.querySelector('.sheet-bg')})() && !document.querySelector('.sheet')"))
   J(g, "()=>{catMisEnd(); openHomeSheet()}"); g.wait_for_timeout(300)
   ok('water Done: quiet inline row confirmation with ≤64px round thumb, no overlay', J(g, "(()=>{const r=document.querySelector('#home-dm .mis[data-m=water] .misok img.misthumb');if(!r)return false;const b=r.getBoundingClientRect();return b.width<=64&&b.height<=64&&getComputedStyle(r).borderRadius!=='0px'&&!document.querySelector('#cat-clip,.cateat')})()"))
   J(g, "()=>closeSheet()")

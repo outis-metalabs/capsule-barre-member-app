@@ -416,6 +416,10 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 .catfish{position:absolute;z-index:4;font-size:30px;pointer-events:none;left:0;top:0}
 .catheart{position:absolute;z-index:4;pointer-events:none;font-size:20px;color:#B04A5E}
 @media (prefers-reduced-motion:reduce){.catfab,.catfab[data-state=hungry],.catfab.squish{animation:none!important;transition:none}}
+.catpip{position:absolute;left:16px;top:40%;z-index:4;width:112px;height:112px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.95);box-shadow:0 10px 26px rgba(60,30,40,.28);background:#FBE9ED;opacity:0;transform:scale(.92);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
+.catpip.on{opacity:1;transform:none}.catpip video,.catpip img{width:100%;height:100%;object-fit:cover;display:block}
+@media (prefers-reduced-motion:reduce){.catpip{transition:none;transform:none}}
+body.v2home .confetti{display:none} /* one message at a time in the room: no confetti over the card */
 .stchip{position:absolute;left:12px;right:88px;bottom:calc(170px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;align-items:center;gap:8px;padding:10px 10px 10px 16px;border-radius:22px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.7);box-shadow:0 8px 24px rgba(60,30,40,.16);color:#2B2324}
 .stchip .sttx{flex:1;display:flex;flex-direction:column;min-width:0}.stchip #stl{font-size:24px;font-weight:800;color:#B04A5E;line-height:1.1}.stchip .sm{font-size:12px;color:#5E5154}
 .stchip .btn{min-height:44px}.stchip .stx{min-height:44px;min-width:44px;border:0;background:transparent;color:#5E5154;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
@@ -717,7 +721,12 @@ const CICI_CAT = { base: "assets/cici-real/cici-cat-", poster: "assets/cici-real
   clips: { calm: "petting", lively: "lively", napping: "napping", hungry: "petting", react: "react", eating: "petting" },
   eat: "assets/cici-real/dubu-eating", fadeMs: 400 };
   /* Official loops (tall): petting default; lively / napping / hungry / react wired. No overlays: feed crossfades the scene to react ~3 s; missions confirm inline. Crossfade CICI_CAT.fadeMs (300–500). */
-const CAT_CLIPS = { stretch: "assets/cici-real/mochi-stretch", water: "assets/cici-real/mochi-water" }; /* official mission clips, played full-screen in the room */
+const CAT_CLIPS = { stretch: "assets/cici-real/mochi-stretch", water: "assets/cici-real/mochi-water",
+  "room-hungry": "assets/cici-real/cici-room-hungry_tall", "room-water": "assets/cici-real/cici-room-water_tall", "room-stretch": "assets/cici-real/cici-room-stretch_tall", "room-happy": "assets/cici-real/cici-room-happy_tall" };
+/* ROOM SLOT (3D Designer): tall Cici+Mochi room clips drop in as cici-room-<k>_tall.webm/.mp4 (+ -poster.jpg). Used only when the file exists; else hungry/happy keep the room loop and missions use the small PiP bubble. */
+const CAT_ROOM = { hungry: false, water: false, stretch: false, happy: false };
+function catRoomProbe() { if (typeof fetch !== "function" || !catMotionOk()) return; /* no probe (or clip traffic) under reduced motion / Save-Data */ Object.keys(CAT_ROOM).forEach(k => { fetch(CAT_CLIPS["room-" + k] + ".mp4", { method: "HEAD" }).then(r => { if (r.ok && !CAT_ROOM[k]) { CAT_ROOM[k] = true; if (typeof catSyncMood === "function" && !ST.catMis && !ST.catEat) catSyncMood(); } }).catch(() => {}); }); }
+setTimeout(catRoomProbe, 0); /* official mission clips, played full-screen in the room */
 const CAT_MAX = 3, CAT_HUNGRY_H = 18, CAT_CRISIS_MS = 24 * 3600 * 1000;
 const MOCHI = () => L3("Mochi", "Mochi", "모찌"); /* was Dubu/두부; renamed 2026-10-15 */
 function catDay() { const dk = ME ? dayKey(ME, PV.now()) : "d"; const c = P2S.cat = P2S.cat || {}; c.treats = c.treats || 0; if (c.day !== dk) { c.day = dk; c.earned = 0; c.fed = 0; c.log = []; } /* DB-H3: daily reset of earned/fed; held treats carry over (DB-T4 cap 3) */ return c; }
@@ -777,7 +786,7 @@ function catFeedFx() { /* squish, fish arc button → Mochi, hearts burst, soft 
       const a = i / 6 * Math.PI * 2, r = 46 + (i % 3) * 10; h.animate([{ transform: `translate(${x1 + 8}px,${y1}px) scale(.4)`, opacity: 1 }, { transform: `translate(${x1 + 8 + Math.cos(a) * r}px,${y1 + Math.sin(a) * r - 30}px) scale(1)`, opacity: 0 }], { duration: 800, easing: "ease-out" }).onfinish = () => h.remove(); } }; }
 function catMotionOk() { try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return false; const cn = navigator.connection; if (cn && cn.saveData) return false; } catch (e) {} return true; }
 function catClipSrc(name) { const b = CAT_CLIPS[name] || CICI_CAT.base + name; return { webm: b + ".webm", mp4: b + ".mp4" }; } /* stretch / water map to the official mochi-* mission clips */
-function catClipName(mood) { if (mood === "mission" && ST.catMis) return ST.catMis; return CICI_CAT.clips[mood] || CICI_CAT.clips.calm || "petting"; }
+function catClipName(mood) { if (mood === "mission" && ST.catMis) return CAT_ROOM[ST.catMis] ? "room-" + ST.catMis : "petting"; if (mood === "hungry" && CAT_ROOM.hungry) return "room-hungry"; if (mood === "lively" && CAT_ROOM.happy && catDay().fed > 0) return "room-happy"; return CICI_CAT.clips[mood] || CICI_CAT.clips.calm || "petting"; }
 function catVidEl(id, name, on, alt, pos) {
   const s = catClipSrc(name);
   return `<video id="${id}" class="catvid${on ? " on" : ""}" muted playsinline loop autoplay preload="auto" disableremoteplayback poster="${CICI_CAT.poster || CICI_HOME.src}" style="${pos}" aria-label="${esc(alt)}" data-clip="${name}"><source src="${s.webm}" type="video/webm"><source src="${s.mp4}" type="video/mp4"></video>`;
@@ -890,14 +899,26 @@ function catItemsCard() { /* sheet only: stage chip + owned items; locked growth
 function catMisOk(k) { if (!P2() || catCrisis() || !CAT_CLIPS[k]) return "";
   const tx = k === "water" ? L3(`${MOCHI()} drank too`, `${MOCHI()} cũng uống nước`, `${MOCHI()}도 물 마셨어요`) : L3(`${MOCHI()} stretched with you`, `${MOCHI()} giãn cơ cùng bạn`, `${MOCHI()}도 같이 스트레칭했어요`);
   return `<span class="misok" data-k="${k}"><img class="misthumb" src="${CAT_CLIPS[k]}-poster.jpg" width="28" height="28" alt="" loading="lazy">${esc(tx)}</span>`; }
-function catMisPlay(kind, ms) { /* mission clip IN THE ROOM: close the sheet, crossfade the full-screen scene to stretch/water, then back. No box, no dim, no X. */
+function catMisPlay(kind, ms) { /* mission moment in the room: tall room clip if it exists, else a small PiP bubble near Mochi over the room loop. Never a modal: no dim, no X, non-blocking. */
   if (!P2() || catCrisis() || !CAT_CLIPS[kind]) return false; closeSheet(); clearTimeout(catMisPlay.t); ST.catMis = kind;
   if (!document.getElementById("cici-real")) { ST.tab = "home"; ST.page = null; ST.store = null; render(); }
-  const fig = document.getElementById("cici-real"); if (fig) { fig.dataset.mood = "mission-" + kind; if (catMotionOk()) catXfadeTo(kind, { loop: true });
-    else { const im = fig.querySelector("img.catstill"); if (im) { im.dataset.home = im.dataset.home || im.src; im.src = CAT_CLIPS[kind] + "-poster.jpg"; } } }
+  const fig = document.getElementById("cici-real"); if (fig) { fig.dataset.mood = "mission-" + kind; if (catMotionOk() && CAT_ROOM[kind]) catXfadeTo("room-" + kind, { loop: true }); else catPipShow(kind); }
   catRefreshUi(); if (ms) catMisPlay.t = setTimeout(catMisEnd, ms); return true; }
-function catMisEnd() { clearTimeout(catMisPlay.t); if (!ST.catMis) return; ST.catMis = null; const fig = document.getElementById("cici-real");
-  if (fig) { const im = fig.querySelector("img.catstill"); if (im && im.dataset.home) im.src = im.dataset.home; } catSyncMood(); catRefreshUi(); }
+function catPipShow(kind) { const hero = document.getElementById("v2-hero"); if (!hero) return; catPipHide(true);
+  const b = CAT_CLIPS[kind], mv = catMotionOk(), alt = kind === "water" ? L3(`${MOCHI()} lapping water`, `${MOCHI()} đang uống nước`, `물 마시는 ${MOCHI()}`) : L3(`${MOCHI()} stretching`, `${MOCHI()} đang giãn cơ`, `스트레칭하는 ${MOCHI()}`);
+  const o = document.createElement("div"); o.id = "cat-pip"; o.className = "catpip"; o.dataset.kind = kind; o.setAttribute("role", "img"); o.setAttribute("aria-label", alt);
+  o.innerHTML = mv ? `<video muted playsinline autoplay loop preload="auto" disableremoteplayback poster="${b}-poster.jpg"><source src="${b}.webm" type="video/webm"><source src="${b}.mp4" type="video/mp4"></video>` : `<img src="${b}-poster.jpg" alt="">`;
+  hero.appendChild(o); const v = o.querySelector("video"); if (v) { v.muted = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+  requestAnimationFrame(() => requestAnimationFrame(() => o.classList.add("on"))); }
+function catPipHide(now) { const o = document.getElementById("cat-pip"); if (!o) return; if (now || !catMotionOk()) return o.remove(); o.classList.remove("on"); o.id = ""; setTimeout(() => o.remove(), 420); }
+function catMisEnd() { clearTimeout(catMisPlay.t); catPipHide(); if (!ST.catMis) return; ST.catMis = null; catSyncMood(); catRefreshUi(); }
+function catMisToast(r, nm, dm, kind, earned) { /* ONE message after a mission: points · Mochi line · treat (no win card, no confetti unless the 3/3 bonus) */
+  const parts = [r.pts ? L3(`+${r.pts} points`, `+${r.pts} điểm`, `+${r.pts}포인트`) : r.msg ? pvT(r.msg) : nm];
+  if (!catCrisis()) parts.push(kind === "water" ? L3(`${MOCHI()} drank too`, `${MOCHI()} cũng uống nước`, `${MOCHI()}도 물 마셨어요`) : L3(`${MOCHI()} stretched too`, `${MOCHI()} cũng giãn cơ`, `${MOCHI()}도 스트레칭했어요`));
+  if (earned && !catCrisis()) parts.push(L3("🐟 +1 treat", "🐟 +1 ăn vặt", "🐟 간식 +1"));
+  if (dm && dm.bonus) parts.push(L3(`All 3 done: +${DM_BONUS} bonus!`, `Xong cả 3: +${DM_BONUS} thưởng!`, `3개 모두 완료: 보너스 +${DM_BONUS}!`));
+  WINQ.length = 0; { const w = $("#wintoast"); if (w) { w.classList.remove("in"); w.hidden = true; } } toastCut = null;
+  if (dm && dm.bonus) celebrate(false); toast(parts.join(" · ")); }
 function catDismissOverlays() { /* nothing floats any more; just clear pending reactions (one thing at a time) */
   clearTimeout(catEatShow.t); clearTimeout(catReact.t); if (ST.catReact) ST.catReact = null; if (ST.catEat) ST.catEat = false; }
 function catCard() { if (catCrisis()) return ""; catGrantItems(); const c = catDay(), d = MOCHI(), h = catHungry(), off = c.treats <= 0, st = catStageNm();
@@ -3002,12 +3023,12 @@ function stretchChip() { /* small glass timer chip over the room while Mochi cop
   c.innerHTML = `<div class="sttx"><b>${esc(t("mStretch"))}</b><span id="stl">2:00</span><span class="sm">${esc(tr("Stop if anything hurts."))}</span></div><button class="btn" data-act="stretchdone">${esc(L3("Finish", "Xong", "완료"))}</button><button class="stx" data-act="stretchstop" aria-label="${esc(L3("Stop stretching", "Dừng giãn cơ", "스트레칭 그만하기"))}">${esc(L3("Stop", "Dừng", "그만"))}</button>`;
   hero.appendChild(c); const f = c.querySelector("[data-act=stretchdone]"); if (f) try { f.focus({ preventScroll: true }); } catch (e) {}
   clearInterval(stretchT); stretchT = setInterval(() => { left--; const el = $("#stl"); if (!el) return clearInterval(stretchT); el.textContent = Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0"); if (left <= 0) finishStretch(); }, 1000); }
-function stretchStop() { clearInterval(stretchT); const c = document.getElementById("stretch-chip"); if (c) c.remove(); catMisEnd(); }
+function stretchStop() { clearInterval(stretchT); const c = document.getElementById("stretch-chip"); if (c) c.remove(); catMisEnd(); catPipHide(); }
 function stretchSheet() { /* stretch opens its timer sheet directly */
   if (V2HOME() || (P2() && !catCrisis() && CICI_REAL)) { if (catMisPlay("stretch")) return stretchChip(); }
   stretchSheetOpen(); /* crisis / non-room: plain timer sheet */
 }
-function finishStretch() { clearInterval(stretchT); { const c = document.getElementById("stretch-chip"); if (c) c.remove(); } const inRoom = ST.catMis === "stretch"; if (inRoom) ST.catMis = null; const r = pvMission(ME, "stretch"); ST.miss.stretch = true; const dm = dmMark("stretch"); closeSheet(); if (inRoom && document.getElementById("cici-real")) { catSyncMood(); catRefreshUi(); } else render(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, t("mStretch"), dm)); }
+function finishStretch() { clearInterval(stretchT); { const c = document.getElementById("stretch-chip"); if (c) c.remove(); } const inRoom = ST.catMis === "stretch"; if (inRoom) ST.catMis = null; const e0 = catDay().earned, r = pvMission(ME, "stretch"); ST.miss.stretch = true; const dm = dmMark("stretch"); closeSheet(); if (inRoom && document.getElementById("cici-real")) { catSyncMood(); catRefreshUi(); } else render(); catPipHide(); if (P2()) catMisToast(r, t("mStretch"), dm, "stretch", catDay().earned > e0); else { if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, t("mStretch"), dm)); } }
 function dmToast(r, nm, dm) { const a = r.pts ? pvT("earnMission", { n: r.pts, mission: nm }) : r.msg ? pvT(r.msg) : ""; return dm && dm.bonus ? (a ? a + " " : "") + L3(`All 3 done: +${DM_BONUS} bonus!`, `Xong cả 3: +${DM_BONUS} thưởng!`, `3개 모두 완료: 보너스 +${DM_BONUS}!`) : a; }
 function manage(b) {
   if (!b) return; const s = S[b.store], P = bkPol(b), free = bkFree(b), st = bkStarted(b) || b.status !== "confirmed";
@@ -3348,7 +3369,7 @@ document.addEventListener("click", e => {
     case "checkin": checkin(bk(d.id)); break;
     case "attend": attend(bk(d.id)); break;
     case "stretch": stretchSheet(); break;
-    case "dmwater": { if (!P2() || gated()) break; const r = pvMission(ME, "water"), dm = dmMark("water"); if (!catMisPlay("water", 4200)) { render(); const hd = $("#home-dm"); if (hd) { const w = document.createElement("div"); w.innerHTML = dmCard(); hd.replaceWith(w.firstElementChild); } } else catRefreshUi(); if (r.pts || (dm && dm.bonus)) celebrate(); toast(dmToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm)); break; }
+    case "dmwater": { if (!P2() || gated()) break; const e0 = catDay().earned, r = pvMission(ME, "water"), dm = dmMark("water"); if (!catMisPlay("water", 4200)) { render(); const hd = $("#home-dm"); if (hd) { const w = document.createElement("div"); w.innerHTML = dmCard(); hd.replaceWith(w.firstElementChild); } } else catRefreshUi(); catMisToast(r, L3("Drink a glass of water", "Uống một ly nước", "물 한 잔 마시기"), dm, "water", catDay().earned > e0); break; }
     case "catfeed": case "catnudge": case "cattime": case "cattreat": case "catreset": case "catcrisis": case "catcrisisoff": case "catequip": catAct(a, d.v); break;
     case "hbsheet": openHomeSheet(); break;
     case "hbmis": { if (!$("#home-dm")) openHomeSheet(); const el = $("#home-dm"); if (el) { el.scrollIntoView({ block: "center" }); el.focus({ preventScroll: true }); } break; }

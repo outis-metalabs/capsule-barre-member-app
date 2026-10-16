@@ -133,7 +133,7 @@ with sync_playwright() as p:
   # MC-K
   g = page(); J(g, FRESH)
   J(g, "()=>{stretchSheet()}"); g.wait_for_timeout(400)
-  ok('MC-K1 stretch: Mochi copies the stretch in the room + timer chip, no popup', J(g, "!!document.querySelector('#stretch-chip #stl') && (document.querySelector('.catvid.on')||{}).dataset.clip==='stretch' && !document.querySelector('#cat-clip,.cateat')"))
+  ok('MC-K1 stretch: Mochi copies the stretch in the room + timer chip, no popup', J(g, "!!document.querySelector('#stretch-chip #stl') && (()=>{const o=document.querySelector('#cat-pip[data-kind=stretch]');if(!o)return false;const r=o.getBoundingClientRect();return r.width>=96&&r.width<=120&&!o.querySelector('button')&&(document.querySelector('.catvid.on')||{}).dataset.clip!=='stretch'&&!document.querySelector('.sheet-bg')})() && !document.querySelector('#cat-clip,.cateat')"))
   J(g, "()=>{stretchStop();closeSheet();dmMark('water');openHomeSheet()}"); g.wait_for_timeout(300)
   ok('MC-K2 water done: inline "Mochi drank too" line in the row', J(g, "!!document.querySelector('#home-dm .mis[data-m=water] .misok') && !document.querySelector('#cat-clip')"))
   J(g, "()=>{closeSheet();crisisReply(CH.cici,'x');render();openHomeSheet()}")
