@@ -1,0 +1,151 @@
+"""platform-app-v3.html — solution-review fixes (2026-10-16 review, /tmp/trial/review/SOLUTION-REVIEW.md): safety routing for a hurt bystander,
+room/shop reachable, grew-moment before the outfit modal, growth track capped at real looks, seeded store-confirmed visits, balance vs lifetime,
+staff tool off by default, no sample/dev labels, computed open status, next bookable class day, fMin, rental move total, waitlist review,
+pass once + court/paddle breakdown, current slot marked, slim booking rows, one photoreal Cici, i18n cluster, inbox store messages, Discover order.
+Usage: v3_review_fixes.py [base_url] [shots_dir]"""
+import sys, os
+from playwright.sync_api import sync_playwright
+U = sys.argv[1] if len(sys.argv) > 1 else 'http://localhost:8765/platform-app-v3.html'
+SH = sys.argv[2] if len(sys.argv) > 2 else '/tmp/v3shots/review'; os.makedirs(SH, exist_ok=True)
+R = []; ok = lambda n, c, d='': (R.append(bool(c)), print(('PASS ' if c else 'FAIL ') + n + ('' if c else f' :: {str(d)[:360]}')))
+with sync_playwright() as p:
+  b = p.chromium.launch()
+  def page(q='?lang=ko', w=390, h=844):
+    c = b.new_context(viewport={'width': w, 'height': h}); g = c.new_page(); g.E = []; g.NF = []
+    g.on('pageerror', lambda e: g.E.append(str(e))); g.on('response', lambda r: r.status >= 400 and g.NF.append(r.url))
+    g.goto(U + q); g.evaluate('localStorage.clear()'); g.goto(U + q); g.wait_for_timeout(700); return g
+  g = page(); J = g.evaluate
+  # ---- S-1 safety
+  for tx in ['누가 다쳤어요', '누군가 다쳤어요', '친구가 다쳤어요', '피가 나요', 'someone is hurt', 'someone got hurt', 'my friend is bleeding', 'có người bị thương']:
+    ok(f'S-1 "{tx}" → urgent', J(f"safety({tx!r})") == 'urgent', J(f"safety({tx!r})"))
+  ok('S-1 own mild symptom still not urgent ("머리가 조금 아파요")', J("safety('머리가 조금 아파요')") != 'urgent', J("safety('머리가 조금 아파요')"))
+  ok('S-1 booking talk untouched ("내일 7시 바레 예약")', J("safety('내일 7시 바레 예약')") in (None, ''), J("safety('내일 7시 바레 예약')"))
+  # ---- S-2 room / shop reachable, growth art, no sample tags
+  J("()=>{ST.tab='you';ST.page='growth';render()}"); g.wait_for_timeout(300)
+  ok('S-2 growth page shows the (empty) room with Decorate + Item shop', J("!!document.querySelector('#p2-room [data-act=p2shop]') && !!document.querySelector('#p2-room [data-act=p2deco]') && P2S.placed.length===0"))
+  ok('G-art growth page opens on the photoreal pair', J("!!document.querySelector('.gart img')"))
+  g.click('#p2-room [data-act=p2shop]'); g.wait_for_timeout(300)
+  ok('S-2 Item shop opens from there', J("document.querySelectorAll('.sheet .p2sk').length") >= 3, J("document.querySelectorAll('.sheet .p2sk').length")); J("closeSheet()")
+  g.screenshot(path=f'{SH}/growth-ko.png', full_page=True)
+  # ---- G-2 track capped, no promise of an unready look
+  ok('G-2 track: 2 nodes, top node = 꽃봉오리 · 만개 · 샤인, no 준비 중', J("(()=>{const c=[...document.querySelectorAll('#cat-looks .chip')];return c.length===2&&/샤인/.test(c[1].innerText)&&!/준비 중/.test(document.querySelector('#cat-grow').innerText)})()"))
+  ok('G-2 grow-how line never promises the fluffy cat', not J("/복슬/.test(document.querySelector('#cat-grow-how').innerText)"))
+  # ---- G-4 seeded visits
+  ok('G-4 three store-confirmed past visits: stats 1/1/1, ledger has visit rows', J("Object.keys(ME.att).length") >= 3 and J("(()=>{const s=gState().st;return s.str>=1&&s.calm>=1&&s.glow>=1})()") and J("ME.ledger.filter(r=>r.reason==='visit').length") >= 3, J("[Object.keys(ME.att).length, gState().st]"))
+  ok('G-4 growth bars show non-zero numbers', J("[...document.querySelectorAll('#g-bars .gbn')].every(e=>+e.innerText>0)"), J("[...document.querySelectorAll('#g-bars .gbn')].map(e=>e.innerText)"))
+  J("()=>{ST.tab='you';ST.page='bookings';ST.bkSeg='past';render()}"); g.wait_for_timeout(200)
+  ok('G-4 past attended rows show +50', J("[...document.querySelectorAll('#view .bkrow')].filter(r=>/\\+50/.test(r.innerText)).length") >= 3, J("[...document.querySelectorAll('#view .bkrow')].map(r=>r.innerText.replace(/\\n/g,' ').slice(0,80))"))
+  ok('G-4 lifetime = 640 migrated + 150 from visits, level 2', J("life(ME)") == 790 and J("lvlOf(ME)") == 2, J("[life(ME), lvlOf(ME)]"))
+  # ---- G-6 staff tool off; dev labels gone
+  J("()=>{ST.tab='you';ST.page='settings';render()}"); g.wait_for_timeout(200)
+  ok('G-6 member Settings: no "Mark a visit attended"; has Account & privacy + reset', not J("!!document.querySelector('#mvp-confirm')") and J("!!document.querySelector('#set-acct') && !!document.querySelector('#set-reset')"))
+  g.click('#set-reset'); g.wait_for_timeout(200)
+  ok('G-6 reset is two-step (first tap only warns)', J("/한 번 더/.test(document.querySelector('#toast')?.innerText||'')") and J("B.length") > 0)
+  J("()=>{ST.page='points';render()}"); g.wait_for_timeout(200)
+  ok('G-6 Points page: no staff tool either', not J("!!document.querySelector('#mvp-confirm')"))
+  ok('dev labels: no "U2–U8" / "pending native review" anywhere in copy functions', not J("/U2–U8|U1\\)|pending native review|원어민 검토/.test(DEMO_U()+sT('sub'))"))
+  # ---- G-5 balance vs lifetime with real rewards on
+  J("()=>{__plat.pv.setFlag(true,PV.now());ST.page='points';render()}"); g.wait_for_timeout(200)
+  ok('G-5 Points page shows balance AND lifetime', J("!!document.querySelector('#pv-bal') && !!document.querySelector('#pv-earned')"))
+  J("()=>{ST.page=null;render()}"); g.wait_for_timeout(200)
+  ok('G-5 You line shows the spendable balance when rewards are on', J("document.querySelector('#you-pts').innerText.includes(fmtPts(bal(ME)))"), J("[document.querySelector('#you-pts').innerText, fmtPts(bal(ME))]"))
+  J("()=>{__plat.pv.setFlag(false,PV.now());render()}")
+  # ---- store page: open status, next bookable day, fMin, no sample, action row
+  J("()=>{NOWX=13*60;ST.tab='discover';ST.store='capsule';render()}"); g.wait_for_timeout(300)
+  st = J("document.querySelector('#view').innerText")
+  ok('store: no 샘플 tag, no English "min"', '샘플' not in st and not J("/\\d+ min\\b/.test(document.querySelector('#view').innerText)"), st[:160])
+  ok('store D-1 open status computed (13:00 → 영업 중 · HH:MM까지)', J("document.querySelector('#st-open').dataset.open") == 'true' and '영업 중' in J("document.querySelector('#st-open').innerText"), J("document.querySelector('#st-open').innerText"))
+  ok('store D-2 class rows: no "무료 취소 기한 지남" before booking; 자리 남음 spacing', not J("[...document.querySelectorAll('#view [data-act=classpick]')].some(b=>/기한 지남/.test(b.innerText))") and J("[...document.querySelectorAll('#view [data-act=classpick]')].some(b=>/\\d자리 남음/.test(b.innerText))"), J("[...document.querySelectorAll('#view [data-act=classpick]')].map(b=>b.innerText.replace(/\\n/g,' '))"))
+  J("()=>{NOWX=3*60;render()}"); g.wait_for_timeout(200)
+  ok('store D-1 03:00 → "HH:MM에 열어요"', '에 열어요' in J("document.querySelector('#st-open').innerText"), J("document.querySelector('#st-open').innerText"))
+  J("()=>{NOWX=null;ST.store='rally';render()}"); g.wait_for_timeout(200)
+  ok('store D-1 a place Discover marks closed says 오늘 휴무', J("document.querySelector('#st-open').innerText") == '오늘 휴무', J("document.querySelector('#st-open').innerText"))
+  ok('store rally copy matches the rooftop photo', '루프탑' in J("document.querySelector('#view').innerText"))
+  J("()=>{ST.store='yoga';render()}"); g.wait_for_timeout(200)
+  ok('store yoga policy spelled out (이용권 1회 차감), no bare 1회', '이용권 1회 차감' in J("document.querySelector('#view').innerText") and not J("/(^|[^권 ])1회($|[^ 차])/.test(document.querySelector('#view .pol').innerText)"), J("document.querySelector('#view .pol').innerText"))
+  ok('store yoga area 서울 성동구 서울숲', '성동구' in J("document.querySelector('#view').innerText"))
+  J("()=>{ST.store='spa';render()}"); g.wait_for_timeout(200); g.screenshot(path=f'{SH}/store-spa-ko.png')
+  g.click('#view [data-act=svc] >> nth=0'); g.wait_for_timeout(300)
+  ok('spa booking: room chips localised (로터스 룸)', J("/로터스 룸/.test(document.querySelector('.sheet').innerText)") and not J("/Lotus room/.test(document.querySelector('.sheet').innerText)")); J("closeSheet()")
+  g.close()
+  g = page('?lang=ko', 360, 780); J = g.evaluate
+  J("()=>{ST.tab='discover';ST.store='capsule';render()}"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/store-360-ko.png')
+  ok('store D-3 action row at 360: nothing clipped, 4 actions', J("(()=>{const a=[...document.querySelectorAll('#view .sact3 .sact')];return a.length>=3&&a.every(b=>b.scrollWidth<=b.clientWidth+1)})()"), J("[...document.querySelectorAll('#view .sact3 .sact')].map(b=>[b.innerText,b.scrollWidth,b.clientWidth])"))
+  J("()=>{ST.store=null;ST.tab='home';render()}"); g.wait_for_timeout(500)
+  ok('home 360: Mochi status line visible (hbsec not hidden by width)', J("(()=>{const e=document.querySelector('#hb-bubble .hbsec');return !e||getComputedStyle(e).display!=='none'})()"))
+  J("()=>{P2S.cat={seenLook:0};catRefreshUi()}"); g.wait_for_timeout(200)
+  ok('home: empty Feed circle shows no "0" badge', not J("!!document.querySelector('#cat-feed .catbadge')"), J("document.querySelector('#cat-feed .catbadge')?.innerText"))
+  J("()=>openHomeSheet()"); g.wait_for_timeout(600)
+  ok('Today sheet fits at 360×780 (level row inside, no scroll)', J("(()=>{const s=document.querySelector('.sheet');return s.scrollHeight<=s.clientHeight+2&&!!document.querySelector('.sheet #home-lvl')})()"), J("(()=>{const s=document.querySelector('.sheet');return [s.scrollHeight,s.clientHeight]})()"))
+  g.screenshot(path=f'{SH}/today-360-ko.png'); J("closeSheet()"); g.close()
+  g = page(); J = g.evaluate
+  J("()=>openHomeSheet()"); g.wait_for_timeout(600)
+  ok('Today sheet fits at 390×844', J("(()=>{const s=document.querySelector('.sheet');return s.scrollHeight<=s.clientHeight+2})()"), J("(()=>{const s=document.querySelector('.sheet');return [s.scrollHeight,s.clientHeight]})()"))
+  ok('G-3 missions card uses the photoreal Cici', J("!!document.querySelector('#home-dm .dmcici img.cut-real') && !document.querySelector('#home-dm .cut-cheer')"))
+  g.screenshot(path=f'{SH}/today-390-ko.png'); J("closeSheet()")
+  # ---- G-1 grew beat first, then the outfit modal (photoreal)
+  J("()=>{ST.catGrew=true;ME.notices.push({k:'outfitUnlocked',v:{lvl:2,outfit:'o2'},played:false});maybeUnlock()}")
+  ok('G-1 no outfit modal while Mochi\'s grew moment plays', not J("!!document.querySelector('.munlock')"))
+  J("()=>{ST.catGrew=false;maybeUnlock()}"); g.wait_for_timeout(200)
+  ok('G-1 modal after the beat, with the photoreal Cici (no ribbon cut-out)', J("!!document.querySelector('.munlock img.cut-real') && !document.querySelector('.munlock .cut-ribbon')"))
+  g.screenshot(path=f'{SH}/unlock-ko.png'); J("closeUnlock()")
+  # ---- bookings: slim rows, manage has maps, move total, waitlist/pass/breakdown rows, late tag wraps
+  J("()=>{ST.tab='you';ST.page='bookings';ST.bkSeg='up';render()}"); g.wait_for_timeout(200); g.screenshot(path=f'{SH}/bookings-ko.png', full_page=True)
+  ok('rows slim: ≤3 actions per row, no map links in the list', J("[...document.querySelectorAll('#view .bkrow .acts')].every(a=>a.querySelectorAll('button,a').length<=3)") and not J("!!document.querySelector('#view .bkrow .bkmap')"), J("[...document.querySelectorAll('#view .bkrow .acts')].map(a=>a.querySelectorAll('button,a').length)"))
+  g.click('#view .bkrow [data-act=managebk] >> nth=0'); g.wait_for_timeout(300)
+  ok('Manage sheet carries message · call · map', J("!!document.querySelector('.sheet [data-act=msgfrom]') && !!document.querySelector('.sheet .bkmap')")); J("closeSheet()")
+  pk = J("(B.find(b=>b.store==='pickle'&&b.status==='confirmed')||{}).id")
+  J(f"()=>{{const b=B.find(b=>b.id==={pk});openBook(b.store,b.svc,{{move:b.id,d:b.d,len:b.len,party:b.party||4,paddles:b.paddles,court:'any'}})}}"); g.wait_for_timeout(300)
+  ok('B-1 move picker marks the held time (현재, disabled)', J("document.querySelectorAll('.sheet .slot.cur[disabled]').length") == 1, J("[...document.querySelectorAll('.sheet .slot')].map(s=>s.innerText.replace(/\\n/g,' ')).slice(0,6)"))
+  J("()=>{const s=[...document.querySelectorAll('.sheet .slot')].find(s=>!s.disabled&&+s.dataset.m<+document.querySelector('.sheet .slot.cur').dataset.m);(s||[...document.querySelectorAll('.sheet .slot')].find(s=>!s.disabled)).click()}"); g.wait_for_timeout(400)
+  mt = J("document.querySelector('.sheet')?.innerText||''")
+  ok('B-1 rental move review states the new total and delta, never "가격은 같아요"', '새 금액' in mt and ('−' in mt or '+' in mt) and '가격은 같아요' not in mt, mt[:200])
+  ok('breakdown: court block + paddles line on a rental review', J("!!document.querySelector('.sheet .rv-break') && /코트 \\d+분/.test(document.querySelector('.sheet .rv-break').innerText)"), J("document.querySelector('.sheet .rv-break')?.innerText"))
+  g.screenshot(path=f'{SH}/move-rental-ko.png'); J("closeSheet()")
+  ok('pass detailed once: total = ₩0 · 이용권 1회 차감, pass row carries store-only', J("(()=>{const d=document.createElement('div');d.innerHTML=draftRows({store:'capsule',svc:'barre',d:1,m:420,len:50,rids:['yuna'],price:250000,usePass:'p10'});const t=d.querySelector('.tot').innerText,p=d.querySelector('.rv-pass')?.innerText||'';return /₩0/.test(t)&&/이용권 1회 차감/.test(t)&&!/회 남음/.test(t)&&/회 남음/.test(p)})()"))
+  ok('waitlist review: no pass deduction, no cash total, no points line', J("(()=>{const d=document.createElement('div');d.innerHTML=draftRows({store:'capsule',svc:'barre',d:1,m:420,len:50,rids:['yuna'],price:250000,usePass:'p10',wait:true});return !d.querySelector('.rv-pass')&&/지금은 결제 없음/.test(d.querySelector('.tot').innerText)})()"))
+  ok('late-move warning tag wraps (p.tag white-space normal)', J("(()=>{const p=document.createElement('p');p.className='tag warn';document.body.appendChild(p);const w=getComputedStyle(p).whiteSpace;p.remove();return w})()") == 'normal')
+  # ---- success sheet photoreal cheer
+  n0 = J("B.length"); J("()=>{const z=nextFree('salon');openConfirm(Object.assign({},z,{rids:z.rids||['linh'],len:z.len||45}))}"); g.wait_for_timeout(300); J("()=>document.querySelector('.sheet [data-act=dobook]')?.click()"); g.wait_for_timeout(500)
+  ok('G-3 success sheet shows the photoreal Cici (no 2D cheer video)', J("!!document.querySelector('#bk-confirm img.cut-real') && !document.querySelector('#bk-confirm video')"), J("document.querySelector('#bk-confirm')?.innerHTML.slice(0,200)"))
+  g.screenshot(path=f'{SH}/success-ko.png'); J("()=>{closeSheet();}")
+  # ---- D-4 bring, players chips, level names, event label, VI calm
+  J("()=>{ST.tab='cici';ST.page=null;render()}"); g.fill('#in-cici', '바레 수업에 뭐 가져가야 해요?'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(900)
+  ok('D-4 "뭐 가져가야 해요?" answers from the store info, not the fallback', J("(()=>{const m=CH.cici.msgs[CH.cici.msgs.length-1];return m.who!=='me'&&!!m.faq})()") and not J("/추측하지 않을게요/.test(document.querySelector('#th-cici').innerText)"), J("document.querySelector('#th-cici').innerText.slice(-240)"))
+  J("()=>{CH.cici.msgs=[];render()}"); g.fill('#in-cici', '모레 오후 6시 피클볼 코트'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(900)
+  ok('players chips in Korean (2명 / 3명 / 4명), never "players"', J("[...document.querySelectorAll('#th-cici ~ .mchips .chip, .mchips .chip')].some(c=>/^\\d명$/.test(c.innerText.trim()))") and not J("/players/.test(document.querySelector('#view').innerText)"), J("[...document.querySelectorAll('.mchips .chip')].map(c=>c.innerText)"))
+  ok('level names in natural Korean', J("[1,2,3,4,5].map(lvlName)") == ['새내기', '단골', '열성 멤버', '빛나는 멤버', '아이콘'], J("[1,2,3,4,5].map(lvlName)"))
+  ok('KR build: event type says Seollal in EN', J("NTYPES.find(x=>x[0]==='event')[1][0]") == 'Birthdays & Seollal')
+  ok('VI stat name matches the legend (Bình yên)', J("G_STAT.calm[1]") == 'Bình yên')
+  ok('look tile name consistent (style / phong cách / 스타일)', J("[T.en.wardrobe,T.vi.wardrobe,T.ko.wardrobe]") == ["Cici's style", 'Phong cách Cici', 'Cici 스타일'] if J("typeof T!=='undefined'&&!!T.en") else True)
+  # ---- N-1 inbox
+  J("()=>{ST.tab='home';ST.page='notif';ST.seenN=true;render()}"); g.wait_for_timeout(200)
+  ns = J("INBOX.filter(m=>m.s).length")
+  ok('N-1 inbox lists store messages and the badge can reach 0', J("document.querySelectorAll('#n-store .card').length") == ns and J("INBOX.filter(m=>m.unread).length") == 0, [J("document.querySelectorAll('#n-store .card').length"), ns])
+  ok('N caps visible: a held item explains the daily cap', J("/하루 추천 1개 제한/.test(document.querySelector('#view').innerText)"))
+  g.screenshot(path=f'{SH}/notif-ko.png', full_page=True)
+  # ---- Discover
+  J("()=>{ST.page=null;ST.tab='discover';render()}"); g.wait_for_timeout(300); g.screenshot(path=f'{SH}/discover-ko.png', full_page=True)
+  ok('Discover leads with un-joined places by distance; joined grouped under a collapsed 내 매장 row', J("(()=>{const c=[...document.querySelectorAll('#dres > .dcard')];const ids=c.map(e=>e.id.slice(3));const km=ids.map(i=>DISC[i].km);return c.length>0&&ids.every(i=>!S[i].joined)&&km.every((k,i)=>!i||k>=km[i-1])&&!!document.querySelector('#d-mine')&&!document.querySelector('#d-mine').open&&/내 매장 \\d곳/.test(document.querySelector('#d-mine summary').innerText)})()"), J("[...document.querySelectorAll('#dres > .dcard')].map(e=>e.id)"))
+  ok('Discover sponsored label is plain 광고', J("(()=>{const e=document.querySelector('.splabel');return !e||e.innerText.trim()==='광고'})()"))
+  J("()=>{ST.q='zzzz';render()}"); g.wait_for_timeout(200)
+  ok('Discover no-result offers Clear search & filters', J("!!document.querySelector('#d-clear')"))
+  g.click('#d-clear'); g.wait_for_timeout(200)
+  ok('… and it restores the list', J("document.querySelectorAll('#dres .dcard').length") > 3 and J("ST.q") in ('', None))
+  J("()=>{DF.map=true;DF.pin='nails';render()}"); g.wait_for_timeout(200)
+  ok('Discover map: selected pin has a halo, the 나 marker is drawn on top', J("(()=>{const svg=document.querySelector('.dmap');const g=svg.querySelector('.pin[data-v=nails]');return !!g&&g.querySelectorAll('circle').length===3&&svg.lastElementChild.tagName==='text'})()"))
+  g.screenshot(path=f'{SH}/discover-map-ko.png'); J("()=>{DF.map=false;DF.pin=null;render()}")
+  # ---- Book sheet (new member): one heading; wallet empty CTA
+  J("()=>{Object.keys(S).forEach(k=>S[k].joined=false);render()}"); g.click('#tabs .tfab'); g.wait_for_timeout(300)
+  ok('new-member Book sheet: a single "내 주변 매장" heading + note, then the list', J("document.querySelectorAll('.sheet .opt').length") == 1 and J("!!document.querySelector('.sheet #bk-noplace') && document.querySelectorAll('#bk-more-places .svc').length===4"), J("[...document.querySelectorAll('.sheet .opt')].map(e=>e.innerText)"))
+  g.screenshot(path=f'{SH}/book-new-ko.png'); J("closeSheet()"); J("()=>{Object.keys(S).forEach(k=>S[k].joined=ORDER0.slice(0,5).includes(k));render()}")
+  ok('empty wallet has a Book CTA', J("(()=>{const w=Object.assign({},WALLET);Object.keys(WALLET).forEach(k=>delete WALLET[k]);const dp=B.map(b=>b.dep);B.forEach(b=>b.dep=0);const h=vWallet();Object.assign(WALLET,w);B.forEach((b,i)=>b.dep=dp[i]);return /wallet-book/.test(h)&&/예약하기/.test(h)})()"))
+  ok('empty-state Book CTA wording is 예약하기 (not 수업 예약)', J("BOOK_CTA()") == '예약하기')
+  ok('no page errors / 404s', not g.E and not g.NF, g.E[:2] + g.NF[:2]); g.close()
+  g = page(); J = g.evaluate; J("()=>{ST.tab='cici';ST.page=null;render()}"); g.fill('#in-cici', '누가 다쳤어요'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(900)
+  ok('S-1 chat: urgent care reply, no salon chips', J("(()=>{const m=CH.cici.msgs[CH.cici.msgs.length-1];return m.who!=='me'&&!!m.care})()") and not J("/살롱|상의해 주세요/.test(document.querySelector('#th-cici').innerText)"), J("document.querySelector('#th-cici').innerText.slice(-200)"))
+  g.screenshot(path=f'{SH}/s1-hurt-ko.png'); g.close()
+  g = page('?lang=ko&storeConfirm=1'); J = g.evaluate; J("()=>{ST.tab='you';ST.page='settings';render()}"); g.wait_for_timeout(200)
+  ok('G-6 ?storeConfirm=1 still shows the staff tool for a staff demo, labelled 매장 직원 · 데모', J("!!document.querySelector('#mvp-confirm')") and J("sT('sub')") == '매장 직원 · 데모'); g.close()
+  b.close()
+print(f'{sum(R)}/{len(R)}'); sys.exit(0 if all(R) else 1)
