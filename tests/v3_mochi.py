@@ -43,6 +43,7 @@ with sync_playwright() as p:
   ok('V3-1 feed when not hungry: fish arc, then Mochi eats from Cici\'s hand (room-eat, once)', J(g, "ST.catEat==='feed'") and J(g, TOP) == 'room-eat' and J(g, "(()=>{const v=document.querySelector('.catvid[data-clip=\"room-eat\"]');return !!v&&!v.loop})()"), [J(g, "ST.catEat"), J(g, TOP)])
   g.wait_for_timeout(4600); ok('V3-1 ... then happy (room-play when on)', J(g, "ST.catEat==='play'") and J(g, TOP) == J(g, "CAT_OPT['room-play']?'room-play':'room-happy'"), [J(g, "ST.catEat"), J(g, TOP)])
   ok('V3-1 toast sits under the glass card on Home (never over the greeting)', J(g, "(()=>{const t=document.querySelector('#toast'),c=document.querySelector('#hb-bubble');if(!t||t.hidden)return 'hidden';return t.getBoundingClientRect().top>=c.getBoundingClientRect().bottom})()") in (True, 'hidden'))
+  ok('V3-1 feeding shows no "Mochi loved it" toast over the room (user 2026-10-16): the scene + card line are the feedback', J(g, "(()=>{const t=document.querySelector('#toast');return !t||t.hidden||!/loved it|Purr/.test(t.innerText)})()") and 'loved it! Purr' not in SRC, J(g, "document.querySelector('#toast')&&document.querySelector('#toast').innerText"))
 
   # 2. Streak moods
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;ME.streak=3;render()}"); g.wait_for_timeout(700)
@@ -71,12 +72,13 @@ with sync_playwright() as p:
 
   # 4. Growth look + collar / bed in the room
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(300)
-  ok('V3-4 kitten at Seed/Sprout; sheet card shows the look', J(g, "catLook()==='kitten'") and J(g, "(()=>{openHomeSheet();const t=document.querySelector('#cat-grow').innerText;closeSheet();return /Kitten/.test(t)})()"))
-  J(g, "()=>{openHomeSheet()}"); ok('V3-4 growth track Kitten → Young cat → Fluffy cat with the current one marked', J(g, "(()=>{const c=[...document.querySelectorAll('#cat-looks .chip')];return c.length===3&&c[0].classList.contains('on')&&c[0].getAttribute('aria-current')==='true'})()")); J(g, "()=>closeSheet()")
+  GROW = "()=>{closeSheet();ST.tab='you';ST.page='growth';render()}"; HOME = "()=>{ST.tab='home';ST.page=null;render()}"
+  ok('V3-4 kitten at Seed/Sprout; You → Cici & Mochi page shows the look', J(g, "catLook()==='kitten'") and J(g, GROW) is None and J(g, "/Kitten/.test(document.querySelector('#cat-grow').innerText) && !!document.querySelector('#g-comp,#home-cici')"))
+  ok('V3-4 growth track Kitten → Young cat → Fluffy cat with the current one marked', J(g, "(()=>{const c=[...document.querySelectorAll('#cat-looks .chip')];return c.length===3&&c[0].classList.contains('on')&&c[0].getAttribute('aria-current')==='true'})()")); J(g, HOME)
   TO = lambda n: J(g, f"()=>{{let i=0;while(gState().stage<{n}&&i++<200)ME.ledger.push({{id:'TS'+i+'_'+Math.random(),delta:0,life:100,reason:'t',t:PV.now()}});render()}}")
   TO(2); g.wait_for_timeout(2100)
   ok('V3-4 Bud -> young cat look; collar granted AT BUD; -cat clip has the collar baked in, so NO 2D overlay', J(g, "catStage()===2 && catLook()==='cat' && catItemOwned('m_collar') && catItemOn('m_collar') && !catItemOwned('m_bed')") and J(g, "[...document.querySelectorAll('video[id^=cat-video]')].some(v=>/-cat\\.(webm|mp4)/.test(v.currentSrc)&&getComputedStyle(v).opacity>0.5)") and J(g, "(()=>{const c=document.querySelector('#cat-layer .catcollar');return !c||!c.classList.contains('on')})()"), J(g, "[catStage(),catLook(),P2S.cat.owned]"))
-  J(g, "()=>{openHomeSheet()}"); HINT = J(g, "(document.querySelector('#cat-locked-hint')||{}).innerText||''"); J(g, "()=>closeSheet()")
+  J(g, GROW); HINT = J(g, "(document.querySelector('#cat-locked-hint')||{}).innerText||''"); J(g, HOME); g.wait_for_timeout(300)
   ok('V3-4 sheet hint: collar at Bud, bed at Blossom', 'Collar at Bud, bed at Blossom' in HINT, HINT)
   ok('V3-4 one-time "grew" moment in the card, no modal', J(g, "ST.catGrew===true && /grew/i.test(document.querySelector('#cat-line').innerText) && !document.querySelector('.modal,.wtoast.in')"), J(g, LINE))
   g.screenshot(path=f'{SH}/grew-collar.png')
@@ -99,6 +101,35 @@ with sync_playwright() as p:
   g.screenshot(path=f'{SH}/water.png'); g.wait_for_timeout(4200)
   ok('V3-5 water ends: back to the mood loop; mission row shows the quiet inline line', J(g, "!ST.catMis") and J(g, "(()=>{openHomeSheet();const r=document.querySelector('#home-dm .mis[data-m=water] .misok');const t=r&&r.innerText;closeSheet();return !!t&&/bowl/i.test(t)})()"))
   ok('V3-5 slots for the combined Cici+Mochi water clip and the play clip exist', J(g, "'room-waterbowl' in CAT_OPT && 'room-play' in CAT_OPT && 'napping-bed' in CAT_OPT"))
+
+  # Today sheet (user 2026-10-16: "answers the tap"): missions first, Mochi second, one row each for next class + level; no growth card, no system notes; one view
+  J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;P2S.cat.treats=1;P2S.cat.earned=1;ME.notices.push({k:'migrated',v:{},t:PV.now()});render()}"); g.wait_for_timeout(300)
+  J(g, "()=>document.querySelector('#v2-pull').click()"); g.wait_for_timeout(700)
+  ORDER = J(g, "[...document.querySelectorAll('.sheet #home-dm, .sheet #cat-card, .sheet #home-next, .sheet #home-lvl')].map(e=>e.id)")
+  ok('SHEET order: missions → Mochi → next class → level', ORDER == ['home-dm', 'cat-card', 'home-next', 'home-lvl'], ORDER)
+  ok('SHEET nothing else: no growth/stats card, no room, no notes card, no level bar card, no items card', J(g, "!document.querySelector('.sheet #g-comp, .sheet #home-cici, .sheet #p2-room, .sheet #pv-notes, .sheet .lvlbar, .sheet #cat-grow, .sheet #cat-looks')"))
+  ok('SHEET missions card fully visible on open (no scroll needed to reach Start)', J(g, "(()=>{const s=document.querySelector('.sheet'),m=document.querySelector('.sheet #home-dm').getBoundingClientRect(),r=s.getBoundingClientRect();return m.top>=r.top&&m.bottom<=r.bottom+1})()"))
+  ok('SHEET fits one view (≤ 1 short scroll)', J(g, "(()=>{const s=document.querySelector('.sheet');return s.scrollHeight-s.clientHeight})()") <= 120, J(g, "(()=>{const s=document.querySelector('.sheet');return [s.scrollHeight,s.clientHeight]})()"))
+  ok('SHEET Mochi row: one line + Feed, no on-ramp buttons', J(g, "!!document.querySelector('.sheet #cat-card #cat-feedbtn') && !document.querySelector('.sheet #cat-open-mis,.sheet #cat-open-bk') && document.querySelector('.sheet #cat-card').getBoundingClientRect().height<=96"))
+  J(g, "()=>document.querySelector('.sheet [data-act=dmwater]').click()"); g.wait_for_timeout(4600); J(g, "()=>document.querySelector('#v2-pull').click()"); g.wait_for_timeout(600)
+  ok('SHEET done row: no strikethrough, Mochi line on one line (ellipsis, not wrap)', J(g, "(()=>{const t=document.querySelector('.sheet .mis.done .mt'),x=document.querySelector('.sheet .mis.done .mistx');if(!t||!x)return false;return getComputedStyle(t).textDecorationLine==='none'&&getComputedStyle(x).whiteSpace==='nowrap'&&x.getBoundingClientRect().height<24})()"))
+  J(g, "()=>document.querySelector('.sheet #home-lvl').click()"); g.wait_for_timeout(300)
+  ok('SHEET level row leaves the sheet and opens You → points', J(g, "!document.querySelector('.sheet') && ST.tab==='you' && ST.page==='points'"))
+  J(g, "()=>{ST.tab='you';ST.page=null;render()}"); ok('YOU has a Cici & Mochi tile that opens the growth page', J(g, "(()=>{const b=document.querySelector('#you-tiles [data-v=growth]');if(!b)return false;b.click();return ST.page==='growth'&&!!document.querySelector('#cat-grow')&&!!document.querySelector('#g-comp,#home-cici')})()"))
+  ok('YOU growth page header reads "Cici & Mochi" (not "Notifications") and Back returns to You', J(g, "document.querySelector('.brand .t').innerText.trim()") == 'Cici & Mochi' and J(g, "(()=>{document.querySelector('[data-act=back]').click();return ST.tab==='you'&&ST.page===null})()"), J(g, "document.querySelector('header').innerText"))
+  J(g, HOME); g.wait_for_timeout(300)
+
+  # Court rental step 2 (user 2026-10-16: "I can not book by myself"): times right under the day, options folded, slot rows look tappable, thin day points at the next one
+  J(g, "()=>{closeSheet();bookSheet('pickle')}"); g.wait_for_timeout(400)
+  ok('BOOK court step 2: open times sit above the fold, not under five rows of chips', J(g, "(()=>{const s=document.querySelector('.sheet #bk-slots .slot, .sheet #bk-slots .svc');if(!s)return 'no slot';const o=document.querySelector('.sheet #bk-opts');return s.getBoundingClientRect().top<700&&o&&!o.open&&o.getBoundingClientRect().top<document.querySelector('#bk-slots').getBoundingClientRect().top})()") is True, J(g, "document.querySelector('.sheet').innerText.slice(0,300)"))
+  ok('BOOK court step 2: options summary line shows court · block · players · paddles', re.search(r'Any court · 60 min · 4 players · No paddles', J(g, "document.querySelector('#bk-opts summary').innerText")), J(g, "document.querySelector('#bk-opts summary').innerText"))
+  ok('BOOK court step 2: every open slot has a chevron; a thin day adds a "next day with more" row', J(g, "[...document.querySelectorAll('#bk-slots .slot:not([disabled])')].every(b=>b.querySelector('.chev'))") and (J(g, "document.querySelectorAll('#bk-slots .slot:not([disabled])').length") > 2 or J(g, "!!document.querySelector('#bk-more')")))
+  J(g, "()=>{document.querySelector('#bk-opts summary').click()}"); g.wait_for_timeout(150); J(g, "()=>{document.querySelector('.sheet [data-k=len][data-v=\"90\"]').click()}"); g.wait_for_timeout(300)
+  ok('BOOK court step 2: changing an option keeps Options open and updates the summary + times', J(g, "document.querySelector('#bk-opts').open && /90 min/.test(document.querySelector('#bk-opts summary').innerText) && BS.len===90"))
+  n0 = J(g, "B.filter(b=>b.store==='pickle'&&b.status==='confirmed').length")
+  J(g, "()=>{const m=document.querySelector('#bk-more');if(m)m.click()}"); g.wait_for_timeout(300); J(g, "()=>document.querySelector('#bk-slots .slot:not([disabled])').click()"); g.wait_for_timeout(300); J(g, "()=>document.querySelector('.sheet [data-act=dobook]').click()"); g.wait_for_timeout(400)
+  ok('BOOK court: slot → confirm → booked by the member alone (90 min block kept)', J(g, "B.filter(b=>b.store==='pickle'&&b.status==='confirmed').length") == n0 + 1 and J(g, "B.filter(b=>b.store==='pickle'&&b.status==='confirmed').pop().len") == 90, J(g, "B.filter(b=>b.store==='pickle').map(b=>[b.d,b.m,b.len,b.status])"))
+  g.screenshot(path=f'{SH}/court-booked.png'); J(g, "()=>{closeSheet()}"); J(g, HOME); g.wait_for_timeout(300)
 
   # Fixes
   ok('FIX caption "Earn a treat" not truncated', J(g, "(()=>{P2S.cat.treats=0;catRefreshUi();const c=document.querySelector('#cat-fab-empty').parentElement.querySelector('.v2cap');return c.scrollWidth<=c.clientWidth+1})()"))
