@@ -97,6 +97,7 @@ with sync_playwright() as p:
   J(f"()=>{{const b=B.find(b=>b.id==={pk});openBook(b.store,b.svc,{{move:b.id,d:b.d,len:b.len,party:b.party||4,paddles:b.paddles,court:'any'}})}}"); g.wait_for_timeout(300)
   ok('B-1 move picker marks the held time (현재, disabled)', J("document.querySelectorAll('.sheet .slot.cur[disabled]').length") == 1, J("[...document.querySelectorAll('.sheet .slot')].map(s=>s.innerText.replace(/\\n/g,' ')).slice(0,6)"))
   J("()=>{const s=[...document.querySelectorAll('.sheet .slot')].find(s=>!s.disabled&&+s.dataset.m<+document.querySelector('.sheet .slot.cur').dataset.m);(s||[...document.querySelectorAll('.sheet .slot')].find(s=>!s.disabled)).click()}"); g.wait_for_timeout(400)
+  J("()=>{const a=document.querySelector('#bk-courts [data-v=any]');if(a)a.click()}"); g.wait_for_timeout(400) # courts 2026-10-17: a move also goes time → court → review
   mt = J("document.querySelector('.sheet')?.innerText||''")
   ok('B-1 rental move review states the new total and delta, never "가격은 같아요"', '새 금액' in mt and ('−' in mt or '+' in mt) and '가격은 같아요' not in mt, mt[:200])
   ok('breakdown: court block + paddles line on a rental review', J("!!document.querySelector('.sheet .rv-break') && /코트 \\d+분/.test(document.querySelector('.sheet .rv-break').innerText)"), J("document.querySelector('.sheet .rv-break')?.innerText"))

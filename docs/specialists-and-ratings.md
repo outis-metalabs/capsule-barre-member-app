@@ -132,7 +132,7 @@ Thresholds: stars at `nRatings12m ≥ 10`; rebook rate at `visits ≥ 20`; other
 
 - Store setup flags on the four appointment stores and the two class stores; private barre and private yoga as class types; Capsule Barre `staffChoice: "optional"`, Soom Spa `"none"` (assigns on arrival) to show both.
 - Team section and person sheet with sample stats; Book sheet person rows with next free time; "Assigned by the store" on confirm for Anyone and for `none` stores.
-- Court stores: time rows with "N of 4 courts free", court rows with attributes and surcharge under the chosen time, Rally Court Club as the `courtChoice: "none"` example, court number on confirm, success, My bookings and the check-in code.
+- Court stores (**implemented 2026-10-17**, `tests/v3_courts.py`): time rows with "N of 4 courts free", court rows with attributes and surcharge under the chosen time, court-first entry from the store page, Rally Court Club as the `courtChoice: "none"` example, court number on confirm, success, My bookings and the check-in code, the "moved to Court 2" notification.
 - Rating attribution by booking; a per-person average that only appears past the threshold.
 - Chat answers for the two questions.
 

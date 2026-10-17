@@ -111,7 +111,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .svc .pr{font-weight:700;white-space:nowrap}
 .slot{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);min-height:56px}
 .slot:hover{border-color:var(--rasp)}
-.slot .tm{font-weight:750;font-size:17px;min-width:56px}
+.slot .tm{font-weight:750;font-size:17px;min-width:56px}.slot.open{border-color:var(--rasp);border-bottom-left-radius:0;border-bottom-right-radius:0}.courts{border:1px solid var(--rasp);border-top:0;border-radius:0 0 14px 14px;padding:4px 10px 10px;background:#FFF8F9;display:flex;flex-direction:column;gap:6px}.slot.court{min-height:52px;padding:8px 12px}.slot.court.taken{opacity:.6;background:#F7F1F2}
 .slot .chev,.bkmore .chev,.bkopts .chev{font-size:22px;line-height:1;color:var(--rasp);margin-left:2px}.slot .chev{font-weight:700} /* v3: a slot reads as a tappable row, not a notice */
 .bkopts{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);padding:0 12px}.bkopts summary{list-style:none;gap:8px}.bkopts summary::-webkit-details-marker{display:none}
 .bkopts summary .sm{color:var(--ink);font-weight:500}.bkopts[open] summary .chev{transform:rotate(90deg)}.bkopts .chev{transition:transform .15s}.bkopts[open]{padding-bottom:12px}.bkopts .opt:first-of-type{margin-top:4px}
@@ -1814,7 +1814,7 @@ const S = {
     kw: /\b(spa|massage|deep tissue|hot stone|da nong|mat xa|xoa bop|head spa|goi dau|bam huyet|an huyet|acupressure|body scrub|scrub|tay te bao chet)\b|헤드 ?스파|마사지|지압|스크럽/, names: /\b(sen|soom) spa\b/, kb: { m: "From Soom Spa's info: the 60-minute is a full-body relax; the 90-minute adds more time on back and shoulders. Both use the same oil." } },
   pickle: { name: "Sunrise Pickleball Club", area: "Thảo Điền, Thủ Đức", cat: "sport", kind: "rental", color: "#2D6680", logo: "SP", joined: true, visits: 2, unread: 0,
     policy: { free: 12, late: "Half the court fee", dep: 0, noshow: "Full court fee", arrive: "Your block ends on time" },
-    staff: [], courts: [{ id: "c1", n: "Court 1" }, { id: "c2", n: "Court 2" }, { id: "c3", n: "Court 3" }, { id: "c4", n: "Court 4" }], hours: [360, 1320], step: 60,
+    staff: [], courts: [{ id: "c1", n: "Court 1", out: 1, lit: 1, note: "near the desk" }, { id: "c2", n: "Court 2", out: 1, lit: 1 }, { id: "c3", n: "Court 3", indoor: 1, ac: 1, extra: 40000 }, { id: "c4", n: "Court 4", indoor: 1, ac: 1, extra: 40000 }], courtChoice: "optional", /* docs/specialists-and-ratings.md §4f: courts differ, so the member may pick one; extra = surcharge per hour (base ₫) */ hours: [360, 1320], step: 60,
     svcs: [{ id: "court", n: "Court rental", len: 60, price: 0, desc: "Outdoor, lit courts. " + vnd(200000) + "/h before 17:00, " + vnd(280000) + "/h after." }],
     kw: /\b(pickle\w*|courts?|san|paddles?)\b/, names: /\bsunrise\b/,
     kb: { bring: "Non-marking court shoes, water and a towel. Paddles can be rented for " + vnd(30000) + " each, and balls are free. Arrive 10 minutes early to warm up." } },
@@ -1831,6 +1831,13 @@ const S = {
 const ORDER0 = ["capsule", "salon", "skin", "spa", "pickle", "nails", "yoga"];
 const joinedIds = () => ORDER0.filter(id => S[id].joined);
 const svcOf = (sid, vid) => S[sid].svcs.find(v => v.id === vid);
+/* courts (docs/specialists-and-ratings.md §4f): attributes, labels, "assigned on arrival", the member's usual court */
+const courtOf = (sid, rid) => (S[sid].courts || []).find(c => c.id === rid);
+const courtBits = c => [c.indoor ? L3("indoor", "trong nhà", "실내") : c.out ? L3("outdoor", "ngoài trời", "야외") : "", c.lit ? L3("lit", "có đèn", "조명") : "", c.ac ? L3("AC", "máy lạnh", "냉방") : "", c.note ? tr(c.note) : ""].filter(Boolean).join(" · ");
+const courtLabel = (sid, rid, short) => { const c = courtOf(sid, rid); if (!c) return resName(sid, rid); const b = short ? "" : courtBits(c); return N(c.n) + (b ? " · " + b : ""); };
+const COURT_ASSIGNED = () => L3("Court assigned on arrival", "Sân được xếp khi đến", "코트는 도착 시 배정");
+const usualCourt = sid => { const c = {}; let best = null; for (const b of B) { if (b.store !== sid || b.status === "cancelled" || b.anyCourt || !b.rids || !b.rids.length) continue; const r = b.rids[0]; c[r] = (c[r] || 0) + 1; if (best == null || c[r] > c[best]) best = r; } return best && c[best] >= 3 ? best : null; };
+const bkWho = b => S[b.store].kind === "rental" ? (b.anyCourt ? COURT_ASSIGNED() : courtLabel(b.store, b.rids[0], true)) : b.rids.map(r => resName(b.store, r)).join(" + ");
 const resName = (sid, rid) => { const s = S[sid]; for (const k of ["staff", "rooms", "courts"]) { const r = (s[k] || []).find(x => x.id === rid); if (r) return N(r.n); } return rid; };
 const staffStore = id => ORDER0.find(sid => (S[sid].staff || []).some(x => x.id === id));
 const priceLabel = v => v.from ? L3("from ", "từ ", "") + vnd(v.price) + L3("", "", "부터") : v.price ? vnd(v.price) : (v.id === "court" ? vnd(200000) + L3("/h", "/giờ", "/시간") : tr("Free"));
@@ -1901,7 +1908,7 @@ function resFree(sid, rid, d, m, len, ignore) {
   if (busy(sid + rid + d + ":" + m)) return false;
   return !B.some(b => b.id !== ignore && b.status === "confirmed" && b.store === sid && b.d === d && b.rids.includes(rid) && m < b.m + b.len && b.m < m + len);
 }
-function priceFor(s, svc, m, len, o) { if (s.kind === "rental") { let p = 0; for (let t = m; t < m + len; t += 30) p += (t >= 1020 ? 280000 : 200000) / 2; return p + (o.paddles || 0) * 30000; } return svc.price; } /* panel: each half hour at its own rate */
+function priceFor(s, svc, m, len, o) { if (s.kind === "rental") { let p = 0; for (let t = m; t < m + len; t += 30) p += (t >= 1020 ? 280000 : 200000) / 2; const c = o.court && o.court !== "any" ? (s.courts || []).find(x => x.id === o.court) : null; return p + (o.paddles || 0) * 30000 + (c && c.extra ? Math.round(c.extra * len / 60) : 0); } return svc.price; } /* panel: each half hour at its own rate */
 function slotsFor(sid, vid, d, o = {}) {
   const s = S[sid], svc = svcOf(sid, vid), out = []; if (!svc || d < 0) return out;
   const minM = Math.max(0, nowMin() + 30 - d * 1440);
@@ -1919,8 +1926,8 @@ function slotsFor(sid, vid, d, o = {}) {
     if (m < minM) continue;
     let rids = null;
     if (s.kind === "rental") {
-      const cs = o.court && o.court !== "any" ? [o.court] : s.courts.map(c => c.id);
-      const c = cs.find(c => resFree(sid, c, d, m, len, o.ignore)); if (c) rids = [c];
+      const all = s.courts.map(c => c.id), free = all.filter(c => resFree(sid, c, d, m, len, o.ignore)), cs = o.court && o.court !== "any" ? free.filter(c => c === o.court) : free;
+      if (cs.length) { rids = [cs[0]]; out.push({ d, m, len, rids, price: priceFor(s, svc, m, len, o), free, ncourt: all.length }); } continue;
     } else {
       const sts = o.staff && o.staff !== "any" ? [o.staff] : s.staff.map(x => x.id);
       const st = sts.find(x => resFree(sid, x, d, m, len, o.ignore)); if (!st) continue;
@@ -1938,7 +1945,7 @@ const TRD = {
   " now, taken off the total": [" ngay, trừ vào tổng", " 지금 결제, 합계에서 차감"], "Past the free window": ["Đã qua hạn hủy miễn phí", "지났어요"], "(sample)": ["(mẫu)", "(샘플)"],
   "Done": ["Xong", "완료"], "XP comes when you show up, not for booking.": ["XP được tính khi bạn đến, không phải khi đặt.", "XP는 예약이 아니라 방문할 때 쌓여요."],
   "Day": ["Ngày", "날짜"], "Therapist": ["Kỹ thuật viên", "테라피스트"], "Staff": ["Nhân viên", "담당자"], "Anyone": ["Ai cũng được", "누구나"], "Room": ["Phòng", "룸"], "Any room": ["Phòng bất kỳ", "아무 룸"],
-  "Any court": ["Sân bất kỳ", "아무 코트"], "Time block": ["Thời lượng", "이용 시간"], "Players": ["Người chơi", "인원"], "None": ["Không", "없음"], "2 paddles": ["2 vợt", "패들 2개"], "4 paddles": ["4 vợt", "패들 4개"],
+  "Any court": ["Sân bất kỳ", "아무 코트"], "near the desk": ["gần quầy", "데스크 근처"], "Time block": ["Thời lượng", "이용 시간"], "Players": ["Người chơi", "인원"], "None": ["Không", "없음"], "2 paddles": ["2 vợt", "패들 2개"], "4 paddles": ["4 vợt", "패들 4개"],
   "60 min": ["60 phút", "60분"], "90 min": ["90 phút", "90분"], "2 hours": ["2 tiếng", "2시간"],
   "Open times · total and free-cancel on each": ["Giờ trống · có tổng tiền và hạn hủy miễn phí", "예약 가능 시간 · 합계와 무료 취소 기한 표시"], "spots left": ["chỗ trống", "자리 남음"], "Full": ["Hết chỗ", "마감"], "Pass": ["Gói", "이용권"],
   "Try another day above.": ["Thử ngày khác ở trên.", "위에서 다른 날을 골라 보세요."], "Nothing open": ["Không còn chỗ", "예약 가능 없음"],
@@ -2081,6 +2088,7 @@ const ntx = n => n.txf ? n.txf() : n.tx; /* points brainstorm 2026-10-17: live-n
 const NFEED = [
   { type: "points", s: "capsule", day: 0, at: 495, txf: () => { const b = ME ? bal(ME) : 0, v = pvT("nEarn", { s: S.capsule.name, n: 50, b: fmtN(b), w: ptsW(b) }); return [v, v, v]; } },
   { type: "points", s: null, day: 1, at: 610, txf: () => { const b = ME ? bal(ME) : 0, L0 = ME ? Math.max(ME.lastVisit || 0, ME.lastSpend || 0, ME.enabledAt || 0) : 0, v = pvT("nExpire", { w: ptsW(b), date: fDateP(addMonths(L0 || PV.now(), 12)) }); return [v, v, v]; } },
+  { type: "reminder", s: "pickle", day: 0, at: 555, tx: ["Your 18:00 game tomorrow moved to Court 2 (outdoor, lit). Same price, same time.", "Trận 18:00 ngày mai của bạn chuyển sang Sân 2 (ngoài trời, có đèn). Giá và giờ không đổi.", "내일 18:00 경기가 2번 코트(야외·조명)로 바뀌었어요. 가격과 시간은 그대로예요."] },
   { type: "reminder", s: "capsule", day: 0, at: 1080, tx: ["Barre with Yuna is tomorrow at 07:00. Grip socks, water, and you. See you there!", "Barre với Yuna vào 07:00 ngày mai. Vớ chống trượt, nước, và bạn. Hẹn gặp nhé!", "내일 07:00 유나 바레예요. 논슬립 양말, 물, 그리고 당신. 거기서 만나요!"] },
   { type: "nudge", s: "capsule", day: 0, at: 660, slot: { svc: "barre", m: 1080 }, tx: ["Fancy barre today? There's room at 18:00 if you feel like it.", "Hôm nay đi barre không? 18:00 vẫn có chỗ nếu bạn muốn.", "오늘 바레 어때요? 마음 내키면 18:00에 자리가 있어요."] },
   { type: "nudge", s: "spa", day: 0, at: 720, weather: true, tx: ["Rainy afternoon in Hannam-dong. A warm foot massage at Soom Spa sounds nice. 15:00 is open.", "Chiều Hannam-dong mưa rồi. Massage chân ấm áp ở Soom Spa nghe thật dễ chịu. 15:00 còn trống.", "한남동에 비 오는 오후예요. Soom Spa 따뜻한 발 마사지 어때요? 15:00 비어 있어요."] },
@@ -2191,7 +2199,7 @@ function capInfo(x) {
 const capTx = c => c.full ? L3(`Full · ${c.cap}/${c.cap}`, `Đã đầy · ${c.cap}/${c.cap}`, `마감 · ${c.cap}/${c.cap}`) : L3(`${c.booked}/${c.cap} booked · ${c.left} ${c.left === 1 ? "spot" : "spots"} left`, `${c.booked}/${c.cap} đã đặt · còn ${c.left} chỗ`, `${c.booked}/${c.cap} 예약 · ${c.left}자리 남음`);
 function draftRows(x) {
   const s = S[x.store], v = svcOf(x.store, x.svc), pass = x.usePass && !x.wait ? (WALLET[x.store] || []).find(p => p.id === x.usePass) : null;
-  const who = x.rids.map(r => resName(x.store, r)).join(" + ");
+  const who = s.kind === "rental" ? (x.anyCourt ? COURT_ASSIGNED() : courtLabel(x.store, x.rids[0])) : x.rids.map(r => resName(x.store, r)).join(" + ");
   let what = esc(N(v.n)); if (s.kind === "rental") what += ` · ${fMin(x.len)} · ${trS((x.party || 4) + " players")}` + (x.paddles ? ` · ${L3(x.paddles + " paddles", x.paddles + " vợt", "패들 " + x.paddles + "개")}` : "");
   const priceTxt = x.wait ? `<span class="sub sm">${esc(L3("Nothing now · you pay (or use your pass) only if a spot opens and you confirm", "Chưa tính gì · chỉ trả (hoặc dùng gói) khi có chỗ và bạn xác nhận", "지금은 결제 없음 · 자리가 나고 확정할 때만 결제(또는 이용권 사용)"))}</span>`
     : pass ? `${vnd(0)} <span class="sub sm">· ${esc(L3("1 class from your pass", "1 buổi từ gói", "이용권 1회 차감"))}</span>` /* review: the pass is detailed once, in its own row */
@@ -2204,7 +2212,7 @@ function draftRows(x) {
     ${s.kind === "class" ? `<dt>${L3("Room", "Phòng", "룸")}</dt><dd class="rv-room">${esc(roomTx(v.room || "Main studio"))}</dd>` : ""}
     ${(() => { const c = x.status ? null : capInfo(x); return c ? `<dt>${L3("Spots", "Chỗ", "정원")}</dt><dd class="rv-cap">${esc(capTx(c))}</dd>` : ""; })()}
     ${pass ? `<dt>${L3("Pass", "Gói", "이용권")}</dt><dd class="rv-pass">${esc(L3(`${pass.t} · ${pass.left} left`, `${tr(pass.t)} · còn ${pass.left}`, `${tr(pass.t)} · ${pass.left}회 남음`))} <span class="sub sm">· ${esc(t("storeOnly", { s: s.name }))}</span></dd>` : ""}
-    ${s.kind === "rental" && !x.status ? `<dt>${L3("Price", "Giá", "요금")}</dt><dd class="rv-break">${esc(L3(`Court ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`, `Sân ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`, `코트 ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`))}${x.paddles ? " + " + esc(tr(`${x.paddles} paddles`)) + " " + vnd(x.paddles * 30000) : ""}</dd>` : ""}
+    ${s.kind === "rental" && !x.status ? `<dt>${L3("Price", "Giá", "요금")}</dt><dd class="rv-break">${esc(L3(`Court ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`, `Sân ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`, `코트 ${fMin(x.len)} ${vnd(priceFor(s, v, x.m, x.len, {}))}`))}${(() => { const c = !x.anyCourt && x.rids && courtOf(x.store, x.rids[0]); return c && c.extra ? " + " + esc(L3(`${N(c.n)} ${vnd(Math.round(c.extra * x.len / 60))}`, `${N(c.n)} ${vnd(Math.round(c.extra * x.len / 60))}`, `${N(c.n)} ${vnd(Math.round(c.extra * x.len / 60))}`)) : ""; })()}${x.paddles ? " + " + esc(tr(`${x.paddles} paddles`)) + " " + vnd(x.paddles * 30000) : ""}</dd>` : ""}
     <dt>${t("total")}</dt><dd class="tot">${priceTxt}</dd>
     <dt>${t("deposit")}</dt><dd>${P.dep ? (x.status ? esc(L3(`${vnd(x.dep || P.dep)} paid · taken off the total`, `Đã trả ${vnd(x.dep || P.dep)} · trừ vào tổng`, `${vnd(x.dep || P.dep)}결제 완료 · 총액에서 차감`)) : vnd(P.dep) + tr(" now, taken off the total")) : t("none") + " · " + t("payAt")}</dd>
     ${x.pol ? "" : `<dt>${L3("Cancel policy", "Chính sách hủy", "취소 규정")}</dt><dd class="rv-pol">${esc(policyLine(x.store))}</dd>`}
@@ -2218,7 +2226,7 @@ function completeDraft(x) { const pass = passFor(x.store, x.svc); if (pass && !x
 let PEND = null;
 function openConfirm(x) {
   if (gated()) return; /* MVP-B7: no review card in a crisis/urgent turn */
-  completeDraft(x); PEND = x; track("booking_review_open", { via: "sheet" }); const s = S[x.store]; if (JBJOIN === x.store && !s.joined) x.joinOnBook = true;
+  completeDraft(x); PEND = x; track("booking_review_open", { via: "sheet" }); const s = S[x.store]; if (s.kind === "rental" && x.anyCourt == null) x.anyCourt = !x.court || x.court === "any"; /* chat and quick paths never pick a court: the club assigns */ if (JBJOIN === x.store && !s.joined) x.joinOnBook = true;
   const mv = x.move ? B.find(b => b.id === x.move) : null; if (mv) x.usePass = mv.usePass || null; /* panel: the review of a move shows the pass, not a cash total */
   const lbl = mv ? t("move") : (s.policy.dep ? t("payBook") + " · " + vnd(s.policy.dep) : t("confirm"));
   const lateMove = mv && !freeNow(mv.store, mv.d, mv.m);
@@ -2248,7 +2256,7 @@ function doBook(x, quiet) {
     if (dup) { closeSheet(); render(); toast(L3("You already have this booking.", "Bạn đã đặt buổi này rồi.", "이미 예약된 시간이에요.")); manage(dup); return null; } }
   if (!quiet) { let ok = true; try { const o = s.kind === "rental" ? { court: x.rids[0], len: x.len, paddles: x.paddles } : s.kind === "class" ? {} : { staff: x.rids[0], room: x.rids[1] }; ok = slotsFor(x.store, x.svc, x.d, o).some(z => z.m === x.m && z.left !== 0); } catch (e) {}
     if (!ok) { takenSheet(x); return null; } }
-  const b = { id: BID++, status: "confirmed", source: x.source || "app", store: x.store, svc: x.svc, d: x.d, m: x.m, len: x.len, rids: x.rids, price: x.price, party: x.party || 0, paddles: x.paddles || 0, dep: s.policy.dep || 0, usePass: x.usePass || null, paid: x.paid || null, pol: Object.assign({}, s.policy) };
+  const b = { id: BID++, status: "confirmed", source: x.source || "app", store: x.store, svc: x.svc, d: x.d, m: x.m, len: x.len, rids: x.rids, price: x.price, party: x.party || 0, paddles: x.paddles || 0, anyCourt: !!x.anyCourt, dep: s.policy.dep || 0, usePass: x.usePass || null, paid: x.paid || null, pol: Object.assign({}, s.policy) };
   if (b.usePass) { const p = WALLET[b.store].find(p => p.id === b.usePass); if (p) p.left--; }
   B.push(b); if (x.joinOnBook && !S[b.store].joined) { S[b.store].joined = true; INBOX.unshift({ s: b.store, text: `Welcome to ${S[b.store].name}!`, when: L3("Now", "Vừa xong", "방금"), unread: false }); track("store_join", { store: b.store, via: "book" }); } if (JBJOIN === b.store) JBJOIN = null;
   if (quiet) { render(); return b; }
@@ -2290,7 +2298,7 @@ function success(b, undo) {
   if (dm && undo) { const u0 = undo; undo = () => { u0(); dmUnmark("book"); }; } /* PO review: undoing the booking takes the mission credit back */
   const cheerAlt = L3("Cici cheering", "Cici reo mừng", "응원하는 " + CICI_KO);
   const calm = gated(); /* MVP-B7/A6: no cheer in a crisis/urgent turn */ const media = calm ? "" : realCut({ alt: cheerAlt, eager: 1, cls: "cut-cheer" }); if (!calm) setTimeout(() => celebrate(false), 50);
-  openSheet(sheetHd(t("booked")) + `<div class="card scene succ" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${esc(b.paid ? L3(`Deposit ${vnd(b.dep)} paid with ${b.paid} (demo). It comes off the total at the store.`, `Đã trả cọc ${vnd(b.dep)} bằng ${b.paid} (demo). Trừ vào tổng tại cửa hàng.`, `예약금 ${vnd(b.dep)} ${b.paid} 결제 완료 (데모). 매장에서 총액에서 차감돼요.`) : L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`))}</p>` : ""}<p class="sm" id="bk-earn">${esc(bkT("earnShort", { n: earnEst(), s: S[b.store].name, w: ptsW(Math.floor(50 * mult(ME))) }))}</p></div></div>` + /* user 2026-10-17: no "saved" filler, one earn line */
+  openSheet(sheetHd(t("booked")) + `<div class="card scene succ" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}${S[b.store].kind === "rental" ? ` · ${esc(bkWho(b))}` : ""}</p>${b.dep ? `<p class="sub sm">${esc(b.paid ? L3(`Deposit ${vnd(b.dep)} paid with ${b.paid} (demo). It comes off the total at the store.`, `Đã trả cọc ${vnd(b.dep)} bằng ${b.paid} (demo). Trừ vào tổng tại cửa hàng.`, `예약금 ${vnd(b.dep)} ${b.paid} 결제 완료 (데모). 매장에서 총액에서 차감돼요.`) : L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`))}</p>` : ""}<p class="sm" id="bk-earn">${esc(bkT("earnShort", { n: earnEst(), s: S[b.store].name, w: ptsW(Math.floor(50 * mult(ME))) }))}</p></div></div>` + /* user 2026-10-17: no "saved" filler, one earn line */
     `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="close" id="bk-done">${tr("Done")}</button><div class="sact3"><a class="btn ghost" href="${icsHref(b)}" download="cici-${b.id}.ics" data-act="addcal" data-id="${b.id}" id="bk-cal">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</a><button class="btn ghost" data-act="succundo">${t("undo")}</button></div><div class="row bklinks" id="bk-links"><button class="link" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm", true); return m ? m.replace(/class="btn (sec|ghost) bkmap"/g, 'class="link bkmap"').replace(/<svg[\s\S]*?<\/svg>\s*/g, "") : ""; })()}</div></div>`, t("booked"));
   succUndo = undo;
 }
@@ -2374,9 +2382,9 @@ function renderBook(fresh) {
   if (s.rooms) h += `<div class="opt">${tr("Room")}</div>` + chipSet("room", tr("Room"), [["any", tr("Any room")]].concat(s.rooms.map(x => [x.id, N(x.n)])), BS.room);
   if (s.kind === "rental") { /* v3: court / block / players / paddles fold into one line so the open times stay above the fold (user 2026-10-16: "I can not book by myself") */
     const lenL = fMin(BS.len);
-    const sum = [BS.court === "any" ? tr("Any court") : resName(sid, BS.court), lenL, L3(`${BS.party} players`, `${BS.party} người chơi`, `${BS.party}명`), BS.paddles ? tr(`${BS.paddles} paddles`) : L3("No paddles", "Không thuê vợt", "패들 없음")].join(" · ");
+    const sum = [lenL, L3(`${BS.party} players`, `${BS.party} người chơi`, `${BS.party}명`), BS.paddles ? tr(`${BS.paddles} paddles`) : L3("No paddles", "Không thuê vợt", "패들 없음")].join(" · ");
+    if (BS.court !== "any") h += `<div class="card row" id="bk-court-fixed" style="margin-top:10px;padding:8px 12px"><span class="grow sm"><b>${esc(courtLabel(sid, BS.court))}</b></span><button class="link" data-act="bs" data-k="court" data-v="any">${esc(tr("Any court"))}</button></div>`; /* court-first entry from the store page */
     h += `<details class="bkopts" id="bk-opts"${BS.optsOpen ? " open" : ""}><summary><span class="opt" style="margin:0 10px 0 0">${L3("Options", "Tuỳ chọn", "옵션")}</span><span class="grow sm">${esc(sum)}</span><span class="chev" aria-hidden="true">›</span></summary>`;
-    h += `<div class="opt">${tr("Court")}</div>` + chipSet("court", tr("Court"), [["any", tr("Any court")]].concat(s.courts.map(x => [x.id, resName(sid, x.id)])), BS.court);
     h += `<div class="opt">${tr("Time block")}</div>` + chipSet("len", tr("Time block"), [[60, fMin(60)], [90, fMin(90)], [120, fMin(120)]], BS.len);
     h += `<div class="opt">${tr("Players")}</div>` + chipSet("party", tr("Players"), [[2, "2"], [3, "3"], [4, "4"]], BS.party);
     h += `<div class="opt">${L3(`Paddle rental · ${vnd(30000)} each`, `Thuê vợt · ${vnd(30000)} mỗi cây`, `패들 대여 · 개당 ${vnd(30000)}`)}</div>` + chipSet("paddles", L3("Paddles", "Vợt", "패들"), [[0, tr("None")], [2, tr("2 paddles")], [4, tr("4 paddles")]].filter(([n]) => n <= BS.party), BS.paddles > BS.party ? (BS.paddles = BS.party >= 2 ? 2 : 0) : BS.paddles) + `</details>`;
@@ -2387,23 +2395,34 @@ function renderBook(fresh) {
   h += `<div class="opt">${esc(L3("Open times", "Giờ trống", "예약 가능 시간"))}</div><p class="sub sm" id="bk-pol" style="margin:0 0 6px">${esc(policyLine(sid))}</p><div class="stack" role="list" id="bk-slots">`; /* PO review: the cancel rule once above the list, not on every row */
   if (!list.length) h += `<p class="sub">${esc(L3(`Nothing open ${fDay(BS.d)}.`, `Không còn chỗ ${fDay(BS.d)}.`, `${fDay(BS.d)} · 예약 가능한 시간이 없어요.`))} ${tr("Try another day above.")}</p>`;
   for (const z of list) {
-    const full = s.kind === "class" && z.left <= 0; const who = z.rids.map(r => resName(sid, r)).join(" + ");
+    const full = s.kind === "class" && z.left <= 0, pickC = s.kind === "rental" && s.courtChoice !== "none" && BS.court === "any", openC = pickC && BS.m === z.m;
+    const who = s.kind === "rental" ? (BS.court !== "any" ? courtLabel(sid, BS.court, true) : s.courtChoice === "none" ? L3(`${z.ncourt} courts · assigned on arrival`, `${z.ncourt} sân · xếp khi đến`, `코트 ${z.ncourt}면 · 도착 시 배정`) : L3(`${z.free.length} of ${z.ncourt} courts free`, `${z.free.length}/${z.ncourt} sân trống`, `코트 ${z.ncourt}면 중 ${z.free.length}면 가능`)) : z.rids.map(r => resName(sid, r)).join(" + ");
     const mine = !BS.move && B.find(b => b.status === "confirmed" && b.store === sid && b.svc === BS.svc && b.d === BS.d && b.m === z.m); /* panel: the same class twice was bookable */
     if (mine) { h += `<div role="listitem"><button class="slot mine" data-act="managebk" data-id="${mine.id}" aria-label="${fTime(z.m)}, ${esc(who)}, ${esc(L3("already booked · manage", "đã đặt · quản lý", "이미 예약함 · 관리"))}">
       <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span><br><span class="sub sm">${esc(L3("You're booked here", "Bạn đã đặt giờ này", "이미 예약한 시간이에요"))}</span></span><span class="tag ok">${esc(L3("Booked", "Đã đặt", "예약됨"))}</span><span class="chev" aria-hidden="true">›</span></button></div>`; continue; }
     const isCur = !!BS.move && (b0 => !!b0 && b0.d === BS.d && b0.m === z.m)(B.find(b => b.id === BS.move)); /* review: the time you already hold is not a move */
-    h += `<div role="listitem"><button class="slot${full ? " full" : ""}${isCur ? " cur" : ""}" data-act="slot" data-m="${z.m}"${isCur ? " disabled" : ""} aria-label="${fTime(z.m)}, ${esc(who)}, ${isCur ? esc(L3("your current time", "giờ hiện tại của bạn", "현재 예약 시간")) : full ? L3("full · join the waitlist", "đã đầy · vào danh sách chờ", "마감 · 대기 신청") : (pass ? L3("uses 1 from your pass", "dùng 1 buổi từ gói", "이용권 1회 사용") : vnd(z.price))}">
+    h += `<div role="listitem"><button class="slot${full ? " full" : ""}${isCur ? " cur" : ""}${openC ? " open" : ""}" data-act="slot" data-m="${z.m}"${isCur ? " disabled" : ""}${pickC ? ` aria-expanded="${openC}"` : ""} aria-label="${fTime(z.m)}, ${esc(who)}, ${isCur ? esc(L3("your current time", "giờ hiện tại của bạn", "현재 예약 시간")) : full ? L3("full · join the waitlist", "đã đầy · vào danh sách chờ", "마감 · 대기 신청") : (pass ? L3("uses 1 from your pass", "dùng 1 buổi từ gói", "이용권 1회 사용") : vnd(z.price))}">
       <span class="tm">${fTime(z.m)}</span><span class="grow"><span>${esc(who)}</span>${s.kind === "class" ? ` · <span class="sub sm">${full ? tr("Full") : spotsTx(z.left)}</span>` : ""}${full ? `<br><span class="sub sm">${esc(L3("Join the waitlist · we'll tell you if a spot opens", "Vào danh sách chờ · báo khi có chỗ", "대기 신청 · 자리가 나면 알려드려요"))}</span>` : freeNow(sid, BS.d, z.m) ? "" : `<br><span class="tag warn">${esc(L3(`Free-cancel window passed · cancelling costs ${tr(s.policy.late)}`, `Hết hạn hủy miễn phí · hủy mất ${tr(s.policy.late)}`, `무료 취소 기간 지남 · 취소 시 ${tr(s.policy.late)}`))}</span>`}</span>
-      <span style="font-weight:750">${isCur ? `<span class="tag">${esc(L3("Current", "Hiện tại", "현재"))}</span>` : full ? esc(L3("Waitlist", "Chờ", "대기")) : (pass ? tr("Pass") : (v.from ? L3("from ", "từ ", "") + vnd(z.price) + L3("", "", "부터") : vnd(z.price)))}</span><span class="chev" aria-hidden="true">›</span></button></div>`;
+      <span style="font-weight:750">${isCur ? `<span class="tag">${esc(L3("Current", "Hiện tại", "현재"))}</span>` : full ? esc(L3("Waitlist", "Chờ", "대기")) : (pass ? tr("Pass") : (v.from ? L3("from ", "từ ", "") + vnd(z.price) + L3("", "", "부터") : vnd(z.price)))}</span><span class="chev" aria-hidden="true">${openC ? "⌄" : "›"}</span></button>${openC ? courtRows(sid, z) : ""}</div>`;
   }
   if (list.filter(z => !(s.kind === "class" && z.left <= 0)).length <= 2 && !BS.move) { /* a thin day (e.g. tonight's last court) also points at the next day with more open times */
     for (let d2 = BS.d + 1; d2 < 7; d2++) { const n = slotsFor(sid, BS.svc, d2, bsOpts()).filter(z => z.left !== 0); if (n.length > list.length) { h += `<div role="listitem"><button class="svc bkmore" data-act="bs" data-k="d" data-v="${d2}" id="bk-more"><span class="grow"><b>${esc(fDay(d2))}</b><br><span class="sub sm">${esc(L3(`${n.length} open times from ${fTime(n[0].m)}`, `${n.length} giờ trống từ ${fTime(n[0].m)}`, `${fTime(n[0].m)}부터 ${n.length}개 가능`))}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`; break; } }
   }
   h += `</div>` + bkAsk(sid);
-  const ae = document.activeElement, keep = ae && ae.dataset && ae.dataset.k ? [ae.dataset.k, ae.dataset.v] : null;
-  if (!fresh && $(".sheet")) { $(".sheet").innerHTML = h; if (keep) { const el = $(`.sheet [data-k="${keep[0]}"][data-v="${keep[1]}"]`); if (el) el.focus(); } }
+  const ae = document.activeElement, keep = ae && ae.dataset && ae.dataset.k ? [ae.dataset.k, ae.dataset.v] : (ae && ae.dataset && ae.dataset.act === "slot" ? ["slot", ae.dataset.m] : null);
+  if (!fresh && $(".sheet")) { $(".sheet").innerHTML = h; if (keep) { const el = keep[0] === "slot" ? $(`.sheet [data-act="slot"][data-m="${keep[1]}"]`) : $(`.sheet [data-k="${keep[0]}"][data-v="${keep[1]}"]`); if (el) el.focus(); } }
   else openSheet(h, v.n);
 }
+function courtRows(sid, z) { /* docs/specialists-and-ratings.md §4f: under the chosen time, Any court first (the club assigns, cheapest), then every court with its attributes; taken ones stay visible */
+  const s = S[sid], svc = svcOf(sid, BS.svc), usual = usualCourt(sid), base = priceFor(s, svc, z.m, z.len, bsOpts());
+  const row = (id, title, sub, price, free, tag) => free ? `<button class="slot court" data-act="court" data-m="${z.m}" data-v="${id}" aria-label="${esc(title + ", " + sub + ", " + price)}"><span class="grow"><b>${esc(title)}</b>${tag ? ` <span class="tag ok">${esc(tag)}</span>` : ""}<br><span class="sub sm">${esc(sub)}</span></span><span style="font-weight:750">${esc(price)}</span><span class="chev" aria-hidden="true">›</span></button>`
+    : `<div class="slot court taken" aria-disabled="true"><span class="grow"><b>${esc(title)}</b><br><span class="sub sm">${esc(sub)}</span></span><span class="tag">${esc(L3("Taken", "Đã có người", "사용 중"))}</span></div>`;
+  let h = `<div class="courts" id="bk-courts" role="group" aria-label="${esc(fTime(z.m) + " · " + tr("Court"))}"><p class="opt" style="margin:6px 0 4px">${esc(fTime(z.m))} · ${esc(L3("which court?", "sân nào?", "어느 코트로 할까요?"))}</p>`;
+  h += row("any", tr("Any court"), L3("the club assigns · cheapest", "câu lạc bộ xếp sân · rẻ nhất", "클럽이 배정 · 가장 저렴"), vnd(base), true, "");
+  for (const c of s.courts) { const free = z.free.includes(c.id), p = priceFor(s, svc, z.m, z.len, Object.assign({}, bsOpts(), { court: c.id })), bits = courtBits(c) + (c.extra ? ` · +${vnd(c.extra)}/${L3("h", "giờ", "시간")}` : "");
+    let sub = bits; if (!free) { const bk = B.find(b => b.status === "confirmed" && b.store === sid && b.d === z.d && b.rids.includes(c.id) && z.m < b.m + b.len && b.m < z.m + z.len); sub = (bits ? bits + " · " : "") + (bk ? L3(`taken ${fTime(bk.m)}–${fTime(bk.m + bk.len)}`, `đã có người ${fTime(bk.m)}–${fTime(bk.m + bk.len)}`, `${fTime(bk.m)}–${fTime(bk.m + bk.len)} 사용 중`) : L3("taken at this time", "đã có người giờ này", "이 시간엔 사용 중")); }
+    h += row(c.id, N(c.n), sub, vnd(p), free, c.id === usual ? L3("your usual", "sân quen", "자주 쓰는 코트") : ""); }
+  return h + `</div>`; }
 /* ===== natural-language booking: deterministic parser, no LLM ===== */
 const NUM = { one: 1, a: 1, an: 1, mot: 1, two: 2, hai: 2, three: 3, ba: 3, four: 4, bon: 4, five: 5, six: 6 };
 const WDN = { sun: 0, sunday: 0, mon: 1, monday: 1, tue: 2, tues: 2, tuesday: 2, wed: 3, weds: 3, wednesday: 3, thu: 4, thur: 4, thurs: 4, thursday: 4, fri: 5, friday: 5, sat: 6, saturday: 6 };
@@ -2921,7 +2940,7 @@ function homeLevelBar() {
 }
 function upRow(b) {
   const s = S[b.store], v = svcOf(b.store, b.svc);
-  const res = b.rids.map(r => resName(b.store, r)).join(" + ") + (b.party ? " · " + trS(b.party + " players") : "") + rentalBits(b);
+  const res = bkWho(b) + (b.party ? " · " + trS(b.party + " players") : "") + rentalBits(b);
   const today = b.d === todayIdx(), tags = (b.dep ? ` <span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : "") + (b.source !== "app" ? ` <span class="tag">${tr(b.source === "voice" ? "by call" : "by chat")}</span>` : ""); /* user 2026-10-17: one tappable row, no "Confirmed" tag (it is the default), Check in only on the day */
   const lbl = `${N(v.n)} · ${s.name}, ${fWhen(b.d, b.m)}, ${res}`;
   return `<div class="up${today ? " today" : ""}" role="listitem"><button type="button" class="uprow" data-act="managebk" data-id="${b.id}" aria-label="${esc(t("manage") + ": " + lbl)}">${logo(b.store)}<span class="grow"><b>${esc(N(v.n))} · ${esc(s.name)}</b>${tags}<br><span class="sm sub">${fWhen(b.d, b.m)} · ${esc(res)}</span></span>${today ? "" : ic("chev")}</button>${today ? `<button class="btn upci" data-act="checkin" data-id="${b.id}" aria-label="${esc(t("checkin") + ": " + lbl)}">${t("checkin")}</button>` : ""}</div>`;
@@ -3023,6 +3042,8 @@ function vStore(sid) {
   const openTx = closedDay ? L3("Closed today", "Hôm nay nghỉ", "오늘 휴무") : openNow ? L3(`Open now · until ${fTime(hrs[1])}`, `Đang mở · đến ${fTime(hrs[1])}`, `영업 중 · ${fTime(hrs[1])}까지`) : nowM < hrs[0] ? L3(`Opens at ${fTime(hrs[0])}`, `Mở lúc ${fTime(hrs[0])}`, `${fTime(hrs[0])}에 열어요`) : L3(`Closed · opens tomorrow ${fTime(hrs[0])}`, `Đã đóng · mở lại ${fTime(hrs[0])} ngày mai`, `영업 종료 · 내일 ${fTime(hrs[0])}에 열어요`);
   let h = `<div class="card">${storeGallery(sid)}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm" id="st-open" data-open="${openNow}">${esc(openTx)}</div>${s.joined && PV.flag && ME ? `<div class="sm" id="st-pts" style="margin-top:2px">${esc(pvT("storeEarn", { n: earnEst() }))}</div>` : ""}</div></div>
   <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="bk" data-s="${sid}" id="st-book">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button>${mapUrls(sid) ? mapLinks(sid, "store", true).replace(/class="btn (sec|ghost) bkmap"/g, 'class="btn ghost sact bkmap"') : `<button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>`}</div>` : `<div class="stack" style="width:100%"><button class="btn full" data-act="jbook" data-v="${sid}" id="st-jbook">${esc(jbT("btn", s.name))}</button><button class="btn ghost full" data-act="join" data-v="${sid}">${esc(L3(`Join ${s.name}`, `Tham gia ${s.name}`, `${s.name} 가입하기`))}</button></div>`}</div></div>`;
+  if (s.kind === "rental" && s.courts) { if (s.courtChoice === "none") h += `<p class="sub sm" id="st-courts-note" style="margin:10px 2px 0">${esc(L3(`${s.courts.length} identical courts · assigned on arrival`, `${s.courts.length} sân giống nhau · xếp khi đến`, `동일한 코트 ${s.courts.length}면 · 도착 시 배정`))}</p>`;
+    else h += `<h2>${esc(L3("Courts", "Sân", "코트"))}</h2><div class="stack" id="st-courts">${s.courts.map(c => { const nf = nextFree(sid, null, 0, null, { court: c.id }), bits = courtBits(c); return `<button class="svc" data-act="courtbook" data-s="${sid}" data-v="${c.id}" aria-label="${esc(N(c.n) + (bits ? ", " + bits : ""))}"><span class="grow"><b>${esc(N(c.n))}</b>${c.id === usualCourt(sid) ? ` <span class="tag ok">${esc(L3("your usual", "sân quen", "자주 쓰는 코트"))}</span>` : ""}<br><span class="sub sm">${esc(bits ? bits + " · " : "")}${esc(nf ? L3(`next free ${fDay(nf.d)} ${fTime(nf.m)}`, `trống ${fDay(nf.d)} ${fTime(nf.m)}`, `${fDay(nf.d)} ${fTime(nf.m)} 가능`) : L3("full this week", "kín tuần này", "이번 주 마감"))}</span></span>${c.extra ? `<span class="pr">+${vnd(c.extra)}/${esc(L3("h", "giờ", "시간"))}</span>` : ""}${ic("chev")}</button>`; }).join("")}</div>`; }
   if (aboutTx(sid)) h += `<h2>${esc(L3("About", "Giới thiệu", "소개"))}</h2><div class="card" id="st-about"><p class="sm" style="margin:0">${esc(aboutTx(sid))}</p></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${esc(jbT("hint", s.name))}</p>`}<div class="stack">`;
@@ -3192,7 +3213,7 @@ Object.assign(S, {
     policy: { free: 6, late: "50% of the price", dep: 0, noshow: "Full price", arrive: "Your time ends on schedule" }, staff: [{ id: "lanh", n: "Lành" }], rooms: [{ id: "m1", n: "Room 1" }], hours: [600, 1320], step: 60,
     svcs: [{ id: "thai", n: "Thai massage 60 min", len: 60, price: 380000, desc: "Stretch-based massage, light clothing provided." }], kw: /\bthai\b/, names: /\b(moc|namu) spa\b/, kb: {} },
   rally: { name: "Rally Court Club", area: "An Phú, Thủ Đức", cat: "sport", kind: "rental", color: "#2F5E6E", logo: "RC", joined: false, visits: 0,
-    policy: { free: 24, late: "Half the court fee", dep: 0, noshow: "Full court fee", arrive: "Your block ends on time" }, staff: [], courts: [{ id: "r1", n: "Court A" }, { id: "r2", n: "Court B" }], hours: [360, 1320], step: 60,
+    policy: { free: 24, late: "Half the court fee", dep: 0, noshow: "Full court fee", arrive: "Your block ends on time" }, staff: [], courts: [{ id: "r1", n: "Court A" }, { id: "r2", n: "Court B" }], courtChoice: "none", /* identical courts: the club assigns on arrival */ hours: [360, 1320], step: 60,
     svcs: [{ id: "court", n: "Court rental", len: 60, price: 0, desc: "Rooftop courts, lit until late." }], kw: /\brally\b/, names: /\brally\b/, kb: {} }
 });
 ORDER0.push("barber", "moc", "rally"); WALLET.barber = []; WALLET.moc = []; WALLET.rally = [];
@@ -3311,11 +3332,11 @@ const DSYN = { fitness: "barre pilates gym fitness tập thể dục lớp tập
   massage: "massage spa mát xa xoa bóp thư giãn 마사지 스파", sport: "pickleball court courts sân thể thao 피클볼 코트", nails: "nail nails manicure làm móng móng 네일", yoga: "yoga 요가" };
 const DF = { type: "all", dist: 99, open: false, price: 0, rate: 0, map: false, pin: null };
 const typeLabel = sid => { const r = DTYPES.find(x => x[0] === DISC[sid].type); return r ? r[L === "vi" ? 2 : L === "ko" ? 3 : 1] : ""; };
-function nextFree(sid, vid, from, pref) { /* first open slot; with pref (minutes) the first open slot at or after that time of day, falling back to the earliest */
+function nextFree(sid, vid, from, pref, opts) { /* first open slot; with pref (minutes) the first open slot at or after that time of day, falling back to the earliest */
   const s = S[sid], v = (vid && s.svcs.find(q => q.id === vid)) || s.svcs[0];
-  const pick = (d, p) => slotsFor(sid, v.id, d, { len: 60, party: 4 }).find(q => q.left !== 0 && (p == null || q.m >= p));
+  const pick = (d, p) => slotsFor(sid, v.id, d, Object.assign({ len: 60, party: 4 }, opts || {})).find(q => q.left !== 0 && (p == null || q.m >= p));
   for (let d = from > 0 ? +from : 0; d < 7; d++) { const z = pick(d, pref); if (z) return Object.assign({}, z, { store: sid, svc: v.id, party: s.kind === "rental" ? 4 : 0, paddles: 0 }); }
-  return pref != null ? nextFree(sid, vid, from) : null;
+  return pref != null ? nextFree(sid, vid, from, null, opts) : null;
 }
 const usualMin = sid => { const c = {}; let best = null; for (const b of B) { if (b.store !== sid || b.status === "cancelled") continue; c[b.m] = (c[b.m] || 0) + 1; if (best == null || c[b.m] > c[best]) best = b.m; } return best; }; /* the member's usual time at a store (most common booking time) */
 const discNext = sid => nextFree(sid, null, 0, usualMin(sid) != null ? usualMin(sid) : 540); /* user 2026-10-17: Discover prefers the member's usual time, else the first slot from 09:00; 06:30 is accurate but not appealing */
@@ -3453,7 +3474,7 @@ function checkin(b) {
     else on = hsh("q" + b.id + "_" + i + "_" + j) % 2 === 0;
     if (on) cells += `<rect x="${j}" y="${i}" width="1" height="1"/>`;
   }
-  openSheet(sheetHd(t("checkin")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b> · ${fWhen(b.d, b.m)}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="${L3("Check-in code, sample", "Mã check-in, mẫu", "체크인 코드, 샘플")}" shape-rendering="crispEdges"><g fill="#2B2326">${cells}</g></svg><p class="sub sm" style="text-align:center">${tr("Show this at the desk. It works offline.")}</p><p class="sm" id="ci-earn" style="text-align:center;margin:4px 0"><b>${esc(pvT("ciEarn", { n: earnEst() }))}</b></p>
+  openSheet(sheetHd(t("checkin")) + storeBar(b.store) + `<p style="margin-top:10px"><b>${esc(N(svcOf(b.store, b.svc).n))}</b> · ${fWhen(b.d, b.m)}${S[b.store].kind === "rental" ? `<br><span class="sm" id="ci-court"><b>${esc(courtLabel(b.store, b.rids[0]))}</b>${b.anyCourt ? ` · ${esc(L3("assigned by the club", "câu lạc bộ đã xếp", "클럽 배정"))}` : ""}</span>` : ""}</p><svg class="qr" viewBox="0 0 21 21" role="img" aria-label="${L3("Check-in code, sample", "Mã check-in, mẫu", "체크인 코드, 샘플")}" shape-rendering="crispEdges"><g fill="#2B2326">${cells}</g></svg><p class="sub sm" style="text-align:center">${tr("Show this at the desk. It works offline.")}</p><p class="sm" id="ci-earn" style="text-align:center;margin:4px 0"><b>${esc(pvT("ciEarn", { n: earnEst() }))}</b></p>
   <button class="btn full" data-act="attend" data-id="${b.id}">${L3("Demo: the store scans this code", "Demo: cửa hàng quét mã này", "데모: 매장에서 이 코드를 스캔")}</button><p class="sub sm" style="text-align:center">${esc(pvT("pendingConfirm", { s: S[b.store].name }))}</p>`, t("checkin"));
 }
 function attend(b) { /* the Store app scans the member's code (demo); points come only from store confirmation (E1, AC-P39) */
@@ -3624,7 +3645,7 @@ const bkPrice = b => { const p = b.usePass ? (WALLET[b.store] || []).find(q => q
 const fMin = n => L3(`${n} min`, `${n} phút`, `${n}분`);
 const rentalBits = b => S[b.store].kind === "rental" ? ` · ${fMin(b.len)}${b.paddles ? " · " + L3(b.paddles + " paddles", b.paddles + " vợt", "패들 " + b.paddles + "개") : ""}` : ""; /* panel: the court card dropped 90분 / 패들 */
 function bkRowUp(b) {
-  const s = S[b.store], v = svcOf(b.store, b.svc), res = b.rids.map(r => resName(b.store, r)).join(" + ") + rentalBits(b);
+  const s = S[b.store], v = svcOf(b.store, b.svc), res = bkWho(b) + rentalBits(b);
   const st = b.req ? "" : b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
   return `<div class="up bkrow${ST.bkHi === b.id ? " hi" : ""}" role="listitem" id="bk-${b.id}">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}</div>
   <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} <span class="sub">${tzTag()}</span>${res ? " · " + esc(res) : ""}</div><div class="sm">${bkPrice(b)} · <span class="sub">${esc(fCancelB(b))}</span></div>
@@ -3816,8 +3837,14 @@ document.addEventListener("click", e => {
     case "classpick": { const z = slotsFor(d.s, d.v, +d.d).find(q => q.m === +d.m); if (!z) { toast(jbT("gone")); break; } const x = Object.assign({}, z, { store: d.s, svc: d.v }); if (S[d.s] && !S[d.s].joined) joinBookSheet(d.s, x, d.v); else openConfirm(x); break; }
     case "jbook": { const s0 = S[d.v]; if (!s0) break; if (s0.joined) { joinBookSheet(d.v, null, null); break; } if (gated()) { toast(jbT("crisis")); break; } JBJOIN = d.v; track("join_book_open", { store: d.v, slot: false }); if (s0.svcs.length > 1) svcStep(d.v); else openBook(d.v, s0.svcs[0].id); break; } /* PO review: the member picks the time and the person; joining happens on confirm */
     case "jbgo": joinAndBook(); break;
-    case "bs": BS[d.k] = ["d", "len", "party", "paddles"].includes(d.k) ? +d.v : d.v; renderBook(); break;
-    case "slot": { const z = slotsFor(BS.store, BS.svc, BS.d, bsOpts()).find(q => q.m === +d.m); if (z) openConfirm(Object.assign({}, z, { store: BS.store, svc: BS.svc, party: S[BS.store].kind === "rental" ? BS.party : 0, paddles: BS.paddles, move: BS.move })); break; }
+    case "bs": BS[d.k] = ["d", "len", "party", "paddles"].includes(d.k) ? +d.v : d.v; BS.m = null; renderBook(); break;
+    case "slot": { const s = S[BS.store], z = slotsFor(BS.store, BS.svc, BS.d, bsOpts()).find(q => q.m === +d.m); if (!z) break;
+      if (s.kind === "rental" && s.courtChoice !== "none" && BS.court === "any") { BS.m = BS.m === z.m ? null : z.m; renderBook(); break; } /* time first, then the court rows open under it */
+      openConfirm(Object.assign({}, z, { store: BS.store, svc: BS.svc, party: s.kind === "rental" ? BS.party : 0, paddles: BS.paddles, move: BS.move, court: BS.court, anyCourt: s.kind === "rental" && BS.court === "any" })); break; }
+    case "court": { const s = S[BS.store], z = slotsFor(BS.store, BS.svc, BS.d, bsOpts()).find(q => q.m === +d.m); if (!z) break; const any = d.v === "any", o = Object.assign({}, bsOpts(), { court: any ? "any" : d.v });
+      if (!any && !z.free.includes(d.v)) { toast(t("taken")); BS.m = null; renderBook(); break; }
+      openConfirm(Object.assign({}, z, { rids: any ? z.rids : [d.v], price: priceFor(s, svcOf(BS.store, BS.svc), z.m, z.len, o), store: BS.store, svc: BS.svc, party: BS.party, paddles: BS.paddles, move: BS.move, court: any ? "any" : d.v, anyCourt: any })); break; }
+    case "courtbook": { const sid = d.s; if (!S[sid] || !S[sid].courts) break; if (!S[sid].joined) { joinBookSheet(sid, nextFree(sid, null, 0, null, { court: d.v }), null); break; } openBook(sid, S[sid].svcs[0].id, { court: d.v }); break; }
     case "dobook": if (PEND) { const x = PEND; if (!x.move && !x.paid && S[x.store].policy.dep) { paySheet({ amount: S[x.store].policy.dep, dep: true, ptsOk: false, title: L3("Deposit", "Tiền cọc", "예약금 결제"), label: L3(`Deposit · ${S[x.store].name}`, `Tiền cọc · ${S[x.store].name}`, `예약금 · ${S[x.store].name}`), sub: L3("Taken off the total at the store", "Trừ vào tổng tại cửa hàng", "매장에서 총액에서 차감돼요"), quietReceipt: true, onDone: r => { x.paid = r.nm; PEND = null; doBook(x); }, onCancel: () => openConfirm(x) }); break; } PEND = null; doBook(x); } break;
     case "passshop": passShopSheet(d.s || null); break;
     case "paybuy": { const p = (PASS_SHOP[d.s] || []).find(q => q.id === d.v); if (!p) break; paySheet({ amount: p.price, ptsOk: true, title: L3("Buy a pass", "Mua gói", "이용권 구매"), label: `${tr(p.t)} · ${S[d.s].name}`, onDone: () => { const w = WALLET[d.s] = WALLET[d.s] || []; const cur = w.find(q => q.id === p.id); if (cur) cur.left += p.n; else w.push({ id: p.id, t: p.t, left: p.n, exp: "Valid until 30 Nov", svc: p.svc }); track("pass_bought", { store: d.s, pass: p.id }); render(); }, onCancel: () => passShopSheet(d.s) }); break; }
