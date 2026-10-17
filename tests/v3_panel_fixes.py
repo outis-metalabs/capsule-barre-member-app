@@ -45,7 +45,7 @@ with sync_playwright() as p:
   # ---- circle caption taps, greeting wraps ----
   J(g, "()=>{P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(300)
   ok('P-home caption under the Missions circle opens the Today sheet', J(g, "(()=>{document.querySelector('#v2-pull').parentElement.querySelector('.v2cap').click();return !!document.querySelector('.sheet #home-dm')})()")); J(g, "closeSheet()")
-  ok('P-home next-class line wraps instead of "Capsule B…"', J(g, "(()=>{const e=document.querySelector('#v2-next');return !e||getComputedStyle(e).whiteSpace!=='nowrap'})()"))
+  ok('P-home next-class line: one line, nothing truncated (user 2026-10-17: the card must not cover Cici\'s face)', J(g, "(()=>{const e=document.querySelector('#v2-next');return !e||(e.scrollWidth<=e.clientWidth&&e.getBoundingClientRect().height<24)})()"))
   # ---- missions: the sheet comes back after the water moment ----
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(300); J(g, "openHomeSheet()"); g.wait_for_timeout(500)
   J(g, "()=>document.querySelector('.sheet [data-act=dmwater]').click()"); g.wait_for_timeout(600)

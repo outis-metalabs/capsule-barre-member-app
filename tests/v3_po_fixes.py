@@ -22,7 +22,7 @@ with sync_playwright() as p:
   ok('intro: second screen introduces Mochi, button becomes 시작하기', J("/모찌/.test(document.querySelector('.ipanel.on').innerText) && document.querySelector('#intro-next').innerText==='시작하기'"))
   g.screenshot(path=f'{SH}/intro-2.png'); g.click('#intro-next'); g.wait_for_timeout(200)
   ok('intro: dismissed and remembered', not J("!!document.querySelector('#intro')") and J("localStorage.getItem('cici.intro')") == '1')
-  ok('Home card: membership line (N개 매장 · 하나의 멤버십 · pass left) opens the wallet', J("/개 매장 · 하나의 멤버십/.test(document.querySelector('#hb-mem').innerText) && /회 남음/.test(document.querySelector('#hb-mem').innerText)") and J("(()=>{document.querySelector('#hb-mem').click();return ST.page==='wallet'})()"))
+  ok('Home card: membership line (N개 매장 · 하나의 멤버십 · pass left) opens the wallet', J("/^\\d+개 매장 · .+ \\d+회 남음$/.test(document.querySelector('#hb-mem').innerText)") and J("(()=>{document.querySelector('#hb-mem').click();return ST.page==='wallet'})()"))
   J("()=>{ST.page=null;ST.tab='home';render()}"); g.wait_for_timeout(300)
   ok('header carries the brand on Home', J("/^Cici · /.test(document.querySelector('#top .brand .t').innerText)"), J("document.querySelector('#top .brand .t').innerText"))
   ok('streak line is tappable (opens points)', J("(()=>{const e=document.querySelector('#cat-line');return !!e&&e.tagName==='BUTTON'})()"))
