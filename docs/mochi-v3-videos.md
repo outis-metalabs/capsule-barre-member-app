@@ -19,7 +19,7 @@ Drop the files in `assets/cici-real/` with the exact names below, then flip the 
 
 Mochi grows with Cici on the Seed → Shine track: **kitten** (Seed, Sprout — today's clips) → **young cat** (Bud, Blossom) → **fluffy cat** (Shine). Each look is a variant of an existing clip with the suffix `-cat` or `-fluffy`, e.g. `cici-cat-petting-cat.mp4`, `cici-cat-petting-fluffy.mp4`. Set `CAT_LOOK_READY.cat` / `.fluffy` to `true` once a **full set** for that look exists (the app switches all clips of a look together so Mochi never changes age mid-session).
 
-Minimum set per look (8 clips): `cici-cat-petting`, `cici-cat-lively`, `cici-cat-napping`, `cici-cat-react`, `cici-cat-hungry`, `cici-room-happy_tall`, `cici-room-eat_tall`, `cici-room-stretch_tall`. Nice to have: `cici-room-water_tall`, `dubu-eating`, `mochi-water`, plus any A-clips above.
+Minimum set per look (7 clips): `cici-cat-petting`, `cici-cat-lively`, `cici-cat-napping`, `cici-cat-hungry`, `cici-room-happy_tall`, `cici-room-eat_tall`, `cici-room-stretch_tall`. (`cici-cat-react` is no longer needed: since 2026-10-18 a tap on the hero is a camera move on the running loop, not a clip swap.) Nice to have: `cici-room-water_tall`, `dubu-eating`, `mochi-water`, plus any A-clips above.
 
 Prompt per look (append to each existing clip's prompt):
 

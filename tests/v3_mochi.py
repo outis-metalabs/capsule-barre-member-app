@@ -56,8 +56,8 @@ with sync_playwright() as p:
   J(g, "()=>{ST.miss.rest=true;P2S.cat.demoHour=19;render()}"); g.wait_for_timeout(700)
   ok('V3-2 rest day: napping on Cici\'s lap, no hunger', J(g, "catMood()==='napping' && !catHungry()") and J(g, TOP) == 'napping' and 'nap' in J(g, LINE).lower(), [J(g, "catMood()"), J(g, LINE)])
   J(g, "()=>{ST.miss.rest=false;P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(500); J(g, "()=>catReact('tap')"); g.wait_for_timeout(1200)
-  ok('V3-2 tap: react clip holds (still on it after 1.2 s, not a flicker)', J(g, "catMood()==='react'") and J(g, TOP) == 'react', [J(g, "catMood()"), J(g, TOP)])
-  g.wait_for_timeout(2200); ok('V3-2 tap: back to the mood loop after ~2.9 s', J(g, "catMood()!=='react'"))
+  ok('V3-2 tap: zoom focus, not a clip swap (user 2026-10-18): the loop stays, the figure is zoomed toward Mochi after 1.2 s', J(g, "catMood()==='react'") and J(g, TOP) != 'react' and J(g, "document.getElementById('cici-real').classList.contains('zoomin') && /matrix\\(1\\.1/.test(getComputedStyle(document.querySelector('.catvid.on')).transform)"), [J(g, "catMood()"), J(g, TOP), J(g, "getComputedStyle(document.querySelector('.catvid.on')).transform")])
+  g.wait_for_timeout(2200); ok('V3-2 tap: back to the mood loop and unzoomed after ~2.9 s', J(g, "catMood()!=='react' && !document.getElementById('cici-real').classList.contains('zoomin')"))
 
   # 3. Visit treats + arrival moment
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;render()}"); g.wait_for_timeout(400)

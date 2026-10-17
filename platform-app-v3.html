@@ -449,11 +449,11 @@ body.v2home:has(.sheet) .toast{top:calc(64px + env(safe-area-inset-top,0px));bot
 @media (prefers-reduced-motion:reduce){.catbowl{animation:none!important}}
 
 .v2bg{isolation:isolate}
-.v2bg .catvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease;pointer-events:none}
+.v2bg .catvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease,transform .8s cubic-bezier(.3,.6,.3,1);pointer-events:none}
 .v2bg .catvid.on{opacity:1;z-index:1}
 .v2bg .catvid.swap{z-index:2}
 .v2bg img.catstill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.v2bg.cat-react .catvid.on{animation:catreact .7s ease}
+.v2bg.cat-react .catvid.on{animation:none} /* user 2026-10-18: the tap zooms (.zoomin), no pulse, no clip swap */
 .v2bg.cat-hungry .catvid.on{filter:saturate(.9) brightness(.96)}
 @keyframes catreact{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.v2bg .catvid{transition:none!important}.v2bg.cat-react .catvid.on{}}
@@ -488,7 +488,7 @@ body.v2home .toast{top:calc(64px + env(safe-area-inset-top,0px));bottom:auto}
 #cici-real.cat-hungry .cathbub{opacity:1;animation:hbfloat 3.2s ease-in-out infinite}
 @keyframes hbfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.catfab[data-state=hungry]{animation:none!important}#cici-real .cathbub{animation:none!important;transition:none}.sheet.glass.closing{transition:none}}
-.v2bg .catvid{transform-origin:50% 40%}
+.v2bg .catvid,.v2bg .catlayer{transform-origin:var(--zx,50%) var(--zy,40%)}.v2bg .catlayer{transition:transform .8s cubic-bezier(.3,.6,.3,1)}.v2bg.zoomin .catvid,.v2bg.zoomin .catlayer{transform:scale(1.16);transition-duration:.55s}@media (prefers-reduced-motion:reduce){.v2bg.zoomin .catvid,.v2bg.zoomin .catlayer{transform:none}}
 .v2bg.blurdip .catvid{filter:blur(8px) brightness(1.05);transform:scale(1.02);transition:filter 70ms ease-in,transform 70ms ease-in,opacity 0s!important}
 .v2bg.blurout .catvid{filter:none;transform:none;transition:filter 120ms ease-out,transform 120ms ease-out,opacity 0s!important}
 /* ===== v3 Mochi (2026-10-16): state shown in the scene ===== */
@@ -941,6 +941,7 @@ function catMotionOk() { try { if (matchMedia("(prefers-reduced-motion: reduce)"
 function catClipSrc(name) { const b = catVarPath(CAT_CLIPS[name] || CICI_CAT.base + name, name); return { webm: b + ".webm", mp4: b + ".mp4", poster: b === CICI_CAT.base + "petting" ? CICI_CAT.poster : b + "-poster.jpg" }; } /* panel: the kitten petting still is cici-cat-poster.jpg */
 function catClipName(mood) { return catLookAlias(catClipName0(mood)); }
 function catClipName0(mood) {
+  if (mood === "react") { const r = ST.catReact; ST.catReact = null; try { return catClipName0(catMood()); } finally { ST.catReact = r; } } /* user 2026-10-18: a tap never switches the clip; the loop stays and the camera moves in (catZoomFocus) */
   if (mood === "mission" && ST.catMis) return ST.catMis === "water" ? (CAT_OPT["room-waterbowl"] ? "room-waterbowl" : "water") : (CAT_ROOM.stretch ? "room-stretch" : "petting");
   if (mood === "eating") return ST.catEat === "eat" ? "eating" : ST.catEat === "feed" ? "room-eat" : ST.catEat === "pet" ? "petting" : (CAT_OPT["room-play"] ? "room-play" : CAT_ROOM.happy ? "room-happy" : "lively");
   if (mood === "hungry") return CAT_OPT["hungry-room"] ? "hungry-room" : "hungry";
@@ -1018,9 +1019,14 @@ function catSyncMood(soft) { const fig = document.getElementById("cici-real"); i
   if (!catMotionOk()) { catWearSync(); return; } catXfadeTo(catClipName(mo), { loop: true }); }
 function catReact(kind) { /* tap = Mochi's react clip plays through (~3 s); long-press = a longer loop of it — no clutter (MC-K4/crisis quiet) */
   if (!V2HOME() || catCrisis() || ST.catEat || ST.catMis) return;
-  catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood(); try { const [x, y] = catHeadXY(); catHearts(x, y, kind === "long" ? 8 : 6); } catch (e) {} /* PO review: the hero tap must be seen — more hearts with the react clip */
-  const ms = kind === "long" ? 4800 : 2900;
+  catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood(); const ms = kind === "long" ? 4800 : 2900; catZoomFocus(ms);
+  try { const [x, y] = catHeadXY(); catHearts(x, y, kind === "long" ? 8 : 6); } catch (e) {} /* PO review: the hero tap must be seen — hearts with the zoom */
   catRefreshUi(); clearTimeout(catReact.t); catReact.t = setTimeout(() => { ST.catReact = null; catSyncMood(); catRefreshUi(); }, ms);
+}
+function catZoomFocus(ms) { /* user 2026-10-18: the tap is a camera move, not a new clip — ease in toward Mochi's head, hold, ease back; the overlay layer scales with the video so the collar and bed stay pinned */
+  const fig = document.getElementById("cici-real"); if (!fig || !catMotionOk()) return;
+  try { const [x, y] = catHeadXY(); fig.style.setProperty("--zx", x + "px"); fig.style.setProperty("--zy", y + "px"); } catch (e) {}
+  fig.classList.add("zoomin"); clearTimeout(catZoomFocus.t); catZoomFocus.t = setTimeout(() => fig.classList.remove("zoomin"), Math.max(600, ms - 700));
 }
 function catWire() { /* pause off-screen / hidden; tap & long-press reactions; keep crossfade front in sync; v3: overlays, stage-up moment, treat arrival */
   if (catIO) { catIO.disconnect(); catIO = null; }

@@ -44,7 +44,7 @@ with sync_playwright() as p:
   # React on tap
   J(g, FRESH); J(g, "()=>{P2S.cat.demoHour=12;ME.streak=12;ST.miss.rest=false;render()}"); g.wait_for_timeout(500)
   J(g, "()=>{catReact('tap')}"); g.wait_for_timeout(500)
-  ok('tap → react clip crossfade', J(g, "catMood()==='react' && (document.querySelector('.catvid.on')||{}).dataset.clip==='react'"), J(g, "[catMood(),(document.querySelector('.catvid.on')||{}).dataset.clip]"))
+  ok('tap → zoom focus on the same loop (user 2026-10-18: no react clip swap)', J(g, "catMood()==='react' && (document.querySelector('.catvid.on')||{}).dataset.clip!=='react' && document.getElementById('cici-real').classList.contains('zoomin')"), J(g, "[catMood(),(document.querySelector('.catvid.on')||{}).dataset.clip]"))
   g.wait_for_timeout(900)
   ok('react returns to lively/petting mood after moment', J(g, "catMood()!=='react'"))
 
