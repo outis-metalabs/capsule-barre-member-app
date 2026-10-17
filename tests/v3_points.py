@@ -72,7 +72,7 @@ with sync_playwright() as p:
   ok('P9 store page (joined): 방문하면 약 NP 적립 · 포인트 할인 가능 under the open line', J("/방문하면 약 \\d+P 적립 · 포인트 할인 가능/.test(document.querySelector('#st-pts').innerText)"))
   g.screenshot(path=f'{SH}/store-ko.png')
   J("()=>{ST.store=null;ST.tab='home';render()}"); J("()=>success(upcoming()[0], ()=>{})"); g.wait_for_timeout(200)
-  ok('P9 success sheet: earn line + "다음 이용권에 ₩ 할인으로 쓸 수 있어요"', J("/약 \\d+포인트가 적립돼요/.test(document.querySelector('#bk-earn').innerText) && /다음 이용권에 ₩[\\d,]+ 할인으로 쓸 수 있어요/.test(document.querySelector('#bk-earn').innerText)"), J("document.querySelector('#bk-earn').innerText"))
+  ok('P9 success sheet: earn line + "다음 이용권에 ₩ 할인으로 쓸 수 있어요"', J("/방문 확인 시 약 \\d+P/.test(document.querySelector('#bk-earn').innerText) && /다음 이용권 ₩[\\d,]+ 할인/.test(document.querySelector('#bk-earn').innerText)"), J("document.querySelector('#bk-earn').innerText"))
   g.screenshot(path=f'{SH}/success-ko.png'); J("closeSheet()")
   # ---- chat
   J("()=>{ST.tab='cici';ST.page=null;render()}"); g.wait_for_timeout(200)

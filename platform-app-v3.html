@@ -86,7 +86,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .place.add{align-items:center;justify-content:center;border-style:dashed;color:var(--rasp);font-weight:700;min-width:110px}
 .up{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
 .up:first-child{border-top:0;padding-top:0}
-.up .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.up{align-items:center;gap:8px;padding:10px 0}.uprow{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;background:none;font:inherit;color:inherit;text-align:left;padding:0;min-height:44px}.uprow .grow{min-width:0}.uprow b{font-size:15px}.up .upci{flex:none;min-height:40px;padding:0 14px}
 .mis{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
 .mis:first-of-type{border-top:0}
 .mis .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none}
@@ -189,7 +189,7 @@ h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .tag.ok{background:#D9F0E6}
 .svc,.slot,.place,.tile{border-radius:20px;border:0;box-shadow:0 4px 16px rgba(176,74,94,.07)}
 .scene{border-radius:24px;background:linear-gradient(135deg,#FFD9DF 0%,#FFE4D3 100%);box-shadow:0 10px 30px rgba(233,133,151,.25)}
-.scene .pic{background:transparent;width:48%;max-width:190px;min-height:230px}
+.scene .pic{background:transparent;width:48%;max-width:190px;min-height:230px}.scene.succ .pic{width:31%;max-width:116px;min-height:150px}#bk-confirm.succ .pic .cut-real{width:100%;height:100%;object-fit:contain}.scene.succ .txt{padding:14px 14px 14px 10px;gap:4px}.bklinks{display:flex;flex-wrap:wrap;justify-content:center;gap:0 12px}.bklinks .link{white-space:nowrap;min-height:40px;min-width:0;padding:0;font-size:14px}
 html{min-height:100%;background:#FFF6F3}
 .scene .pic img:not(.cut),.cici-blend{mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 72% 78% at 50% 42%,#000 62%,transparent 100%)}
 .scene .pic img:not(.cut){animation:nfloat 4s ease-in-out infinite}
@@ -299,21 +299,21 @@ button:active:not([disabled]){transform:scale(.94)}
 .dchips .chip[aria-pressed=true]{background:#B04A5E;color:#fff;border:0;font-weight:650}
 .dfbtn{position:relative;flex:none;border:0;background:#F7EEF0;border-radius:999px;color:#4A3F42}.dfbtn[aria-pressed=true]{background:#B04A5E;color:#fff}
 .dfn{position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:8px;background:#fff;color:#8E3346;font-size:11px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 1px #B04A5E}
-.dlist{display:flex;flex-direction:column;gap:14px;margin-top:10px}
-.dcard{padding:0;background:none;border:0;box-shadow:none}.dcard.sel .dphoto{box-shadow:0 0 0 3px #B04A5E}
-.dhit{display:block;position:relative;width:100%;padding:0;border:0;background:none;text-align:left;border-radius:16px}
-.dphoto{width:100%;height:auto;aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:#F7EEF0;display:block;position:relative}
+.dlist{display:flex;flex-direction:column;gap:4px;margin-top:6px}.dlist > .dcard + .dcard{border-top:1px solid var(--line)}
+.dcard{display:flex;gap:12px;align-items:flex-start;padding:10px 0 0;background:none;border:0;box-shadow:none;border-radius:0}.dcard.sel .dphoto{box-shadow:0 0 0 3px #B04A5E}
+.dhit{display:block;position:relative;flex:none;width:96px;padding:0;border:0;background:none;text-align:left;border-radius:14px}
+.dphoto{width:96px;height:96px;border-radius:14px;overflow:hidden;background:#F7EEF0;display:block;position:relative}
 .dimg{width:100%;height:100%;object-fit:cover;display:block}
 .dinit{display:grid;place-items:center}
 .dov{position:absolute;display:inline-flex;align-items:center;gap:4px;border-radius:999px;font-size:12px;font-weight:650;padding:4px 9px;white-space:nowrap}
-.dov.dj{left:10px;top:10px;background:rgba(255,255,255,.94);color:#8E3346}.dov.dj .ico{width:13px;height:13px;fill:#B04A5E;stroke:#B04A5E}
-.dov.splabel{left:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-weight:600;font-size:11.5px}
-.dbody{display:flex;align-items:center;gap:10px;padding:8px 2px 0}.dtx{min-width:0;flex:1;line-height:1.35}
-.dname{display:block;font-size:16px;overflow-wrap:anywhere}.dmeta{font-size:13px;color:#6B5E62}
+.dov{font-size:11px;padding:3px 7px}.dov.dj{left:6px;top:6px;background:rgba(255,255,255,.94);color:#8E3346}.dov.dj .ico{width:13px;height:13px;fill:#B04A5E;stroke:#B04A5E}
+.dov.splabel{left:6px;bottom:6px;background:rgba(43,35,38,.72);color:#fff;font-weight:600;font-size:11px}
+.dbody{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:2px 0 0}.dtx{min-width:0;width:100%;line-height:1.35}.dtxb{display:block;text-align:left;padding:0;border:0;background:none;font:inherit;color:inherit}
+.dname{display:block;font-size:16px;overflow-wrap:anywhere}.dmeta{display:block;font-size:13px;color:#6B5E62;margin-top:2px}
 @media (max-width:350px){.dfrow .dchips{margin-right:-12px}}
-.dslot{flex:none;min-height:44px;min-width:44px;display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-radius:999px;border:1.5px solid #E9B3BF;background:#FFF8F9;color:#8E3346;font-size:13px;font-weight:650;white-space:nowrap}
+.dslot{flex:none;min-height:38px;min-width:44px;display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-radius:999px;border:1.5px solid #E9B3BF;background:#FFF8F9;color:#8E3346;font-size:13px;font-weight:650;white-space:nowrap}
 .dslot .ico{width:14px;height:14px}.dslot:hover{border-color:#B04A5E}.dnone{flex:none}
-.cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}
+.cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}.gal{position:relative}.galtrack{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.galtrack::-webkit-scrollbar{display:none}.galtrack .himg{flex:none;width:100%;height:100%;scroll-snap-align:start}.galn{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:650;border-radius:999px;padding:3px 8px;pointer-events:none}.galdots{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:5px;pointer-events:none}.galdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55)}.galdots i.on{background:#fff}
 .hsample{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .p2room .p2floor{display:flex;gap:12px;align-items:flex-end;background:linear-gradient(180deg,#FBF3EC 0 62%,#EAD9CB 62%);border-radius:14px;padding:10px;min-height:120px}
@@ -2290,8 +2290,8 @@ function success(b, undo) {
   if (dm && undo) { const u0 = undo; undo = () => { u0(); dmUnmark("book"); }; } /* PO review: undoing the booking takes the mission credit back */
   const cheerAlt = L3("Cici cheering", "Cici reo mừng", "응원하는 " + CICI_KO);
   const calm = gated(); /* MVP-B7/A6: no cheer in a crisis/urgent turn */ const media = calm ? "" : realCut({ alt: cheerAlt, eager: 1, cls: "cut-cheer" }); if (!calm) setTimeout(() => celebrate(false), 50);
-  openSheet(sheetHd(t("booked")) + `<div class="card scene" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${esc(b.paid ? L3(`Deposit ${vnd(b.dep)} paid with ${b.paid} (demo). It comes off the total at the store.`, `Đã trả cọc ${vnd(b.dep)} bằng ${b.paid} (demo). Trừ vào tổng tại cửa hàng.`, `예약금 ${vnd(b.dep)} ${b.paid} 결제 완료 (데모). 매장에서 총액에서 차감돼요.`) : L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`))}</p>` : ""}<p class="sub sm">${esc(bkT("saved"))}</p><p class="sm" id="bk-earn"><b>${esc(bkT("earnDone", { n: earnEst(), s: S[b.store].name }))}</b> ${esc(pvT("earnUse", { w: ptsW(Math.floor(50 * mult(ME))) }))}</p></div></div>` +
-    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="close" id="bk-done">${tr("Done")}</button><div class="sact3"><a class="btn ghost" href="${icsHref(b)}" download="cici-${b.id}.ics" data-act="addcal" data-id="${b.id}" id="bk-cal">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</a><button class="btn ghost" data-act="succundo">${t("undo")}</button></div><div class="row wrap bklinks" id="bk-links" style="gap:4px 14px;justify-content:center"><button class="link" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm"); return m ? m.replace(/class="btn (sec|ghost) bkmap"/g, 'class="link bkmap"') : ""; })()}</div></div>`, t("booked"));
+  openSheet(sheetHd(t("booked")) + `<div class="card scene succ" id="bk-confirm" style="margin-bottom:12px">${media ? `<div class="pic">${media}</div>` : ""}<div class="txt"><div class="who">${ciciNm()}</div><p><b>${L3("You're booked at ","Đã đặt tại ","예약 완료: ")}${esc(S[b.store].name)}.</b></p><p class="sub sm">${esc(N(svcOf(b.store, b.svc).n))} · ${fWhen(b.d, b.m)}</p>${b.dep ? `<p class="sub sm">${esc(b.paid ? L3(`Deposit ${vnd(b.dep)} paid with ${b.paid} (demo). It comes off the total at the store.`, `Đã trả cọc ${vnd(b.dep)} bằng ${b.paid} (demo). Trừ vào tổng tại cửa hàng.`, `예약금 ${vnd(b.dep)} ${b.paid} 결제 완료 (데모). 매장에서 총액에서 차감돼요.`) : L3(`Deposit ${vnd(b.dep)} held (demo, nothing charged).`, `Đã giữ cọc ${vnd(b.dep)} (demo, không tính tiền).`, `예약금 ${vnd(b.dep)} 보관 중 (데모, 청구 없음).`))}</p>` : ""}<p class="sm" id="bk-earn">${esc(bkT("earnShort", { n: earnEst(), s: S[b.store].name, w: ptsW(Math.floor(50 * mult(ME))) }))}</p></div></div>` + /* user 2026-10-17: no "saved" filler, one earn line */
+    `<div class="stack" id="bk-done-acts"><button class="btn full" data-act="close" id="bk-done">${tr("Done")}</button><div class="sact3"><a class="btn ghost" href="${icsHref(b)}" download="cici-${b.id}.ics" data-act="addcal" data-id="${b.id}" id="bk-cal">${esc(L3("Add to calendar", "Thêm vào lịch", "캘린더에 추가"))}</a><button class="btn ghost" data-act="succundo">${t("undo")}</button></div><div class="row bklinks" id="bk-links"><button class="link" data-act="bkview" data-id="${b.id}" id="bk-view">${esc(bkT("view"))}</button>${(() => { const m = mapLinks(b.store, "confirm", true); return m ? m.replace(/class="btn (sec|ghost) bkmap"/g, 'class="link bkmap"').replace(/<svg[\s\S]*?<\/svg>\s*/g, "") : ""; })()}</div></div>`, t("booked"));
   succUndo = undo;
 }
 
@@ -2301,9 +2301,9 @@ const BKT = { step1: ["Step 1 of 3 · Service", "Bước 1/3 · Dịch vụ", "1
   title: ["Book at {s}", "Đặt lịch tại {s}", "{s} 예약"], pickSvc: ["Pick a service", "Chọn dịch vụ", "서비스 선택"], pickCls: ["Pick a class", "Chọn lớp", "수업 선택"], place: ["Choose a place", "Chọn nơi", "매장 선택"], placeT: ["Book a visit", "Đặt lịch", "예약하기"],
   noPlace: ["Join a place first, then book here.", "Hãy tham gia một nơi trước rồi đặt lịch tại đây.", "먼저 매장에 가입하면 여기서 예약할 수 있어요."], discover: ["Find places", "Tìm nơi", "매장 찾기"],
   change: ["Change service", "Đổi dịch vụ", "서비스 변경"], ask: ["Ask Cici about this place", "Hỏi Cici về nơi này", "Cici에게 이 매장 물어보기"],
-  earn: ["Earn ~{n} points on visit", "Nhận ~{n} điểm khi đến", "방문 시 약 {n}포인트 적립"], earnDone: ["You'll earn ~{n} points when {s} confirms your visit.", "Bạn sẽ nhận ~{n} điểm khi {s} xác nhận lượt đến.", "{s}에서 방문을 확인하면 약 {n}포인트가 적립돼요."],
+  earn: ["Earn ~{n} points on visit", "Nhận ~{n} điểm khi đến", "방문 시 약 {n}포인트 적립"], earnDone: ["You'll earn ~{n} points when {s} confirms your visit.", "Bạn sẽ nhận ~{n} điểm khi {s} xác nhận lượt đến.", "{s}에서 방문을 확인하면 약 {n}포인트가 적립돼요."], earnShort: ["~{n}P when {s} confirms your visit · {w} off your next pass", "~{n}P khi {s} xác nhận lượt đến · giảm {w} cho gói tiếp theo", "{s} 방문 확인 시 약 {n}P · 다음 이용권 {w} 할인"],
   view: ["View in My bookings", "Xem trong Lịch của tôi", "내 예약에서 보기"], saved: ["It's saved in My bookings.", "Đã lưu trong Lịch của tôi.", "내 예약에 저장됐어요."] };
-const bkT = (k, o = {}) => L3(...BKT[k]).replace("{s}", o.s || "").replace("{n}", o.n == null ? "" : o.n);
+const bkT = (k, o = {}) => L3(...BKT[k]).replace("{s}", o.s || "").replace("{n}", o.n == null ? "" : o.n).replace("{w}", o.w == null ? "" : o.w);
 const earnEst = () => { try { return fmtN(Math.floor(50 * mult(ME || {}))); } catch (e) { return "50"; } }; /* same base as confirmVisit: 50 × streak multiplier */
 const bkStep = k => `<p class="sub sm bkstep" id="bk-step" style="margin:10px 0 0;font-weight:650">${esc(bkT(k))}</p>`;
 const bkAsk = sid => `<p style="margin:12px 0 0;text-align:center"><button class="link" data-act="bkask" data-s="${sid}" id="bk-ask">${esc(bkT("ask"))}</button></p>`;
@@ -2922,10 +2922,9 @@ function homeLevelBar() {
 function upRow(b) {
   const s = S[b.store], v = svcOf(b.store, b.svc);
   const res = b.rids.map(r => resName(b.store, r)).join(" + ") + (b.party ? " · " + trS(b.party + " players") : "") + rentalBits(b);
-  const st = b.dep ? `<span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : `<span class="tag ok">${tr("Confirmed")}</span>`;
-  return `<div class="up" role="listitem">${logo(b.store)}<div class="grow"><div class="row wrap" style="gap:6px"><b>${esc(N(v.n))}</b> ${st}${b.source !== "app" ? ` <span class="tag">${tr(b.source === "voice" ? "by call" : "by chat")}</span>` : ""}</div>
-  <div class="sm"><b>${esc(s.name)}</b> · ${fWhen(b.d, b.m)} · ${esc(res)}</div>
-  <div class="acts">${b.d <= 1 ? `<button class="btn sec" data-act="checkin" data-id="${b.id}" aria-label="${t("checkin")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("checkin")}</button><button class="link" data-act="managebk" data-id="${b.id}" aria-label="${t("manage")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("manage")}</button>` : `<button class="btn ghost" data-act="managebk" data-id="${b.id}" aria-label="${t("manage")}: ${esc(N(v.n))}, ${esc(s.name)}">${t("manage")}</button>`}</div></div></div>`;
+  const today = b.d === todayIdx(), tags = (b.dep ? ` <span class="tag warn">${tr("Deposit held")} · ${vnd(b.dep)}</span>` : "") + (b.source !== "app" ? ` <span class="tag">${tr(b.source === "voice" ? "by call" : "by chat")}</span>` : ""); /* user 2026-10-17: one tappable row, no "Confirmed" tag (it is the default), Check in only on the day */
+  const lbl = `${N(v.n)} · ${s.name}, ${fWhen(b.d, b.m)}, ${res}`;
+  return `<div class="up${today ? " today" : ""}" role="listitem"><button type="button" class="uprow" data-act="managebk" data-id="${b.id}" aria-label="${esc(t("manage") + ": " + lbl)}">${logo(b.store)}<span class="grow"><b>${esc(N(v.n))} · ${esc(s.name)}</b>${tags}<br><span class="sm sub">${fWhen(b.d, b.m)} · ${esc(res)}</span></span>${today ? "" : ic("chev")}</button>${today ? `<button class="btn upci" data-act="checkin" data-id="${b.id}" aria-label="${esc(t("checkin") + ": " + lbl)}">${t("checkin")}</button>` : ""}</div>`;
 }
 function placeCard(sid) {
   const s = S[sid], w = WALLET[sid] || [], nx = upcoming().find(b => b.store === sid);
@@ -3022,7 +3021,7 @@ function vStore(sid) {
   const nowM = nowMin() % 1440, hrs = s.hours || (s.sched && s.sched.length ? [Math.min(...s.sched.map(x => x[1])), Math.max(...s.sched.map(x => x[1])) + 60] : [540, 1260]), closedDay = !!DISC[sid] && DISC[sid].open === false;
   const openNow = !closedDay && nowM >= hrs[0] && nowM < hrs[1]; /* review D-1: never a hardcoded "Open now" */
   const openTx = closedDay ? L3("Closed today", "Hôm nay nghỉ", "오늘 휴무") : openNow ? L3(`Open now · until ${fTime(hrs[1])}`, `Đang mở · đến ${fTime(hrs[1])}`, `영업 중 · ${fTime(hrs[1])}까지`) : nowM < hrs[0] ? L3(`Opens at ${fTime(hrs[0])}`, `Mở lúc ${fTime(hrs[0])}`, `${fTime(hrs[0])}에 열어요`) : L3(`Closed · opens tomorrow ${fTime(hrs[0])}`, `Đã đóng · mở lại ${fTime(hrs[0])} ngày mai`, `영업 종료 · 내일 ${fTime(hrs[0])}에 열어요`);
-  let h = `<div class="card">${s.photo ? `<div class="cover hero">${shopImg(sid, "himg", true)}</div>` : `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm" id="st-open" data-open="${openNow}">${esc(openTx)}</div>${s.joined && PV.flag && ME ? `<div class="sm" id="st-pts" style="margin-top:2px">${esc(pvT("storeEarn", { n: earnEst() }))}</div>` : ""}</div></div>
+  let h = `<div class="card">${storeGallery(sid)}<div class="row top">${logo(sid, true)}<div class="grow"><h1 style="margin:0">${esc(s.name)}</h1><div class="sub sm">${esc(N(s.area))} · <span class="tag ok">${tr("Verified")}</span></div><div class="sub sm" id="st-open" data-open="${openNow}">${esc(openTx)}</div>${s.joined && PV.flag && ME ? `<div class="sm" id="st-pts" style="margin-top:2px">${esc(pvT("storeEarn", { n: earnEst() }))}</div>` : ""}</div></div>
   <div class="${s.joined ? "sacts" : "row"}" style="margin-top:12px">${s.joined ? `<button class="btn full" data-act="bk" data-s="${sid}" id="st-book">${t("bookHere")}</button><div class="sact3">${callBtn(sid, "sact", true)}<button class="btn ghost sact" data-act="fake" data-v="${MARKET === "kr" ? "Opens the store's KakaoTalk chat (demo)." : "Opens the store's Zalo chat (demo)."}">${ic("chat", "s")} ${MARKET === "kr" ? L3("KakaoTalk", "KakaoTalk", "카카오톡") : "Zalo"}</button>${mapUrls(sid) ? mapLinks(sid, "store", true).replace(/class="btn (sec|ghost) bkmap"/g, 'class="btn ghost sact bkmap"') : `<button class="btn ghost sact" data-act="fake" data-v="Opens directions (demo).">${ic("dir", "s")} ${L3("Map", "Bản đồ", "지도")}</button>`}</div>` : `<div class="stack" style="width:100%"><button class="btn full" data-act="jbook" data-v="${sid}" id="st-jbook">${esc(jbT("btn", s.name))}</button><button class="btn ghost full" data-act="join" data-v="${sid}">${esc(L3(`Join ${s.name}`, `Tham gia ${s.name}`, `${s.name} 가입하기`))}</button></div>`}</div></div>`;
   h += `<h2>${t("policies")}</h2><div class="card"><dl class="pol"><dt>${tr("Cancel")}</dt><dd>${esc(policyLine(sid))}</dd><dt>${t("deposit")}</dt><dd>${s.policy.dep ? vnd(s.policy.dep) + " " + tr("to book, taken off the total") : t("none")}</dd><dt>${t("noShow")}</dt><dd>${esc(tr(s.policy.noshow))}</dd><dt>${t("arrive")}</dt><dd>${esc(tr(s.policy.arrive))}</dd></dl></div>`;
   h += `<h2>${t("services")}</h2>${s.joined ? "" : `<p class="sub sm">${esc(jbT("hint", s.name))}</p>`}<div class="stack">`;
@@ -3038,10 +3037,14 @@ function vStore(sid) {
   } else for (const v of s.svcs) h += `<button class="svc" data-act="svc" data-s="${sid}" data-v="${v.id}"><span class="grow"><b>${esc(N(v.n))}</b><br><span class="sub sm">${esc(tr(v.desc))}${s.kind !== "rental" ? " · " + fMin(v.len) : ""}</span></span><span class="pr">${esc(priceLabel(v))}</span></button>`;
   h += `</div>`;
   if (s.joined) {
-    h += `<h2>${t("passes")}</h2><div class="card stack">${w.length ? w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("") : `<p class="sub sm">${tr("No passes here. You pay per visit.")}</p>`}${PASS_SHOP[sid] ? `<button class="btn sec full" data-act="passshop" data-s="${sid}">${esc(L3("Buy a pass", "Mua gói", "이용권 구매"))}</button>` : ""}${mine.filter(b => b.dep).map(b => `<p class="sm">${tr("Deposit held")}: <b>${vnd(b.dep)}</b> · ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}</div>`;
-    h += `<h2>${t("upNext")}</h2><div class="card" role="list">${mine.length ? mine.map(upRow).join("") : `<p class="sub sm">${t("nothingUp")}</p>`}</div>`;
-    h += `<h2>${t("inbox")}</h2><div class="card stack">${msgs.length ? msgs.map(m => `<div class="sm"><span class="sub">${esc(tr(m.when))}</span> · ${esc(trS(m.text))}</div>`).join("") : `<p class="sub sm">${t("inboxEmpty")}</p>`}
-      <form class="chatbox" data-form="store" data-s="${sid}"><label class="vh" for="sm-${sid}">${esc(t("msgStore", { s: s.name }))}</label><textarea id="sm-${sid}" rows="1" placeholder="${esc(L3("Message", "Nhắn tin", "메시지"))}"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form></div>`;
+    /* user 2026-10-17: no empty-state cards on a store page. Passes only when there is one (else a single Buy row), Up next only when booked, the composer behind one row. */
+    const deps = mine.filter(b => b.dep), shop = PASS_SHOP[sid], cheap = shop ? shop.slice().sort((a, b) => a.price / a.n - b.price / b.n)[0] : null;
+    const buyRow = shop ? `<button class="svc" data-act="passshop" data-s="${sid}" id="st-passbuy">${ic("wallet")}<span class="grow"><b>${esc(L3("Buy a pass", "Mua gói", "이용권 구매"))}</b><br><span class="sub sm">${esc(L3(`from ${vnd(Math.round(cheap.price / cheap.n))} per visit`, `từ ${vnd(Math.round(cheap.price / cheap.n))} mỗi buổi`, `회당 ${vnd(Math.round(cheap.price / cheap.n))}부터`))}</span></span>${ic("chev")}</button>` : "";
+    if (w.length || deps.length) h += `<h2>${t("passes")}</h2><div class="card stack">${w.map(p => `<div class="row"><span class="grow"><b>${esc(tr(p.t))}</b><br><span class="sub sm">${esc(tr(p.exp))} · ${esc(t("storeOnly", { s: s.name }))}</span></span><b>${p.credit ? vnd(p.credit) : p.left + " " + tr("left")}</b></div>`).join("")}${deps.map(b => `<p class="sm">${tr("Deposit held")}: <b>${vnd(b.dep)}</b> · ${esc(N(svcOf(sid, b.svc).n))}, ${fWhen(b.d, b.m)}</p>`).join("")}${buyRow ? `<div class="stack" style="margin-top:4px">${buyRow}</div>` : ""}</div>`;
+    else if (buyRow) h += `<div class="stack" style="margin-top:12px">${buyRow}</div>`;
+    if (mine.length) h += `<h2>${t("upNext")}</h2><div class="card" role="list">${mine.map(upRow).join("")}</div>`;
+    const open = ST.stMsg === sid;
+    h += `<h2>${t("inbox")}</h2><div class="card stack">${msgs.map(m => `<div class="sm"><span class="sub">${esc(tr(m.when))}</span> · ${esc(trS(m.text))}</div>`).join("")}${open ? `<form class="chatbox" data-form="store" data-s="${sid}"><label class="vh" for="sm-${sid}">${esc(t("msgStore", { s: s.name }))}</label><textarea id="sm-${sid}" rows="1" placeholder="${esc(L3("Message", "Nhắn tin", "메시지"))}"></textarea><button class="send" type="submit" aria-label="${t("send")}">${ic("send")}</button></form>` : `<button class="svc" data-act="stmsg" data-v="${sid}" id="st-msg" style="margin:${msgs.length ? "4px" : "0"} 0 0">${ic("chat")}<span class="grow"><b>${esc(t("msgStore", { s: s.name }))}</b><br><span class="sub sm">${esc(L3("Replies land here and in your inbox", "Trả lời sẽ hiện ở đây và trong hộp thư", "답장은 여기와 알림함에 와요"))}</span></span>${ic("chev")}</button>`}</div>`;
   }
   return h;
 }
@@ -3257,6 +3260,12 @@ const PHALT = { capsule: ["Bright barre studio with a ballet barre and blush wal
   moc: ["Wooden spa room with a massage bed", "Phòng spa gỗ với giường massage", "마사지 베드가 있는 우드톤 스파 룸"],
   rally: ["Rooftop court with nets at golden hour", "Sân trên sân thượng với lưới lúc hoàng hôn", "노을 질 무렵 네트가 쳐진 루프탑 코트"] };
 for (const sid in PHALT) if (S[sid]) Object.assign(S[sid], { photo: "assets/shops/" + sid + ".webp", sample: true });
+const PHOTOS = { capsule: ["capsule", "yoga"], yoga: ["yoga", "capsule"], salon: ["salon", "barber"], barber: ["barber", "salon"], spa: ["spa", "moc", "skin"], moc: ["moc", "spa"], skin: ["skin", "spa"], pickle: ["pickle", "rally"], rally: ["rally", "pickle"], nails: ["nails", "salon"] }; /* user 2026-10-17: a store has several photos; sample set */
+for (const sid in PHOTOS) if (S[sid] && S[sid].photo) S[sid].photos = PHOTOS[sid].map(k => "assets/shops/" + k + ".webp");
+function storeGallery(sid) { const s = S[sid]; if (!s.photo) return `<div class="cover" style="background:linear-gradient(120deg,${s.color},${s.color}bb)"></div>`; const ph = s.photos && s.photos.length > 1 ? s.photos : [s.photo];
+  if (ph.length === 1) return `<div class="cover hero">${shopImg(sid, "himg", true)}</div>`;
+  return `<div class="cover hero gal" id="st-gal"><div class="galtrack" data-gal="${sid}" tabindex="0" role="group" aria-label="${esc(L3(`${ph.length} photos, swipe`, `${ph.length} ảnh, vuốt`, `사진 ${ph.length}장, 옆으로 넘기기`))}">${ph.map((src, i) => `<img class="himg" src="${src}" alt="${esc(photoAlt(sid))}${i ? " " + (i + 1) : ""}" width="800" height="600" loading="${i ? "lazy" : "eager"}" decoding="async" data-sid="${sid}" onerror="photoFail(this)">`).join("")}</div><span class="galn" id="st-galn">1/${ph.length}</span><span class="galdots" id="st-galdots" aria-hidden="true">${ph.map((_, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</span></div>`; }
+document.addEventListener("scroll", e => { const t = e.target; if (!t || !t.classList || !t.classList.contains("galtrack")) return; const i = Math.round(t.scrollLeft / Math.max(1, t.clientWidth)); const n = document.getElementById("st-galn"); if (n) n.textContent = (i + 1) + "/" + t.children.length; document.querySelectorAll("#st-galdots i").forEach((d, k) => d.classList.toggle("on", k === i)); }, true);
 const photoAlt = sid => (PHALT[sid] ? PHALT[sid][L === "vi" ? 1 : L === "ko" ? 2 : 0] : S[sid].name) + " (" + L3("sample photo", "ảnh mẫu", "샘플 사진") + ")";
 const shopImg = (sid, cls, eager) => S[sid].photo ? `<img class="${cls}" src="${S[sid].photo}" alt="${esc(photoAlt(sid))}" width="800" height="600" loading="${eager ? "eager" : "lazy"}" decoding="async" data-sid="${sid}" onerror="photoFail(this)">` : "";
 /* a photo that fails to load: card -> brand tint + initials, store hero -> brand gradient (never a broken icon or spilled alt text) */
@@ -3304,7 +3313,7 @@ function dcard(sid) {
   const slot = nf ? `<button class="dslot" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} ${esc(fDay(nf.d) + " " + fTime(nf.m))}</button>` : `<span class="sub sm dnone">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`;
   return `<article class="dcard${sel ? " sel" : ""}" id="dc-${sid}" aria-label="${esc(s.name)}${f.ad ? ", " + esc(t("sponsored")) : ""}">
   <button class="dhit" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}">${photo(sid)}${badge}${f.ad ? `<span class="dov splabel">${esc(t("sponsored"))}</span>` : ""}</button>
-  <div class="dbody"><div class="dtx"><b class="dname">${esc(s.name)}</b><div class="dmeta">${meta}</div></div>${slot}</div></article>`;
+  <div class="dbody"><button type="button" class="dtx dtxb" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}"><b class="dname">${esc(s.name)}</b><span class="dmeta">${meta}</span></button>${slot}</div></article>`; /* user 2026-10-17: compact rows, the photo is a thumbnail (several photos live on the store page) */
 }
 IP.dfit = '<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>'; IP.dhair = '<circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5L20 17M8 15.5L20 7"/>';
 IP.dskin = '<path d="M12 3c3.5 4.5 6 7.6 6 10.5a6 6 0 0 1-12 0C6 10.6 8.5 7.5 12 3z"/>'; IP.dspa = '<path d="M12 20c-4 0-8-3-8-8 3 0 6 1.5 8 4 2-2.5 5-4 8-4 0 5-4 8-8 8z"/><path d="M12 16c-1.5-3-1.5-7 0-11 1.5 4 1.5 8 0 11z"/>';
@@ -3824,6 +3833,7 @@ case "catfeed": case "catnudge": case "cattime": case "cattreat": case "catreset
     case "linkopen": { const v = norm(($("#lk") || {}).value || ""); const sid = /nail/.test(v) ? "nails" : /yoga|bloom/.test(v) ? "yoga" : ORDER0.find(id => v.includes(id)) || "yoga"; closeSheet(); ST.store = sid; render(); if (!S[sid].joined) joinConsent(sid); break; }
     case "gosearch": closeSheet(); ST.tab = "discover"; ST.store = null; render(); $("#dq").focus(); break;
     case "join": joinConsent(d.v); break;
+    case "stmsg": ST.stMsg = d.v; render(); { const ta = $("#sm-" + d.v); if (ta) ta.focus(); } break;
     case "joinok": { const oi = $("#optin"); if (oi && oi.checked) { NSET.optin[d.v] = true; saveN(); } doJoin(d.v); break; }
     case "cat": ST.cat = d.v; renderView(); { const el2 = $(`[data-act="cat"][data-v="${d.v}"]`); if (el2) el2.focus(); } break;
     case "whyad": toast("Shown by area. Not based on your bookings or health."); break;
