@@ -128,13 +128,17 @@ Per person: `{ id, n, photo, role, since (year), tags: ["balayage"], langs: ["ko
 
 Thresholds: stars at `nRatings12m ≥ 10`; rebook rate at `visits ≥ 20`; otherwise "New here". Numbers are rounded (visits to 10s, rebook to whole percent).
 
-## 6. What the prototype can show (sample data)
+## 6. What the prototype shows (sample data, implemented 2026-10-17)
 
-- Store setup flags on the four appointment stores and the two class stores; private barre and private yoga as class types; Capsule Barre `staffChoice: "optional"`, Soom Spa `"none"` (assigns on arrival) to show both.
-- Team section and person sheet with sample stats; Book sheet person rows with next free time; "Assigned by the store" on confirm for Anyone and for `none` stores.
-- Court stores (**implemented 2026-10-17**, `tests/v3_courts.py`): time rows with "N of 4 courts free", court rows with attributes and surcharge under the chosen time, court-first entry from the store page, Rally Court Club as the `courtChoice: "none"` example, court number on confirm, success, My bookings and the check-in code, the "moved to Court 2" notification.
-- Rating attribution by booking; a per-person average that only appears past the threshold.
-- Chat answers for the two questions.
+- **Store setup flags** (`staffChoice`) on every appointment store and the class stores: the six appointment stores and Capsule Barre are `"optional"`; Namu Spa (`moc`) is `"none"` (assigns on arrival); Bloom Yoga Loft is `"none"` because it has one teacher. Profiles per person: role, since-year, specialty tags, languages, `display`, and sample platform stats (visits, rebook, avg, n). Live data is added on top: confirmed visits with that person and ratings attributed from the booking (`inst`, else the visit stars).
+- **Private class**: Capsule Barre has `pbarre` (Private barre · 1:1 · 50 min · ₩80,000) as its own service row with a cap-1 schedule per teacher. The Book sheet shows the teacher rows first with no "Anyone", no times until a teacher is picked (then the day jumps to their next free day), rows say "1:1" instead of a spots count, a taken 1:1 time is simply not offered (no waitlist), the group pass never applies, the confirm sheet says "Format · 1:1".
+- **Team section** on the store page (between About and Policies): cards ordered by soonest availability, stars only at 10+ ratings ("New here" below), rebook rate only at 20+ visits (else "N+ visits"), a Book button per person. The person sheet carries role · years, languages, tags, the three signals with their one-line definitions, the "no written reviews, no ranking" line, and "Book with <name> · next time". A `none` store shows one "Assigned by the store on arrival" line instead.
+- **Book sheet** person rows: "Anyone · soonest, the store assigns" first and preselected, then each person with role · signals · next free time for that service. Picking a person filters the slots. Confirm, success, My bookings: the person's name, or "Assigned by the store on arrival" at a `none` store.
+- **Discover** meta line: "N specialists" for appointment stores with a choice.
+- **Cici**: "소라 평점 어때?" gives the three signals in one sentence plus "I don't rank people" and a Book-with chip; "누가 제일 잘해?" at a named store refuses to rank and offers two people (soonest, then highest rebook, else highest rating / the newcomer) with Book chips; with no store named it asks which place and lists only stores where a choice exists.
+- **Court stores** (`tests/v3_courts.py`): time rows with "N of 4 courts free", court rows with attributes and surcharge under the chosen time, court-first entry from the store page, Rally Court Club as the `courtChoice: "none"` example, court number on confirm, success, My bookings and the check-in code, the "moved to Court 2" notification.
+- Tests: `tests/v3_team.py` (40 checks, EN and KO).
+- Not in the prototype: `staffChoice: "required"` for private classes (every private class in the sample requires a teacher anyway), the teacher-name tap target on public timetable rows (§4c), per-court rating tags (§4f), the store owner's per-person display switch UI.
 
 ## 7. Open questions for the owner
 
