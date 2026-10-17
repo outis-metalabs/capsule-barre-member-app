@@ -312,7 +312,7 @@ button:active:not([disabled]){transform:scale(.94)}
 .dname{display:block;font-size:16px;overflow-wrap:anywhere}.dmeta{display:block;font-size:13px;color:#6B5E62;margin-top:2px}
 @media (max-width:350px){.dfrow .dchips{margin-right:-12px}}
 .dslot{flex:none;min-height:38px;min-width:44px;display:inline-flex;align-items:center;gap:4px;padding:0 12px;border-radius:999px;border:1.5px solid #E9B3BF;background:#FFF8F9;color:#8E3346;font-size:13px;font-weight:650;white-space:nowrap}
-.dslot .ico{width:14px;height:14px}.dslot:hover{border-color:#B04A5E}.dnone{flex:none}
+.dslot{max-width:100%}.dslot .dslott{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dslot .ico{width:14px;height:14px;flex:none}.dslot:hover{border-color:#B04A5E}.dnone{flex:none}
 .cover.hero{height:auto;aspect-ratio:16/9;overflow:hidden;background:#F7EEF0}.himg{width:100%;height:100%;object-fit:cover;display:block}.gal{position:relative}.galtrack{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.galtrack::-webkit-scrollbar{display:none}.galtrack .himg{flex:none;width:100%;height:100%;scroll-snap-align:start}.galn{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:650;border-radius:999px;padding:3px 8px;pointer-events:none}.galdots{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:5px;pointer-events:none}.galdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55)}.galdots i.on{background:#fff}
 .hsample{position:absolute;right:10px;bottom:10px;background:rgba(43,35,38,.72);color:#fff;font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -3166,7 +3166,9 @@ function vSettings() {
   h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Cici's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Cici dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.",CICI_KO + "의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "growth" ? vGrowth() : ST.page === "p2char" && P2() ? p2CharPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
+function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "growth" ? vGrowth() : ST.page === "p2char" && P2() ? p2CharPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); fitSlots(); }
+function fitSlots() { /* Discover chip: "Next free · <service> · day time"; the service is dropped only when the chip would truncate (the aria-label keeps it) */
+  document.querySelectorAll(".dslot .dslott").forEach(sp => { const sv = sp.querySelector(".dsvc"); if (sv && sp.scrollWidth > sp.clientWidth + 1) sv.remove(); }); }
 /* MVP-L1/L7: the unlock animation plays once, on the next normal Home view (deferred while a crisis/urgent turn is in force, A6) */
 function maybeUnlock() {
   if (!ME || ST.tab !== "home" || ST.page || ST.store || gated() || $(".sheet") || $(".munlock") || ST.catGrew) return; /* review G-1: never over Mochi's "grew" beat; catStageMoment calls back when it ends */
@@ -3285,11 +3287,14 @@ const DSYN = { fitness: "barre pilates gym fitness tập thể dục lớp tập
   massage: "massage spa mát xa xoa bóp thư giãn 마사지 스파", sport: "pickleball court courts sân thể thao 피클볼 코트", nails: "nail nails manicure làm móng móng 네일", yoga: "yoga 요가" };
 const DF = { type: "all", dist: 99, open: false, price: 0, rate: 0, map: false, pin: null };
 const typeLabel = sid => { const r = DTYPES.find(x => x[0] === DISC[sid].type); return r ? r[L === "vi" ? 2 : L === "ko" ? 3 : 1] : ""; };
-function nextFree(sid, vid, from) {
+function nextFree(sid, vid, from, pref) { /* first open slot; with pref (minutes) the first open slot at or after that time of day, falling back to the earliest */
   const s = S[sid], v = (vid && s.svcs.find(q => q.id === vid)) || s.svcs[0];
-  for (let d = from > 0 ? +from : 0; d < 7; d++) { const z = slotsFor(sid, v.id, d, { len: 60, party: 4 }).find(q => q.left !== 0); if (z) return Object.assign({}, z, { store: sid, svc: v.id, party: s.kind === "rental" ? 4 : 0, paddles: 0 }); }
-  return null;
+  const pick = (d, p) => slotsFor(sid, v.id, d, { len: 60, party: 4 }).find(q => q.left !== 0 && (p == null || q.m >= p));
+  for (let d = from > 0 ? +from : 0; d < 7; d++) { const z = pick(d, pref); if (z) return Object.assign({}, z, { store: sid, svc: v.id, party: s.kind === "rental" ? 4 : 0, paddles: 0 }); }
+  return pref != null ? nextFree(sid, vid, from) : null;
 }
+const usualMin = sid => { const c = {}; let best = null; for (const b of B) { if (b.store !== sid || b.status === "cancelled") continue; c[b.m] = (c[b.m] || 0) + 1; if (best == null || c[b.m] > c[best]) best = b.m; } return best; }; /* the member's usual time at a store (most common booking time) */
+const discNext = sid => nextFree(sid, null, 0, usualMin(sid) != null ? usualMin(sid) : 540); /* user 2026-10-17: Discover prefers the member's usual time, else the first slot from 09:00; 06:30 is accurate but not appealing */
 function discList() {
   const q = norm(ST.q || "");
   return ORDER0.filter(sid => {
@@ -3306,11 +3311,11 @@ function photo(sid) {
   return s.photo ? `<div class="dphoto">${shopImg(sid, "dimg")}</div>` : `<div class="dphoto dinit" style="background:linear-gradient(135deg,${s.color}26,${s.color}55)" aria-hidden="true"><span>${esc(s.logo)}</span></div>`;
 }
 function dcard(sid) {
-  const s = S[sid], f = DISC[sid], nf = nextFree(sid), sel = DF.pin === sid;
+  const s = S[sid], f = DISC[sid], nf = discNext(sid), sel = DF.pin === sid;
   const badge = s.joined ? `<span class="dov dj">${ic("heart", "s")} ${t("joined")}</span>` : f.fr ? `<span class="dov dj">${L3("Friends", "Bạn bè", "친구")}</span>` : "";
   const fromP = (() => { const v = s.svcs.slice().sort((a, b) => (a.price || 1e12) - (b.price || 1e12))[0]; return v ? (s.kind === "rental" ? vnd(200000) + L3("/h", "/giờ", "/시간") : L3("from ", "từ ", "") + vnd(v.price) + L3("", "", "부터")) : ""; })();
   const meta = [typeLabel(sid), f.km.toFixed(1) + " km"].concat(FLAGS.publicRatings ? [`★ ${f.rate.toFixed(1)} (${f.n})`] : []).concat(fromP ? [fromP] : []).map(esc).join(" · ");
-  const slot = nf ? `<button class="dslot" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} ${esc(fDay(nf.d) + " " + fTime(nf.m))}</button>` : `<span class="sub sm dnone">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`;
+  const slot = nf ? `<button class="dslot" data-act="dslot" data-v="${sid}" aria-label="${esc(L3("Book next free slot", "Đặt giờ trống gần nhất", "가장 빠른 시간 예약"))}: ${esc(fWhen(nf.d, nf.m))}, ${esc(N(svcOf(sid, nf.svc).n))}">${ic("clock", "s")} <span class="dslott">${esc(L3("Next free", "Còn chỗ", "가장 빠른 자리"))}${s.svcs.length > 1 ? `<span class="dsvc"> · ${esc(N(svcOf(sid, nf.svc).n))}</span>` : ""} · ${esc(fDay(nf.d) + " " + fTime(nf.m))}</span></button>` : `<span class="sub sm dnone">${L3("No free slots this week", "Tuần này hết chỗ", "이번 주 빈 시간 없음")}</span>`;
   return `<article class="dcard${sel ? " sel" : ""}" id="dc-${sid}" aria-label="${esc(s.name)}${f.ad ? ", " + esc(t("sponsored")) : ""}">
   <button class="dhit" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}">${photo(sid)}${badge}${f.ad ? `<span class="dov splabel">${esc(t("sponsored"))}</span>` : ""}</button>
   <div class="dbody"><button type="button" class="dtx dtxb" data-act="store" data-v="${sid}" aria-label="${esc(L3("Open ", "Mở ", "열기: ") + s.name)}"><b class="dname">${esc(s.name)}</b><span class="dmeta">${meta}</span></button>${slot}</div></article>`; /* user 2026-10-17: compact rows, the photo is a thumbnail (several photos live on the store page) */
@@ -3360,7 +3365,7 @@ function discAct(a, d) {
   else if (a === "drate") DF.rate = DF.rate ? 0 : 4.5;
   else if (a === "pin") DF.pin = d.v;
   else if (a === "dfilters") { filterSheet(); return true; }
-  else if (a === "dslot") { const x = nextFree(d.v); if (!S[d.v].joined) joinBookSheet(d.v, x, null); else if (x) openConfirm(x); else toast(jbT("none")); return true; }
+  else if (a === "dslot") { const x = discNext(d.v); if (!S[d.v].joined) joinBookSheet(d.v, x, null); else if (x) openConfirm(x); else toast(jbT("none")); return true; }
   else return false;
   renderView(); if ($("#dfsheet")) { filterSheet(); const g = $(`#dfsheet [data-act="${a}"][data-v="${d.v}"]`); if (g) g.focus(); return true; }
   const f = $(`[data-act="${a}"]`); if (f) f.focus();
