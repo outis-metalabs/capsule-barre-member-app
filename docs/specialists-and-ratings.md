@@ -15,7 +15,8 @@ Design note, 2026-10-17. Question from the owner: "In a store, the member needs 
 | **Class, public** | barre, yoga, reformer | a time on the timetable | the teacher of that class, as information, not a choice |
 | **Class, private** (1:1 or 1:2) | PT, private barre, private yoga | a teacher first, then a time | the teacher, as the product |
 | **Specialist appointment** | hair, skin, spa, nails | a service, optionally a person, then a time | the person, as a choice with "Anyone" first |
-| **Resource / no selector** | courts, rooms, a one-person shop, a spa that assigns on arrival | a time (and a court or room) | nobody; the store assigns |
+| **Court / room rental** | pickleball, tennis, futsal, practice rooms | a date, a time, then a **court number** when courts differ | the courts, as a choice with "Any court" first; no people |
+| **No selector** | a one-person shop, a spa that assigns on arrival, identical rooms | a time | nobody; the store assigns |
 
 The rule: **a person is shown only where choosing them changes the booking.** Public classes and resource stores never show a selector. The teacher name on a public class is a label on the slot, not a step.
 
@@ -84,11 +85,40 @@ Private classes live in the Services list as their own rows: "Private barre · 1
 
 Resource stores and stores with `staffChoice: "none"` show nothing about people. The store page has no Team section; the confirm sheet says "Therapist assigned by the store". Their ratings stay at store level, exactly as today. The rate sheet asks only "How was your visit?" with no name.
 
-### 4f. Discover
+### 4f. Court stores: picking the court number
+
+Courts are resources, not people, but members still want to choose: outdoor vs indoor, lights, surface, the court next to the clubhouse, "our usual court". Today the Book sheet folds court / length / players / paddles into one collapsed options line with "Any court" chips. That hides the choice. Proposal:
+
+```
+Sat 19 Oct   [Today] [Tomorrow] [Sat] [Sun] …
+18:00 · 90 min                         3 of 4 courts free
+19:30 · 90 min                         1 of 4 courts free
+21:00 · 90 min                         Full
+─────────────────────────────────────────────────────
+18:00 · which court?
+● Any court · the club assigns, cheapest                ₩30,000
+○ Court 1 · outdoor · lit · near the desk               ₩30,000
+○ Court 2 · outdoor · lit                               ₩30,000
+○ Court 3 · indoor · ac                              +₩4,000
+   Court 4 · indoor · ac · taken 18:00–19:30
+```
+
+- **Time first, then court.** Members think "Saturday evening" before "Court 3". Each time row says how many courts are free, so a full slot is never a surprise after picking a court.
+- **Court rows appear under the chosen time**, free ones selectable, taken ones greyed with who-when ("taken 18:00–19:30"), never hidden, so the member sees why. "Any court" is first and preselected; it is also the cheapest when courts carry a surcharge.
+- **Courts carry attributes** the store sets: indoor/outdoor, lights, surface, a surcharge, a photo, a note ("near the desk"). Identical courts show as plain numbers.
+- **Usual court.** If the member booked the same court three times, that court's row says "your usual" and is preselected instead of Any.
+- **Court-first entry** also exists for members who care: the store page lists courts as cards (photo, attributes, "next free 18:00"); tapping a card opens the Book sheet with that court preselected and only its open times.
+- **No selector variant.** A store with identical courts sets `courtChoice: "none"`: the time rows stay, the court section never appears, and the confirm sheet says "Court assigned on arrival" with the number shown on the check-in code once the club allocates it.
+- **Confirm and after.** The confirm sheet, success sheet, My bookings row and check-in code all show the court number ("Court 3 · indoor"). A court change by the club sends a notification ("Your 18:00 game moved to Court 2, same price").
+- **Rating.** Court stores rate the visit and, optionally, the court ("lights were dim") as a tag the club sees; no public per-court score.
+
+Data per court: `{ id, n, indoor, lit, surface, surcharge, photo, note }`; booking carries `court` (id or null for assigned); `courtChoice: "none" | "optional"` on the store.
+
+### 4g. Discover
 
 Unchanged: store-level rating and from-price. One addition for appointment stores: "3 specialists" in the meta line, so a member knows a choice exists before opening.
 
-### 4g. Cici
+### 4h. Cici
 
 "린 선생님 평점 어때?" answers with the three signals in one sentence and a "린으로 예약" chip. "누가 제일 잘해?" answers "순위는 보여주지 않아요. 가장 빨리 되는 분과 재예약률이 높은 분을 알려드릴게요" and lists two people.
 
@@ -102,6 +132,7 @@ Thresholds: stars at `nRatings12m ≥ 10`; rebook rate at `visits ≥ 20`; other
 
 - Store setup flags on the four appointment stores and the two class stores; private barre and private yoga as class types; Capsule Barre `staffChoice: "optional"`, Soom Spa `"none"` (assigns on arrival) to show both.
 - Team section and person sheet with sample stats; Book sheet person rows with next free time; "Assigned by the store" on confirm for Anyone and for `none` stores.
+- Court stores: time rows with "N of 4 courts free", court rows with attributes and surcharge under the chosen time, Rally Court Club as the `courtChoice: "none"` example, court number on confirm, success, My bookings and the check-in code.
 - Rating attribution by booking; a per-person average that only appears past the threshold.
 - Chat answers for the two questions.
 
