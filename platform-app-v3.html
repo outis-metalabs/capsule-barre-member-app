@@ -430,7 +430,7 @@ body.v2home #view{height:100%;overflow:hidden;padding-bottom:0}
 .catroombowl{position:absolute;left:58%;top:72%;z-index:2;font-size:30px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.18))}
 .catempty{position:absolute;left:-14px;bottom:-4px;width:30px;height:22px;border-radius:10px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.18)}
 .catfish{position:absolute;z-index:4;font-size:30px;pointer-events:none;left:0;top:0}
-.catheart{position:absolute;z-index:4;pointer-events:none;font-size:20px;color:#B04A5E}
+.catheart{position:absolute;z-index:4;pointer-events:none;font-size:20px;color:#B04A5E}.catheart.up{top:0;left:0;color:#D9506E;text-shadow:0 1px 6px rgba(255,255,255,.6);will-change:transform,opacity}
 @media (prefers-reduced-motion:reduce){.catfab,.catfab[data-state=hungry],.catfab.squish{animation:none!important;transition:none}}
 .catpip{position:absolute;left:16px;top:40%;z-index:4;width:112px;height:112px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.95);box-shadow:0 10px 26px rgba(60,30,40,.28);background:#FBE9ED;opacity:0;transform:scale(.92);transition:opacity .4s ease,transform .4s ease;pointer-events:none}
 .catpip.on{opacity:1;transform:none}.catpip video,.catpip img{width:100%;height:100%;object-fit:cover;display:block}
@@ -926,6 +926,11 @@ function catFeedFx() { /* squish, fish arc button → Mochi, hearts burst, soft 
 function catHearts(x, y, n) { const hero = document.getElementById("v2-hero"); if (!hero || !catMotionOk() || !hero.animate) return; n = n || 6;
   for (let i = 0; i < n; i++) { const h = document.createElement("span"); h.className = "catheart"; h.setAttribute("aria-hidden", "true"); h.textContent = i % 2 ? "✨" : "♥"; hero.appendChild(h);
     const a = i / n * Math.PI * 2, r = 46 + (i % 3) * 10; h.animate([{ transform: `translate(${x}px,${y}px) scale(.4)`, opacity: 1 }, { transform: `translate(${x + Math.cos(a) * r}px,${y + Math.sin(a) * r - 30}px) scale(1)`, opacity: 0 }], { duration: 800, easing: "ease-out" }).onfinish = () => h.remove(); } }
+function catHeartsUp(x, y, n) { /* user 2026-10-18: hearts start at the tap point and float up; every tap adds its own batch, nothing is throttled */
+  const hero = document.getElementById("v2-hero"); if (!hero || !catMotionOk() || !hero.animate) return; n = n || 3;
+  for (let i = 0; i < n; i++) { const h = document.createElement("span"); h.className = "catheart up"; h.setAttribute("aria-hidden", "true"); h.textContent = "♥"; hero.appendChild(h);
+    const sz = 16 + Math.random() * 12, dx = (Math.random() - .5) * 60, rise = 120 + Math.random() * 80, sway = (Math.random() - .5) * 40, dur = 1100 + Math.random() * 500; h.style.fontSize = sz + "px";
+    h.animate([{ transform: `translate(${x - sz / 2}px,${y - sz / 2}px) scale(.5)`, opacity: 0 }, { transform: `translate(${x - sz / 2 + dx * .4 + sway}px,${y - sz / 2 - rise * .35}px) scale(1.05)`, opacity: 1, offset: .25 }, { transform: `translate(${x - sz / 2 + dx * .75 - sway * .5}px,${y - sz / 2 - rise * .65}px) scale(1)`, opacity: 1, offset: .65 }, { transform: `translate(${x - sz / 2 + dx}px,${y - sz / 2 - rise}px) scale(.9)`, opacity: 0 }], { duration: dur, delay: i * 70, easing: "cubic-bezier(.2,.6,.3,1)", fill: "backwards" }).onfinish = () => h.remove(); } }
 function catTreatFx() { /* v3: a visit treat arrives — fish drops from the top of the room into the Feed circle, badge pops. Reduced motion: badge only. */
   const hero = document.getElementById("v2-hero"), fab = document.getElementById("cat-feed") || document.getElementById("cat-fab-empty"); if (!hero || !fab) return false;
   const pop = () => { fab.classList.remove("pop"); void fab.offsetWidth; fab.classList.add("pop"); };
@@ -1017,10 +1022,10 @@ function catXfadeTo(clipName, { loop = true, oneShot = false, tap = false } = {}
 function catSyncMood(soft) { const fig = document.getElementById("cici-real"); if (!fig || ST.catMis) return;
   const mo = catMood(); fig.dataset.mood = mo; fig.className = "v2bg cat-" + mo + (ST.catEat ? " phase-" + ST.catEat : "");
   if (!catMotionOk()) { catWearSync(); return; } catXfadeTo(catClipName(mo), { loop: true }); }
-function catReact(kind) { /* tap = Mochi's react clip plays through (~3 s); long-press = a longer loop of it — no clutter (MC-K4/crisis quiet) */
+function catReact(kind, pt) { /* tap = Mochi's react clip plays through (~3 s); long-press = a longer loop of it — no clutter (MC-K4/crisis quiet) */
   if (!V2HOME() || catCrisis() || ST.catEat || ST.catMis) return;
   catDismissOverlays(); ST.catReact = kind || "tap"; catSyncMood(); const ms = kind === "long" ? 4800 : 2900; /* user 2026-10-18: a tap only reacts (hearts + the caption line); the loop keeps playing, no clip swap, no zoom */
-  try { const [x, y] = catHeadXY(); catHearts(x, y, kind === "long" ? 8 : 6); } catch (e) {} /* PO review: the hero tap must be seen — hearts */
+  try { if (pt) catHeartsUp(pt[0], pt[1], kind === "long" ? 6 : 3); else { const [x, y] = catHeadXY(); catHeartsUp(x, y, kind === "long" ? 6 : 3); } } catch (e) {} /* PO review: the hero tap must be seen — hearts rise from where the member tapped */
   catRefreshUi(); clearTimeout(catReact.t); catReact.t = setTimeout(() => { ST.catReact = null; catSyncMood(); catRefreshUi(); }, ms);
 }
 function catWire() { /* pause off-screen / hidden; tap & long-press reactions; keep crossfade front in sync; v3: overlays, stage-up moment, treat arrival */
@@ -1034,9 +1039,9 @@ function catWire() { /* pause off-screen / hidden; tap & long-press reactions; k
   let vis = true; const sync = () => { const v = catFrontVid(); if (!v) return; if (vis && !document.hidden) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else vids.forEach(x => x.pause()); };
   if ("IntersectionObserver" in window) { catIO = new IntersectionObserver(es => { vis = es[0].isIntersecting && es[0].intersectionRatio > 0.15; sync(); }, { threshold: [0, 0.15, 0.5] }); catIO.observe(fig); }
   /* tap / long-press on the character (ignore UI chrome) */
-  let lpT = 0, lpDone = false;
-  const onDown = e => { if (e.target.closest(".v2card,.v2pull,.catfeed,.catfab,button,a")) return; lpDone = false; clearTimeout(lpT); lpT = setTimeout(() => { lpDone = true; catReact("long"); }, 420); };
-  const onUp = e => { if (e.target.closest(".v2card,.v2pull,.catfeed,.catfab,button,a")) return; clearTimeout(lpT); if (!lpDone) catReact("tap"); };
+  let lpT = 0, lpDone = false; const heroPt = e => { const r = document.getElementById("v2-hero").getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const onDown = e => { if (e.target.closest(".v2card,.v2pull,.catfeed,.catfab,button,a")) return; lpDone = false; clearTimeout(lpT); const pt = heroPt(e); lpT = setTimeout(() => { lpDone = true; catReact("long", pt); }, 420); };
+  const onUp = e => { if (e.target.closest(".v2card,.v2pull,.catfeed,.catfab,button,a")) return; clearTimeout(lpT); if (!lpDone) catReact("tap", heroPt(e)); };
   fig.onpointerdown = onDown; fig.onpointerup = onUp; fig.onpointerleave = () => clearTimeout(lpT); fig.onpointercancel = () => clearTimeout(lpT);
   fig.setAttribute("role", "button"); fig.setAttribute("aria-label", L3(`Play with ${MOCHI()}`, `Chơi với ${MOCHI()}`, `${MOCHI()}와 놀기`));
   catSyncMood(); sync(); catWearSync(); catStageMoment(); setTimeout(catTreatArrive, 600);
