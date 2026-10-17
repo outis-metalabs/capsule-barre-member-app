@@ -45,9 +45,9 @@ with sync_playwright() as p:
   ok('dev labels: no "U2–U8" / "pending native review" anywhere in copy functions', not J("/U2–U8|U1\\)|pending native review|원어민 검토/.test(DEMO_U()+sT('sub'))"))
   # ---- G-5 balance vs lifetime with real rewards on
   J("()=>{__plat.pv.setFlag(true,PV.now());ST.page='points';render()}"); g.wait_for_timeout(200)
-  ok('G-5 Points page shows balance AND lifetime', J("!!document.querySelector('#pv-bal') && !!document.querySelector('#pv-earned')"))
+  ok('G-5 Points page shows ONE spendable balance (lifetime hidden; points brainstorm 2026-10-17)', J("!!document.querySelector('#pv-bal') && !document.querySelector('#pv-earned')"))
   J("()=>{ST.page=null;render()}"); g.wait_for_timeout(200)
-  ok('G-5 You line shows the spendable balance when rewards are on', J("document.querySelector('#you-pts').innerText.includes(fmtPts(bal(ME)))"), J("[document.querySelector('#you-pts').innerText, fmtPts(bal(ME))]"))
+  ok('G-5 You line shows the spendable balance when rewards are on', J("document.querySelector('#you-pts').innerText.includes(balTx(bal(ME)))"), J("[document.querySelector('#you-pts').innerText, fmtPts(bal(ME))]"))
   J("()=>{__plat.pv.setFlag(false,PV.now());render()}")
   # ---- store page: open status, next bookable day, fMin, no sample, action row
   J("()=>{NOWX=13*60;ST.tab='discover';ST.store='capsule';render()}"); g.wait_for_timeout(300)

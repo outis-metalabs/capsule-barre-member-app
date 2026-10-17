@@ -56,7 +56,7 @@ with sync_playwright() as p:
   J("()=>{ST.page='points';render();histSheet()}"); g.wait_for_timeout(300)
   ok('points history: no "not carried over" audit row; pre-app points labelled plainly', not J("/이월되지 않음/.test(document.querySelector('#pv-hist').innerText)") and J("/앱 이전 활동 포인트/.test(document.querySelector('#pv-hist').innerText)")); J("closeSheet()")
   J("()=>{__plat.pv.setFlag(true,PV.now());ST.page='vouchers';ST.vseg=null;render()}"); g.wait_for_timeout(300)
-  ok('vouchers open on "get more" when nothing is claimed; copy says points become vouchers', J("document.querySelector('.seg [aria-selected=true]').innerText") == '더 받기' and J("/쿠폰으로 바꿀 수 있어요/.test(pvT('noCash'))"))
+  ok('vouchers open on "get more" when nothing is claimed; copy says points become vouchers', J("document.querySelector('.seg [aria-selected=true]').innerText") == '더 받기' and J("/이용권 구매와 카운터 할인에 쓸 수 있어요/.test(pvT('noCash'))"))
   J("()=>{__plat.pv.setFlag(false,PV.now())}")
   # ---- money
   J("()=>{ST.page='wallet';render()}"); g.wait_for_timeout(200); g.click('#wallet-buy'); g.wait_for_timeout(300)
@@ -111,8 +111,11 @@ with sync_playwright() as p:
   ok('"바레 갈 때 뭐 준비해야 해?" is answered from the store info', J("(()=>{const m=CH.cici.msgs[CH.cici.msgs.length-1];return !!m.faq})()"), J("document.querySelector('#th-cici').innerText.slice(-200)"))
   J("()=>{CH.cici.msgs=[];render()}"); g.fill('#in-cici', '바레 예약'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(700); g.fill('#in-cici', '내 예약 확인'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(800)
   ok('a new intent exits a half-filled booking ("내 예약 확인" answers with the next booking, not "which place?")', J("(()=>{const m=CH.cici.msgs[CH.cici.msgs.length-1];return !!m.bk})()") and not J("!!CH.cici.ask"), J("[CH.cici.ask, CH.cici.msgs[CH.cici.msgs.length-1].text]"))
-  J("()=>{CH.cici.msgs=[];CH.cici.ask=null;CH.cici.draft=null;render()}"); g.fill('#in-cici', '바레 예약 옮겨줘'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(800)
-  J("()=>{const c=[...document.querySelectorAll('.mchips .chip')][1];if(c)c.click()}"); g.wait_for_timeout(700); J("()=>{const c=document.querySelector('.mchips .chip');if(c)c.click()}"); g.wait_for_timeout(700)
+  J("()=>{NOWX=600;CH.cici.msgs=[];CH.cici.ask=null;CH.cici.draft=null;render()}"); g.fill('#in-cici', '바레 예약 옮겨줘'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(800)
+  J("()=>{const c=[...document.querySelectorAll('.mchips .chip')].find(x=>/내일/.test(x.innerText));if(c)c.click()}"); g.wait_for_timeout(700) # the tomorrow 07:00 pass booking
+  J("()=>{const c=[...document.querySelectorAll('.mchips .chip')].find(x=>!/오늘/.test(x.innerText));if(c)c.click()}"); g.wait_for_timeout(700) # a later day, never 오늘 (its slot list depends on the clock)
+  J("()=>{const c=document.querySelector('.mchips .chip');if(c)c.click()}"); g.wait_for_timeout(700) # first open time -> move review
+  J("()=>{NOWX=null}")
   ok('a move by chat keeps the pass (₩0 · 이용권), never a surprise cash total', J("(()=>{const m=CH.cici.msgs.find(x=>x.confirm&&x.confirm.move);return !!m&&!!m.confirm.usePass})()") and J("/₩0/.test(document.querySelector('#th-cici .mcard .tot')?.innerText||'')"), J("CH.cici.msgs.map(m=>m.text.slice(0,60)).slice(-3)"))
   g.close()
   g = page(); J = g.evaluate; J("()=>{ST.tab='cici';render()}"); g.fill('#in-cici', '누가 다쳤어요'); g.press('#in-cici', 'Enter'); g.wait_for_timeout(800)
