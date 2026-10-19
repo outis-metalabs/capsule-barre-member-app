@@ -19,6 +19,19 @@ header.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justi
 .icb{min-width:44px;min-height:44px;border-radius:999px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:4px;position:relative;color:var(--ink);font-weight:600;font-size:13px}
 .icb:hover{background:#EFE4DA}
 .badge{position:absolute;top:5px;right:5px;min-width:18px;height:18px;border-radius:9px;background:var(--rasp);color:#fff;font-size:11px;line-height:18px;text-align:center;padding:0 4px}
+.hud{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:99px;padding:5px 12px 5px 5px;border:1.5px solid rgba(176,74,94,.13);cursor:pointer;min-height:44px;font:inherit;color:inherit;vertical-align:middle}
+.hud:hover{background:rgba(255,255,255,.95)}
+.hud-av{width:34px;height:34px;border-radius:50%;background:#fbe4dd url(assets/nari-cut/thinking.webp) 55% 20%/200% no-repeat;color:transparent;overflow:hidden;border:1.5px solid #fff;flex:none}
+.hud-av.frame-silver{outline:2px solid #a8a8b8;outline-offset:1px}
+.hud-av.frame-gold{outline:2px solid #E9B44C;outline-offset:1px}
+.hud-av.frame-rainbow{outline:2px solid #a855f7;outline-offset:1px}
+.hud-av.frame-fire{outline:2px solid #e85c20;outline-offset:1px}
+.hud-meta{display:flex;flex-direction:column;line-height:1.2;text-align:left}
+.hud-lv{font-size:11px;font-weight:700;color:var(--sub)}
+.hud-coin{font-size:13px;font-weight:800;color:#c98b00}
+.coin-ic{display:inline-block;width:1em;height:1em;vertical-align:-.15em;flex:none}
+.hud-av-wrap{position:relative;flex:none}
+.hud-badge{position:absolute;top:-3px;right:-4px;min-width:15px;height:15px;border-radius:99px;background:#E8566E;color:#fff;font-size:8px;font-weight:900;line-height:15px;text-align:center;padding:0 3px;border:1.5px solid rgba(255,255,255,.9);box-shadow:0 1px 3px rgba(0,0,0,.2)}
 main{padding:12px 16px 28px;outline:none}
 h1{font-size:22px;line-height:1.25;margin:6px 0 12px}
 h2{font-size:17px;margin:24px 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -34,12 +47,12 @@ p{margin:0 0 8px}
 .wrap{flex-wrap:wrap}
 button{font:inherit;color:inherit;cursor:pointer}
 a{color:var(--rasp)}
-.btn{min-height:44px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--rasp);background:var(--rasp);color:#fff;font-weight:650;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn{min-height:38px;padding:7px 16px;border-radius:999px;border:1.5px solid var(--rasp);background:var(--rasp);color:#fff;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .btn:hover{background:var(--raspd);border-color:var(--raspd)}
 .btn.sec{background:var(--card);color:var(--raspd)}
 .btn.sec:hover{background:var(--tint)}
 .btn.sec.dk{color:#8E3346} /* PR16 P3: staff Mark attended text >= 4.5:1 */
-.btn.ghost{border-color:var(--line);background:var(--card);color:var(--ink);font-weight:600}
+.btn.ghost{border-color:var(--line);background:var(--card);color:var(--ink);font-weight:500}
 .btn.full{width:100%}
 .btn[disabled]{opacity:.55;cursor:not-allowed}
 .btn.pvoff[disabled]{opacity:1;background:#EFE4DA;border-color:#EFE4DA;color:#2B2326}
@@ -57,8 +70,9 @@ button.tile[aria-pressed=true]{border:1.5px solid var(--rasp);background:var(--t
 .tag.ok{background:var(--mint)}
 .tag.warn{background:#F3DFC4}
 .tag.sp{background:#EDE6F2}
-.slogo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;color:#fff;font-weight:750;font-size:13px;flex:none;letter-spacing:.3px}
+.slogo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:12px;color:#fff;font-weight:750;font-size:13px;flex:none;letter-spacing:.3px;overflow:hidden}
 .slogo.lg{width:54px;height:54px;border-radius:16px;font-size:17px}
+.slogo img{width:100%;height:100%;object-fit:cover;display:block}
 .ico{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .ico.s{width:18px;height:18px}
 nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:6}
@@ -161,6 +175,7 @@ nav.tabs button[aria-current=page] .ico{stroke-width:2.2}
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .tile{border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--card);display:flex;flex-direction:column;gap:6px;min-height:104px}
 .tile .ic{width:40px;height:40px;border-radius:12px;background:#F2E8DE;display:grid;place-items:center;color:var(--raspd)}
+.tile .ic .wear-acc{width:30px;height:30px;margin:0;vertical-align:middle}
 .tile.lock{background:#F6F0EA;color:var(--sub)}
 /* call screen */
 .dcard{padding:10px}.dcard.sel{border-color:var(--rasp);box-shadow:0 0 0 2px #F0C9D2}.dhit{display:flex;gap:10px;width:100%;text-align:left;background:none;border:0;padding:0;min-height:44px}.dtx{min-width:0;flex:1;line-height:1.5}
@@ -179,8 +194,15 @@ header.top{background:rgba(253,236,239,.96);border-bottom:0;box-shadow:0 8px 18p
 h1{font-weight:850;letter-spacing:-.3px;font-size:24px}
 h2{font-weight:800;font-size:18px;margin:28px 0 12px}
 .card{border-radius:22px;border:0;box-shadow:0 6px 22px rgba(176,74,94,.08),0 1px 0 rgba(176,74,94,.04);padding:16px}
-.btn{border-radius:999px;font-weight:750;box-shadow:0 4px 12px rgba(176,74,94,.18)}
-.btn.sec,.btn.ghost{box-shadow:none}
+.btn{border-radius:999px;font-weight:500;background:linear-gradient(180deg,#E8566E 0%,#C05068 100%);box-shadow:0 2px 0 rgba(100,20,35,.5),0 3px 10px rgba(176,74,94,.18);text-shadow:0 1px 1px rgba(0,0,0,.12)}
+.btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(100,20,35,.5),0 1px 4px rgba(176,74,94,.1)}
+.btn:hover:not(:active){background:linear-gradient(180deg,#F06880 0%,#C05068 100%)}
+.btn.sec,.btn.ghost{background:var(--card);box-shadow:none;text-shadow:none;font-weight:500}
+.btn.sec:active,.btn.ghost:active{transform:none}
+.sbtns .sbuy{background:linear-gradient(180deg,#E8566E 0%,#C05068 100%);box-shadow:0 2px 0 rgba(100,20,35,.5);text-shadow:0 1px 1px rgba(0,0,0,.12);font-weight:500}
+.sbtns .sbuy:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(100,20,35,.5)}
+.sbtns .sequip{background:linear-gradient(180deg,#5a5a6a 0%,#3a3a48 100%);box-shadow:0 2px 0 rgba(0,0,0,.35);font-weight:500}
+.sbtns .sequip:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
 .chip{border-radius:999px;border:1.5px solid var(--line);background:#fff}
 .tag{border-radius:999px;background:#FCE4E2}
 .tag.ok{background:#D9F0E6}
@@ -199,9 +221,12 @@ html{min-height:100%;background:#F6D9E2}
 html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 .cut-note{width:72px;height:auto;flex:none}
 /* polish: Cici tab like a chat app (input pinned above the tab bar), store action row */
-#view.cici-v{display:flex;flex-direction:column;min-height:calc(100dvh - 64px - 72px - env(safe-area-inset-bottom));padding-bottom:0}
-#view.cici-v .dock{margin-top:auto;position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:4;background:#FDECEF;padding:8px 0 0;box-shadow:0 -10px 12px -8px rgba(176,74,94,.10)}
-.nhero{display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0 14px;text-align:center}
+#view.cici-v{display:flex;flex-direction:column;min-height:calc(100dvh - 60px - 66px - env(safe-area-inset-bottom));padding-bottom:0}
+#app:has(#view.cici-v){padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+#view.cici-v .dock{margin-top:auto;position:sticky;bottom:calc(66px + env(safe-area-inset-bottom));z-index:4;margin-left:-16px;margin-right:-16px;padding:8px 16px 0;background:transparent;box-shadow:none;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+#view.cici-v .dock .helplink{color:#3A2E31;background:rgba(255,253,249,.92);border-radius:999px}
+@media (max-width:350px){#view.cici-v .dock{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}}
+.nhero{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0 14px;text-align:center}
 .nhero-cut{width:auto;height:200px;max-width:60%;object-fit:contain}
 .nhero .msg.n{max-width:100%;text-align:center;font-size:16px;line-height:1.45;padding:12px 16px}
 .chip.sug{background:#FFF8F9;border:1.5px dashed #E9B3BF;color:#8E3346;font-size:14px;box-shadow:none}
@@ -220,10 +245,16 @@ html:lang(ko) body{word-break:keep-all;overflow-wrap:anywhere}
 
 @media (prefers-reduced-motion: reduce){#wintoast{transition:none;transform:translate(-50%,0)}}
 /* MVP character-first Home + unlock */
-.chome{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 0}
-.chome .cpic{position:relative;width:200px;height:240px;margin:0 auto}
-.chome .cpic .cut,.chome .cpic video,.chome .cpic img{width:100%;height:100%;object-fit:contain;object-position:50% 100%}
-.chome .cg{font-size:21px;margin:8px 0 6px}
+.chome{position:relative;display:block;overflow:hidden;height:380px;padding:0;text-align:center}
+#home-cici>video,#home-cici>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0%;z-index:0}
+#home-cici::after{content:"";position:absolute;inset:auto 0 0 0;height:140px;background:linear-gradient(to top,rgba(43,35,38,.45),transparent);z-index:1;pointer-events:none}
+.chome .cpic{position:absolute;top:12px;right:12px;width:52px;height:66px;z-index:3}
+.chome .cpic .cut,.chome .cpic video,.chome .cpic img{width:100%;height:100%;object-fit:contain}
+.chome .cg{font-size:18px}
+#home-cici .lvlbar{position:absolute;bottom:0;left:0;right:0;margin:0;border-radius:0;border:0;padding:10px 16px 14px;background:rgba(255,255,255,.12);backdrop-filter:none;box-shadow:none;z-index:3;color:#fff}
+#home-cici .lvlbar .sub{color:rgba(255,255,255,.75)}
+#home-cici .lvlbar .bar{background:rgba(255,255,255,.25)}
+#home-cici .lvlbar .bar i{background:#fff}
 .wear-acc{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-right:4px;flex:none} /* acc-fix: never drawn over Cici's body/face */
 .wear-acc.frame{position:absolute;right:0;bottom:0;width:34px;height:34px;margin:0;padding:6px;box-sizing:border-box;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(176,74,94,.25)}
 .wear-tag{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:#F6E3E7;color:#8E3346;font-size:13px;font-weight:650}
@@ -242,8 +273,9 @@ body:has(#view.cici-v) .toast{bottom:calc(196px + env(safe-area-inset-bottom))} 
 .nrow .msg.n::after,.nhero .msg.n::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 6px 8px -4px rgba(176,74,94,.16)}
 .nrow .msg.n::after{left:14px;bottom:-5px}
 .nhero .msg.n::after{left:50%;top:-6px;transform:translateX(-50%)}
-.chome .cg{position:relative;margin:16px 0 6px;padding:12px 18px;background:#fff;border-radius:28px;box-shadow:0 10px 24px rgba(176,74,94,.10)}
-.chome .cg::before{content:"";position:absolute;left:50%;top:-6px;width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+.chome .cg{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);margin:0;padding:10px 18px;background:rgba(255,255,255,.12);border-radius:28px;box-shadow:none;white-space:nowrap;z-index:3;color:#fff;backdrop-filter:none}
+.chome .cg::before{display:none}
+#home-cici #home-wear{display:none}
 .sheet{border-radius:28px 28px 0 0;background:#FFF8F6;animation:sheetup .28s cubic-bezier(.2,.9,.3,1.2)}
 .sheet-bg{animation:fadein .2s ease}
 #view{animation:viewin .25s ease}
@@ -297,32 +329,78 @@ button:active:not([disabled]){transform:scale(.94)}
 .chome .cpic.p2sk{border-radius:50% 50% 24px 24px}
 .p2wrap{position:relative;display:inline-block;flex:none}.p2wrap .p2hair{position:absolute;left:0;bottom:0;margin:0;width:16px;height:16px}.p2wrap .wear-acc{position:absolute;right:0;bottom:0;margin:0;width:22px;height:22px;padding:3px;box-sizing:border-box;border-radius:50%;background:#fff}
 /* ===== CICI SHOP ===== */
-.shop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.shop-head h2{margin:0}
-.shop-balance{display:inline-flex;align-items:center;gap:5px;background:#fff9e6;border:1.5px solid #E9B44C;border-radius:99px;padding:4px 12px;font-size:14px;font-weight:800;color:#7a5c00}
-.shop-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}.shop-cats::-webkit-scrollbar{display:none}
-.shop-cats button{flex:none;border:1.5px solid var(--line);background:var(--bg);border-radius:99px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer}
+/* ── Cici Shop ──────────────────────────────────── */
+.shop-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.shop-head h2{margin:0}
+.shop-balance{display:inline-flex;align-items:center;gap:5px;background:#fff9e6;border:1.5px solid #E9B44C;border-radius:99px;padding:5px 14px;font-size:14px;font-weight:800;color:#7a5c00}
+/* preview panel — shows current equipped look */
+.shop-prev{border-radius:22px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;border:1.5px solid rgba(255,255,255,.5)}
+.shop-prev .sp-fig{position:relative;width:68px;height:84px;flex:none}
+.shop-prev .sp-fig .cut{width:68px;height:84px;object-fit:contain;object-position:50% 100%}
+.shop-prev .sp-fig .ccbadge{right:-2px;bottom:0;font-size:14px}
+.shop-prev .sp-av{width:48px;height:48px;border-radius:50%;background:#fbe4dd url(assets/nari-cut/thinking.webp) 55% 20%/200% no-repeat;color:transparent;overflow:hidden;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.08);flex:none;align-self:center}
+.shop-prev .sp-meta{flex:1;min-width:0}
+.shop-prev .sp-title{font-size:15px;font-weight:800;margin-bottom:3px}
+.shop-prev .sp-sub{font-size:12px;opacity:.65;line-height:1.4}
+/* category filter chips */
+.shop-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px;scrollbar-width:none}.shop-cats::-webkit-scrollbar{display:none}
+.shop-cats button{flex:none;border:1.5px solid var(--line);background:var(--bg);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--sub);white-space:nowrap;cursor:pointer}
 .shop-cats button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+/* item grid */
 .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.shop-item{background:var(--bg);border:1.5px solid var(--line);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
-.shop-item.owned{border-color:var(--ok)}.shop-item.equipped-item{border-color:#E9B44C;background:#fffdf0}
-.shop-item .sico{font-size:36px;line-height:1;margin-bottom:2px}.shop-item .snm{font-size:14px;font-weight:800;text-align:center}.shop-item .sdesc{font-size:11px;color:var(--sub);font-weight:500;text-align:center;line-height:1.3}
-.srarity{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:2px 8px}
-.srarity.common{background:#e8f4ec;color:#2e6b52}.srarity.rare{background:#e8eeff;color:#2244aa}.srarity.epic{background:#f5e8ff;color:#7700cc}
-.sprice{font-size:13px;font-weight:800;color:#c98b00;display:flex;align-items:center;gap:3px}
-.sbtns{display:flex;gap:6px;margin-top:4px;width:100%}.sbtns button{flex:1;border-radius:99px;border:0;padding:6px 4px;font-size:12px;font-weight:800;cursor:pointer}
-.sbtns .sbuy{background:var(--ox);color:#fff}.sbtns .sbuy:disabled{background:#ddd;color:#999;cursor:default}
-.sbtns .sequip{background:var(--ink);color:#fff}.sbtns .sunequip{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)!important}
-.sbtns .seqtag{background:#e8f4ec;color:#2e6b52;text-align:center;border-radius:99px;padding:6px 4px;font-size:11px;font-weight:800;flex:1}
-.sboost{background:#fff9e6;border:1.5px solid #E9B44C;border-radius:14px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
-.sboost span{font-size:20px}
+.shop-item{background:var(--bg);border:1.5px solid var(--line);border-radius:18px;padding:10px 10px 12px;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
+.shop-item.owned{border-color:#a8d5b8}
+.shop-item.equipped-item{border-color:#E9B44C;box-shadow:0 0 0 3px rgba(233,180,76,.15)}
+/* visual swatch — top of each card */
+.swatch{width:100%;height:80px;border-radius:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;position:relative;flex-shrink:0;background:var(--line)}
+.swatch-fav{width:44px;height:44px;border-radius:50%;background:#fbe4dd url(assets/nari-cut/thinking.webp) 55% 20%/200% no-repeat;color:transparent;overflow:hidden}
+.swatch-comp{background:var(--tint)}
+.swatch-music{background:linear-gradient(135deg,#f5f3ff,#ddd6fe)}
+.swatch-boost{background:linear-gradient(135deg,#fefce8,#fde68a)}
+.seq-check{position:absolute;top:7px;right:7px;width:20px;height:20px;border-radius:50%;background:#E9B44C;color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center}
+.shop-item .snm{font-size:13px;font-weight:800;text-align:center;margin-bottom:3px;line-height:1.2}
+.srarity{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:2px 7px;margin-bottom:6px}
+.srarity.common{background:#e8f4ec;color:#2e6b52}.srarity.rare{background:#dbeafe;color:#1d4ed8}.srarity.epic{background:#f5e8ff;color:#7700cc}
+.sprice{font-size:13px;font-weight:800;color:#c98b00;margin-bottom:6px}
+.sbtns{display:flex;gap:5px;width:100%}.sbtns button{flex:1;border-radius:99px;border:0;padding:7px 4px;font-size:12px;font-weight:800;cursor:pointer;min-height:36px}
+.sbtns .sbuy{background:var(--rasp);color:#fff}.sbtns .sbuy:disabled{background:#ddd;color:#999;cursor:not-allowed}
+.sbtns .sequip{background:var(--ink);color:#fff}.sbtns .sunequip{background:transparent;color:var(--sub);border:1.5px solid var(--line)!important}
+.sbtns .seqtag{display:flex;align-items:center;justify-content:center;gap:3px;background:#e8f4ec;color:#2e6b52;border-radius:99px;padding:7px 4px;font-size:11px;font-weight:800;flex:1;min-height:36px}
+.sboost{background:#fff9e6;border:1.5px solid #E9B44C;border-radius:14px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}.sboost>span{font-size:20px}
+/* ── Look / Wardrobe hero ───────────────────────── */
+.look-hero{border-radius:22px;overflow:hidden;position:relative;height:480px;margin-bottom:18px}
+.look-hero .lh-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.look-hero .lh-fig{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:190px;width:auto}
+.look-hero .lh-fig .cut{height:190px;width:auto;display:block;object-fit:contain;object-position:50% 100%}
+.look-hero .lh-badge{position:absolute;bottom:16px;left:calc(50% + 30px);font-size:22px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.2))}
+.look-hero .lh-chip{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--ink)}
+.look-hero .lh-av{position:absolute;bottom:14px;right:16px;width:56px;height:56px;border-radius:50%;background:#fbe4dd url(assets/nari-cut/thinking.webp) 55% 20%/200% no-repeat;color:transparent;overflow:hidden;border:2px solid rgba(255,255,255,.9);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.look-hero .lh-outfit{position:absolute;bottom:14px;left:14px;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:99px;padding:5px 12px;font-size:11px;font-weight:700;max-width:calc(100% - 100px)}
+.look-meta{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:18px;padding:10px 14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(176,74,94,.07)}
+.look-meta .lm-name{font-size:15px;font-weight:700;flex:1;color:var(--ink)}
+.look-meta .lm-tag{font-size:10px;font-weight:800;background:var(--tint);color:var(--rasp);border-radius:99px;padding:3px 9px;white-space:nowrap}
+/* ── Outfit look tiles ───────────────────────── */
+.look-tile{position:relative;border-radius:20px;overflow:hidden;background:#f6efe9;border:0;box-shadow:0 4px 16px rgba(176,74,94,.07);padding:0;font:inherit;color:inherit;cursor:pointer;aspect-ratio:2/3;width:100%;display:block}
+.look-tile[aria-pressed=true]{outline:2.5px solid var(--rasp);outline-offset:-2px}
+.look-tile.lock{cursor:default}
+.look-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.look-tile-top{position:absolute;top:0;left:0;right:0;padding:10px 8px 28px;background:linear-gradient(to bottom,rgba(255,255,255,.9) 0%,rgba(255,255,255,0) 100%);text-align:center}
+.look-tile-bot{position:absolute;bottom:0;left:0;right:0;padding:24px 8px 10px;background:linear-gradient(to top,rgba(255,255,255,.85) 0%,rgba(255,255,255,0) 100%);text-align:center}
+.look-tile-wearing{position:absolute;top:8px;right:8px;background:var(--rasp);color:#fff;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700;line-height:1.6}
+.look-tile .lock-veil{position:absolute;inset:0;background:rgba(255,255,255,.5);display:grid;place-items:center;color:var(--sub)}
+#look-tiles{grid-template-columns:1fr 1fr}
+.cici-act{background:#f6efe9;border-radius:22px;overflow:hidden;margin:0 0 10px;scroll-margin-top:76px}
+.cici-act-fig{display:block;width:100%;height:320px;object-fit:contain;background:#f6efe9}
+.cici-act-fig.full{height:420px}
+@media (prefers-reduced-motion:no-preference){.cici-act-fig{animation:cici-breathe 3.2s ease-in-out infinite}}
+@keyframes cici-breathe{50%{transform:scale(1.015)}}
 /* companion badge */
 .ccstage{position:relative;display:inline-block}.ccbadge{position:absolute;right:-8px;bottom:-4px;font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2));pointer-events:none}
 /* avatar initials */
-.initav{width:56px;height:56px;border-radius:50%;background:#E98597;color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800;flex:none}
-.initav.frame-silver{border:3px solid #a8a8b8;box-shadow:0 0 0 2px #e0e0ea}
-.initav.frame-gold{border:3px solid #E9B44C;box-shadow:0 0 0 2px #fff3a0}
-.initav.frame-rainbow{border:3px solid transparent;background-image:linear-gradient(white,white),linear-gradient(135deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);background-origin:border-box;background-clip:padding-box,border-box}
-.initav.frame-fire{border:3px solid #e85c20;box-shadow:0 0 8px rgba(245,160,64,.53)}
+.initav{width:56px;height:56px;border-radius:50%;background:#fbe4dd url(assets/nari-cut/thinking.webp) 55% 20%/200% no-repeat;color:transparent;overflow:hidden;border:2px solid #fff;flex:none}
+.initav.frame-silver,.lh-av.frame-silver,.swatch-fav.frame-silver{border:3px solid #a8a8b8;box-shadow:0 0 0 2px #e0e0ea}
+.initav.frame-gold,.lh-av.frame-gold,.swatch-fav.frame-gold{border:3px solid #E9B44C;box-shadow:0 0 0 2px #fff3a0}
+.initav.frame-rainbow,.lh-av.frame-rainbow,.swatch-fav.frame-rainbow{border:3px solid transparent;background-image:linear-gradient(white,white),linear-gradient(135deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);background-origin:border-box;background-clip:padding-box,border-box}
+.initav.frame-fire,.lh-av.frame-fire,.swatch-fav.frame-fire{border:3px solid #e85c20;box-shadow:0 0 8px rgba(245,160,64,.53)}
 /* onboard */
 .onboard-hero{text-align:center;padding:24px 0 16px}.onboard-hero h1{margin:4px 0 6px}
 .onboard-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
@@ -360,6 +438,7 @@ button:active:not([disabled]){transform:scale(.94)}
 <div id="sheetRoot"></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tx"></span></div>
 <div class="gain-float" id="gainFloat" aria-hidden="true"></div>
+<script src="../cici-design-share/motion/library.js"></script>
 <script>
 "use strict";
 /* ===== safety logic reused verbatim from mascot3d-app.html (ask-hana-spec §3) ===== */
@@ -462,10 +541,14 @@ const P2_ITEMS = [
 ];
 /* ===== CICI SHOP ITEMS (cosmetic, separate from store-money) ===== */
 const SHOP_ITEMS = [
-  { id:"bg-sakura",    cat:"bg",        icon:"🌸", name:["Sakura","Hoa anh đào","사쿠라"],          desc:["Soft pink blossom backdrop","Nền hoa anh đào hồng","부드러운 벚꽃 배경"],       price:80,  rarity:"common" },
-  { id:"bg-ocean",     cat:"bg",        icon:"🌊", name:["Ocean Calm","Đại dương xanh","오션 블루"],  desc:["Deep blue wave gradient","Sóng biển xanh dịu","깊고 차분한 바다 그라데이션"], price:120, rarity:"rare"   },
-  { id:"bg-aurora",    cat:"bg",        icon:"🌌", name:["Aurora","Cực quang","오로라"],              desc:["Northern lights gradient","Ánh cực quang huyền ảo","오로라 그라데이션"],        price:200, rarity:"epic"   },
-  { id:"bg-forest",    cat:"bg",        icon:"🌿", name:["Forest","Rừng xanh","포레스트"],            desc:["Mossy green studio vibes","Màu xanh studio thiên nhiên","초록 스튜디오 분위기"],price:80,  rarity:"common" },
+  { id:"bg-sakura",    cat:"bg", icon:"🌸", name:["Sakura","Hoa anh đào","사쿠라"],             desc:["Cherry blossom pink","Nền hoa anh đào hồng","벚꽃 핑크"],                price:80,  rarity:"common" },
+  { id:"bg-peach",     cat:"bg", icon:"🍑", name:["Peach Dream","Đào mơ","피치 드림"],             desc:["Warm peach & cream","Đào ấm và kem mềm","따뜻한 피치 크림"],            price:80,  rarity:"common" },
+  { id:"bg-lavender",  cat:"bg", icon:"💜", name:["Lavender","Oải hương","라벤더"],                desc:["Dreamy purple tones","Tím oải hương dịu","몽환적인 퍼플 톤"],            price:80,  rarity:"common" },
+  { id:"bg-ocean",     cat:"bg", icon:"🌊", name:["Ocean Calm","Đại dương xanh","오션 블루"],       desc:["Deep blue gradient","Sóng biển xanh dịu","깊고 차분한 바다"],           price:120, rarity:"rare"   },
+  { id:"bg-forest",    cat:"bg", icon:"🌿", name:["Forest","Rừng xanh","포레스트"],                desc:["Mossy green vibes","Màu xanh thiên nhiên","초록 스튜디오"],             price:80,  rarity:"common" },
+  { id:"bg-sunset",    cat:"bg", icon:"🌅", name:["Sunset","Hoàng hôn","선셋"],                   desc:["Golden hour warmth","Ánh hoàng hôn vàng ấm","골든 아워 웜톤"],          price:120, rarity:"rare"   },
+  { id:"bg-aurora",    cat:"bg", icon:"🌌", name:["Aurora","Cực quang","오로라"],                  desc:["Northern lights","Ánh cực quang huyền ảo","오로라 그라데이션"],         price:200, rarity:"epic"   },
+  { id:"bg-night",     cat:"bg", icon:"🌙", name:["Night Sky","Bầu trời đêm","나이트 스카이"],      desc:["Midnight indigo depth","Bầu trời đêm sâu thẳm","깊은 미드나잇 인디고"], price:200, rarity:"epic"   },
   { id:"frame-silver", cat:"frame",     icon:"🪙", name:["Silver Ring","Khung bạc","실버 링"],        desc:["Shining silver border","Viền bạc sáng bóng","빛나는 실버 테두리"],              price:60,  rarity:"common" },
   { id:"frame-gold",   cat:"frame",     icon:"🏅", name:["Gold Ring","Khung vàng","골드 링"],         desc:["Warm gold champion border","Viền vàng ấm áp","따뜻한 골드 테두리"],             price:150, rarity:"rare"   },
   { id:"frame-rainbow",cat:"frame",     icon:"🌈", name:["Rainbow","Cầu vồng","레인보우"],            desc:["Animated spectrum border","Viền cầu vồng sống động","스펙트럼 테두리"],          price:250, rarity:"epic"   },
@@ -492,12 +575,43 @@ function showGainPill(xp, coins) {
   if (coins) { const p = document.createElement("span"); p.className = "gain-pill gold"; p.textContent = "+" + coins + " 🪙"; wrap.appendChild(p); }
   clearTimeout(showGainPill.t); showGainPill.t = setTimeout(() => { if (wrap) wrap.innerHTML = ""; }, 2200);
 }
+const BG_MAP = {
+  "bg-sakura":   "radial-gradient(ellipse at 25% 15%,#fde4f0 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,#f9a8d4 0%,transparent 50%),linear-gradient(160deg,#fef0f5 0%,#fce4ec 55%,#f9b8d4 100%)",
+  "bg-peach":    "radial-gradient(ellipse at 70% 15%,#fed7aa 0%,transparent 55%),radial-gradient(ellipse at 20% 90%,#fca5a5 0%,transparent 45%),linear-gradient(165deg,#fff8f4 0%,#ffedd5 45%,#fdd9c3 100%)",
+  "bg-lavender": "radial-gradient(ellipse at 75% 10%,#e9d5ff 0%,transparent 50%),radial-gradient(ellipse at 15% 85%,#c4b5fd 0%,transparent 50%),linear-gradient(155deg,#faf5ff 0%,#ede9fe 50%,#ddd6fe 100%)",
+  "bg-ocean":    "radial-gradient(ellipse at 15% 80%,#bfdbfe 0%,transparent 50%),radial-gradient(ellipse at 85% 10%,#7dd3fc 0%,transparent 45%),linear-gradient(155deg,#f0f9ff 0%,#dbeafe 45%,#93c5fd 100%)",
+  "bg-forest":   "radial-gradient(ellipse at 25% 20%,#bbf7d0 0%,transparent 50%),radial-gradient(ellipse at 75% 85%,#4ade80 0%,transparent 45%),linear-gradient(155deg,#f0fdf4 0%,#dcfce7 50%,#a7f3d0 100%)",
+  "bg-sunset":   "radial-gradient(ellipse at 50% 5%,#fed7aa 0%,transparent 55%),radial-gradient(ellipse at 95% 55%,#fb923c 0%,transparent 40%),radial-gradient(ellipse at 5% 95%,#fca5a5 0%,transparent 40%),linear-gradient(175deg,#fff7ed 0%,#ffedd5 30%,#fed7aa 60%,#fecaca 100%)",
+  "bg-aurora":   "radial-gradient(ellipse at 20% 50%,#7c3aed 0%,transparent 40%),radial-gradient(ellipse at 80% 20%,#0284c7 0%,transparent 40%),radial-gradient(ellipse at 55% 90%,#059669 0%,transparent 35%),linear-gradient(135deg,#0f0723 0%,#1e1b4b 50%,#0c1a2e 100%)",
+  "bg-night":    "radial-gradient(ellipse at 30% 25%,#4f46e5 0%,transparent 35%),radial-gradient(ellipse at 70% 65%,#1e3a5f 0%,transparent 40%),radial-gradient(circle at 55% 5%,#818cf8 0%,transparent 20%),linear-gradient(160deg,#0f0a1e 0%,#1e1b4b 50%,#0c0f2e 100%)",
+};
+const COMP_MAP = { "comp-cat":"🐱","comp-axolotl":"🦎","comp-bunny":"🐰","comp-fox":"🦊" };
+function shopSwatch(it, eq2) {
+  const check = eq2 ? '<span class="seq-check">✓</span>' : "";
+  if (it.cat === "bg") {
+    const bg = BG_MAP[it.id] || "var(--line)";
+    return `<div class="swatch" style="background:${bg}">${check}</div>`;
+  }
+  if (it.cat === "frame") {
+    return `<div class="swatch" style="background:var(--cream)">${check}<div class="swatch-fav ${it.id}">A</div></div>`;
+  }
+  if (it.cat === "companion") {
+    return `<div class="swatch swatch-comp">${check}<span style="font-size:36px">${COMP_MAP[it.id]||it.icon}</span></div>`;
+  }
+  if (it.cat === "music") {
+    return `<div class="swatch swatch-music">${check}<span>🎵</span></div>`;
+  }
+  return `<div class="swatch swatch-boost">${check}<span>⚡</span></div>`;
+}
 function shopPage() {
   const f = ST.shopFilter || "all";
   const cats = [
-    { k:"all", l:L3("All","Tất cả","전체") }, { k:"bg", l:"🖼 "+L3("Background","Nền","배경") },
-    { k:"frame", l:"🪙 "+L3("Frames","Khung","프레임") }, { k:"companion", l:"🐱 "+L3("Companions","Bạn đồng hành","동반자") },
-    { k:"music", l:"🎵 "+L3("Music","Nhạc","음악") }, { k:"boost", l:"⚡ "+L3("Boosts","Tăng cường","부스트") },
+    { k:"all", l:L3("All","Tất cả","전체") },
+    { k:"bg",        l:L3("Background","Nền","배경") },
+    { k:"frame",     l:L3("Frame","Khung","프레임") },
+    { k:"companion", l:L3("Companion","Bạn đồng hành","동반자") },
+    { k:"music",     l:L3("Music","Nhạc","음악") },
+    { k:"boost",     l:L3("Boost","Tăng cường","부스트") },
   ];
   const items = SHOP_ITEMS.filter(x => f === "all" || x.cat === f);
   const eq = ST.shopEquipped;
@@ -505,43 +619,56 @@ function shopPage() {
   const own = id => ST.shopInventory.includes(id);
   const boostActive = ST.xpBoostLeft > 0 || ST.coinRushLeft > 0;
   const chips = cats.map(c => `<button type="button" class="${f===c.k?"on":""}" data-act="shop-filter" data-k="${c.k}">${esc(c.l)}</button>`).join("");
+  /* preview panel */
+  const prevBg = BG_MAP[eq.bg] || "linear-gradient(135deg,var(--tint),var(--cream))";
+  const prevComp = eq.companion ? COMP_MAP[eq.companion] || "" : "";
+  const uinit = (ME && (ME.name || "?")[0].toUpperCase()) || "C";
+  const prevPanel = `<div class="shop-prev" style="background:${prevBg}">
+    <div class="sp-fig">${cut("idle",{alt:"Cici",eager:1})}${prevComp?`<span class="ccbadge" style="font-size:14px;right:-2px;bottom:0">${prevComp}</span>`:""}</div>
+    <div class="sp-av${eq.frame?" "+eq.frame:""}">${esc(uinit)}</div>
+    <div class="sp-meta">
+      <div class="sp-title">Cici Shop</div>
+      <div class="sp-sub">${eq.bg?shopItemNm(SHOP_ITEMS.find(x=>x.id===eq.bg)||{})||"—":"—"}<br>${eq.frame?shopItemNm(SHOP_ITEMS.find(x=>x.id===eq.frame)||{})||"—":"—"}</div>
+    </div>
+    <span class="shop-balance" style="position:absolute;top:12px;right:12px">${coinSvg} ${ST.shopCoins}</span>
+  </div>`;
   const grid = items.map(it => {
     const o = own(it.id), eq2 = isEq(it), isB = it.cat === "boost";
     const canBuy = !o && ST.shopCoins >= it.price;
     let btns = "";
     if (isB) {
       const active = (it.id==="boost-xp"&&ST.xpBoostLeft>0)||(it.id==="boost-coin"&&ST.coinRushLeft>0);
-      btns = active ? `<div class="sbtns"><span class="seqtag">${esc(L3("Active!","Đang bật!","활성화!"))}</span></div>`
-        : `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+      btns = active
+        ? `<div class="sbtns"><span class="seqtag">⚡ ${esc(L3("Active","Đang bật","활성화"))}</span></div>`
+        : `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">${coinSvg} ${it.price}</button></div>`;
     } else if (o) {
       btns = eq2
-        ? `<div class="sbtns"><span class="seqtag">✓ ${esc(L3("Equipped","Đang dùng","착용 중"))}</span><button class="sunequip" data-act="equip-shopitem" data-id="${it.id}" data-unequip="1">${esc(L3("Remove","Bỏ","해제"))}</button></div>`
-        : `<div class="sbtns"><button class="sequip" data-act="equip-shopitem" data-id="${it.id}">${esc(L3("Equip","Đeo vào","착용"))}</button></div>`;
+        ? `<div class="sbtns"><span class="seqtag">✓ ${esc(L3("On","Đang dùng","착용 중"))}</span><button class="sunequip" data-act="equip-shopitem" data-id="${it.id}" data-unequip="1">${esc(L3("Off","Bỏ","해제"))}</button></div>`
+        : `<div class="sbtns"><button class="sequip" data-act="equip-shopitem" data-id="${it.id}">${esc(L3("Equip","Dùng","착용"))}</button></div>`;
     } else {
-      btns = `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">🪙 ${it.price}</button></div>`;
+      btns = `<div class="sbtns"><button class="sbuy" ${canBuy?"":"disabled"} data-act="buy-shopitem" data-id="${it.id}">${coinSvg} ${it.price}</button></div>`;
     }
     return `<div class="shop-item${o?" owned":""}${eq2?" equipped-item":""}">
-      <div class="sico">${it.icon}</div><div class="snm">${esc(shopItemNm(it))}</div>
-      <div class="sdesc">${esc(shopItemDesc(it))}</div>
+      ${shopSwatch(it, eq2)}
+      <div class="snm">${esc(shopItemNm(it))}</div>
       <span class="srarity ${it.rarity}">${it.rarity}</span>
-      ${!o?`<div class="sprice">🪙 ${it.price}</div>`:""}
-      ${btns}</div>`;
+      ${!o?`<div class="sprice">${coinSvg} ${it.price}</div>`:""}
+      ${btns}
+    </div>`;
   }).join("");
-  return `<button class="link" style="min-height:44px;margin-bottom:4px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
-    <div class="shop-head"><h2>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</h2><span class="shop-balance">🪙 ${ST.shopCoins}</span></div>
-    ${boostActive?`<div class="sboost"><span>⚡</span><div>${ST.xpBoostLeft>0?esc(L3("Points ×2 active","Điểm ×2 đang bật","포인트 ×2 활성"))+" — "+ST.xpBoostLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}${ST.xpBoostLeft>0&&ST.coinRushLeft>0?" · ":""}${ST.coinRushLeft>0?esc(L3("Coin ×2 active","Xu ×2 đang bật","코인 ×2 활성"))+" — "+ST.coinRushLeft+" "+esc(L3("visits left","lần còn lại","방문 남음")):""}</div></div>`:""}
+  return `<button class="link" style="min-height:44px;margin-bottom:6px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
+    ${prevPanel}
+    ${boostActive?`<div class="sboost"><span>⚡</span><div>${ST.xpBoostLeft>0?esc(L3("Points ×2","Điểm ×2","포인트 ×2"))+" — "+ST.xpBoostLeft+" "+esc(L3("left","còn lại","남음")):""}${ST.xpBoostLeft>0&&ST.coinRushLeft>0?" · ":""}${ST.coinRushLeft>0?esc(L3("Coin ×2","Xu ×2","코인 ×2"))+" — "+ST.coinRushLeft+" "+esc(L3("left","còn lại","남음")):""}</div></div>`:""}
     <div class="shop-cats">${chips}</div>
-    <div class="shop-grid">${grid||`<p class="sub sm" style="grid-column:span 2">${esc(L3("Nothing here yet.","Chưa có gì.","아직 없어요."))}</p>`}</div>`;
+    <div class="shop-grid">${grid||`<p class="sub sm" style="grid-column:span 2;text-align:center;padding:24px 0">${esc(L3("Nothing here yet.","Chưa có gì.","아직 없어요."))}</p>`}</div>`;
 }
 function applyEquipped() {
-  const bgMap = { "bg-sakura":"#fde8f0","bg-ocean":"#e0eeff","bg-aurora":"linear-gradient(135deg,#1a0038,#00204a,#003a1a)","bg-forest":"#e6f5ec" };
-  const view = document.getElementById("view"); if (view) view.style.background = bgMap[ST.shopEquipped.bg] || "";
-  const compMap = { "comp-cat":"🐱","comp-axolotl":"🦎","comp-bunny":"🐰","comp-fox":"🦊" };
-  document.querySelectorAll(".ccstage .ccbadge").forEach(el => el.remove());
+  const view = document.getElementById("view"); if (view) view.style.background = BG_MAP[ST.shopEquipped.bg] || "";
+  document.querySelectorAll(".cpic .ccbadge, .nhero .ccbadge").forEach(el => el.remove());
   const comp = ST.shopEquipped.companion;
-  if (comp && compMap[comp]) {
-    document.querySelectorAll(".ccstage").forEach(stage => {
-      const b = document.createElement("span"); b.className = "ccbadge"; b.textContent = compMap[comp]; stage.appendChild(b);
+  if (comp && COMP_MAP[comp]) {
+    document.querySelectorAll(".cpic, .nhero").forEach(stage => {
+      const b = document.createElement("span"); b.className = "ccbadge"; b.textContent = COMP_MAP[comp]; stage.appendChild(b);
     });
   }
   const av = document.querySelector(".initav");
@@ -555,7 +682,22 @@ function onboardPage() {
     <div class="onboard-step"><span class="num">3</span><p><b>${esc(L3("Earn points","Kiếm điểm","포인트 적립"))}</b> — ${esc(L3("every visit grows your level","mỗi lần đến tăng cấp độ","방문할수록 레벨 상승"))}</p></div>
   </div>
   <p class="sub sm" style="text-align:center;margin:0 0 8px">${esc(L3("Join to earn +50 Cici coins to spend in the shop.","Tham gia để nhận +50 xu Cici dùng trong cửa hàng.","가입하면 샵에서 쓸 수 있는 Cici 코인 +50을 받아요."))}</p>
-  <button class="btn full" data-act="onboard-done">${esc(L3("Let's go · +50 🪙","Bắt đầu · +50 🪙","시작하기 · +50 🪙"))}</button>`;
+  <button class="btn full" data-act="onboard-done">${esc(L3("Let's go · +50","Bắt đầu · +50","시작하기 · +50"))} ${coinSvg}</button>
+  <p style="text-align:center;margin:16px 0 0"><button class="link" data-act="youpage" data-v="auth">${esc(L3("Already have an account? Sign in →","Đã có tài khoản? Đăng nhập →","이미 계정이 있으신가요? 로그인 →"))}</button></p>`;
+}
+function authPage() {
+  return `<div class="onboard-hero">${cut("thinking",{alt:"Cici",eager:1})}
+    <h1>${esc(L3("Welcome back","Chào mừng trở lại","다시 오셨군요"))}</h1>
+    <p class="sub">${esc(L3("Sign in to continue","Đăng nhập để tiếp tục","로그인하고 계속하세요"))}</p>
+  </div>
+  <div class="card stack" style="margin-top:4px">
+    <label class="stack" style="gap:4px"><span class="sm" style="font-weight:600">${L3("Phone number","Số điện thoại","전화번호")}</span>
+    <input type="tel" placeholder="0901 234 567" style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;font-size:16px;width:100%;box-sizing:border-box;outline:none;background:var(--bg)"></label>
+    <label class="stack" style="gap:4px"><span class="sm" style="font-weight:600">${L3("Password","Mật khẩu","비밀번호")}</span>
+    <input type="password" placeholder="••••••••" style="border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font:inherit;font-size:16px;width:100%;box-sizing:border-box;outline:none;background:var(--bg)"></label>
+    <button class="btn full" data-act="auth-done">${L3("Get code →","Nhận mã →","코드 받기 →")}</button>
+  </div>
+  <p style="text-align:center;margin:14px 0 0"><button class="link" data-act="youpage" data-v="onboard">${esc(L3("← New here? Join free","← Mới dùng? Tham gia miễn phí","← 처음이세요? 무료 가입"))}</button></p>`;
 }
 function profileEditPage() {
   return `<button class="link" style="min-height:44px;margin-bottom:4px" data-act="back">‹ ${esc(L3("Back","Quay lại","뒤로"))}</button>
@@ -586,6 +728,7 @@ const p2Svg = (it, s) => `<svg viewBox="0 0 24 24" width="${s || 40}" height="${
 const p2Price = it => it.free ? p2t("free") : vnd(it.krw * 10); /* PO prices: decor ₩1,100 · outfit ₩2,200 · room theme ₩4,400; sponsored = free */ /* store-currency formatter (KRW display = seed / 10) */
 const p2Nm = it => L3(...it.n);
 const ptsIc = '<svg class="p2ptsic" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#E9B44C" stroke="#8E3346" stroke-width="1"/></svg>';
+const coinSvg = '<svg class="coin-ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9.5" fill="#FBBC04" stroke="#D97706" stroke-width="1.5"/><circle cx="10" cy="10" r="5.5" fill="none" stroke="#D97706" stroke-width="1.2" opacity=".7"/></svg>';
 const p2Look = () => P2S.photo ? Object.assign({}, P2S.char, P2S.photo.look) : P2S.char;
 /* PR19-1: the saved skin tone applies everywhere Cici appears (same soft backdrop as the builder/room portrait) */
 function p2SkinAttr(look, soft) { if (!P2() || gated()) return ""; const l = look || p2Look(), sk = (P2_SKIN.find(x => x[0] === l.skin) || P2_SKIN[1])[1], bg = soft ? `color-mix(in srgb,${sk} 30%,transparent)` : sk; return ` data-skin="${l.skin}" style="--sk:${sk};background:radial-gradient(circle at 50% 40%,#fff 0 35%,${bg} 36%)"`; } /* soft on the large Home hero */
@@ -1091,7 +1234,7 @@ const STR = {
     confirm: "Book", payBook: "Pay deposit & book (demo)", move: "Move booking", cancel: "Cancel booking", keep: "Keep booking", undo: "Undo", reschedule: "Reschedule", manage: "Manage", checkin: "Check in", join: "Join", joined: "Joined",
     policies: "Policies, up front", freeCancel: "Free cancel until", deposit: "Deposit", noShow: "No-show", lateCancel: "Late cancel", none: "None", total: "Total", services: "Book here", passes: "My passes & credit here", inbox: "Inbox", send: "Send",
     whatBook: "What would you like to book?", bookHint: "Type it like a message, or tap below.", askCici: "Ask Cici", typeHere: "Type a message", level: "Level", streak: "{n}-day streak", coins: "coins",
-    wardrobe: "Cici's look", shop: "Cici shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
+    wardrobe: "Cici's look", look: "Cici's look", shop: "Cici shop", wallet: "Wallet", language: "Language", search: "Search: nails, yoga…", scan: "Scan QR", link: "Open a link", sponsored: "Sponsored",
     gm: "Good morning, Mina", ga: "Good afternoon, Mina", ge: "Good evening, Mina", gn: "Still up, Mina?", booked: "Booked", moved: "Moved", cancelled: "Cancelled", back: "Back", close: "Close", with: "with",
     payAt: "Pay at the store", storeOnly: "Only at {s}", journey: "Journey", quest: "Cross-store quest", restDay: "Rest day", mAttend: "Show up for your next visit", mNew: "Try a new place", mStretch: "Stretch for 2 minutes", mRest: "Rest day: 1-minute stretch + water",
     demo: "Demo", xp: "XP", nothingUp: "Nothing booked yet.", newPlace: "Join", cats: "Categories", sample: "sample",
@@ -1100,7 +1243,7 @@ const STR = {
     confirm: "Đặt lịch", payBook: "Đặt cọc & đặt lịch (demo)", move: "Đổi lịch", cancel: "Hủy lịch", keep: "Giữ lịch", undo: "Hoàn tác", reschedule: "Đổi giờ", manage: "Quản lý", checkin: "Check-in", join: "Tham gia", joined: "Đã tham gia",
     policies: "Chính sách, nói trước", freeCancel: "Hủy miễn phí trước", deposit: "Đặt cọc", noShow: "Không đến", lateCancel: "Hủy muộn", none: "Không", total: "Tổng", services: "Đặt tại đây", passes: "Gói & tín dụng của tôi ở đây", inbox: "Hộp thư", send: "Gửi",
     whatBook: "Bạn muốn đặt gì?", bookHint: "Gõ như nhắn tin, hoặc chạm bên dưới.", askCici: "Hỏi Cici", typeHere: "Nhập tin nhắn", level: "Cấp", streak: "Chuỗi {n} ngày", coins: "xu",
-    wardrobe: "Tủ đồ của Cici", shop: "Cửa hàng Cici", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
+    wardrobe: "Tủ đồ của Cici", look: "Tủ đồ Cici", shop: "Cửa hàng Cici", wallet: "Ví", language: "Ngôn ngữ", search: "Tìm: nail, yoga…", scan: "Quét QR", link: "Mở liên kết", sponsored: "Được tài trợ",
     gm: "Chào buổi sáng, Mina", ga: "Chào buổi chiều, Mina", ge: "Chào buổi tối, Mina", gn: "Vẫn còn thức à, Mina?", booked: "Đã đặt", moved: "Đã đổi", cancelled: "Đã hủy", back: "Quay lại", close: "Đóng", with: "với",
     payAt: "Thanh toán tại cửa hàng", storeOnly: "Chỉ dùng tại {s}", journey: "Hành trình", quest: "Nhiệm vụ nhiều nơi", restDay: "Ngày nghỉ", mAttend: "Đến buổi hẹn tiếp theo", mNew: "Thử một nơi mới", mStretch: "Giãn cơ 2 phút", mRest: "Ngày nghỉ: giãn cơ 1 phút + uống nước",
     demo: "Demo", xp: "XP", nothingUp: "Chưa có lịch nào.", newPlace: "Tham gia", cats: "Danh mục", sample: "mẫu",
@@ -1109,7 +1252,7 @@ const STR = {
     confirm: "예약하기", payBook: "예약금 결제 후 예약 (데모)", move: "예약 변경", cancel: "예약 취소", keep: "유지하기", undo: "되돌리기", reschedule: "시간 변경", manage: "관리", checkin: "체크인", join: "가입", joined: "가입됨",
     policies: "정책 미리 보기", freeCancel: "무료 취소 기한", deposit: "예약금", noShow: "노쇼", lateCancel: "늦은 취소", none: "없음", total: "합계", services: "여기서 예약", passes: "이 매장의 이용권·크레딧", inbox: "받은 메시지", send: "보내기",
     whatBook: "무엇을 예약할까요?", bookHint: "메시지처럼 입력하거나 아래를 누르세요.", askCici: CICI_KO + "에게 묻기", typeHere: "메시지 입력", level: "레벨", streak: "{n}일 연속", coins: "코인",
-    wardrobe: CICI_KO + " 스타일", shop: CICI_KO + " 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
+    wardrobe: CICI_KO + " 스타일", look: CICI_KO + " 스타일", shop: CICI_KO + " 상점", wallet: "지갑", language: "언어", search: "검색: 네일, 요가…", scan: "QR 스캔", link: "링크 열기", sponsored: "광고",
     gm: "좋은 아침이에요, 미나", ga: "좋은 오후예요, 미나", ge: "좋은 저녁이에요, 미나", gn: "아직 안 자요, 미나?", booked: "예약됨", moved: "변경됨", cancelled: "취소됨", back: "뒤로", close: "닫기", with: "담당",
     payAt: "매장에서 결제", storeOnly: "{s}에서만 사용", journey: "여정", quest: "여러 매장 퀘스트", restDay: "쉬는 날", mAttend: "다음 예약에 참석하기", mNew: "새로운 곳 가보기", mStretch: "2분 스트레칭", mRest: "쉬는 날: 1분 스트레칭 + 물",
     demo: "데모", xp: "XP", nothingUp: "아직 예약이 없어요.", newPlace: "가입", cats: "카테고리", sample: "샘플",
@@ -1137,9 +1280,9 @@ Object.assign(STR.ko, { cici: CICI_KO, ciciAria: CICI_KO + ", 예약하거나 �
   callStore: "{store}에 전화", callStoreAria: "{store}에 전화, 매장 전화번호", removeScope: "{store} 빼기", bookHere: "여기서 예약", divider: "예약과 질문이 이제 " + CICI_KO + "와의 대화 하나로 합쳐졌어요", taken: "방금 그 시간이 마감됐어요", newReply: "새 답장" });
 /* ===== icons (simple muted line icons) ===== */
 const IP = {
-  cici: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H11l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M12 9.5c-1.2-1.5-3-1.8-3-.4s1.8 1.1 3 .4c1.2.7 3 1 3-.4s-1.8-1.1-3 .4z"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
-  home: '<path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
-  compass: '<circle cx="12" cy="12" r="8"/><path d="M15 9l-2 4-4 2 2-4z"/>',
+  cici: '<path d="M5 5h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H13l-4 3.5V16H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><circle cx="9" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r="1" fill="currentColor" stroke="none"/>', more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+  home: '<path d="M3 12.5L12 5l9 7.5"/><path d="M5 11.5v7h4v-4h6v4h4v-7"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="M16 8l-3.5 7.5-7.5 3.5 3.5-7.5z"/>',
   cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
   chat: '<path d="M5 6h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4 3v-3H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>',
   user: '<circle cx="12" cy="9" r="3.5"/><path d="M5 20c1-3.5 4-5 7-5s6 1.5 7 5"/>',
@@ -1218,7 +1361,8 @@ const svcOf = (sid, vid) => S[sid].svcs.find(v => v.id === vid);
 const resName = (sid, rid) => { const s = S[sid]; for (const k of ["staff", "rooms", "courts"]) { const r = (s[k] || []).find(x => x.id === rid); if (r) return N(r.n); } return rid; };
 const staffStore = id => ORDER0.find(sid => (S[sid].staff || []).some(x => x.id === id));
 const priceLabel = v => v.from ? L3("from ", "từ ", "") + vnd(v.price) + L3("", "", "부터") : v.price ? vnd(v.price) : (v.id === "court" ? vnd(200000) + L3("/h", "/giờ", "/시간") : tr("Free"));
-const logo = (sid, lg) => `<span class="slogo${lg ? " lg" : ""}" style="background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span>`;
+const LOGO_IMG = new Set(["capsule","salon","skin","spa","pickle","nails","yoga","barber","moc","rally"]);
+const logo = (sid, lg) => `<span class="slogo${lg ? " lg" : ""}" style="background:${S[sid].color}" aria-hidden="true">${LOGO_IMG.has(sid) ? `<img src="assets/shops/${sid}.webp" alt="" loading="lazy">` : esc(S[sid].logo)}</span>`;
 
 /* ===== time (store time = Asia/Ho_Chi_Minh; the demo device is in the same zone) ===== */
 const STZ = MARKET === "kr" ? "Asia/Seoul" : "Asia/Ho_Chi_Minh"; /* store time: KST for KR stores */
@@ -2121,24 +2265,29 @@ const unreadAt = sid => INBOX.some(m => m.s === sid && m.unread);
 const lvl = () => lvlOf(ME);
 function header() {
   const unread = INBOX.filter(m => m.unread).length + (ST.seenN ? 0 : deliver().filter(r => !r.why && r.n.day === 0).length), title = ST.page === "bookings" ? t("bkTitle") : YOU_PAGES.includes(ST.page) ? youTitle(ST.page) : ST.page ? L3(ST.page === "nset" ? "Notification settings" : "Notifications", ST.page === "nset" ? "Cài đặt thông báo" : "Thông báo", ST.page === "nset" ? "알림 설정" : "알림") : ST.store ? S[ST.store].name : t(ST.tab);
+  const hud = ME ? (() => {
+    const lv = lvlOf(ME), ui = (ME.name || "C").trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2), fr = (ST.shopEquipped || {}).frame || "";
+    const badge = unread ? `<span class="hud-badge" aria-hidden="true">${unread > 9 ? "9+" : unread}</span>` : "";
+    return `<button class="hud" data-act="${unread ? "inbox" : "tab"}" ${unread ? "" : 'data-v="you"'} aria-label="${unread ? L3(unread + " unread notifications", unread + " thông báo chưa đọc", "읽지 않은 알림 " + unread) : L3("Your profile", "Hồ sơ của bạn", "내 프로필")} · Level ${lv} · ${ST.shopCoins} coins"><span class="hud-av-wrap"><span class="hud-av${fr ? " " + fr : ""}" aria-hidden="true">${esc(ui)}</span>${badge}</span><span class="hud-meta" aria-hidden="true"><span class="hud-lv">Lv ${lv}</span><span class="hud-coin">${coinSvg}&nbsp;${ST.shopCoins}</span></span></button>`;
+  })() : "";
   return `<div class="brand">${ST.store || ST.page ? `<button class="icb" data-act="back" aria-label="${t("back")}">${ic("back")}</button>` : `<span class="nm" aria-hidden="true">C</span>`}<span class="t">${esc(title)}</span></div>
-  <div class="tr"><button class="icb" data-act="lang" aria-label="${t("language")}: ${L.toUpperCase()}">${ic("globe", "s")}${L.toUpperCase()}</button>
-  <button class="icb" data-act="inbox" aria-label="${t("inbox")}${unread ? ", " + L3(unread + " unread", unread + " chưa đọc", "읽지 않음 " + unread) : ""}">${ic("bell")}${unread ? `<span class="badge" aria-hidden="true">${unread}</span>` : ""}</button></div>`;
+  <div class="tr">${hud}<button class="icb" data-act="lang" aria-label="${t("language")}: ${L.toUpperCase()}">${ic("globe", "s")}${L.toUpperCase()}</button></div>`;
 }
 function tabs() {
   /* 4 tabs, Cici in position 3 (nari-tab §1 IDs kept); the Cici tab shows a dot (never a number) for an unread Cici reply */
-  return [["home", "home"], ["discover", "compass"], ["cici", "cici"], ["you", "user"]].map(([k, i]) => { const dot = k === "cici" && CH.cici.unread && !(ST.tab === "cici" && !ST.page && !ST.store);
+  return [["home", "home"], ["look", "shirt"], ["cici", "cici"], ["you", "user"]].map(([k, i]) => { const dot = k === "cici" && CH.cici.unread && !(ST.tab === "cici" && !ST.page && !ST.store);
     return `<button data-act="tab" data-v="${k}" ${ST.tab === k && !ST.store && !ST.page ? 'aria-current="page"' : ""}${k === "cici" ? ` aria-label="${esc(t("ciciAria"))}${dot ? ", " + esc(t("newReply")) : ""}"` : ""}>${ic(i)}<span>${t(k)}</span>${dot ? '<span class="tdot" aria-hidden="true"></span>' : ""}</button>`; }).join("");
 }
 /* ===== MVP character-first Home (MVP-H1..H8) ===== */
 const outfitIdx = id => { const n = +String(id || "").replace(/^o/, ""); return n >= 1 && n <= 5 ? n : 0; };
+const OUTFIT_IMG = { o1:"assets/cici-outfits/01_blush_wrap.png", o2:"assets/cici-outfits/02_icy_blue_unitard.png", o3:"assets/cici-outfits/07_powder_blue_leggings.png", o4:"assets/cici-outfits/24_pink_hoodie.png", o5:"assets/cici-outfits/20_monochrome_polo.png", wrap:"assets/cici-outfits/09_black_ballet_wrap.png", lan:"assets/cici-outfits/14_pink_knit.png" };
 const OUTFIT_KO = ["기본", "스튜디오", "글로우", "블룸", "아이콘"], OUTFIT_VI = ["Mặc định", "Studio", "Glow", "Bloom", "Icon"];
 const outfitNm = n => L === "ko" ? OUTFIT_KO[n - 1] : L === "vi" ? OUTFIT_VI[n - 1] : OUTFIT[n - 1];
 const wearNm = () => { const n = outfitIdx(ST.wear); if (n) return outfitNm(n); return ST.wear === "wrap" ? tr("Studio wrap top") : ST.wear === "lan" ? tr("Mid-Autumn lantern") : ""; };
 /* decorative accessory drawn over the same Cici art (no new art needed): Studio ribbon, Glow sparkle, Bloom flower, Icon star clip */
 /* acc-fix: mode "pill" = inline icon (inside the Wearing pill), "frame" = round badge at the bottom-right corner of a full-body frame, default = tiny corner badge on small avatars (.cav-h) */
 function outfitBadge(id, mode) {
-  const n = outfitIdx(id), d = { 2: '<path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#B04A5E"/>', 3: '<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#E9B44C"/>', 4: '<g fill="#E98597"><circle cx="12" cy="6" r="4"/><circle cx="6" cy="12" r="4"/><circle cx="18" cy="12" r="4"/><circle cx="12" cy="18" r="4"/></g><circle cx="12" cy="12" r="3.2" fill="#FFD36E"/>', 5: '<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8z" fill="#8E3346"/>' }[n];
+  const n = outfitIdx(id), d = { 1: '<circle cx="12" cy="12" r="7" fill="#E98597"/><circle cx="12" cy="12" r="4" fill="#fff" opacity=".6"/>', 2: '<path d="M12 12c-3-4-8-5-8-1s5 3 8 1c3 2 8 3 8-1s-5-3-8 1z" fill="#B04A5E"/>', 3: '<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="#E9B44C"/>', 4: '<g fill="#E98597"><circle cx="12" cy="6" r="4"/><circle cx="6" cy="12" r="4"/><circle cx="18" cy="12" r="4"/><circle cx="12" cy="18" r="4"/></g><circle cx="12" cy="12" r="3.2" fill="#FFD36E"/>', 5: '<path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.1l1.5-7L2 9.3l7-.8z" fill="#8E3346"/>' }[n];
   if (!d) return ""; return `<svg class="wear-acc${mode === "frame" ? " frame" : mode === "pill" ? " pill" : ""}" data-wear="${esc(id)}" viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
 }
 function heroScene() {
@@ -2149,7 +2298,10 @@ function heroScene() {
     : L3(`Good evening, ${nm}.`, `Chào buổi tối, ${nm}.`, `${nm}님, 좋은 저녁이에요.`);
   const pose = calm ? "idle" : "wave", alt = calm ? L3("Cici, calm", "Cici, bình tĩnh", CICI_KO + ", 차분한 모습") : L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO);
   const wn = wearNm();
-  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}"><div class="cpic${P2() && !calm ? " p2sk" : ""}"${calm ? "" : p2SkinAttr(null, 1)}>${cut(pose, { alt, eager: 1, loop: !calm })}</div><h1 class="cg">${esc(greet)}</h1>${wn && !calm ? `<span class="wear-tag" id="home-wear">${outfitBadge(ST.wear, "pill")}${P2() ? p2Acc() : ""}${esc(L3("Wearing: ", "Đang mặc: ", "착용 중: ") + wn)}</span>` : ""}</section>`;
+  const outfitVidSrc = !calm ? (CHAR_VIDS.find(v => v.id === (OUTFIT_VID[ST.wear] || "v1")) || CHAR_VIDS[0]).src : null;
+  const outfitImgSrc = !calm ? (OUTFIT_IMG[ST.wear] || OUTFIT_IMG.o1) : null;
+  const ciciMedia = outfitVidSrc ? `<video src="${esc(outfitVidSrc)}" muted loop playsinline autoplay></video>` : outfitImgSrc ? `<img src="${esc(outfitImgSrc)}" alt="${esc(alt)}" loading="eager">` : cut(pose, { alt, eager: 1, loop: !calm });
+  return `<section class="chome" id="home-cici" aria-label="${esc(ciciNm())}" data-pose="${pose}" data-greet="${calm ? "neutral" : h < 12 ? "morning" : h < 18 ? "afternoon" : "evening"}">${ciciMedia}<div class="cpic${P2() && !calm ? " p2sk" : ""}"${calm ? "" : p2SkinAttr(null, 1)}></div><h1 class="cg">${esc(greet)}</h1>${homeLevelBar()}</section>`;
 }
 /* MVP-H2: greeting by the member's home time zone (KST in the KR market) */
 function homeHour() { try { const tz = ME && ME.tz || (MARKET === "kr" ? "Asia/Seoul" : "Asia/Saigon"); return loc(PV.now(), tz).getUTCHours(); } catch (e) { return new Date().getHours(); } }
@@ -2176,11 +2328,11 @@ function missionsCard() {
   const done = M.filter(m => ST.miss[m[0]]).length;
   const row = (k, l, x, why, btn) => `<div class="mis${ST.miss[k] ? " done" : ""}"><span class="ck" aria-hidden="true">${ST.miss[k] ? ic("check", "s") : ""}</span><span class="grow"><span class="mt">${esc(l)}</span><span class="vh">${ST.miss[k] ? ", " + tr("done") : ""}</span><br><span class="sub sm">+${esc(fmtPts(x))} · ${esc(why)}</span></span>${ST.miss[k] ? "" : btn || ""}</div>`;
   const demoBtn = (act) => `<button class="btn sec" data-act="${act}">${L3("Demo ›","Demo ›","데모 ›")}</button>`;
-  return `<div class="card" id="home-mis"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span><span class="sub sm" style="color:#c98b00;font-weight:800">🪙 ${ST.shopCoins}</span></div>
+  return `<div class="card" id="home-mis"><div class="row wrap"><b class="grow">${done} / 3 ${tr("done")}</b><span class="tag">${esc(pvT("streak", { n: ME.streak }))}</span><span class="sub sm" style="color:#c98b00;font-weight:800">${coinSvg} ${ST.shopCoins}</span></div>
   ${M.map(([k, l, x, w]) => row(k, l, x, w, k === "stretch" ? `<button class="btn sec" data-act="stretch">${tr("Start")}</button>` : k === "attend" ? demoBtn("attend-demo") : k === "newplace" ? demoBtn("newplace-demo") : "")).join("")}</div>`;
 }
 const AGAIN = [["capsule", "barre", { staff: "yuna" }, "Barre with Yuna"], ["salon", "cut", { staff: "linh" }, "Women's cut with Linh"], ["skin", "hydra", {}, "Hydrating facial"], ["spa", "aroma90", {}, "Aroma 90 min"], ["pickle", "court", { party: 4 }, "Court · 4 players"]];
-function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
+function againChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => `<button class="chip" data-act="again" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${LOGO_IMG.has(sid) ? `<img src="assets/shops/${sid}.webp" alt="" loading="lazy">` : esc(S[sid].logo)}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>`).join("") + `</div>`; }
 function importCard() {
   if (IMPORT.state !== "pending") return ""; const s = S[IMPORT.sid];
   return `<section class="card" style="margin-top:16px" aria-label="${esc(L3("Store invitation", "Lời mời từ cửa hàng", "매장 초대"))}"><div class="row top">${logo(IMPORT.sid)}<div class="grow"><b>${esc(L3(`${s.name} added you as a customer`, `${s.name} đã thêm bạn làm khách hàng`, `${s.name}에서 고객으로 등록했어요`))}</b>
@@ -2190,7 +2342,7 @@ function importCard() {
 function vHome() {
   /* MVP-H1 order: Cici + greeting, level bar, 2–3 missions, Next class card (+ "All bookings"). Allowed extras: the one-line migration banner (A3) and the header bell. */
   const up = upcoming(); track("home_open");
-  return heroScene() + notesCard() + homeLevelBar() + (P2() ? p2Room() : "") +
+  return heroScene() + notesCard() + (P2() ? p2Room() : "") +
     `<h2>${t("missions")}</h2>${missionsCard()}` +
     `<h2>${t("nextClass")}</h2><div class="card" role="list" id="home-next">${up.length ? upRow(up[0]) + `<div class="row" style="justify-content:flex-end"><button class="link" data-act="mybk" data-from="home">${esc(t("allBookings", { n: up.length }))}</button></div>` : nEmpty(esc(t("nothingUp")), "idle") + `<button class="btn full" data-act="go" data-v="cici:book">${t("chipBook")}</button>`}</div>`;
 }
@@ -2307,18 +2459,49 @@ function vYou() {
   const tiles = [["wallet", "wallet", t("wallet"), L3(`${youWallet()} items`, `${youWallet()} mục`, `${youWallet()}개`)], ["bookings", "cal", t("bkTitle"), L3(`${bkUpcoming().length} upcoming`, `${bkUpcoming().length} sắp tới`, `${bkUpcoming().length}개 예정`)], ["look", "shirt", t("wardrobe"), wearNm() || "—"]];
     if (PV.flag) tiles.splice(2, 0, ["vouchers", "star", L3("Vouchers", "Ưu đãi", "쿠폰"), L3(`${youReady()} ready`, `${youReady()} sẵn sàng`, `${youReady()}개 사용 가능`)]);
   h += `<div class="ytiles" id="you-tiles">${tiles.map(([k, i, n, sub]) => `<button class="ytile" data-act="youpage" data-v="${k}" aria-label="${esc(n + ", " + sub)}">${ic(IP[i] ? i : "star")}<b>${esc(n)}</b><span class="sub sm">${esc(sub)}</span></button>`).join("")}</div>`;
-  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="open-shop" id="you-shop">${ic("star")}<span class="grow"><b>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</b><br><span class="sub sm">🪙 ${ST.shopCoins} ${esc(L3("coins · backgrounds, frames, companions","xu · nền, khung, bạn đồng hành","코인 · 배경, 프레임, 동반자"))}</span></span>${ic("chev")}</button>
+  h += `<div class="stack" style="margin-top:16px"><button class="svc" data-act="open-shop" id="you-shop">${ic("star")}<span class="grow"><b>${esc(L3("Cici Shop","Cửa hàng Cici",CICI_KO+" 샵"))}</b><br><span class="sub sm">${coinSvg} ${ST.shopCoins} ${esc(L3("coins · backgrounds, frames, companions","xu · nền, khung, bạn đồng hành","코인 · 배경, 프레임, 동반자"))}</span></span>${ic("chev")}</button>
   <button class="svc" data-act="youpage" data-v="settings" id="you-settings">${ic("info")}<span class="grow"><b>${L3("Settings", "Cài đặt", "설정")}</b><br><span class="sub sm">${L3("Language, notifications", "Ngôn ngữ, thông báo", "언어, 알림")}</span></span>${ic("chev")}</button></div>`;
   return h;
 }
 /* MVP-L4: You → Cici's look. 5 outfits (L1 default + Studio/Glow/Bloom/Icon at L2–L5) + legacy owned cosmetics (AC-P54a). Cosmetic only: no price, no buy/sell/transfer (MVP-L5). */
+const CHAR_VIDS = [
+  { id:"v1",   src:"assets/videos/video1.mp4",                             label:"Clip 1" },
+  { id:"v11",  src:"assets/videos/video_1_1.mp4",                          label:"Clip 2" },
+  { id:"v7",   src:"assets/videos/video_7.mp4",                            label:"Clip 3" },
+  { id:"v14a", src:"assets/videos/video_14_part1.mp4",                     label:"Clip 4" },
+  { id:"v14b", src:"assets/videos/video_14_part2.mp4",                     label:"Clip 5" },
+  { id:"v15",  src:"assets/videos/video15.mp4",                            label:"Clip 6" },
+  { id:"v9",   src:"assets/videos/video_9.mp4",                            label:"Clip 7" }
+];
+const OUTFIT_VID = { o1:"v1", o2:"v7", o3:"v11", o4:"v14a", o5:"v14b", wrap:"v9", lan:"v15" };
+let ciciAct = "stand";
+function ciciActBlock() {
+  const lib = window.CICI_ACT;
+  if (!lib || !lib.actions) return "";
+  const act = lib.actions.find(a => a.id === ciciAct) || lib.actions[0];
+  const src = "../cici-design-share/" + (act.clip ? "motion/" + act.clip : act.source);
+  const moving = act.clip ? `<video class="cici-act-fig ${act.kind}" src="${src}" poster="../cici-design-share/${act.source}" muted loop playsinline autoplay></video>` : `<img class="cici-act-fig ${act.kind}" src="${src}" alt="${esc(act.en)}" width="1024" height="1024">`;
+  const chips = lib.actions.map(a => `<button class="chip" type="button" aria-pressed="${a.id === act.id}" data-act="ciciact" data-v="${a.id}">${esc(a[L] || a.en)}</button>`).join("");
+  return `<h2 style="margin:0 0 10px">${L3("Actions", "Hành động", "동작")}</h2><div class="cici-act">${moving}</div><div class="chips" style="margin-bottom:8px">${chips}</div><p class="sub sm" style="margin:0 0 14px">${esc(act.ko)} · ${esc(act.en)} · ${esc(act.vi)}</p>`;
+}
 function vLook() {
   const lv = lvlOf(ME), OF = [1, 2, 3, 4, 5], CO = [["wrap", tr("Studio wrap top")], ["lan", tr("Mid-Autumn lantern")]].filter(([id]) => ST.owned.includes(id));
-  const tile = (id, nm, sub, ok) => `<button class="tile${ok ? "" : " lock"}" data-act="pvwear" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : 'disabled aria-disabled="true"'} aria-label="${esc(nm + ", " + sub)}" style="min-height:44px;font:inherit;color:inherit"><span class="ic">${ok ? (outfitBadge(id) || ic("shirt")) : ic("lock")}</span><b class="sm">${esc(nm)}</b><span class="sub sm">${esc(sub)}</span></button>`;
+  const tile = (id, nm, sub, ok) => { const img = OUTFIT_IMG[id] || ""; return `<button class="look-tile${ok ? "" : " lock"}" data-act="${ok ? "pvwear" : ""}" data-v="${id}" ${ok ? `aria-pressed="${ST.wear === id}"` : 'disabled aria-disabled="true"'} aria-label="${esc(nm + ", " + sub)}">${img ? `<img src="${img}" alt="" loading="lazy">` : ""}<div class="look-tile-top"><b class="sm">${esc(nm)}</b></div><div class="look-tile-bot"><span class="sub sm">${esc(sub)}</span></div>${ST.wear === id ? `<span class="look-tile-wearing">${L3("Wearing","Đang mặc","착용 중")}</span>` : ""}${!ok ? `<div class="lock-veil">${ic("lock")}</div>` : ""}</button>`; };
   const got = n => n <= lv || (ME.unlocked || []).includes("o" + n); /* MVP-L3/OQ4: kept after a reversal */
-  return `<div class="chome" style="padding-top:0"><div class="cpic" style="width:150px;height:180px">${cut("idle", { alt: L3("Cici", "Cici", CICI_KO), eager: 1 })}${outfitBadge(ST.wear, "frame")}</div></div>
-  <p class="sub sm" id="look-note">${esc(L3("Each new level unlocks a look for Cici. Looks are just for fun: they can't be bought, sold or swapped for discounts.", "Mỗi cấp mới mở một phong cách cho Cici. Chỉ để vui: không mua, bán hay đổi lấy ưu đãi được.", "레벨이 오를 때마다 " + CICI_KO + "의 새 스타일이 열려요. 재미로만 즐기는 거라 사거나 팔거나 할인으로 바꿀 수 없어요."))}</p>
-  ${P2() && !gated() ? `<button class="btn full" data-act="p2look" id="p2-customise" style="margin-bottom:10px">${esc(p2t("customise"))}</button>` : ""}<div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
+  const eq = ST.shopEquipped || {};
+  const heroBg = BG_MAP[eq.bg] || "linear-gradient(135deg,var(--tint),var(--cream))";
+  const heroComp = eq.companion ? (COMP_MAP[eq.companion] || "") : "";
+  const uinit = (ME.name || "C").trim().split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+  const vidSrc = (CHAR_VIDS.find(v => v.id === (OUTFIT_VID[ST.wear] || "v1")) || CHAR_VIDS[0]).src;
+  const wn = wearNm() || outfitNm(1);
+  const heroHtml = `<div class="look-hero" style="background:${heroBg}">
+    <video class="lh-vid" src="${vidSrc}" muted loop playsinline autoplay></video>
+    <div class="lh-av${eq.frame ? " " + eq.frame : ""}">${esc(uinit)}</div>
+    <span class="lh-chip">Lv ${lv} · ${esc(lvlName(lv))}</span>
+    <span class="lh-outfit">${outfitBadge(ST.wear)}${esc(wn)}</span>
+  </div>`;
+  const metaBar = `<div class="look-meta"><b class="lm-name">${esc(wn)}</b><span class="lm-tag">${L3("Wearing","Đang mặc","착용 중")}</span><button class="btn ghost" data-act="open-shop" style="flex:none;padding:6px 12px;font-size:12px">${coinSvg} ${L3("Shop","Shop","쇼핑")}</button></div>`;
+  return heroHtml + metaBar + `<h2 style="margin:0 0 10px">${L3("Outfits", "Trang phục", "코디")}</h2><div class="tiles" id="look-tiles">${OF.map(n => tile("o" + n, outfitNm(n), got(n) ? (ST.wear === "o" + n ? L3("Wearing", "Đang mặc", "착용 중") : n === 1 ? L3("Default", "Mặc định", "기본") : tr("Owned")) : pvT("levelLocked", { n }), got(n))).join("")}${CO.map(([id, nm]) => tile(id, nm, ST.wear === id ? L3("Wearing", "Đang mặc", "착용 중") : tr("Owned"), true)).join("")}</div>`;
 }
 function vWallet() {
   const rows = joinedIds().map(sid => (WALLET[sid] || []).map(p => walletRow(sid, p)).join("")).join("") + upcoming().filter(b => b.dep).map(depRow).join("");
@@ -2338,10 +2521,11 @@ function vSettings() {
   /* PR16 P3: points details live on the Points page only (opened from the You points line) */
   h += `<h2>${L3("More", "Thêm", "더보기")}</h2><div class="stack"><button class="svc" data-act="inbox">${ic("bell")}<span class="grow"><b>${esc(t("inbox"))}</b><br><span class="sub sm">${esc(INBOX.filter(m => m.unread).length + " " + tr("New").toLowerCase())}</span></span>${ic("chev")}</button></div>`; /* MVP: quest/journey scene and room decoration are OUT; Cici's look moved to a You tile */
   h += storeAppBtn();
+  h += `<h2>${L3("Account","Tài khoản","계정")}</h2><div class="stack"><button class="svc" data-act="logout">${ic("x")}<span class="grow"><b>${L3("Log out","Đăng xuất","로그아웃")}</b><br><span class="sub sm">${L3("Return to intro screen","Quay lại màn hình giới thiệu","소개 화면으로 돌아가기")}</span></span>${ic("chev")}</button></div>`;
   h += `<h2>${L3("About","Giới thiệu","정보")}</h2><p class="sub sm" id="demo-safety"><b>${L3("Demo safety: prototype only.","An toàn bản demo: chỉ là bản thử nghiệm.","데모 안전 기능: 프로토타입 전용.")}</b> ${L3("Cici's safety replies follow a fixed, tested list and may miss new wording. The 'Need help?' link is always under the chat. The real app will use a stronger check.","Các câu trả lời an toàn của Cici dựa trên một danh sách cố định đã kiểm thử và có thể bỏ sót cách diễn đạt mới. Liên kết 'Cần hỗ trợ?' luôn ở dưới khung chat. Ứng dụng thật sẽ dùng cách kiểm tra mạnh hơn.",CICI_KO + "의 안전 답변은 테스트된 고정 목록을 따르며 새로운 표현은 놓칠 수 있어요. '도움이 필요하세요?' 링크는 항상 대화 아래에 있어요. 실제 앱은 더 강력한 검사를 사용할 거예요.")}</p>`;
   return h;
 }
-function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "p2char" && P2() ? p2CharPage() : ST.page === "shop" ? shopPage() : ST.page === "onboard" ? onboardPage() : ST.page === "profile-edit" ? profileEditPage() : ST.store ? vStore(ST.store) : ({ home: vHome, discover: vDiscover, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
+function renderView() { if (ST.page === "p2char" && !P2()) ST.page = null; if (!FLAGS.quest) { if (QUEST_RE.test(ST.page || "")) ST.page = null; if (QUEST_RE.test(ST.tab || "")) ST.tab = "home"; if (QUEST_RE.test(ST.bkFrom || "")) ST.bkFrom = "home"; } if (ST.tab === "book" || ST.tab === "ask") ST.tab = "cici"; /* NT-7: old tabs land on Cici */ $("#view").classList.toggle("cici-v", ST.tab === "cici" && !ST.page && !ST.store); $("#view").innerHTML = ST.page === "bookings" ? vBookings() : ST.page === "notif" ? vNotif() : ST.page === "nset" ? vNSet() : ST.page === "wallet" ? vWallet() : ST.page === "vouchers" ? vVouchers() : ST.page === "settings" ? vSettings() : ST.page === "points" ? pointsBlock() + storeAppBtn() : ST.page === "look" ? vLook() : ST.page === "p2char" && P2() ? p2CharPage() : ST.page === "shop" ? shopPage() : ST.page === "auth" ? authPage() : ST.page === "onboard" ? onboardPage() : ST.page === "profile-edit" ? profileEditPage() : ST.store ? vStore(ST.store) : ({ home: vHome, look: vLook, cici: vCici, you: vYou }[ST.tab] || vHome)(); }
 /* MVP-L1/L7: the unlock animation plays once, on the next normal Home view (deferred while a crisis/urgent turn is in force, A6) */
 function maybeUnlock() {
   if (!ME || ST.tab !== "home" || ST.page || ST.store || gated() || $(".sheet") || $(".munlock")) return;
@@ -2353,6 +2537,7 @@ function maybeUnlock() {
 }
 function closeUnlock() { const el = $(".munlock"); if (el) el.remove(); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-act=unlwear],[data-act=unlclose]"); if (!b) return; if (b.dataset.act === "unlwear") { ST.wear = b.dataset.v; try { localStorage.setItem("cici.wear", ST.wear); } catch (x) {} track("cici_item_equip", { item: ST.wear }); } closeUnlock(); render(); });
+document.addEventListener("click", e => { const b = e.target.closest("[data-act=ciciact]"); if (!b || !window.CICI_ACT) return; ciciAct = b.dataset.v || "stand"; if (ST.page !== "look") return; render(); const fig = document.querySelector(".cici-act"); if (fig) fig.scrollIntoView({ block: "start" }); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $(".munlock")) { closeUnlock(); } });
 function render() { document.documentElement.lang = L; { const sk = $("#skipl"); if (sk) sk.textContent = L3("Skip to content", "Bỏ qua đến nội dung", "본문으로 건너뛰기"); const nv = $("#tabs"); if (nv) nv.setAttribute("aria-label", L3("Main", "Điều hướng chính", "주 메뉴")); } $("#top").innerHTML = header(); renderView(); $("#tabs").innerHTML = tabs(); $("#top").innerHTML = header(); saveThread(); hydrateCuts(); setTimeout(applyEquipped, 0); setTimeout(maybeUnlock, 0); }
 /* ===== Discover v2: list-first (GrabFood-style) with a static map toggle ===== */
@@ -2765,14 +2950,15 @@ function bookingsBack() {
 /* ---- the Cici tab ---- */
 const QCHIPS = () => [["qbook", t("chipBook")], ["qask", t("chipAsk")], ["mybk", t("chipMyBk")]];
 const qchipRow = slim => `<div class="chips${slim ? " slim" : ""}" role="group" aria-label="${esc(t("cici"))}">${QCHIPS().map(([a, l]) => `<button class="chip" data-act="${a}" data-from="cici">${esc(l)}</button>`).join("")}</div>`;
-function ciciAgainChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => S[sid].joined ? `<button class="chip" data-act="nagain" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${S[sid].logo}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>` : "").join("") + `</div>`; }
+function ciciAgainChips() { return `<div class="scroll" role="group" aria-label="${t("bookAgain")}">` + AGAIN.map(([sid, vid, o, l], i) => S[sid].joined ? `<button class="chip" data-act="nagain" data-i="${i}"><span class="slogo" style="width:28px;height:28px;border-radius:8px;font-size:10px;background:${S[sid].color}" aria-hidden="true">${LOGO_IMG.has(sid) ? `<img src="assets/shops/${sid}.webp" alt="" loading="lazy">` : esc(S[sid].logo)}</span><span>${esc(N(l))}<br><span class="sub sm">${esc(S[sid].name)}</span></span></button>` : "").join("") + `</div>`; }
 function vCici() {
   const c = CH.cici, g = gated(); c.unread = false;
   const scope = c.scope && S[c.scope] ? `<div class="chips" role="group" aria-label="${L3("Booking at", "Đặt tại", "예약 매장")}"><button class="chip" aria-pressed="true" data-act="unscope" aria-label="${esc(t("removeScope", { store: S[c.scope].name }))}">${logo(c.scope)} ${esc(S[c.scope].name)} ${ic("x", "s")}</button></div>` : "";
   const head = `<div class="row" style="margin:4px 0 6px"><span class="av cav-h" id="cici-hd-av" aria-hidden="true"${g ? "" : p2SkinAttr()}><img src="${A}${g ? "calm" : "greet"}.webp" alt="">${g ? "" : outfitBadge(ST.wear) + (P2() ? p2Acc() : "")}</span><div class="grow"><h1 style="margin:0;word-break:keep-all;overflow-wrap:normal">${t("cici")}</h1><div class="sub sm">${L3("Book or ask, all your places", "Đặt lịch hoặc hỏi, mọi nơi của bạn", "예약과 질문, 모든 매장")}</div></div>
   ${g ? "" : `<button class="icb" data-act="mybk" data-from="cici" aria-label="${t("chipMyBk")}">${ic("cal")}</button>`}</div>`; /* A7/OQ5: the voice-demo call is cut from the MVP, so the overflow menu that only held it is gone */
   const empty = !c.msgs.length;
-  const hello = empty ? `<div class="nhero">${cut("wave", { alt: L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO), eager: 1, cls: "nhero-cut" })}<div class="msg n nhero-msg"><span class="vh">${esc(ciciNm())}: </span>${esc(t("ciciHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${ciciAgainChips()}` : "";
+  const ciciHeroImg = OUTFIT_IMG[ST.wear] ? `<img src="${esc(OUTFIT_IMG[ST.wear])}" alt="" class="nhero-cut" loading="eager">` : cut("wave", { alt: L3("Cici waving hello", "Cici vẫy tay chào", "손 흔들며 인사하는 " + CICI_KO), eager: 1, cls: "nhero-cut" });
+  const hello = empty ? `<div class="nhero">${ciciHeroImg}<div class="msg n nhero-msg"><span class="vh">${esc(ciciNm())}: </span>${esc(t("ciciHello", { name: L3("Mina", "Mina", "미나") }))}</div></div>` + qchipRow(false) + `<h2>${t("bookAgain")}</h2>${ciciAgainChips()}` : "";
   return head + scope + hello + chatUI("cici", L3("Book or ask anything", "Đặt lịch hoặc hỏi bất cứ điều gì", "무엇이든 물어보세요"), ""); /* the 3 quick chips show once, on the empty state */
 }
 function setTab(v) { if (v === "book" || v === "ask") v = "cici"; if (!FLAGS.quest && QUEST_RE.test(v || "")) v = "home"; if (v !== ST.tab) ST.prevTab = ST.tab; ST.tab = v; ST.page = null; ST.store = null; track("tab_open", { tab: v }); if (v === "cici") track("cici_tab_open"); }
@@ -2898,7 +3084,7 @@ document.addEventListener("click", e => {
       if (ST.shopCoins < it.price) { toast(L3("Not enough coins 🪙","Không đủ xu 🪙","코인이 부족해요 🪙")); break; }
       ST.shopCoins -= it.price;
       if (it.cat==="boost") { if (id==="boost-xp") ST.xpBoostLeft=3; if (id==="boost-coin") ST.coinRushLeft=3; toast(it.icon+" "+shopItemNm(it)+" "+L3("activated!","đã bật!","활성화!")); }
-      else { if (!ST.shopInventory.includes(id)) ST.shopInventory.push(id); toast(it.icon+" "+shopItemNm(it)+" "+L3("unlocked!","đã mở khóa!","잠금 해제!")); showGainPill(0, 0); }
+      else { if (!ST.shopInventory.includes(id)) ST.shopInventory.push(id); popCut("cheer"); toast(it.icon+" "+shopItemNm(it)+" "+L3("unlocked!","đã mở khóa!","잠금 해제!")); showGainPill(0, 0); }
       render(); break; }
     case "equip-shopitem": { const id = d.id, it = SHOP_ITEMS.find(x=>x.id===id); if (!it) break;
       const unequip = d.unequip==="1";
@@ -2906,9 +3092,9 @@ document.addEventListener("click", e => {
       const key = catMap[it.cat]; if (key) ST.shopEquipped[key] = unequip ? null : id;
       toast(unequip ? it.icon+" "+L3("Removed.","Đã bỏ.","해제됐어요.") : it.icon+" "+shopItemNm(it)+" "+L3("equipped!","đã đeo!","착용!"));
       applyEquipped(); render(); break; }
-    case "onboard-done": ST.firstRun = false; try { localStorage.setItem("cici.ob","1"); } catch(e){} ST.page = null; ST.shopCoins += 50; showGainPill(0, 50); toast(L3("Welcome! +50 🪙","Chào mừng! +50 🪙","환영해요! +50 🪙")); render(); break;
-    case "attend-demo": { const b = B.find(bk => bk.status === "confirmed"); if (b) { attend(b); } else { ST.miss.attend = true; shopGain(20); render(); toast(L3("Attended! +20 🪙","Đã điểm danh! +20 🪙","출석 완료! +20 🪙")); } break; }
-    case "newplace-demo": ST.miss.newplace = true; shopGain(30); render(); toast(L3("New place visited! +30 🪙","Thử nơi mới! +30 🪙","새로운 곳 방문! +30 🪙")); break;
+    case "onboard-done": ST.firstRun = false; try { localStorage.setItem("cici.ob","1"); } catch(e){} ST.page = null; ST.shopCoins += 50; showGainPill(0, 50); celebrate(); render(); toast(L3("Welcome! +50 🪙","Chào mừng! +50 🪙","환영해요! +50 🪙")); break;
+    case "attend-demo": { const b = B.find(bk => bk.status === "confirmed"); if (b) { attend(b); } else { ST.miss.attend = true; shopGain(20); celebrate(); render(); toast(L3("Attended! +20 🪙","Đã điểm danh! +20 🪙","출석 완료! +20 🪙")); } break; }
+    case "newplace-demo": ST.miss.newplace = true; shopGain(30); celebrate(); render(); toast(L3("New place visited! +30 🪙","Thử nơi mới! +30 🪙","새로운 곳 방문! +30 🪙")); break;
     case "edit-profile": ST.editNameVal = ST.profileName || L3("Mina","Mina","미나"); ST.page = "profile-edit"; render(); window.scrollTo(0,0); break;
     case "save-profile": { const v = ($("#fEditName")||{}).value||""; const vt = v.trim(); if (!vt) { toast(L3("Name can't be empty.","Tên không được bỏ trống.","이름을 입력해 주세요.")); break; } ST.profileName = vt; ST.editNameVal = vt; ST.page = null; toast(L3("Saved.","Đã lưu.","저장됐어요.")); render(); break; }
     case "back": if (ST.page === "bookings") { bookingsBack(); break; } if (ST.page) { ST.page = ST.page === "nset" && ST.fromFeed ? "notif" : null; ST.fromFeed = false; render(); $("#view").focus(); break; } ST.store = null; render(); window.scrollTo(0, 0); $("#view").focus(); break;
@@ -2917,6 +3103,8 @@ document.addEventListener("click", e => {
     case "setlang": setLang(d.v); closeSheet(); render(); break;
     case "inbox": case "nfeed": ST.page = "notif"; ST.seenN = true; render(); window.scrollTo(0, 0); $("#view").focus(); break;
     case "nset": ST.fromFeed = ST.page === "notif"; ST.page = "nset"; render(); window.scrollTo(0, 0); $("#view").focus(); break;
+    case "logout": try { localStorage.removeItem("cici.ob"); } catch(e){} ST.firstRun = true; ST.page = "onboard"; ST.tab = "home"; render(); window.scrollTo(0, 0); break;
+    case "auth-done": try { localStorage.setItem("cici.ob","1"); } catch(e){} ST.firstRun = false; ST.page = null; ST.tab = "home"; render(); window.scrollTo(0,0); break;
     case "ntype": NSET.types[d.v] = el.checked; saveN(); render(); { const f = $(`[data-act="ntype"][data-v="${d.v}"]`); if (f) f.focus(); } break;
     case "nstore": NSET.muted[d.v] = !el.checked; saveN(); render(); { const f = $(`[data-act="nstore"][data-v="${d.v}"]`); if (f) f.focus(); } break;
     case "noptin": NSET.optin[d.v] = el.checked; saveN(); render(); { const f = $(`[data-act="noptin"][data-v="${d.v}"]`); if (f) f.focus(); } break;

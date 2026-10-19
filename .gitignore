@@ -1,3 +1,4 @@
 .omc/
 *.png
 .playwright-mcp/
+node_modules/

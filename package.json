@@ -1,0 +1,27 @@
+{
+  "name": "capsule-barre-member-app",
+  "version": "1.0.0",
+  "description": "Live: https://outis-metalabs.github.io/capsule-barre-member-app/hana-app.html",
+  "main": "record-video.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/outis-metalabs/capsule-barre-member-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/outis-metalabs/capsule-barre-member-app/issues"
+  },
+  "homepage": "https://github.com/outis-metalabs/capsule-barre-member-app#readme",
+  "dependencies": {
+    "playwright": "^1.64.1"
+  }
+}

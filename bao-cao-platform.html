@@ -4,22 +4,22 @@
 <meta charset="utf-8">
 <title>Cici platform report</title>
 <style>
-  html, body { margin: 0; height: 100%; background: #F6D9E2; color: #2B2326; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-  body { display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; padding: 16px 28px 18px; min-height: 100vh; }
-  .phone { box-sizing: border-box; width: 410px; height: 764px; border: 10px solid #fff; border-radius: 40px; overflow: hidden; background: #FDECEF; box-shadow: 0 24px 60px rgba(142,51,70,.18); flex: none; }
-  iframe { width: 100%; height: 100%; border: 0; display: block; background: #FDECEF; }
-  .cap { width: min(550px,100%); margin-top: 18px; background: #fff; border-radius: 22px; padding: 14px 24px 16px; box-shadow: 0 10px 28px rgba(176,74,94,.10); box-sizing: border-box; }
-  .kicker { margin: 0 0 2px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B04A5E; font-weight: 700; }
-  h2 { margin: 0 0 4px; font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
-  p { margin: 0; font-size: 15px; line-height: 1.45; color: #5c4450; }
+  html, body { margin: 0; width: 430px; height: 1112px; overflow: hidden; background: #F6D9E2; color: #2B2326; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { display: flex; flex-direction: column; }
+  .phone { width: 430px; height: 932px; overflow: hidden; background: #FDECEF; flex: none; }
+  iframe { width: 430px; height: 932px; border: 0; display: block; background: #FDECEF; }
+  .cap { width: 430px; height: 180px; box-sizing: border-box; background: #fff; padding: 12px 16px 14px; overflow: hidden; flex: none; }
+  .kicker { margin: 0; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #B04A5E; font-weight: 700; }
+  h2 { margin: 2px 0 6px; font-size: 20px; line-height: 1.2; letter-spacing: -.02em; font-weight: 600; }
+  p { margin: 0; font-size: 15px; line-height: 1.35; color: #5c4450; }
 </style>
 </head>
 <body>
   <div class="phone"><iframe id="appframe" title="Cici member app" src="platform-app.html?lang=en"></iframe></div>
   <div class="cap">
     <p class="kicker" id="kicker">Cici · member app</p>
-    <h2 id="title">Meet Cici</h2>
-    <p id="line">One account for many places. This walkthrough uses the sample Korea demo, in English.</p>
+    <h2 id="title">Feature overview</h2>
+    <p id="line">Platform app — character · outfits · coins · missions.</p>
   </div>
   <script>
     window.setCap = function(kicker, title, line) {
@@ -27,6 +27,106 @@
       document.getElementById("title").textContent = title;
       document.getElementById("line").textContent = line;
     };
+    document.getElementById("appframe").addEventListener("load", function() {
+      try { this.contentWindow.render(); } catch(e) {}
+    });
+
+    /* ── SCRIPT — PLATFORM REPORT v3 (full app tour) ────────────────────
+     *
+     * SETUP BEFORE RECORDING:
+     *   1. Clear localStorage: Application → Local Storage → delete "cici.ob"
+     *   2. document.getElementById("appframe").src = "platform-app.html?lang=en";
+     *   3. After load:
+     *        const w = document.getElementById("appframe").contentWindow;
+     *        w.ST.shopCoins = 70; w.ST.wear = "o1"; w.render();
+     *   4. Start screen recording, pause 2s on Intro.
+     *
+     * ── ACT 1 — FIRST LAUNCH ─────────────────────────────────────────────
+     *
+     * S1 — Intro (3s)
+     *   setCap("Cici · member app","Feature overview","Platform app — character · outfits · coins · missions.");
+     *
+     * S2 — Onboarding + 50 🪙 (4s)
+     *   setCap("🆕 Onboarding","Welcome + 50 🪙","Cici introduces key features. Shows once only — saved via localStorage.");
+     *   → Scroll through 3 steps → tap "Get started · +50 🪙".
+     *
+     * S3 — Log in → Home (4s)
+     *   setCap("Home","Logged in → Home","New nav bar: home · look · cici · you.");
+     *   → Log in → Home. Point to the 4 nav tabs.
+     *
+     * ── ACT 2 — HOME TAB ─────────────────────────────────────────────────
+     *
+     * S4 — Full-width character video (4s)
+     *   setCap("🆕 Home","Full-width character video","Equipped outfit autoplays fullwidth. Transparent level bar at bottom.");
+     *   → Point to video hero, level bar overlay, greeting pill.
+     *
+     * S5 — Mission card + coins (3s)
+     *   setCap("🆕 Home","Daily missions + Cici Coins","3 daily missions. Current coin balance shown on card.");
+     *   → Scroll down, point to mission card.
+     *
+     * ── ACT 3 — CICI'S LOOK · 3 OUTFITS ─────────────────────────────────
+     *
+     * S6 — Enter Look tab (3s)
+     *   setCap("🆕 Cici's Look","Dedicated nav tab","Tap the look tab → video hero + outfit grid.");
+     *
+     * S7 — Outfit 1: Default (3s)
+     *   setCap("Cici's Look","Default outfit — Clip 1","Default outfit: video clip 1 autoplays.");
+     *   → Tap Default tile (o1).
+     *
+     * S8 — Outfit 2: Studio (3s)
+     *   setCap("Cici's Look","Studio — Clip 2","Tap Studio → video switches instantly. Each outfit has its own clip.");
+     *   → Tap Studio tile (o2).
+     *
+     * S9 — Outfit 3: Studio wrap top (3s)
+     *   setCap("Cici's Look","Studio wrap top — video_9","Special outfit outside the 5 tiers. Tap → video_9.mp4 plays.");
+     *   → Tap wrap top tile.
+     *
+     * S10 — Locked + Meta bar (4s)
+     *   setCap("Cici's Look","Unlock by level · Shop","Glow/Bloom/Icon unlock at levels 3–5. Bottom bar: outfit name + Shop.");
+     *   → Tap Glow (locked, lock icon shows) → point to meta bar → tap Shop.
+     *
+     * ── ACT 4 — OUTFIT PROPAGATES ────────────────────────────────────────
+     *
+     * S11 — Home after outfit change (3s)
+     *   setCap("🆕 Home","Outfit change → Home updates","Back to Home — video hero now shows the wrap top clip.");
+     *   → Tap home tab. Video hero = wrap top clip.
+     *
+     * S12 — Cici tab: outfit image (3s)
+     *   setCap("🆕 Cici tab","Character reflects current outfit","Cici tab hero image updates to match the equipped outfit.");
+     *   → Tap cici tab. Image = wrap top.
+     *
+     * ── ACT 5 — MISSIONS + COINS ─────────────────────────────────────────
+     *
+     * S13 — Stretch +10 🪙 (3s)
+     *   setCap("🆕 Missions","Complete → earn coins","Stretch: Start → Finish (demo). Confetti + +10 🪙 toast.");
+     *   → Home tab → Start Stretch → Finish.
+     *
+     * S14 — Attend + New place Demo › (4s)
+     *   setCap("🆕 Missions","Demo › instant simulate","Attend +20 🪙 · New place +30 🪙. No real booking needed.");
+     *   → Demo › Attend → Demo › New place.
+     *
+     * END (4s)
+     *   setCap("feat/cici-gamification","Summary","Video hero · Outfit switching · Look tab · Coins · Missions.");
+     *
+     * ── CHEATSHEET — paste one line at a time ────────────────────────────
+     *
+     *   setCap("Cici · member app","Feature overview","Platform app — character · outfits · coins · missions.");
+     *   setCap("🆕 Onboarding","Welcome + 50 🪙","Cici introduces key features. Shows once only — saved via localStorage.");
+     *   setCap("Home","Logged in → Home","New nav bar: home · look · cici · you.");
+     *   setCap("🆕 Home","Full-width character video","Equipped outfit autoplays fullwidth. Transparent level bar at bottom.");
+     *   setCap("🆕 Home","Daily missions + Cici Coins","3 daily missions. Current coin balance shown on card.");
+     *   setCap("🆕 Cici's Look","Dedicated nav tab","Tap the look tab → video hero + outfit grid.");
+     *   setCap("Cici's Look","Default outfit — Clip 1","Default outfit: video clip 1 autoplays.");
+     *   setCap("Cici's Look","Studio — Clip 2","Tap Studio → video switches instantly. Each outfit has its own clip.");
+     *   setCap("Cici's Look","Studio wrap top — video_9","Special outfit outside the 5 tiers. Tap → video_9.mp4 plays.");
+     *   setCap("Cici's Look","Unlock by level · Shop","Glow/Bloom/Icon unlock at levels 3–5. Bottom bar: outfit name + Shop.");
+     *   setCap("🆕 Home","Outfit change → Home updates","Back to Home — video hero now shows the wrap top clip.");
+     *   setCap("🆕 Cici tab","Character reflects current outfit","Cici tab hero image updates to match the equipped outfit.");
+     *   setCap("🆕 Missions","Complete → earn coins","Stretch: Start → Finish (demo). Confetti + +10 🪙 toast.");
+     *   setCap("🆕 Missions","Demo › instant simulate","Attend +20 🪙 · New place +30 🪙. No real booking needed.");
+     *   setCap("feat/cici-gamification","Summary","Video hero · Outfit switching · Look tab · Coins · Missions.");
+     *
+     * ─────────────────────────────────────────────────────────────────── */
   </script>
 </body>
 </html>

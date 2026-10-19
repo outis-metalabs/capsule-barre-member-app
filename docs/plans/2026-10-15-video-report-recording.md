@@ -1,289 +1,235 @@
-# Video Report Recording Plan
+# Video Report Recording Plan (v3 — full app tour)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Quay video báo cáo ~3 phút trên `bao-cao-platform.html` trình bày tất cả tính năng mới của `feat/cici-gamification`.
+**Goal:** Record a ~3 min report video covering all screens of `platform-app.html`, including the updated character features (full-width video hero, outfit switching across 3 outfits).
 
-**Architecture:** Mở `bao-cao-platform.html` trong Chrome → click qua app trong iframe → gọi `window.setCap()` từ DevTools console để cập nhật caption sau mỗi cảnh → screen record toàn bộ.
+**Tech Stack:** Chrome, QuickTime Player / OBS / Loom, DevTools console
 
-**Tech Stack:** Chrome, QuickTime Player (hoặc bất kỳ screen recorder nào), DevTools console
-
----
-
-### Task 1: Cài đặt màn hình ghi
-
-**Files:**
-- Open: `capsule-barre-member-app/bao-cao-platform.html`
-
-- [ ] **Step 1: Mở Chrome, điều hướng đến file**
-
-  ```
-  File → Open File → capsule-barre-member-app/bao-cao-platform.html
-  ```
-
-  Hoặc kéo thả file vào Chrome. App load trong iframe ở giữa, caption box phía dưới.
-
-- [ ] **Step 2: Resize cửa sổ Chrome**
-
-  Kéo cửa sổ Chrome ra full màn hình (không phải fullscreen F11, chỉ maximize). Caption và phone phải thấy đủ trong frame.
-
-- [ ] **Step 3: Mở DevTools console và giữ mở**
-
-  Phím tắt: `⌘ + Option + J` (Mac) / `Ctrl + Shift + J` (Windows)
-
-  Dock console sang **bên phải** (click ⋮ trong DevTools → Dock side → Dock to right) để không che khuất demo.
-
-- [ ] **Step 4: Bật screen recorder**
-
-  - **QuickTime:** File → New Screen Recording → chọn vùng cửa sổ Chrome (không record DevTools console nếu dock right)
-  - **Hoặc:** OBS / Loom / bất kỳ tool nào tương tự
-  - **Quan trọng:** Chỉ capture vùng chứa phone + caption, KHÔNG capture DevTools
-
-  > Chưa bấm Record ngay — xong Task 2 mới bắt đầu quay.
+**Structure (~14 scenes, ~3 min):**
+- Act 1 — First launch: Intro · Onboarding · +50 🪙 · Log in
+- Act 2 — Home tab: full-width video hero · level bar · mission card
+- Act 3 — Cici's Look tab: 3 outfits · video switches · locked outfits · meta bar
+- Act 4 — Outfit propagates: Home + Cici tab update to match chosen outfit
+- Act 5 — Missions: Stretch · Attend · New place · coins accumulate
 
 ---
 
-### Task 2: Reset trạng thái app trước khi quay
+### Task 1: Setup before recording
 
-- [ ] **Step 1: Mở DevTools Application tab để xóa localStorage**
+- [ ] **Step 1: Open `bao-cao-platform.html` in Chrome**
 
-  Trong DevTools: Tab **Application** → **Local Storage** → click vào origin → tìm key `cici.ob` → Delete (hoặc right-click → Delete)
+- [ ] **Step 2: Open DevTools console, dock to the right**
 
-  Mục đích: Onboarding hiện lại (key này được set khi bấm "Bắt đầu" lần đầu).
+  `⌘⌥J` → ⋮ → Dock side → Dock to right
 
-- [ ] **Step 2: Set coins ban đầu về 70 qua console**
+- [ ] **Step 3: Clear localStorage**
 
-  Chuyển về tab **Console**, paste lệnh sau:
-
-  ```js
-  document.getElementById("appframe").contentWindow.ST.shopCoins = 70; document.getElementById("appframe").contentWindow.render();
+  ```
+  DevTools → Application → Local Storage → delete key "cici.ob"
   ```
 
-  Expected: Không có lỗi. App re-render, nếu đang ở home sẽ thấy coins đổi.
-
-- [ ] **Step 3: Reload iframe về màn hình Intro**
+- [ ] **Step 4: Reset app state via console**
 
   ```js
   document.getElementById("appframe").src = "platform-app.html?lang=en";
   ```
 
-  Expected: Iframe reload, Onboarding screen hiện ra (vì `cici.ob` đã xóa).
-
-- [ ] **Step 4: Set caption ban đầu**
+  After the iframe loads:
 
   ```js
-  setCap("Cici · member app", "Tính năng mới", "feat/cici-gamification — báo cáo cập nhật.");
+  const w = document.getElementById("appframe").contentWindow;
+  w.ST.shopCoins = 70; w.ST.wear = "o1"; w.render();
   ```
 
-- [ ] **Step 5: Bắt đầu screen recording**
+- [ ] **Step 5: Set opening caption**
 
-  Bấm Record trong QuickTime / OBS / Loom.
+  ```js
+  setCap("Cici · member app","Feature overview","Platform app — character · outfits · coins · missions.");
+  ```
 
-  Dừng 2 giây ở màn hình intro để caption đầu tiên hiện rõ trước khi bắt đầu click.
+- [ ] **Step 6: Start screen recording** (capture phone + caption area only, not DevTools)
 
 ---
 
-### Task 3: Record Hồi 1 — Lần đầu mở app (scenes 1–5)
+### Task 2: Act 1 — First launch (scenes 1–3)
 
-Mỗi scene: gọi `setCap()` trước → click vào iframe → dừng 2–3 giây.
-
-- [ ] **Scene 1 — Intro**
-
-  Trong iframe đang hiện Onboarding. Cuộn lên xem màn hình chào nếu cần. Gọi:
+- [ ] **Scene 1 — Intro (3s)**
 
   ```js
-  setCap("Intro", "Màn hình chào", "Hai lựa chọn: đăng nhập hoặc khám phá app thành viên.");
+  setCap("Cici · member app","Feature overview","Platform app — character · outfits · coins · missions.");
   ```
 
-  Dừng 3 giây.
+  → Intro screen visible. Hold 3s.
 
-- [ ] **Scene 2 — Onboarding (🆕)**
+- [ ] **Scene 2 — Onboarding + 50 🪙 (4s)**
 
   ```js
-  setCap("🆕 Onboarding", "Chào mừng thành viên mới", "Cici giới thiệu 3 tính năng. Màn hình này chỉ hiện đúng 1 lần — lưu qua localStorage.");
+  setCap("🆕 Onboarding","Welcome + 50 🪙","Cici introduces key features. Shows once only — saved via localStorage.");
   ```
 
-  Trong iframe: scroll qua 3 bước onboarding. Dừng 3 giây.
+  → Scroll through 3 onboarding steps → tap **"Get started · +50 🪙"**. Coin pill floats up.
 
-- [ ] **Scene 3 — Nhận 50 🪙 (🆕)**
+- [ ] **Scene 3 — Log in → Home (4s)**
 
   ```js
-  setCap("🆕 Cici Coins", "Nhận 50 🪙 khi bắt đầu", "Cici Coins là tiền xu trang trí — hoàn toàn tách biệt với điểm thưởng.");
+  setCap("Home","Logged in → Home","New nav bar: home · look · cici · you.");
   ```
 
-  Trong iframe: bấm nút **"Bắt đầu · +50 🪙"**. Pill `+50 🪙` nổi lên. Dừng 3 giây.
-
-- [ ] **Scene 4 — Đăng nhập**
-
-  ```js
-  setCap("Auth", "Đăng nhập", "Form phone + password. Luồng xác thực không thay đổi.");
-  ```
-
-  Trong iframe: điền số phone mẫu + password → bấm **Get code** → nhập code 6 chữ số → **Continue**. Dừng 2 giây.
-
-- [ ] **Scene 5 — Home (🆕 coins badge)**
-
-  ```js
-  setCap("🆕 Home", "Nhiệm vụ hàng ngày + Coins", "Mission card giờ hiện số Cici Coins hiện tại. 3 nhiệm vụ: Stretch, Attend, New place.");
-  ```
-
-  Trong iframe: xem tab Today, thấy mission card với `🪙 120`. Dừng 3 giây.
+  → Log in (phone + code) → Home. Point to the 4 nav tabs.
 
 ---
 
-### Task 4: Record Hồi 2 — Nhiệm vụ & kiếm coins (scenes 6–10)
+### Task 3: Act 2 — Home tab (scenes 4–5)
 
-- [ ] **Scene 6 — Stretch**
-
-  ```js
-  setCap("Missions", "Stretch — giãn cơ 2 phút", "Bấm Start để mở sheet giãn cơ với Cici và đồng hồ đếm ngược.");
-  ```
-
-  Trong iframe: bấm **Start** trên mission Stretch. Sheet mở ra. Dừng 2 giây.
-
-- [ ] **Scene 7 — Stretch done (🆕 +10 🪙)**
+- [ ] **Scene 4 — Full-width character video (4s)**
 
   ```js
-  setCap("🆕 Missions", "Hoàn thành → nhận điểm + coins", "Missions giờ tặng cả điểm thưởng lẫn Cici Coins. Stretch: +10 🪙.");
+  setCap("🆕 Home","Full-width character video","Equipped outfit autoplays fullwidth. Transparent level bar at bottom.");
   ```
 
-  Trong iframe: bấm **Finish (demo: skip the timer)**. Confetti + toast hiện. Dừng 3 giây.
+  → Point to video hero filling the full width, transparent level bar overlay at bottom, greeting pill.
 
-- [ ] **Scene 8 — Attend demo (🆕 Demo ›)**
+- [ ] **Scene 5 — Mission card + coins (3s)**
 
   ```js
-  setCap("🆕 Missions", "Attend — nút Demo để demo nhanh", "Không cần lịch đặt thật. Bấm Demo › để simulate check-in tức thì. +20 🪙.");
+  setCap("🆕 Home","Daily missions + Cici Coins","3 daily missions. Current coin balance shown on card.");
   ```
 
-  Trong iframe: bấm **Demo ›** trên mission **Attend**. Toast `+20 🪙` hiện. Dừng 3 giây.
-
-- [ ] **Scene 9 — New place demo (🆕 Demo ›)**
-
-  ```js
-  setCap("🆕 Missions", "New place — thử studio mới", "Bấm Demo › simulate visit mới. +30 🪙.");
-  ```
-
-  Trong iframe: bấm **Demo ›** trên mission **New place**. Toast `+30 🪙` hiện. Dừng 3 giây.
-
-- [ ] **Scene 10 — Coins tích lũy**
-
-  ```js
-  setCap("Coins", "Tổng kết coins", "Sau 3 nhiệm vụ: 120 → 130 → 150 → 180 🪙. Sẵn sàng vào shop.");
-  ```
-
-  Trong iframe: scroll lên mission card, chỉ vào `🪙 180`. Dừng 3 giây.
+  → Scroll down, point to mission card with 🪙 balance.
 
 ---
 
-### Task 5: Record Hồi 3 — Shop & trang trí (scenes 11–16)
+### Task 4: Act 3 — Cici's Look · 3 outfits (scenes 6–10)
 
-- [ ] **Scene 11 — Tab You (🆕 initials + Shop)**
-
-  ```js
-  setCap("🆕 You", "Profile mới", "Avatar chữ cái thay ảnh. Nút shop hiện số coins. Tên có thể chỉnh sửa.");
-  ```
-
-  Trong iframe: bấm tab **You** (bottom nav). Thấy avatar initials + `🪙 180 coins...`. Dừng 3 giây.
-
-- [ ] **Scene 12 — Cici Shop (🆕 toàn bộ)**
+- [ ] **Scene 6 — Enter Look tab (3s)**
 
   ```js
-  setCap("🆕 Cici Shop", "17 items trang trí", "Hình nền · Khung avatar · Bạn đồng hành · Nhạc · Boost. Lọc theo loại.");
+  setCap("🆕 Cici's Look","Dedicated nav tab","Tap the look tab → video hero + outfit grid.");
   ```
 
-  Trong iframe: bấm **🪙 180 coins...**. Shop mở. Click từng filter chip để thấy các danh mục. Dừng 4 giây.
+  → Tap **look** tab (shirt icon). Video hero + outfit grid appear.
 
-- [ ] **Scene 13 — Mua Sakura bg (🆕)**
+- [ ] **Scene 7 — Outfit 1: Default (3s)**
 
   ```js
-  setCap("🆕 Shop", "Mua hình nền Sakura — 80 🪙", "Coins trừ ngay, item vào inventory.");
+  setCap("Cici's Look","Default outfit — Clip 1","Default outfit: video clip 1 autoplays.");
   ```
 
-  Trong iframe: filter **Nền** → bấm **Buy** trên Sakura (80 🪙). Toast xác nhận. Dừng 3 giây.
+  → Tap **Default** tile (o1). Video switches to clip 1.
 
-- [ ] **Scene 14 — Equip Sakura (🆕 realtime)**
+- [ ] **Scene 8 — Outfit 2: Studio (3s)**
 
   ```js
-  setCap("🆕 Shop", "Equip → đổi nền ngay lập tức", "Không cần reload. Background thay đổi realtime trên toàn app.");
+  setCap("Cici's Look","Studio — Clip 2","Tap Studio → video switches instantly. Each outfit has its own clip.");
   ```
 
-  Trong iframe: bấm **Equip** trên Sakura. Nền app đổi sang hoa anh đào. Dừng 3 giây.
+  → Tap **Studio** tile (o2). Video switches to clip 2.
 
-- [ ] **Scene 15 — Silver frame (🆕)**
+- [ ] **Scene 9 — Outfit 3: Studio wrap top (3s)**
 
   ```js
-  setCap("🆕 Shop", "Khung avatar — Silver frame — 60 🪙", "Equip → viền bạc xuất hiện quanh avatar chữ cái.");
+  setCap("Cici's Look","Studio wrap top — video_9","Special outfit outside the 5 tiers. Tap → video_9.mp4 plays.");
   ```
 
-  Trong iframe: filter **Khung** → Buy Silver frame (60 🪙) → Equip. Quay lại **You** tab để thấy khung. Dừng 3 giây.
+  → Tap **Studio wrap top** tile. video_9.mp4 plays.
 
-- [ ] **Scene 16 — Cat companion (🆕)**
+- [ ] **Scene 10 — Locked outfits + Meta bar + Shop (4s)**
 
   ```js
-  setCap("🆕 Shop", "Bạn đồng hành — Cat — 40 🪙", "Equip → badge 🐱 xuất hiện trên màn hình Cici.");
+  setCap("Cici's Look","Unlock by level · Shop","Glow/Bloom/Icon unlock at levels 3–5. Bottom bar: outfit name + Shop.");
   ```
 
-  Trong iframe: filter **Bạn đồng hành** → Buy Cat (40 🪙) → Equip → bấm tab **Cici** (hoặc tab có Cici). Badge 🐱 hiện. Dừng 3 giây.
+  → Tap **Glow** (locked — lock icon shows) → point to meta bar → tap **Shop**.
 
 ---
 
-### Task 6: Kết thúc & xuất file
+### Task 5: Act 4 — Outfit propagates (scenes 11–12)
 
-- [ ] **Step 1: Set caption kết thúc**
+- [ ] **Scene 11 — Home after outfit change (3s)**
 
   ```js
-  setCap("feat/cici-gamification", "Tổng kết", "Onboarding · Cici Coins · Item Shop · Mission demo shortcuts · Equip realtime.");
+  setCap("🆕 Home","Outfit change → Home updates","Back to Home — video hero now shows the wrap top clip.");
   ```
 
-  Dừng 4 giây cho caption đọc kịp.
+  → Tap **home** tab. Video hero plays the wrap top clip.
 
-- [ ] **Step 2: Dừng screen recording**
+- [ ] **Scene 12 — Cici tab: outfit image (3s)**
 
-  Bấm Stop trong QuickTime / OBS / Loom.
+  ```js
+  setCap("🆕 Cici tab","Character reflects current outfit","Cici tab hero image updates to match the equipped outfit.");
+  ```
 
-- [ ] **Step 3: Trim**
-
-  - Xóa phần đầu trước khi caption Scene 1 hiện ổn định (< 1 giây)
-  - Xóa phần cuối sau 4 giây caption kết thúc
-  - Cắt bỏ bất kỳ đoạn nào bấm nhầm hoặc lag
-
-- [ ] **Step 4: Export**
-
-  Lưu thành: `bao-cao-platform-v2.mp4`
-
-  Recommend: H.264, 1080p, ~12MB (tương đương bao-cao-hana.mp4)
+  → Tap **cici** tab. Hero image = wrap top outfit.
 
 ---
 
-## Cheatsheet Console — Dán sẵn trước khi quay
+### Task 6: Act 5 — Missions + Coins (scenes 13–14)
 
-Copy paste block này vào console để có tất cả `setCap` calls sẵn sàng:
+- [ ] **Scene 13 — Stretch +10 🪙 (3s)**
+
+  ```js
+  setCap("🆕 Missions","Complete → earn coins","Stretch: Start → Finish (demo). Confetti + +10 🪙 toast.");
+  ```
+
+  → Home tab → tap **Start** on Stretch → **Finish**. Confetti + toast.
+
+- [ ] **Scene 14 — Attend + New place Demo › (4s)**
+
+  ```js
+  setCap("🆕 Missions","Demo › instant simulate","Attend +20 🪙 · New place +30 🪙. No real booking needed.");
+  ```
+
+  → **Demo ›** on Attend → +20 toast → **Demo ›** on New place → +30 toast.
+
+---
+
+### Task 7: End + export
+
+- [ ] **Step 1: Ending caption (4s)**
+
+  ```js
+  setCap("feat/cici-gamification","Summary","Video hero · Outfit switching · Look tab · Coins · Missions.");
+  ```
+
+- [ ] **Step 2: Stop recording → Trim → Export**
+
+  Save as: `bao-cao-platform-v3.mp4` · H.264 · 1080p · ~12 MB
+
+---
+
+## Cheatsheet — paste one line at a time
 
 ```js
-// === PRE-RECORDING SETUP ===
-// 1. Xóa cici.ob trong Application → Local Storage
-// 2. Reload iframe:
+// SETUP
 document.getElementById("appframe").src = "platform-app.html?lang=en";
-// 3. Sau khi iframe load xong, set coins (chạy lần này):
-// document.getElementById("appframe").contentWindow.ST.shopCoins = 70;
-// document.getElementById("appframe").contentWindow.render();
+// after load:
+// const w = document.getElementById("appframe").contentWindow;
+// w.ST.shopCoins = 70; w.ST.wear = "o1"; w.render();
 
-// === CAPTIONS — chạy từng cái theo thứ tự ===
-// S1:  setCap("Intro", "Màn hình chào", "Hai lựa chọn: đăng nhập hoặc khám phá app thành viên.");
-// S2:  setCap("🆕 Onboarding", "Chào mừng thành viên mới", "Cici giới thiệu 3 tính năng. Chỉ hiện 1 lần — lưu qua localStorage.");
-// S3:  setCap("🆕 Cici Coins", "Nhận 50 🪙 khi bắt đầu", "Cici Coins là tiền xu trang trí — tách biệt với điểm thưởng.");
-// S4:  setCap("Auth", "Đăng nhập", "Form phone + password. Luồng xác thực không thay đổi.");
-// S5:  setCap("🆕 Home", "Nhiệm vụ hàng ngày + Coins", "Mission card hiện số Cici Coins. 3 nhiệm vụ: Stretch, Attend, New place.");
-// S6:  setCap("Missions", "Stretch — giãn cơ 2 phút", "Bấm Start để mở sheet giãn cơ với Cici và đồng hồ đếm ngược.");
-// S7:  setCap("🆕 Missions", "Hoàn thành → nhận điểm + coins", "Missions giờ tặng cả điểm thưởng lẫn Cici Coins. Stretch: +10 🪙.");
-// S8:  setCap("🆕 Missions", "Attend — nút Demo để demo nhanh", "Không cần lịch đặt thật. Demo › simulate check-in tức thì. +20 🪙.");
-// S9:  setCap("🆕 Missions", "New place — thử studio mới", "Bấm Demo › simulate visit mới. +30 🪙.");
-// S10: setCap("Coins", "Tổng kết coins", "Sau 3 nhiệm vụ: 120 → 130 → 150 → 180 🪙. Sẵn sàng vào shop.");
-// S11: setCap("🆕 You", "Profile mới", "Avatar chữ cái thay ảnh. Nút shop hiện số coins. Tên có thể chỉnh sửa.");
-// S12: setCap("🆕 Cici Shop", "17 items trang trí", "Hình nền · Khung avatar · Bạn đồng hành · Nhạc · Boost. Lọc theo loại.");
-// S13: setCap("🆕 Shop", "Mua hình nền Sakura — 80 🪙", "Coins trừ ngay, item vào inventory.");
-// S14: setCap("🆕 Shop", "Equip → đổi nền ngay lập tức", "Không cần reload. Background thay đổi realtime trên toàn app.");
-// S15: setCap("🆕 Shop", "Khung avatar — Silver frame — 60 🪙", "Equip → viền bạc xuất hiện quanh avatar chữ cái.");
-// S16: setCap("🆕 Shop", "Bạn đồng hành — Cat — 40 🪙", "Equip → badge 🐱 xuất hiện trên màn hình Cici.");
-// END: setCap("feat/cici-gamification", "Tổng kết", "Onboarding · Cici Coins · Item Shop · Mission demo shortcuts · Equip realtime.");
+// ACT 1
+// S1:  setCap("Cici · member app","Feature overview","Platform app — character · outfits · coins · missions.");
+// S2:  setCap("🆕 Onboarding","Welcome + 50 🪙","Cici introduces key features. Shows once only — saved via localStorage.");
+// S3:  setCap("Home","Logged in → Home","New nav bar: home · look · cici · you.");
+
+// ACT 2
+// S4:  setCap("🆕 Home","Full-width character video","Equipped outfit autoplays fullwidth. Transparent level bar at bottom.");
+// S5:  setCap("🆕 Home","Daily missions + Cici Coins","3 daily missions. Current coin balance shown on card.");
+
+// ACT 3 — OUTFITS
+// S6:  setCap("🆕 Cici's Look","Dedicated nav tab","Tap the look tab → video hero + outfit grid.");
+// S7:  setCap("Cici's Look","Default outfit — Clip 1","Default outfit: video clip 1 autoplays.");
+// S8:  setCap("Cici's Look","Studio — Clip 2","Tap Studio → video switches instantly. Each outfit has its own clip.");
+// S9:  setCap("Cici's Look","Studio wrap top — video_9","Special outfit outside the 5 tiers. Tap → video_9.mp4 plays.");
+// S10: setCap("Cici's Look","Unlock by level · Shop","Glow/Bloom/Icon unlock at levels 3–5. Bottom bar: outfit name + Shop.");
+
+// ACT 4 — PROPAGATION
+// S11: setCap("🆕 Home","Outfit change → Home updates","Back to Home — video hero now shows the wrap top clip.");
+// S12: setCap("🆕 Cici tab","Character reflects current outfit","Cici tab hero image updates to match the equipped outfit.");
+
+// ACT 5 — MISSIONS
+// S13: setCap("🆕 Missions","Complete → earn coins","Stretch: Start → Finish (demo). Confetti + +10 🪙 toast.");
+// S14: setCap("🆕 Missions","Demo › instant simulate","Attend +20 🪙 · New place +30 🪙. No real booking needed.");
+
+// END: setCap("feat/cici-gamification","Summary","Video hero · Outfit switching · Look tab · Coins · Missions.");
 ```
